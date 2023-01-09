@@ -48,5 +48,11 @@ namespace KeyViewer
             prof.KeyViewerYPos = KeyViewerYPos;
             return prof;
         }
+        public void Init(KeyManager manager)
+        {
+            GlobalConfig.keyManager = manager;
+            KeyGroups.ForEach(g => g.keyManager = manager);
+            ActiveKeys.ForEach(k => k.keyManager = manager);
+        }
     }
 }

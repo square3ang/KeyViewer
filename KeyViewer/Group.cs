@@ -11,7 +11,7 @@ namespace KeyViewer
     public class Group
     {
         public Group() { }
-        public KeyManager keyManager;
+        internal KeyManager keyManager;
         public Group(KeyManager keyManager, string name)
         {
             this.keyManager = keyManager;
