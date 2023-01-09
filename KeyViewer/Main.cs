@@ -61,7 +61,6 @@ namespace KeyViewer
                     profiles.Add(new Profile());
                 if (profiles.Count <= profileIndex || profileIndex < 0)
                     Settings.ProfileIndex = 0;
-                profiles.ForEach(p => p.Init(KeyManager));
                 Lang = new LangManager(File.ReadAllText("Mods/KeyViewer/Language.json"));
                 Lang.ChangeLanguage(Settings.Language);
                 Harmony = new Harmony(modEntry.Info.Id);
@@ -73,6 +72,7 @@ namespace KeyViewer
                         config.Count = 0;
                 }    
                 KeyManager.Init(Settings.CurrentProfile);
+                profiles.ForEach(p => p.Init(KeyManager));
             }
             else
             {
