@@ -15,8 +15,9 @@ namespace KeyViewer.Migration.V2
         public Dictionary<KeyCode, int> KeyCounts;
         public Dictionary<KeyCode, KeySetting> KeySettings;
         public KeyViewerSettings Settings;
-        public V2Migrator(V2MigratorArgument args) : this(args.keyCountsPath, args.keySettingsPath, args.settingsPath) { }
-        public V2Migrator(string keyCountsPath, string keySettingsPath, string settingsPath)
+        public KeyManager manager;
+        public V2Migrator(KeyManager manager, V2MigratorArgument args) : this(manager, args.keyCountsPath, args.keySettingsPath, args.settingsPath) { }
+        public V2Migrator(KeyManager manager, string keyCountsPath, string keySettingsPath, string settingsPath)
         {
             if (!string.IsNullOrWhiteSpace(keyCountsPath))
                 KeyCounts = JsonConvert.DeserializeObject<Dictionary<KeyCode, int>>(File.ReadAllText(keyCountsPath));
@@ -30,6 +31,7 @@ namespace KeyViewer.Migration.V2
                 Settings = (KeyViewerSettings)serializer.Deserialize(File.Open(settingsPath, FileMode.Open));
             }
             else throw new InvalidOperationException("Settings Path Cannot Be Null!");
+            this.manager = manager;
         }
         public Settings Migrate()
         {
@@ -52,11 +54,11 @@ namespace KeyViewer.Migration.V2
                     switch (code)
                     {
                         case KeyCode.None:
-                            return new Key.Config(SpecialKeyType.KPS);
+                            return new Key.Config(manager, SpecialKeyType.KPS);
                         case KeyCode.Joystick1Button0:
-                            return new Key.Config(SpecialKeyType.Total);
+                            return new Key.Config(manager, SpecialKeyType.Total);
                         default:
-                            return new Key.Config(code);
+                            return new Key.Config(manager, code);
                     }
                 }).ToList();
                 MigrateProfile(pf, newProfile.ActiveKeys);

@@ -144,7 +144,7 @@ namespace KeyViewer
                 }
                 else
                 {
-                    KeyManager.Profile.ActiveKeys.Add(new Key.Config(code));
+                    KeyManager.Profile.ActiveKeys.Add(new Key.Config(KeyManager, code));
                     changed = true;
                 }
             }
@@ -246,7 +246,7 @@ namespace KeyViewer
             {
                 try
                 {
-                    IMigrator migrator = Migrator.V2(v2Arg);
+                    IMigrator migrator = Migrator.V2(KeyManager, v2Arg);
                     Settings = migrator.Migrate();
                     KeyManager.Profile.calculator.Stop();
                     Lang.ChangeLanguage(Settings.Language);
@@ -280,7 +280,7 @@ namespace KeyViewer
                 GUILayout.BeginHorizontal();
                 var groups = KeyManager.Profile.KeyGroups;
                 if (GUILayout.Button(Lang.GetString("NEW")))
-                    groups.Add(new Group($"Group {groups.Count}"));
+                    groups.Add(new Group(KeyManager, $"Group {groups.Count}"));
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
                 for (int i = 0; i < groups.Count; i++)
@@ -390,12 +390,12 @@ namespace KeyViewer
                 KeyManager.ClearCounts();
             if (!KeyManager.specialKeys.Keys.Contains(SpecialKeyType.KPS) && GUILayout.Button("Register KPS Key"))
             {
-                KeyManager.Profile.ActiveKeys.Add(new Key.Config(SpecialKeyType.KPS));
+                KeyManager.Profile.ActiveKeys.Add(new Key.Config(KeyManager, SpecialKeyType.KPS));
                 KeyManager.UpdateKeys();
             }
             if (!KeyManager.specialKeys.Keys.Contains(SpecialKeyType.Total) && GUILayout.Button("Register Total Key"))
             {
-                KeyManager.Profile.ActiveKeys.Add(new Key.Config(SpecialKeyType.Total));
+                KeyManager.Profile.ActiveKeys.Add(new Key.Config(KeyManager, SpecialKeyType.Total));
                 KeyManager.UpdateKeys();
             }
             GUILayout.FlexibleSpace();

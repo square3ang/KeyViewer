@@ -11,9 +11,15 @@ namespace KeyViewer
     public class Group
     {
         public Group() { }
-        public Group(string name) => Name = name;
+        public KeyManager keyManager;
+        public Group(KeyManager keyManager, string name)
+        {
+            this.keyManager = keyManager;
+            Name = name;
+            groupConfig = new Key.Config(keyManager);
+        }
         public List<KeyCode> codes = new List<KeyCode>();
-        public Key.Config groupConfig = new Key.Config();
+        public Key.Config groupConfig;
         public string Name = "Group";
         public bool Editing = false;
         private bool isResolved = false;
@@ -32,7 +38,7 @@ namespace KeyViewer
         {
             configs.Clear();
             for (int i = 0; i < codes.Count; i++)
-                configs.Add(Main.KeyManager.keys[codes[i]].config);
+                configs.Add(keyManager.keys[codes[i]].config);
             groupConfig.Initialized = true;
             isResolved = true;
         }
@@ -57,13 +63,13 @@ namespace KeyViewer
             Key.DrawGlobalConfig(groupConfig, c =>
             {
                 configs.ForEach(conf => conf.ApplyConfig(c));
-                Main.KeyManager.UpdateLayout();
+                keyManager.UpdateLayout();
             });
             MoreGUILayout.EndIndent();
         }
         public Group Copy()
         {
-            Group g = new Group(Name + " Copy");
+            Group g = new Group(keyManager, Name + " Copy");
             g.configs.AddRange(configs);
             return g;
         }

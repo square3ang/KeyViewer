@@ -53,11 +53,11 @@ namespace KeyViewer
             scaler.referenceResolution = new Vector2(1280, 720);
             Profile = profile;
         }
-        void Update()
-        {
-            if (Keys.All(k => k.Pressed))
-                Main.Settings.FunActivated = !Main.Settings.FunActivated;
-        }
+        //void Update()
+        //{
+        //    if (Keys.All(k => k.Pressed))
+        //        Main.Settings.FunActivated = !Main.Settings.FunActivated;
+        //}
         public void UpdateKeys()
         {
             if (keysCanvas)

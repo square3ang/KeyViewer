@@ -10,16 +10,20 @@ namespace KeyViewer
     {
         public class Config
         {
+            internal KeyManager keyManager;
             public Config() => Reset();
-            public Config(KeyCode code) : this()
+            public Config(KeyManager manager) : this() => keyManager = manager;
+            public Config(KeyManager manager, KeyCode code) : this()
             {
                 Code = code;
                 Initialized = true;
+                keyManager = manager;
             }
-            public Config(SpecialKeyType type) : this()
+            public Config(KeyManager manager, SpecialKeyType type) : this()
             {
                 SpecialType = type;
                 Initialized = true;
+                keyManager = manager;
             }
             private string font = "Default";
             private KeyCode code = KeyCode.None;
@@ -505,7 +509,7 @@ namespace KeyViewer
             public void Backup()
             {
                 if (!Initialized) return;
-                if (Main.KeyManager.Profile.ConfigBackupsCount < Backups.Count)
+                if (keyManager.Profile.ConfigBackupsCount < Backups.Count)
                     Backups.RemoveFirst();
                 if (Current != null)
                     Current = Backups.AddAfter(Current, Copy());

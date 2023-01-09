@@ -9,9 +9,9 @@ namespace KeyViewer.Migration
 {
     public sealed class Migrator
     {
-        public static IMigrator V2(string keyCountsPath, string keySettingsPath, string settingsPath)
-            => new V2Migrator(keyCountsPath, keySettingsPath, settingsPath);
-        public static IMigrator V2(V2MigratorArgument v2Arg)
-           => new V2Migrator(v2Arg);
+        public static IMigrator V2(KeyManager manager, string keyCountsPath, string keySettingsPath, string settingsPath)
+            => new V2Migrator(manager, keyCountsPath, keySettingsPath, settingsPath);
+        public static IMigrator V2(KeyManager manager, V2MigratorArgument v2Arg)
+           => new V2Migrator(manager, v2Arg);
     }
 }
