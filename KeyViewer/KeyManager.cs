@@ -72,7 +72,7 @@ namespace KeyViewer
                 keys.Add(config.Code, new GameObject().AddComponent<Key>().Init(this, config));
             foreach (Key.Config config in Profile.ActiveKeys.Where(c => c.SpecialType != SpecialKeyType.None))
                 specialKeys.Add(config.SpecialType, new GameObject().AddComponent<Key>().Init(this, config));
-            if (!Main.Settings.EditSettingEachKeys)
+            if (!Main.Settings.CurrentProfile.EditEachKeys)
                 Main.ApplyEachKeys(Profile.GlobalConfig);
             UpdateLayout();
         }

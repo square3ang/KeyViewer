@@ -29,6 +29,8 @@ namespace KeyViewer
         public float KeyViewerYPos = 0.03f;
         public int ConfigBackupsCount = 100;
         public int KPSUpdateRateMs = 1000;
+        public bool EditEachKeys = false;
+        public bool ResetWhenStart = false;
         [XmlIgnore]
         public KPSCalculator calculator;
         public Profile Copy()

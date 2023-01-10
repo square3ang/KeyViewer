@@ -571,6 +571,7 @@ namespace KeyViewer
             }
             public void ApplyConfigAll(Config config)
             {
+                keyManager = config.keyManager;
                 Font = config.Font;
                 Code = config.Code;
                 SpecialType = config.SpecialType;
@@ -612,6 +613,7 @@ namespace KeyViewer
             public Config Copy()
             {
                 Config conf = new Config();
+                conf.keyManager = keyManager;
                 conf.Font = Font;
                 conf.Code = Code;
                 conf.SpecialType = SpecialType;

@@ -68,10 +68,10 @@ namespace KeyViewer
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
                 KeyManager = new GameObject().AddComponent<KeyManager>();
-                KeyManager.Init(Settings.CurrentProfile);
-                if (Settings.ResetWhenStart)
-                    KeyManager.ClearCounts();
                 profiles.ForEach(p => p.Init(KeyManager));
+                KeyManager.Init(Settings.CurrentProfile);
+                if (Settings.CurrentProfile.ResetWhenStart)
+                    KeyManager.ClearCounts();
             }
             else
             {
@@ -104,7 +104,7 @@ namespace KeyViewer
                 GUILayout.Space(12f);
                 MoreGUILayout.HorizontalLine(1f, 400f);
                 GUILayout.BeginHorizontal();
-                Settings.ResetWhenStart = GUILayout.Toggle(Settings.ResetWhenStart, Lang.GetString("RESET_WHEN_START"));
+                Settings.CurrentProfile.ResetWhenStart = GUILayout.Toggle(Settings.CurrentProfile.ResetWhenStart, Lang.GetString("RESET_WHEN_START"));
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
                 if (Settings.FunActivated)
@@ -324,6 +324,7 @@ namespace KeyViewer
                 var dup = Settings.Profiles.FirstOrDefault(p => p.Name == profile.Name);
                 if (dup != null)
                     profile.Name += "_Duplicate";
+                profile.Init(KeyManager);
                 Settings.Profiles.Add(profile);
             }
             if (GUILayout.Button(Lang.GetString("EXPORT")))
@@ -456,7 +457,7 @@ namespace KeyViewer
             int.TryParse(GUILayout.TextField(KeyManager.Profile.KPSUpdateRateMs.ToString()), out KeyManager.Profile.KPSUpdateRateMs);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            if (Settings.EditSettingEachKeys = GUILayout.Toggle(Settings.EditSettingEachKeys, Lang.GetString("EDIT_SETTINGS_EACH_KEYS")))
+            if (Settings.CurrentProfile.EditEachKeys = GUILayout.Toggle(Settings.CurrentProfile.EditEachKeys, Lang.GetString("EDIT_SETTINGS_EACH_KEYS")))
                 foreach (Key key in KeyManager.keys.Values)
                     key.RenderGUI();
             else Key.DrawGlobalConfig(KeyManager.Profile.GlobalConfig, ApplyEachKeys);

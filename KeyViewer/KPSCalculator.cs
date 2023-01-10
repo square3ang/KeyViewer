@@ -10,6 +10,7 @@ namespace KeyViewer
 {
     public class KPSCalculator
     {
+        public static KPSCalculator prev = null;
         public Profile profile;
         public KPSCalculator(Profile profile)
         {
@@ -23,8 +24,16 @@ namespace KeyViewer
         public double Average;
         public void Start()
         {
-            try { CalculatingThread.Start(); }
-            catch  (Exception e) { Main.Log.Log($"Exception At Starting KPSCalculator. Report This Exception To CSNB. ({e})"); }
+            try 
+            {
+                prev?.Stop();
+                CalculatingThread.Start(); 
+            }
+            catch  (Exception e)
+            { 
+                if (e is not ThreadStateException)
+                    Main.Log.Log($"Exception At Starting KPSCalculator. Report This Exception To CSNB. ({e})");
+            }
         }
         public void Stop()
         {
