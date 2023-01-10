@@ -14,6 +14,8 @@ using KeyViewer.API;
 using KeyViewer.Migration;
 using KeyViewer.Migration.V2;
 using SFB;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace KeyViewer
 {
@@ -66,12 +68,9 @@ namespace KeyViewer
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
                 KeyManager = new GameObject().AddComponent<KeyManager>();
-                if (Settings.ResetWhenStart)
-                {
-                    foreach (var config in Settings.CurrentProfile.ActiveKeys)
-                        config.Count = 0;
-                }    
                 KeyManager.Init(Settings.CurrentProfile);
+                if (Settings.ResetWhenStart)
+                    KeyManager.ClearCounts();
                 profiles.ForEach(p => p.Init(KeyManager));
             }
             else
@@ -315,6 +314,24 @@ namespace KeyViewer
                 Settings.ProfileIndex = Settings.Profiles.Count - 1;
                 Settings.CurrentProfile.Name += " Copy";
                 KeyManager.Profile = Settings.CurrentProfile;
+            }
+            if (GUILayout.Button(Lang.GetString("IMPORT")))
+            {
+                var file = StandaloneFileBrowser.OpenFilePanel("Profile", Persistence.GetLastUsedFolder(), "xml", false);
+                if (file.Length == 0) return;
+                XmlSerializer serializer = new XmlSerializer(typeof(Profile));
+                var profile = (Profile)serializer.Deserialize(File.OpenRead(file[0]));
+                var dup = Settings.Profiles.FirstOrDefault(p => p.Name == profile.Name);
+                if (dup != null)
+                    profile.Name += "_Duplicate";
+                Settings.Profiles.Add(profile);
+            }
+            if (GUILayout.Button(Lang.GetString("EXPORT")))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Profile));
+                var file = StandaloneFileBrowser.OpenFolderPanel("Profile", Persistence.GetLastUsedFolder(), false);
+                if (file.Length == 0) return;
+                serializer.Serialize(File.OpenWrite(Path.Combine(file[0], $"{KeyManager.Profile.Name}.xml")), KeyManager.Profile);
             }
             if (Settings.Profiles.Count > 1 && GUILayout.Button(Lang.GetString("DELETE")))
             {
