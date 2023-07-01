@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using UnityEngine;
-using TMPro;
-using System.Xml.Serialization;
 
 namespace KeyViewer
 {
     public class Profile
     {
-        public Profile()
-            => calculator = new KPSCalculator(this);
         public string Name = "Default Profile";
         public Key.Config GlobalConfig = new Key.Config();
         public List<Group> KeyGroups = new List<Group>();
@@ -31,8 +22,6 @@ namespace KeyViewer
         public int KPSUpdateRateMs = 1000;
         public bool EditEachKeys = false;
         public bool ResetWhenStart = false;
-        [XmlIgnore]
-        public KPSCalculator calculator;
         public Profile Copy()
         {
             Profile prof = new Profile();

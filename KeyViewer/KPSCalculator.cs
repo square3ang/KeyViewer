@@ -1,46 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using System.Threading;
 using System.Diagnostics;
-using ThreadState = System.Threading.ThreadState;
 
 namespace KeyViewer
 {
-    public class KPSCalculator
+    public static class KPSCalculator
     {
-        public static KPSCalculator prev = null;
-        public Profile profile;
-        public KPSCalculator(Profile profile)
+        static Profile Profile;
+        static Thread CalculatingThread;
+        static int PressCount;
+        public static int Kps;
+        public static int Max;
+        public static double Average;
+        public static void Start(Profile profile)
         {
-            CalculatingThread = GetCalculateThread();
-            this.profile = profile;
-        }
-        Thread CalculatingThread;
-        public int PressCount;
-        public int Kps;
-        public int Max;
-        public double Average;
-        public void Start()
-        {
-            try 
+            try
             {
-                prev?.Stop();
-                CalculatingThread.Start(); 
+                Profile = profile;
+                if (CalculatingThread == null)
+                    (CalculatingThread = GetCalculateThread()).Start();
             }
-            catch  (Exception e)
-            { 
-                if (e is not ThreadStateException)
-                    Main.Log.Log($"Exception At Starting KPSCalculator. Report This Exception To CSNB. ({e})");
-            }
+            finally { }
         }
-        public void Stop()
+        public static void Stop()
         {
             try { CalculatingThread.Abort(); }
-            finally { CalculatingThread = GetCalculateThread(); }
+            finally { }
         }
-        Thread GetCalculateThread()
+        public static void Press() => PressCount++;
+        static Thread GetCalculateThread()
         {
             return new Thread(() =>
             {
@@ -52,7 +41,7 @@ namespace KeyViewer
                     Stopwatch watch = Stopwatch.StartNew();
                     while (true)
                     {
-                        if (watch.ElapsedMilliseconds >= profile.KPSUpdateRateMs)
+                        if (watch.ElapsedMilliseconds >= Profile.KPSUpdateRateMs)
                         {
                             int temp = PressCount;
                             PressCount = 0;
@@ -68,19 +57,15 @@ namespace KeyViewer
                             }
                             prev = kps;
                             timePoints.AddFirst(temp);
-                            if (timePoints.Count >= 1000 / profile.KPSUpdateRateMs)
+                            if (timePoints.Count >= 1000 / Profile.KPSUpdateRateMs)
                                 timePoints.RemoveLast();
                             Kps = kps;
                             watch.Restart();
-                            Thread.Sleep(Math.Max(profile.KPSUpdateRateMs - 1, 0));
+                            Thread.Sleep(Math.Max(Profile.KPSUpdateRateMs - 1, 0));
                         }
                     }
                 }
-                catch
-                {
-                    Start();
-                    return;
-                }
+                finally { CalculatingThread = null; }
             });
         }
     }

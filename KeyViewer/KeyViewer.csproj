@@ -53,8 +53,16 @@
     <Reference Include="DOTweenPro">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\DOTweenPro.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="RDTools">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\RDTools.dll</HintPath>
+    </Reference>
+    <Reference Include="SkyHook.Unity, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\SkyHook.Unity.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -297,12 +305,13 @@
     <Compile Include="API\InputAPI.cs" />
     <Compile Include="FontManager.cs" />
     <Compile Include="Group.cs" />
+    <Compile Include="InputStack.cs" />
     <Compile Include="Key.Config.cs" />
+    <Compile Include="KeyInput.cs" />
     <Compile Include="KPSCalculator.cs" />
     <Compile Include="Migration\IMigrator.cs" />
     <Compile Include="Migration\MigrateVersion.cs" />
     <Compile Include="Migration\Migrator.cs" />
-    <Compile Include="Migration\SDMinified.cs" />
     <Compile Include="Migration\V2\KeySetting.cs" />
     <Compile Include="Migration\V2\KeyViewerProfile.cs" />
     <Compile Include="Migration\V2\KeyViewerSettings.cs" />
@@ -311,6 +320,7 @@
     <Compile Include="Migration\V2\PoSize.cs" />
     <Compile Include="Migration\V2\V2Migrator.cs" />
     <Compile Include="Migration\V2\V2MigratorArgument.cs" />
+    <Compile Include="AsyncInputCompat.cs" />
     <Compile Include="Patches\CountValidKeysPressedPatch.cs" />
     <Compile Include="Key.cs" />
     <Compile Include="KeyManager.cs" />
@@ -321,10 +331,12 @@
     <Compile Include="LanguageEnum.cs" />
     <Compile Include="MoreGUILayout.cs" />
     <Compile Include="Patches\JudgementColorPatch.cs" />
+    <Compile Include="Patches\RemoveFuckingUMMDummyLogPatch.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReplayInput.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="ShiftStack.cs" />
     <Compile Include="SpecialKeyType.cs" />
   </ItemGroup>
   <ItemGroup />

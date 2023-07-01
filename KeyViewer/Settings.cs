@@ -13,7 +13,6 @@ namespace KeyViewer
         public int ProfileIndex = 0;
         public List<Profile> Profiles = new List<Profile>();
         public LanguageType Language = LanguageType.English;
-        public bool FunActivated = false;
         [XmlIgnore]
         public Profile CurrentProfile => Profiles[ProfileIndex];
     }

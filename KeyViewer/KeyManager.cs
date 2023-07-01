@@ -28,9 +28,8 @@ namespace KeyViewer
             get => profile;
             set
             {
-                profile?.calculator.Stop();
                 profile = value;
-                profile.calculator.Start();
+                KPSCalculator.Start(value);
                 foreach (var key in profile.ActiveKeys)
                     key.Initialized = true;
                 profile.GlobalConfig.Initialized = true;
@@ -53,11 +52,6 @@ namespace KeyViewer
             scaler.referenceResolution = new Vector2(1280, 720);
             Profile = profile;
         }
-        //void Update()
-        //{
-        //    if (Keys.All(k => k.Pressed))
-        //        Main.Settings.FunActivated = !Main.Settings.FunActivated;
-        //}
         public void UpdateKeys()
         {
             if (keysCanvas)

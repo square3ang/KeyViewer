@@ -2,12 +2,9 @@
 using TMPro;
 using System;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.TextCore.LowLevel;
 using UnityEngine.UI;
 using System.Linq;
 using DG.Tweening;
-using System.Threading;
 using KeyViewer.API;
 
 namespace KeyViewer
@@ -32,6 +29,7 @@ namespace KeyViewer
         private bool initialized;
         private bool isSpecial;
         private bool prevPressed;
+        private bool colorLocked;
         private Vector2 position;
         private Vector2 offsetVec => new Vector2(config.OffsetX, config.OffsetY);
         private KeyManager keyManager;
@@ -96,7 +94,7 @@ namespace KeyViewer
                     CountText.text = config.Count.ToString();
                     break;
                 case SpecialKeyType.KPS:
-                    CountText.text = Profile.calculator.Kps.ToString();
+                    CountText.text = KPSCalculator.Kps.ToString();
                     break;
                 case SpecialKeyType.Total:
                     CountText.text = (Total = Profile.ActiveKeys.Select(c => c.Count).Sum()).ToString();
@@ -115,7 +113,7 @@ namespace KeyViewer
             switch (SpecialType)
             {
                 case SpecialKeyType.KPS:
-                    CountText.text = Profile.calculator.Kps.ToString();
+                    CountText.text = KPSCalculator.Kps.ToString();
                     return;
                 case SpecialKeyType.Total:
                     CountText.text = Total.ToString();
@@ -125,9 +123,9 @@ namespace KeyViewer
                 Pressed = InputAPI.APIFlags.TryGetValue(Code, out bool flag) && flag;
             else
             {
-                Pressed = Input.GetKey(Code);
+                Pressed = KeyInput.GetKey(Code);
                 if (config.SpareCode != KeyCode.None)
-                    Pressed |= Input.GetKey(config.SpareCode);
+                    Pressed |= KeyInput.GetKey(config.SpareCode);
             }
             if (Pressed == prevPressed) return;
             prevPressed = Pressed;
@@ -136,7 +134,7 @@ namespace KeyViewer
             if (Pressed)
             {
                 CountText.text = (++Count).ToString();
-                Profile.calculator.PressCount++;
+                KPSCalculator.Press();
                 Total++;
             }
             Color bgColor = Color.white, outlineColor;
@@ -162,10 +160,14 @@ namespace KeyViewer
                 textColor = config.ReleasedTextColor;
                 countTextColor = config.ReleasedCountTextColor;
             }
-            Background.color = bgColor;
-            Outline.color = outlineColor;
-            Text.colorGradient = textColor;
-            CountText.colorGradient = countTextColor;
+            if (!colorLocked)
+            {
+                Background.color = bgColor;
+                Outline.color = outlineColor;
+                Text.colorGradient = textColor;
+                CountText.colorGradient = countTextColor;
+            }
+            colorLocked = false;
             if (Profile.AnimateKeys)
             {
                 Background.rectTransform.DOScale(scale, config.EaseDuration)
@@ -1062,6 +1064,7 @@ namespace KeyViewer
                 var col = GetHitMarginColor(hit);
                 //Main.Log.Log($"Changing Color {Code} HitMargin:{hit} Color:{col}");
                 Background.color = col;
+                colorLocked = true;
             }
         }
         public Color GetHitMarginColor(HitMargin hit)

@@ -1,34 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using HarmonyLib;
-using System.Reflection;
-using static UnityModManagerNet.UnityModManager;
+﻿using HarmonyLib;
 using UnityEngine;
+using System;
 
 namespace KeyViewer.Patches
 {
-    [HarmonyPatch(typeof(scrController))]
+    [HarmonyPatch(typeof(scrMistakesManager))]
     public static class JudgementColorPatch
     {
-		static List<KeyCode> inputCodes = new List<KeyCode>();
-        [HarmonyPatch("ValidInputWasTriggered")]
         [HarmonyPrefix]
-		public static void VIWTPrefix()
+        [HarmonyPatch("AddHit")]
+        public static void AHPrefix(HitMargin hit)
         {
-            inputCodes = new List<KeyCode>();
-            foreach (var key in Main.KeyManager.Codes)
+            while (InputStack.TryPop(out KeyCode code))
             {
-                if (Input.GetKeyDown(key))
-                    inputCodes.Add(key);
+                Main.KeyManager[code].ChangeHitMarginColor(hit);
             }
+            InputStack.Flush();
         }
-		[HarmonyPatch("ShowHitText")]
         [HarmonyPostfix]
-        public static void SHTPrefix(HitMargin hitMargin)
-        {
-            for (int i = 0; i < inputCodes.Count; i++)
-                Main.KeyManager[inputCodes[i]].ChangeHitMarginColor(hitMargin);
-        }
+        [HarmonyPatch("Reset")]
+        public static void RPostfix() => InputStack.Flush();
     }
 }

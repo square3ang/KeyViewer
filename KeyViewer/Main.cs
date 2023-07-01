@@ -21,6 +21,7 @@ namespace KeyViewer
 {
     public static class Main
     {
+        public static bool IsEnabled { get; private set; }
         public static ModEntry Mod { get; private set; }
         public static ModEntry.ModLogger Log { get; private set; }
         public static Settings Settings { get; private set; }
@@ -36,8 +37,6 @@ namespace KeyViewer
         public static bool IsMigrating = false;
         public static bool IsListening { get; private set; }
         public static readonly KeyCode[] KeyCodes = (KeyCode[])Enum.GetValues(typeof(KeyCode));
-        public static Thread Wave;
-        public static int WaveInterval = 100;
 
         public static void Load(ModEntry modEntry)
         {
@@ -72,11 +71,14 @@ namespace KeyViewer
                 KeyManager.Init(Settings.CurrentProfile);
                 if (Settings.CurrentProfile.ResetWhenStart)
                     KeyManager.ClearCounts();
+                InputStack.Init();
+                IsEnabled = true;
             }
             else
             {
+                IsEnabled = false;
                 OnSaveGUI(modEntry);
-                KeyManager.Profile.calculator.Stop();
+                KPSCalculator.Stop();
                 KeyManager?.Dispose();
                 KeyManager = null;
                 Harmony.UnpatchAll(Harmony.Id);
@@ -107,8 +109,6 @@ namespace KeyViewer
                 Settings.CurrentProfile.ResetWhenStart = GUILayout.Toggle(Settings.CurrentProfile.ResetWhenStart, Lang.GetString("RESET_WHEN_START"));
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
-                if (Settings.FunActivated)
-                    DrawWaveMenu();
                 GUILayout.Space(8f);
                 DrawGroupSettingsGUI();
                 GUILayout.Space(8f);
@@ -153,46 +153,6 @@ namespace KeyViewer
         public static void OnHideGUI(ModEntry modEntry)
         {
             IsListening = false;
-        }
-        private static void DrawWaveMenu()
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Wave Invertal:");
-            int.TryParse(GUILayout.TextField(WaveInterval.ToString()), out WaveInterval);
-            if (GUILayout.Button("Start"))
-            {
-                try
-                {
-                    Wave = new Thread(interval =>
-                    {
-                        InputAPI.Active = true;
-                        var activeKeys = KeyManager.Keys;
-                        int sleep = (int)interval;
-                        while (true)
-                        {
-                            foreach (var key in activeKeys)
-                            {
-                                InputAPI.PressKey(key.Code);
-                                Thread.Sleep(sleep);
-                                InputAPI.ReleaseKey(key.Code);
-                            }
-                        }
-                    });
-                    Wave.Start(WaveInterval);
-                }
-                catch (Exception e) { Log.Log(e.ToString()); }
-            }
-            if (GUILayout.Button("Stop"))
-            {
-                try
-                {
-                    Wave.Abort();
-                    InputAPI.Active = false;
-                }
-                catch (Exception e) { Log.Log(e.ToString()); }
-            }
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
         }
         private static void DrawMigrateMenu()
         {
@@ -248,7 +208,6 @@ namespace KeyViewer
                 {
                     IMigrator migrator = Migrator.V2(KeyManager, v2Arg);
                     Settings = migrator.Migrate();
-                    KeyManager.Profile.calculator.Stop();
                     Lang.ChangeLanguage(Settings.Language);
                     KeyManager.Profile = Settings.CurrentProfile;
                     MigrateErrorString = string.Empty;
@@ -348,10 +307,9 @@ namespace KeyViewer
             int selected = Settings.ProfileIndex;
             if (MoreGUILayout.ToggleList(Settings.Profiles, ref selected, p => p.Name))
             {
-                KeyManager.Profile.calculator.Stop();
                 Settings.ProfileIndex = selected;
                 KeyManager.Profile = Settings.CurrentProfile;
-                KeyManager.Profile.calculator.Start();
+                KPSCalculator.Start(Settings.CurrentProfile);
             }
         }
         private static void DrawKeyRegisterSettingsGUI()
