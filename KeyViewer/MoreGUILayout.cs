@@ -422,7 +422,7 @@ namespace KeyViewer
             } else {
                 GUILayout.Label(name, GUILayout.Width(labelWidth));
             }
-            string newValue = GUILayout.TextField(value, GUILayout.Width(fieldWidth));
+            string newValue = fieldWidth <= 0 ? GUILayout.TextField(value) : GUILayout.TextField(value, GUILayout.Width(fieldWidth));
             GUILayout.FlexibleSpace();
             return newValue;
         }

@@ -6,6 +6,9 @@ using UnityEngine.UI;
 using System.Linq;
 using DG.Tweening;
 using KeyViewer.API;
+using System.Collections;
+using System.IO;
+using static KeyViewer.Key;
 
 namespace KeyViewer
 {
@@ -142,7 +145,7 @@ namespace KeyViewer
             Vector3 scale = new Vector3(1, 1, 1);
             if (Pressed)
             {
-                if (InputAPI.Active)
+                if (InputAPI.EventActive)
                     InputAPI.KeyPress(Code);
                 bgColor = config.PressedBackgroundColor;
                 outlineColor = config.PressedOutlineColor;
@@ -153,7 +156,7 @@ namespace KeyViewer
             }
             else
             {
-                if (InputAPI.Active)
+                if (InputAPI.EventActive)
                     InputAPI.KeyRelease(Code);
                 bgColor = config.ReleasedBackgroundColor;
                 outlineColor = config.ReleasedOutlineColor;

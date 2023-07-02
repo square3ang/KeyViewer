@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace KeyViewer
 {
     public static class KeyInput
     {
+        public static bool AnyKey => AsyncInputManager.isActive ? AsyncInputCompat.AnyKey : Input.anyKey;
+        public static bool AnyKeyDown => AsyncInputManager.isActive ? AsyncInputCompat.AnyKeyDown : Input.anyKeyDown;
         public static bool GetKey(KeyCode code)
         {
             if (AsyncInputManager.isActive)

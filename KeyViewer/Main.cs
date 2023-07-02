@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 using HarmonyLib;
 using static UnityModManagerNet.UnityModManager;
 using UnityEngine;
 using System.IO;
 using TMPro;
-using System.Threading;
-using KeyViewer.API;
 using KeyViewer.Migration;
 using KeyViewer.Migration.V2;
 using SFB;
 using System.Xml.Serialization;
-using System.Xml;
+using System.Collections;
+using UnityEngine.Networking;
+using System.Runtime.CompilerServices;
 
 namespace KeyViewer
 {
@@ -37,7 +35,6 @@ namespace KeyViewer
         public static bool IsMigrating = false;
         public static bool IsListening { get; private set; }
         public static readonly KeyCode[] KeyCodes = (KeyCode[])Enum.GetValues(typeof(KeyCode));
-
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;

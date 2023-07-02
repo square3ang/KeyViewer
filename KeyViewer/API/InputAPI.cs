@@ -15,9 +15,11 @@ namespace KeyViewer.API
             set
             {
                 active = value;
+                EventActive = value;
                 APIFlags.Clear();
             }
         }
+        public static bool EventActive { get; set; }
         public static void PressKey(KeyCode key)
             => APIFlags[key] = true;
         public static void ReleaseKey(KeyCode key)
