@@ -204,6 +204,7 @@ namespace KeyViewer
         }
         public void UpdateLayout(ref float x, ref float tempX, int updateCount)
         {
+            EventAPI.UpdateLayout(this);
             if (FontManager.TryGetFont(config.Font, out var font))
             {
                 Text.font = font.fontTMP;

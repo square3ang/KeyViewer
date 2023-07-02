@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using Object = UnityEngine.Object;
+using KeyViewer.API;
 
 namespace KeyViewer
 {
@@ -72,6 +73,7 @@ namespace KeyViewer
         }
         public void UpdateLayout()
         {
+            EventAPI.UpdateLayout(this);
             int count = keys.Count;
             float keyHeight = Profile.ShowKeyPressTotal ? 150 : 100;
             float spacing = 10;
@@ -98,6 +100,7 @@ namespace KeyViewer
         public bool isPlaying;
         public void ClearCounts()
         {
+            EventAPI.ClearCounts();
             foreach (Key key in keys.Values)
             {
                 key.Count = 0;
