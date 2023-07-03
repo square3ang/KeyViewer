@@ -25,6 +25,8 @@ namespace KeyViewer
                 Initialized = true;
                 keyManager = manager;
             }
+            public KeyRain.RainConfig RainConfig { get; set; } = new KeyRain.RainConfig();
+            private bool rainEnabled = false;
             private string font = "Default";
             private KeyCode code = KeyCode.None;
             private KeyCode spareCode = KeyCode.None;
@@ -97,6 +99,19 @@ namespace KeyViewer
             public SpecialKeyType SpecialType { get => specialType; set => specialType = value; }
             public uint Count { get => count; set => count = value; }
             public bool Editing { get => editing; set => editing = value; }
+            public bool RainEnabled
+            {
+                get => rainEnabled;
+                set
+                {
+                    if (rainEnabled != value)
+                    {
+                        Backup();
+                        keyManager?.UpdateLayout();
+                    }
+                    rainEnabled = value;
+                }
+            }
             public KeyCode SpareCode
             {
                 get => spareCode;
@@ -471,6 +486,8 @@ namespace KeyViewer
 
             public void Reset()
             {
+                RainEnabled = false;
+                RainConfig = new KeyRain.RainConfig();
                 Width = 100;
                 Height = 100;
                 OffsetX = 0;
@@ -535,6 +552,8 @@ namespace KeyViewer
             }
             public void ApplyConfig(Config config)
             {
+                RainEnabled = config.RainEnabled;
+                RainConfig = config.RainConfig;
                 Font = config.Font;
                 Width = config.Width;
                 Height = config.Height;
@@ -572,6 +591,8 @@ namespace KeyViewer
             public void ApplyConfigAll(Config config)
             {
                 keyManager = config.keyManager;
+                RainEnabled = config.RainEnabled;
+                RainConfig = config.RainConfig;
                 Font = config.Font;
                 Code = config.Code;
                 SpecialType = config.SpecialType;
@@ -614,6 +635,8 @@ namespace KeyViewer
             {
                 Config conf = new Config();
                 conf.keyManager = keyManager;
+                conf.RainEnabled = RainEnabled;
+                conf.RainConfig = RainConfig.Copy();
                 conf.Font = Font;
                 conf.Code = Code;
                 conf.SpecialType = SpecialType;

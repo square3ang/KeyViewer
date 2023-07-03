@@ -369,7 +369,7 @@ namespace KeyViewer
         public static string NamedTextField(
             string name,
             string value,
-            float fieldWidth,
+            float fieldWidth = 0,
             float labelWidth = 0) {
             GUILayout.BeginHorizontal();
             string newValue = NamedTextFieldContent(name, value, fieldWidth, labelWidth);
@@ -414,7 +414,7 @@ namespace KeyViewer
         private static string NamedTextFieldContent(
             string name,
             string value,
-            float fieldWidth,
+            float fieldWidth = 0,
             float labelWidth = 0) {
             if (labelWidth == 0) {
                 GUILayout.Label(name);

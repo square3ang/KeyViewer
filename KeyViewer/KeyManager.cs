@@ -57,16 +57,16 @@ namespace KeyViewer
         {
             if (keysCanvas)
                 Destroy(keysCanvas.gameObject);
-            GameObject keysObject = new GameObject();
+            GameObject keysObject = new GameObject("Canvas");
             keysObject.transform.SetParent(transform);
             keysCanvas = keysObject.AddComponent<Canvas>();
             keysCanvasRt = keysCanvas.GetComponent<RectTransform>();
             keys = new Dictionary<KeyCode, Key>();
             specialKeys = new Dictionary<SpecialKeyType, Key>();
             foreach (Key.Config config in Profile.ActiveKeys.Where(c => c.Code != KeyCode.None))
-                keys.Add(config.Code, new GameObject().AddComponent<Key>().Init(this, config));
+                keys.Add(config.Code, new GameObject($"{config.Code} Key").AddComponent<Key>().Init(this, config));
             foreach (Key.Config config in Profile.ActiveKeys.Where(c => c.SpecialType != SpecialKeyType.None))
-                specialKeys.Add(config.SpecialType, new GameObject().AddComponent<Key>().Init(this, config));
+                specialKeys.Add(config.SpecialType, new GameObject($"{config.SpecialType} Key").AddComponent<Key>().Init(this, config));
             if (!Main.Settings.CurrentProfile.EditEachKeys)
                 Main.ApplyEachKeys(Profile.GlobalConfig);
             UpdateLayout();

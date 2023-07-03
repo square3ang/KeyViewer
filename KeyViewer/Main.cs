@@ -63,7 +63,7 @@ namespace KeyViewer
                 Lang.ChangeLanguage(Settings.Language);
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
-                KeyManager = new GameObject().AddComponent<KeyManager>();
+                KeyManager = new GameObject("KeyViewer KeyManager").AddComponent<KeyManager>();
                 profiles.ForEach(p => p.Init(KeyManager));
                 KeyManager.Init(Settings.CurrentProfile);
                 if (Settings.CurrentProfile.ResetWhenStart)
@@ -453,6 +453,25 @@ namespace KeyViewer
             uint result = 0;
             foreach (uint u in enumerable)
                 result += u;
+            return result;
+        }
+        static Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
+        public static Sprite GetSprite(string path)
+        {
+            if (!File.Exists(path)) return null;
+            if (spriteCache.TryGetValue(path, out Sprite value))
+                return value;
+            var texture = new Texture2D(1, 1);
+            texture.LoadImage(File.ReadAllBytes(path));
+            return spriteCache[path] = texture.ToSprite();
+        }
+        public static bool DrawEnum<T>(string title, ref T @enum) where T : Enum
+        {
+            T[] values = (T[])Enum.GetValues(typeof(T));
+            string[] names = values.Select(x => x.ToString()).ToArray();
+            int selected = Array.IndexOf(values, @enum);
+            bool result = UI.PopupToggleGroup(ref selected, names, title);
+            @enum = values[selected];
             return result;
         }
     }
