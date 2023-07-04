@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static UnityModManagerNet.UnityModManager;
 
@@ -16,22 +17,23 @@ namespace KeyViewer
         private Image image;
         private Key key;
         private RectTransform rt;
-        private bool initialized;
+        private Vector2 initialPosition;
+        void Awake()
+        {
+            image = gameObject.AddComponent<Image>();
+            rt = image.rectTransform;
+            rt.anchoredPosition = Vector2.zero;
+            initialPosition = rt.anchoredPosition;
+        }
         public void Init(Key key)
         {
             this.key = key;
-            image = gameObject.AddComponent<Image>();
             if (File.Exists(config.RainImage))
                 image.sprite = Main.GetSprite(config.RainImage);
-            rt = image.rectTransform;
             ResetSizePos();
-            //Main.Log.Log($"Initialized Rain Instance From {key.Code} Key.");
-            initialized = true;
         }
         public void Press()
         {
-            IsAlive = true;
-            ResetSizePos();
             stretching = true;
         }
         public void ResetSizePos()
@@ -53,7 +55,7 @@ namespace KeyViewer
         }
         private void Update()
         {
-            if (!initialized) return;
+            IsAlive = IsVisible(config.Direction);
             if (IsAlive)
             {
                 var toMove = Time.deltaTime * config.RainSpeed;
@@ -69,11 +71,11 @@ namespace KeyViewer
                     rt.anchoredPosition += delta * 0.5f;
                 }
                 else rt.anchoredPosition += delta;
-                IsAlive = IsVisible(config.Direction);
             }
             else
             {
                 stretching = false;
+                ResetSizePos();
                 gameObject.SetActive(false);
             }
         }
@@ -92,6 +94,12 @@ namespace KeyViewer
             if (changed |= newWidth != config.RainWidth) config.RainWidth = newWidth;
             var newHeight = MoreGUILayout.NamedSlider("Rain Height", config.RainHeight, -1, 1000, 300);
             if (changed |= newHeight != config.RainHeight) config.RainHeight = newHeight;
+            var newPoolSize = MoreGUILayout.NamedSlider("Rain Pool Size", config.RainPoolSize, 1, 100, 300, 1);
+            if (newPoolSize != config.RainPoolSize)
+            {
+                config.RainPoolSize = (int)newPoolSize;
+                Main.KeyManager.UpdateKeys();
+            }
             var newSoftness = MoreGUILayout.NamedSlider("Disappear Softness", config.Softness, 0, 500, 300, 1);
             if (changed |= newSoftness != config.Softness) config.Softness = (int)newSoftness;
             if (config.ColorExpanded = GUILayout.Toggle(config.ColorExpanded, "Rain Color"))

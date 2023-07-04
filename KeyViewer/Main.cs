@@ -14,6 +14,7 @@ using System.Xml.Serialization;
 using System.Collections;
 using UnityEngine.Networking;
 using System.Runtime.CompilerServices;
+using KeyViewer.Patches;
 
 namespace KeyViewer
 {
@@ -68,7 +69,7 @@ namespace KeyViewer
                 KeyManager.Init(Settings.CurrentProfile);
                 if (Settings.CurrentProfile.ResetWhenStart)
                     KeyManager.ClearCounts();
-                InputStack.Init();
+                JudgementColorPatch.Init();
                 IsEnabled = true;
             }
             else
@@ -473,6 +474,11 @@ namespace KeyViewer
             bool result = UI.PopupToggleGroup(ref selected, names, title);
             @enum = values[selected];
             return result;
+        }
+        public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> pair, out TKey key, out TValue value)
+        {
+            key = pair.Key;
+            value = pair.Value;
         }
     }
 }

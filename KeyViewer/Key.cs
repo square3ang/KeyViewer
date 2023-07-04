@@ -34,7 +34,6 @@ namespace KeyViewer
         private bool layoutUpdated;
         private bool isSpecial;
         private bool prevPressed;
-        private bool colorLocked;
         private Vector2 position;
         private Vector2 offsetVec => new Vector2(config.OffsetX, config.OffsetY);
         private KeyManager keyManager;
@@ -42,7 +41,8 @@ namespace KeyViewer
         private Profile Profile => keyManager.Profile;
         private EnsurePool<KeyRain> rains;
         private KeyRain toRelease;
-        internal Transform rainContainer;
+        internal GameObject rainContainer;
+        internal Transform rainContainerTransform;
         internal RectMask2D rainMask;
         internal RectTransform rainMaskRt;
         public Key Init(KeyManager keyManager, Config config)
@@ -55,12 +55,12 @@ namespace KeyViewer
 
             if (!isSpecial)
             {
-                var container = new GameObject("Rain Container");
-                rainContainer = container.transform;
-                rainContainer.SetParent(transform);
-                var image = container.AddComponent<Image>();
+                rainContainer = new GameObject("Rain Container");
+                rainContainerTransform = rainContainer.transform;
+                rainContainerTransform.SetParent(transform);
+                var image = rainContainer.AddComponent<Image>();
                 image.color = new Color(1, 1, 1, 0);
-                rainMask = container.AddComponent<RectMask2D>();
+                rainMask = rainContainer.AddComponent<RectMask2D>();
                 rainMaskRt = rainMask.rectTransform;
                 rainMaskRt.pivot = new Vector2(0.5f, 0.5f);
                 rains = new EnsurePool<KeyRain>(() =>
@@ -133,8 +133,8 @@ namespace KeyViewer
                 TweenID = $"KeyViewer.{SpecialType}Tween";
             else
                 TweenID = $"KeyViewer.{Code}Tween";
+            rains?.Fill(config.RainConfig.RainPoolSize);
             initialized = true;
-            rains?.Fill(30);
             return this;
         }
         private void Update()
@@ -194,14 +194,10 @@ namespace KeyViewer
                 if (config.RainEnabled)
                     toRelease?.Release();
             }
-            if (!colorLocked)
-            {
-                Background.color = bgColor;
-                Outline.color = outlineColor;
-                Text.colorGradient = textColor;
-                CountText.colorGradient = countTextColor;
-            }
-            colorLocked = false;
+            Background.color = bgColor;
+            Outline.color = outlineColor;
+            Text.colorGradient = textColor;
+            CountText.colorGradient = countTextColor;
             if (Profile.AnimateKeys)
             {
                 Background.rectTransform.DOScale(scale, config.EaseDuration)
@@ -241,23 +237,27 @@ namespace KeyViewer
                 Text.font = font.fontTMP;
                 CountText.font = font.fontTMP;
             }
-            if (!isSpecial && config.RainEnabled)
+            if (!isSpecial)
             {
-                var rConfig = config.RainConfig;
-                rainMask.softness = rConfig.Direction switch
+                rainContainer.SetActive(config.RainEnabled);
+                if (config.RainEnabled)
                 {
-                    Direction.U or
-                    Direction.D => new Vector2Int(0, rConfig.Softness),
-                    Direction.L or
-                    Direction.R => new Vector2Int(rConfig.Softness, 0),
-                    _ => Vector2Int.zero
-                };
-                rainMaskRt.sizeDelta = GetSizeDelta(rConfig.Direction);
-                rainMaskRt.anchoredPosition = GetMaskPosition(rainMaskRt.sizeDelta, rConfig.Direction);
-                rains.ForEach(kr => kr.SetRainColor(rConfig.RainColor));
-                var sprite = Main.GetSprite(rConfig.RainImage);
-                if (sprite != null)
-                    rains.ForEach(kr => kr.SetRainSprite(sprite));
+                    var rConfig = config.RainConfig;
+                    rainMask.softness = rConfig.Direction switch
+                    {
+                        Direction.U or
+                        Direction.D => new Vector2Int(0, rConfig.Softness),
+                        Direction.L or
+                        Direction.R => new Vector2Int(rConfig.Softness, 0),
+                        _ => Vector2Int.zero
+                    };
+                    rainMaskRt.sizeDelta = GetSizeDelta(rConfig.Direction);
+                    rainMaskRt.anchoredPosition = GetMaskPosition(rainMaskRt.sizeDelta, rConfig.Direction);
+                    rains.ForEach(kr => kr.SetRainColor(rConfig.RainColor));
+                    var sprite = Main.GetSprite(rConfig.RainImage);
+                    if (sprite != null)
+                        rains.ForEach(kr => kr.SetRainSprite(sprite));
+                }
             }
             if (isSpecial && Profile.MakeBarSpecialKeys)
             {
@@ -403,12 +403,18 @@ namespace KeyViewer
                 GUILayout.EndHorizontal();
             }
 
-            if (config.RainEnabled = GUILayout.Toggle(config.RainEnabled, "Raining Key"))
+            var newRainEnabled = GUILayout.Toggle(config.RainEnabled, "Raining Key");
+            if (newRainEnabled)
             {
                 MoreGUILayout.BeginIndent();
                 if (KeyRain.DrawConfigGUI(Code, config.RainConfig))
                     keyManager.UpdateLayout();
                 MoreGUILayout.EndIndent();
+            }
+            if (config.RainEnabled != newRainEnabled)
+            {
+                config.RainEnabled = newRainEnabled;
+                keyManager.UpdateLayout();
             }
 
             GUILayout.BeginHorizontal();
@@ -1127,7 +1133,6 @@ namespace KeyViewer
                 var col = GetHitMarginColor(hit);
                 //Main.Log.Log($"Changing Color {Code} HitMargin:{hit} Color:{col}");
                 Background.color = col;
-                colorLocked = true;
             }
         }
         public Color GetHitMarginColor(HitMargin hit)
@@ -1435,12 +1440,18 @@ namespace KeyViewer
             }
             GUILayout.EndHorizontal();
 
-            if (config.RainEnabled = GUILayout.Toggle(config.RainEnabled, "Raining Key"))
+            var newRainEnabled = GUILayout.Toggle(config.RainEnabled, "Raining Key");
+            if (newRainEnabled)
             {
                 MoreGUILayout.BeginIndent();
                 if (KeyRain.DrawConfigGUI(config.Code, config.RainConfig))
                     config.keyManager.UpdateLayout();
                 MoreGUILayout.EndIndent();
+            }
+            if (config.RainEnabled != newRainEnabled)
+            {
+                config.RainEnabled = newRainEnabled;
+                config.keyManager.UpdateLayout();
             }
 
             GUILayout.BeginHorizontal();

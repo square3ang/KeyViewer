@@ -18,6 +18,7 @@ namespace KeyViewer
             public float RainWidth = -1f;
             public float RainHeight = -1f;
             public float RainLength = 400f;
+            public int RainPoolSize = 25;
             public int Softness = 100;
             public Color RainColor = Color.white;
             public string RainImage = null;
