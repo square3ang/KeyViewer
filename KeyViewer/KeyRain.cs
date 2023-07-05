@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -14,22 +15,21 @@ namespace KeyViewer
         public bool IsAlive { get; private set; }
         private bool stretching = false;
         private RainConfig config => key.config.RainConfig;
-        private Image image;
+        internal Image image;
         private Key key;
         private RectTransform rt;
-        private Vector2 initialPosition;
         void Awake()
         {
             image = gameObject.AddComponent<Image>();
             rt = image.rectTransform;
             rt.anchoredPosition = Vector2.zero;
-            initialPosition = rt.anchoredPosition;
         }
         public void Init(Key key)
         {
             this.key = key;
             if (File.Exists(config.RainImage))
                 image.sprite = Main.GetSprite(config.RainImage);
+            image.color = config.RainColor;
             ResetSizePos();
         }
         public void Press()
@@ -44,14 +44,6 @@ namespace KeyViewer
         public void Release()
         {
             stretching = false;
-        }
-        public void SetRainSprite(Sprite sprite)
-        {
-            image.sprite = sprite;
-        }
-        public void SetRainColor(Color color)
-        {
-            image.color = color;
         }
         private void Update()
         {
@@ -122,7 +114,8 @@ namespace KeyViewer
             if (changed |= newImage != config.RainImage) config.RainImage = newImage;
             GUILayout.BeginHorizontal();
             GUILayout.Label("Rain Direction");
-            changed |= DrawDirection($"{code} Rain Direction", ref config.Direction);
+            if (DrawDirection($"{code} Rain Direction", ref config.Direction))
+                Main.KeyManager.UpdateKeys();
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             return changed;
@@ -150,7 +143,7 @@ namespace KeyViewer
                 case Direction.D:
                     return config.RainWidth > 0 ?
                         new Vector2(config.RainWidth, 0) :
-                        new Vector2(key.config.Width , 0);
+                        new Vector2(key.config.Width, 0);
                 case Direction.L:
                 case Direction.R:
                     var yOffset = (key.config.keyManager.Profile.ShowKeyPressTotal ? 50 : 0) + 5;
@@ -181,17 +174,17 @@ namespace KeyViewer
             switch (dir)
             {
                 case Direction.U:
-                    return new Vector2(0, (-sizeDelta.y / 2) + config.Softness * 2);
+                    return new Vector2(0, (-sizeDelta.y / 2) + config.Softness);
                 case Direction.D:
-                    return new Vector2(0, (sizeDelta.y / 2) - config.Softness * 2);
+                    return new Vector2(0, (sizeDelta.y / 2) - config.Softness);
                 case Direction.L:
-                    return new Vector2((sizeDelta.x / 2) - config.Softness * 2, 0);
+                    return new Vector2((sizeDelta.x / 2) - config.Softness, 0);
                 case Direction.R:
-                    return new Vector2((-sizeDelta.x / 2) + config.Softness * 2, 0);
+                    return new Vector2((-sizeDelta.x / 2) + config.Softness, 0);
                 default: return Vector2.zero;
             }
         }
-        static readonly string[] dirNames = new string[] { "Up", "Down" };
+        static readonly string[] dirNames = new string[] { "Up", "Down", "Left", "Right" };
         static readonly Direction[] dirValues = (Direction[])Enum.GetValues(typeof(Direction));
         private static bool DrawDirection(string title, ref Direction direction)
         {

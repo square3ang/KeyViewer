@@ -22,6 +22,7 @@ namespace KeyViewer
         public int KPSUpdateRateMs = 1000;
         public bool EditEachKeys = false;
         public bool ResetWhenStart = false;
+        public bool ApplyWithOffset = false;
         public Profile Copy()
         {
             Profile prof = new Profile();
@@ -37,6 +38,7 @@ namespace KeyViewer
             prof.KeyViewerSize = KeyViewerSize;
             prof.KeyViewerXPos = KeyViewerXPos;
             prof.KeyViewerYPos = KeyViewerYPos;
+            prof.ApplyWithOffset = ApplyWithOffset;
             return prof;
         }
         public void Init(KeyManager manager)

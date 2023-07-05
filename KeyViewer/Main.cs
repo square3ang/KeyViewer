@@ -15,6 +15,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using System.Runtime.CompilerServices;
 using KeyViewer.Patches;
+using System.Text;
 
 namespace KeyViewer
 {
@@ -413,10 +414,24 @@ namespace KeyViewer
             int.TryParse(GUILayout.TextField(KeyManager.Profile.KPSUpdateRateMs.ToString()), out KeyManager.Profile.KPSUpdateRateMs);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            if (Settings.CurrentProfile.EditEachKeys = GUILayout.Toggle(Settings.CurrentProfile.EditEachKeys, Lang.GetString("EDIT_SETTINGS_EACH_KEYS")))
+            var newApplyWithOffset = GUILayout.Toggle(KeyManager.Profile.ApplyWithOffset, "Apply Config With Offset");
+            if (newApplyWithOffset != KeyManager.Profile.ApplyWithOffset)
+            {
+                KeyManager.Profile.ApplyWithOffset = newApplyWithOffset;
+                if (!KeyManager.Profile.EditEachKeys)
+                    ApplyEachKeys(KeyManager.Profile.GlobalConfig);
+            }
+            var settingEachKeys = GUILayout.Toggle(Settings.CurrentProfile.EditEachKeys, Lang.GetString("EDIT_SETTINGS_EACH_KEYS"));
+            if (settingEachKeys)
                 foreach (Key key in KeyManager.keys.Values)
                     key.RenderGUI();
             else Key.DrawGlobalConfig(KeyManager.Profile.GlobalConfig, ApplyEachKeys);
+            if (settingEachKeys != Settings.CurrentProfile.EditEachKeys)
+            {
+                Settings.CurrentProfile.EditEachKeys = settingEachKeys;
+                ApplyEachKeys(KeyManager.Profile.GlobalConfig);
+                KeyManager.UpdateKeys();
+            }
             foreach (Key key in KeyManager.specialKeys.Values)
                 key.RenderGUI();
             MoreGUILayout.EndIndent();
@@ -424,7 +439,9 @@ namespace KeyViewer
         public static void ApplyEachKeys(Key.Config keyConfig)
         {
             foreach (Key key in KeyManager.keys.Values)
-                key.config.ApplyConfig(keyConfig);
+                if (KeyManager.Profile.ApplyWithOffset)
+                    key.config.ApplyConfig(keyConfig);
+                else key.config.ApplyConfigWithoutOffset(keyConfig);
             KeyManager.UpdateLayout();
         }
         public static bool Equals(this VertexGradient left, VertexGradient right)
@@ -479,6 +496,26 @@ namespace KeyViewer
         {
             key = pair.Key;
             value = pair.Value;
+        }
+        public static void LogDifference<T>(Capture<T> oldCapture, Capture<T> newCapture)
+        {
+            if (!ReferenceEquals(oldCapture.original, oldCapture.original)) return;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Comparing {oldCapture.original} Difference");
+            foreach (var key in oldCapture.values.Keys.Union(newCapture.values.Keys))
+            {
+                sb.Append(' ', 4).Append($"{key} => ");
+                if (oldCapture.values.TryGetValue(key, out object oldValue))
+                    sb.Append($"Old Value: {oldValue ?? "null"}, ");
+                else sb.Append("Old Value: Not Exists, ");
+                if (newCapture.values.TryGetValue(key, out object newValue))
+                    sb.Append($"New Value: {newValue ?? "null"} ");
+                else sb.Append("New Value: Not Exists ");
+                if (Equals(oldValue, newValue))
+                    sb.AppendLine("(Old == New)");
+                else sb.AppendLine("<color=green>(Old != New)</color>");
+            }
+            Log.Log($"\n{sb}");
         }
     }
 }

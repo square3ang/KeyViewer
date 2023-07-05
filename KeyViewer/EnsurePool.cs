@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace KeyViewer
@@ -10,8 +9,8 @@ namespace KeyViewer
         private Func<T> ensurer;
         private Predicate<T> criteria;
         private Action<T> onGet;
-        private Action<T> onClear;
-        public EnsurePool(Func<T> ensurer, Predicate<T> ensureCriteria, Action<T> onGet = null, Action<T> onClear = null, int capacity = -1) 
+        private Action<T> onRemove;
+        public EnsurePool(Func<T> ensurer, Predicate<T> ensureCriteria, Action<T> onGet = null, Action<T> onRemove = null, int capacity = -1) 
         {
             if (ensurer == null)
                 throw new ArgumentNullException(nameof(ensurer), "Ensurer Cannot Be Null!");
@@ -21,11 +20,10 @@ namespace KeyViewer
             this.ensurer = ensurer;
             criteria = ensureCriteria;
             this.onGet = onGet;
-            this.onClear = onClear;
+            this.onRemove = onRemove;
             if (capacity > 0)
                 Fill(capacity);
         }
-        [NotNull]
         public T Get()
         {
             foreach (T t in pool)
@@ -41,8 +39,19 @@ namespace KeyViewer
         }
         public void Clear()
         {
-            ForEach(onClear);
+            ForEach(onRemove);
             pool.Clear();
+        }
+        public void Remove(T t)
+        {
+            onRemove(t);
+            pool.Remove(t);
+        }
+        public void RemoveAt(int index)
+        {
+            if (index >= Count) return;
+            onRemove(pool[index]);
+            pool.RemoveAt(index);
         }
         public void Fill(int count)
         {

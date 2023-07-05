@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static KeyViewer.Key;
 using static KeyViewer.Main;
 
 namespace KeyViewer
@@ -39,7 +40,7 @@ namespace KeyViewer
             configs.Clear();
             for (int i = 0; i < codes.Count; i++)
                 configs.Add(keyManager.keys[codes[i]].config);
-            groupConfig.Initialized = true;
+            groupConfig.keyManager = keyManager;
             isResolved = true;
         }
         public bool IsAdded(Key.Config config) => codes.Contains(config.Code);
@@ -54,15 +55,50 @@ namespace KeyViewer
                 Main.Settings.CurrentProfile.KeyGroups.Add(Copy());
             if (GUILayout.Button(Lang.GetString("DELETE")))
                 Main.Settings.CurrentProfile.KeyGroups.Remove(this);
+            if (GUILayout.Button("Add All Codes"))
+            {
+                foreach (var key in keyManager.Codes)
+                    if (!codes.Contains(key))
+                        AddConfig(keyManager[key].config);
+            }
             GUILayout.Label("Codes: ");
             for (int i = 0; i < configs.Count; i++)
                 GUILayout.Label($"{configs[i].Code} ");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             Name = MoreGUILayout.NamedTextField(Lang.GetString("KEY_GROUP_NAME"), Name, 400f);
+            GUILayout.BeginHorizontal();
+            float offsetX = MoreGUILayout.NamedSliderContent(Lang.GetString("OFFSET_X"), groupConfig.OffsetX, -Screen.width, Screen.width, 300f);
+            float offsetY = MoreGUILayout.NamedSliderContent(Lang.GetString("OFFSET_Y"), groupConfig.OffsetY, -Screen.height, Screen.height, 300f);
+            if (offsetX != groupConfig.OffsetX)
+            {
+                groupConfig.OffsetX = offsetX;
+                configs.ForEach(conf =>
+                {
+                    if (keyManager.Profile.ApplyWithOffset)
+                        conf.ApplyOffsetRelative(groupConfig);
+                });
+                keyManager.UpdateLayout();
+            }
+            if (offsetY != groupConfig.OffsetY)
+            {
+                groupConfig.OffsetY = offsetY;
+                configs.ForEach(conf =>
+                {
+                    if (keyManager.Profile.ApplyWithOffset)
+                        conf.ApplyOffsetRelative(groupConfig);
+                });
+                keyManager.UpdateLayout();
+            }
+            GUILayout.EndHorizontal();
             Key.DrawGlobalConfig(groupConfig, c =>
             {
-                configs.ForEach(conf => conf.ApplyConfig(c));
+                configs.ForEach(conf =>
+                {
+                    if (keyManager.Profile.ApplyWithOffset)
+                        conf.ApplyConfig(c);
+                    else conf.ApplyConfigWithoutOffset(c);
+                });
                 keyManager.UpdateLayout();
             });
             MoreGUILayout.EndIndent();

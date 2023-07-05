@@ -16,38 +16,38 @@ namespace KeyViewer
             public Config(KeyManager manager, KeyCode code) : this()
             {
                 Code = code;
-                Initialized = true;
                 keyManager = manager;
             }
             public Config(KeyManager manager, SpecialKeyType type) : this()
             {
                 SpecialType = type;
-                Initialized = true;
                 keyManager = manager;
             }
-            public KeyRain.RainConfig RainConfig { get; set; } = new KeyRain.RainConfig();
-            private bool rainEnabled = false;
-            private string font = "Default";
-            private KeyCode code = KeyCode.None;
-            private KeyCode spareCode = KeyCode.None;
-            private SpecialKeyType specialType = SpecialKeyType.None;
-            private uint count = 0;
-            private bool gradient = false;
-            private bool editing = false;
-            private bool changeBgColorJudge = false;
-            private float width = 100;
-            private float height = 100;
-            private float offsetX = 0;
-            private float offsetY = 0;
-            private float textOffsetX = 0;
-            private float textOffsetY = 0;
-            private float countTextOffsetX = 0;
-            private float countTextOffsetY = 0;
-            private float shrinkFactor = 0.9f;
-            private float easeDuration = 0.1f;
-            private float textFontSize = 75;
-            private float countTextFontSize = 50;
-            private Ease ease = Ease.OutExpo;
+            public KeyRain.RainConfig RainConfig = new KeyRain.RainConfig();
+            public bool RainEnabled = false;
+            public string Font = "Default";
+            public KeyCode Code = KeyCode.None;
+            public KeyCode SpareCode = KeyCode.None;
+            public SpecialKeyType SpecialType = SpecialKeyType.None;
+            public uint Count = 0;
+            public bool Gradient = false;
+            public bool Editing = false;
+            public bool ChangeBgColorJudge = false;
+            public float Width = 100;
+            public float Height = 100;
+            [XmlIgnore]
+            public float offsetX = 0;
+            [XmlIgnore]
+            public float offsetY = 0;
+            public float TextOffsetX = 0;
+            public float TextOffsetY = 0;
+            public float CountTextOffsetX = 0;
+            public float CountTextOffsetY = 0;
+            public float ShrinkFactor = 0.9f;
+            public float EaseDuration = 0.1f;
+            public float TextFontSize = 75;
+            public float CountTextFontSize = 50;
+            public Ease Ease = Ease.OutExpo;
             private Color pressedOutlineColor = Color.white;
             private Color releasedOutlineColor = Color.white;
             private Color pressedBackgroundColor = Color.white;
@@ -68,8 +68,6 @@ namespace KeyViewer
             private VertexGradient releasedCountTextColor = new VertexGradient(Color.white);
 
             [XmlIgnore]
-            public bool Initialized = false;
-            [XmlIgnore]
             public string PressedOutlineColorHex;
             [XmlIgnore]
             public string ReleasedOutlineColorHex;
@@ -87,198 +85,32 @@ namespace KeyViewer
             public string[] ReleasedCountTextColorHex = new string[4];
             [XmlIgnore]
             public string[] HitMarginColorHex = new string[10];
-            [XmlIgnore]
-            public LinkedList<Config> Backups = new LinkedList<Config>();
-            [XmlIgnore]
-            public LinkedListNode<Config> Current = null;
-            internal bool CanUndo => Current?.Previous != null;
-            internal bool CanRedo => Current?.Next != null;
 
-            public string Font { get => font; set => font = value; }
-            public KeyCode Code { get => code; set => code = value; }
-            public SpecialKeyType SpecialType { get => specialType; set => specialType = value; }
-            public uint Count { get => count; set => count = value; }
-            public bool Editing { get => editing; set => editing = value; }
-            public bool RainEnabled
+            public float OffsetX
             {
-                get => rainEnabled;
-                set
+                get
                 {
-                    if (rainEnabled != value)
-                    {
-                        Backup();
-                        keyManager?.UpdateLayout();
-                    }
-                    rainEnabled = value;
+                    if (RelativeOffsetApplied)
+                        return offsetX + RelativeOffsetX;
+                    return offsetX;
                 }
+                set => offsetX = value;
             }
-            public KeyCode SpareCode
+            public float OffsetY
             {
-                get => spareCode;
-                set
+                get
                 {
-                    if (spareCode != value)
-                        Backup();
-                    spareCode = value;
+                    if (RelativeOffsetApplied)
+                        return offsetY + RelativeOffsetY;
+                    return offsetY;
                 }
-            }
-            public bool Gradient
-            {
-                get => gradient;
-                set
-                {
-                    if (gradient != value)
-                        Backup();
-                    gradient = value;
-                }
-            }
-            public bool ChangeBgColorJudge 
-            { 
-                get => changeBgColorJudge; 
-                set 
-                {
-                    if (changeBgColorJudge != value)
-                        Backup();
-                    changeBgColorJudge = value;
-                } 
-            }
-            public float Width 
-            { 
-                get => width; 
-                set 
-                {
-                    if (width != value)
-                        Backup();
-                    width = value;
-                } 
-            }
-            public float Height 
-            { 
-                get => height; 
-                set
-                {
-                    if (height != value)
-                        Backup();
-                    height = value;
-                }
-            }
-            public float OffsetX 
-            { 
-                get => offsetX; 
-                set 
-                {
-                    if (offsetX != value)
-                        Backup();
-                    offsetX = value;
-                } 
-            }
-            public float OffsetY 
-            { 
-                get => offsetY;
-                set
-                {
-                    if (offsetY != value)
-                        Backup();
-                    offsetY = value;
-                }
-            }
-            public float TextOffsetX 
-            { 
-                get => textOffsetX; 
-                set 
-                {
-                    if (textOffsetX != value)
-                        Backup();
-                    textOffsetX = value;
-                } 
-            }
-            public float TextOffsetY 
-            { 
-                get => textOffsetY; 
-                set
-                {
-                    if (textOffsetY != value)
-                        Backup();
-                    textOffsetY = value;
-                }
-            }
-            public float CountTextOffsetX 
-            { 
-                get => countTextOffsetX; 
-                set 
-                {
-                    if (countTextOffsetX != value)
-                        Backup();
-                    countTextOffsetX = value;
-                } 
-            }
-            public float CountTextOffsetY 
-            { 
-                get => countTextOffsetY; 
-                set 
-                {
-                    if (countTextOffsetY != value)
-                        Backup();
-                    countTextOffsetY = value;
-                }
-            }
-            public float ShrinkFactor 
-            { 
-                get => shrinkFactor; 
-                set 
-                {
-                    if (shrinkFactor != value)
-                        Backup();
-                    shrinkFactor = value;
-                } 
-            }
-            public float EaseDuration 
-            { 
-                get => easeDuration; 
-                set 
-                {
-                    if (easeDuration != value)
-                        Backup();
-                    easeDuration = value;
-                } 
-            }
-            public float TextFontSize 
-            { 
-                get => textFontSize; 
-                set 
-                {
-                    if (textFontSize != value)
-                        Backup();
-                    textFontSize = value;
-                } 
-            }
-            public float CountTextFontSize 
-            { 
-                get => countTextFontSize; 
-                set
-                {
-                    if (countTextFontSize != value)
-                        Backup();
-                    countTextFontSize = value;
-                }
-            }
-            public Ease Ease 
-            { 
-                get => ease;
-                set 
-                {
-                    if (ease != value)
-                        Backup();
-                    ease = value;
-                } 
+                set => offsetY = value;
             }
             public Color PressedOutlineColor
             {
                 get => pressedOutlineColor;
                 set
                 {
-                    if (pressedOutlineColor != value)
-                        Backup();
                     pressedOutlineColor = value;
                     PressedOutlineColorHex = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -288,8 +120,6 @@ namespace KeyViewer
                 get => releasedOutlineColor;
                 set
                 {
-                    if (releasedOutlineColor != value)
-                        Backup();
                     releasedOutlineColor = value;
                     ReleasedOutlineColorHex = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -299,8 +129,6 @@ namespace KeyViewer
                 get => pressedBackgroundColor;
                 set
                 {
-                    if (pressedBackgroundColor != value)
-                        Backup();
                     pressedBackgroundColor = value;
                     PressedBackgroundColorHex = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -310,8 +138,6 @@ namespace KeyViewer
                 get => releasedBackgroundColor;
                 set
                 {
-                    if (releasedBackgroundColor != value)
-                        Backup();
                     releasedBackgroundColor = value;
                     ReleasedBackgroundColorHex = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -321,8 +147,6 @@ namespace KeyViewer
                 get => pressedTextColor;
                 set
                 {
-                    if (pressedTextColor.Inequals(value))
-                        Backup();
                     pressedTextColor = value;
                     PressedTextColorHex[0] = ColorUtility.ToHtmlStringRGBA(value.topLeft);
                     PressedTextColorHex[1] = ColorUtility.ToHtmlStringRGBA(value.topRight);
@@ -335,8 +159,6 @@ namespace KeyViewer
                 get => releasedTextColor;
                 set
                 {
-                    if (releasedTextColor.Inequals(value))
-                        Backup();
                     releasedTextColor = value;
                     ReleasedTextColorHex[0] = ColorUtility.ToHtmlStringRGBA(value.topLeft);
                     ReleasedTextColorHex[1] = ColorUtility.ToHtmlStringRGBA(value.topRight);
@@ -349,8 +171,6 @@ namespace KeyViewer
                 get => pressedCountTextColor;
                 set
                 {
-                    if (pressedCountTextColor.Inequals(value))
-                        Backup();
                     pressedCountTextColor = value;
                     PressedCountTextColorHex[0] = ColorUtility.ToHtmlStringRGBA(value.topLeft);
                     PressedCountTextColorHex[1] = ColorUtility.ToHtmlStringRGBA(value.topRight);
@@ -363,8 +183,6 @@ namespace KeyViewer
                 get => releasedCountTextColor;
                 set
                 {
-                    if (ReleasedCountTextColor.Inequals(value))
-                        Backup();
                     releasedCountTextColor = value;
                     ReleasedCountTextColorHex[0] = ColorUtility.ToHtmlStringRGBA(value.topLeft);
                     ReleasedCountTextColorHex[1] = ColorUtility.ToHtmlStringRGBA(value.topRight);
@@ -377,8 +195,6 @@ namespace KeyViewer
                 get => tooEarlyColor;
                 set
                 {
-                    if (tooEarlyColor != value)
-                        Backup();
                     tooEarlyColor = value;
                     HitMarginColorHex[0] = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -388,8 +204,6 @@ namespace KeyViewer
                 get => veryEarlyColor;
                 set
                 {
-                    if (veryEarlyColor != value)
-                        Backup();
                     veryEarlyColor = value;
                     HitMarginColorHex[1] = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -399,8 +213,6 @@ namespace KeyViewer
                 get => earlyPerfectColor;
                 set
                 {
-                    if (earlyPerfectColor != value)
-                        Backup();
                     earlyPerfectColor = value;
                     HitMarginColorHex[2] = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -410,8 +222,6 @@ namespace KeyViewer
                 get => perfectColor;
                 set
                 {
-                    if (perfectColor != value)
-                        Backup();
                     perfectColor = value;
                     HitMarginColorHex[3] = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -421,8 +231,6 @@ namespace KeyViewer
                 get => latePerfectColor;
                 set
                 {
-                    if (latePerfectColor != value)
-                        Backup();
                     latePerfectColor = value;
                     HitMarginColorHex[4] = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -432,8 +240,6 @@ namespace KeyViewer
                 get => veryLateColor;
                 set
                 {
-                    if (veryLateColor != value)
-                        Backup();
                     veryLateColor = value;
                     HitMarginColorHex[5] = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -443,8 +249,6 @@ namespace KeyViewer
                 get => tooLateColor;
                 set
                 {
-                    if (tooLateColor != value)
-                        Backup();
                     tooLateColor = value;
                     HitMarginColorHex[6] = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -454,8 +258,6 @@ namespace KeyViewer
                 get => multipressColor;
                 set
                 {
-                    if (multipressColor != value)
-                        Backup();
                     multipressColor = value;
                     HitMarginColorHex[7] = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -465,8 +267,6 @@ namespace KeyViewer
                 get => failMissColor;
                 set
                 {
-                    if (failMissColor != value)
-                        Backup();
                     failMissColor = value;
                     HitMarginColorHex[8] = ColorUtility.ToHtmlStringRGBA(value);
                     
@@ -477,8 +277,6 @@ namespace KeyViewer
                 get => failOverloadColor;
                 set
                 {
-                    if (failOverloadColor != value)
-                        Backup();
                     failOverloadColor = value;
                     HitMarginColorHex[9] = ColorUtility.ToHtmlStringRGBA(value);
                 }
@@ -523,37 +321,10 @@ namespace KeyViewer
                 FailMissColor = new Color(0.851f, 0.346f, 1.000f, 1.000f);
                 FailOverloadColor = new Color(0.851f, 0.346f, 1.000f, 1.000f);
             }
-            public void Backup()
-            {
-                if (!Initialized) return;
-                if (keyManager.Profile.ConfigBackupsCount < Backups.Count)
-                    Backups.RemoveFirst();
-                if (Current != null)
-                    Current = Backups.AddAfter(Current, Copy());
-                else Current = Backups.AddLast(Copy());
-            }
-            public bool Undo()
-            {
-                var prev = Current.Previous;
-                if (prev == null)
-                    return false;
-                Current = prev;
-                ApplyConfigAll(prev.Value);
-                return true;
-            }
-            public bool Redo()
-            {
-                var next = Current.Next;
-                if (next == null)
-                    return false;
-                Current = next;
-                ApplyConfigAll(next.Value);
-                return true;
-            }
             public void ApplyConfig(Config config)
             {
                 RainEnabled = config.RainEnabled;
-                RainConfig = config.RainConfig;
+                RainConfig = config.RainConfig.Copy();
                 Font = config.Font;
                 Width = config.Width;
                 Height = config.Height;
@@ -588,11 +359,59 @@ namespace KeyViewer
                 FailMissColor = config.FailMissColor;
                 FailOverloadColor = config.FailOverloadColor;
             }
+            [XmlIgnore]
+            public bool RelativeOffsetApplied = false;
+            [XmlIgnore]
+            public float RelativeOffsetX = 0;
+            [XmlIgnore]
+            public float RelativeOffsetY = 0;
+            public void ApplyOffsetRelative(Config config)
+            {
+                RelativeOffsetApplied = true;
+                RelativeOffsetX = config.OffsetX;
+                RelativeOffsetY = config.OffsetY;
+            }
+            public void ApplyConfigWithoutOffset(Config config)
+            {
+                RainEnabled = config.RainEnabled;
+                RainConfig = config.RainConfig.Copy();
+                Font = config.Font;
+                Width = config.Width;
+                Height = config.Height;
+                ShrinkFactor = config.ShrinkFactor;
+                EaseDuration = config.EaseDuration;
+                Ease = config.Ease;
+                TextOffsetX = config.TextOffsetX;
+                TextOffsetY = config.TextOffsetY;
+                CountTextOffsetX = config.CountTextOffsetX;
+                CountTextOffsetY = config.CountTextOffsetY;
+                TextFontSize = config.TextFontSize;
+                CountTextFontSize = config.CountTextFontSize;
+                PressedOutlineColor = config.PressedOutlineColor;
+                ReleasedOutlineColor = config.ReleasedOutlineColor;
+                PressedBackgroundColor = config.PressedBackgroundColor;
+                ReleasedBackgroundColor = config.ReleasedBackgroundColor;
+                PressedTextColor = config.PressedTextColor;
+                ReleasedTextColor = config.ReleasedTextColor;
+                PressedCountTextColor = config.PressedCountTextColor;
+                ReleasedCountTextColor = config.ReleasedCountTextColor;
+                ChangeBgColorJudge = config.ChangeBgColorJudge;
+                TooEarlyColor = config.TooEarlyColor;
+                VeryEarlyColor = config.VeryEarlyColor;
+                EarlyPerfectColor = config.EarlyPerfectColor;
+                PerfectColor = config.PerfectColor;
+                LatePerfectColor = config.LatePerfectColor;
+                VeryLateColor = config.VeryLateColor;
+                TooLateColor = config.TooLateColor;
+                MultipressColor = config.MultipressColor;
+                FailMissColor = config.FailMissColor;
+                FailOverloadColor = config.FailOverloadColor;
+            }
             public void ApplyConfigAll(Config config)
             {
                 keyManager = config.keyManager;
                 RainEnabled = config.RainEnabled;
-                RainConfig = config.RainConfig;
+                RainConfig = config.RainConfig.Copy();
                 Font = config.Font;
                 Code = config.Code;
                 SpecialType = config.SpecialType;

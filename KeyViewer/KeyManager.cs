@@ -31,9 +31,6 @@ namespace KeyViewer
             {
                 profile = value;
                 KPSCalculator.Start(value);
-                foreach (var key in profile.ActiveKeys)
-                    key.Initialized = true;
-                profile.GlobalConfig.Initialized = true;
                 UpdateKeys();
             }
         }

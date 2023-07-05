@@ -37,7 +37,7 @@ namespace KeyViewer
                 case KeyLabel.Alpha2: return KeyCode.Alpha2;
                 case KeyLabel.Alpha3: return KeyCode.Alpha3;
                 case KeyLabel.Alpha4: return KeyCode.Alpha4;
-                case KeyLabel.Alpha5:  return KeyCode.Alpha5;
+                case KeyLabel.Alpha5: return KeyCode.Alpha5;
                 case KeyLabel.Alpha6: return KeyCode.Alpha6;
                 case KeyLabel.Alpha7: return KeyCode.Alpha7;
                 case KeyLabel.Alpha8: return KeyCode.Alpha8;
@@ -57,8 +57,8 @@ namespace KeyViewer
                 case KeyLabel.I: return KeyCode.I;
                 case KeyLabel.O: return KeyCode.O;
                 case KeyLabel.P: return KeyCode.P;
-                case KeyLabel.LeftBrace: return KeyCode.LeftCurlyBracket;
-                case KeyLabel.RightBrace: return KeyCode.RightCurlyBracket;
+                case KeyLabel.LeftBrace: return KeyCode.LeftBracket;
+                case KeyLabel.RightBrace: return KeyCode.RightBracket;
                 case KeyLabel.BackSlash: return KeyCode.Backslash;
                 case KeyLabel.CapsLock: return KeyCode.CapsLock;
                 case KeyLabel.A: return KeyCode.A;

@@ -6,10 +6,6 @@ using UnityEngine.UI;
 using System.Linq;
 using DG.Tweening;
 using KeyViewer.API;
-using System.Collections;
-using System.IO;
-using static KeyViewer.Key;
-using UnityEngine.Pool;
 
 namespace KeyViewer
 {
@@ -62,7 +58,7 @@ namespace KeyViewer
                 image.color = new Color(1, 1, 1, 0);
                 rainMask = rainContainer.AddComponent<RectMask2D>();
                 rainMaskRt = rainMask.rectTransform;
-                rainMaskRt.pivot = new Vector2(0.5f, 0.5f);
+                rainMaskRt.anchorMin = rainMaskRt.anchorMax = Vector2.zero;
                 rains = new EnsurePool<KeyRain>(() =>
                 {
                     GameObject go = new GameObject($"Rain {Code}");
@@ -71,6 +67,7 @@ namespace KeyViewer
                     kr.Init(this);
                     return kr;
                 }, kr => !kr.IsAlive, kr => kr.gameObject.SetActive(true), Destroy);
+                rains.Fill(config.RainConfig.RainPoolSize);
             }
 
             GameObject bgObj = new GameObject("Background");
@@ -133,7 +130,6 @@ namespace KeyViewer
                 TweenID = $"KeyViewer.{SpecialType}Tween";
             else
                 TweenID = $"KeyViewer.{Code}Tween";
-            rains?.Fill(config.RainConfig.RainPoolSize);
             initialized = true;
             return this;
         }
@@ -236,28 +232,6 @@ namespace KeyViewer
             {
                 Text.font = font.fontTMP;
                 CountText.font = font.fontTMP;
-            }
-            if (!isSpecial)
-            {
-                rainContainer.SetActive(config.RainEnabled);
-                if (config.RainEnabled)
-                {
-                    var rConfig = config.RainConfig;
-                    rainMask.softness = rConfig.Direction switch
-                    {
-                        Direction.U or
-                        Direction.D => new Vector2Int(0, rConfig.Softness),
-                        Direction.L or
-                        Direction.R => new Vector2Int(rConfig.Softness, 0),
-                        _ => Vector2Int.zero
-                    };
-                    rainMaskRt.sizeDelta = GetSizeDelta(rConfig.Direction);
-                    rainMaskRt.anchoredPosition = GetMaskPosition(rainMaskRt.sizeDelta, rConfig.Direction);
-                    rains.ForEach(kr => kr.SetRainColor(rConfig.RainColor));
-                    var sprite = Main.GetSprite(rConfig.RainImage);
-                    if (sprite != null)
-                        rains.ForEach(kr => kr.SetRainSprite(sprite));
-                }
             }
             if (isSpecial && Profile.MakeBarSpecialKeys)
             {
@@ -371,6 +345,29 @@ namespace KeyViewer
             Text.rectTransform.localScale = scale;
             CountText.rectTransform.localScale = scale;
             x += keyWidth + 10;
+            if (!isSpecial)
+            {
+                rainContainer.SetActive(config.RainEnabled);
+                if (config.RainEnabled)
+                {
+                    var rConfig = config.RainConfig;
+                    rainMask.softness = rConfig.Direction switch
+                    {
+                        Direction.U or
+                        Direction.D => new Vector2Int(0, rConfig.Softness),
+                        Direction.L or
+                        Direction.R => new Vector2Int(rConfig.Softness, 0),
+                        _ => Vector2Int.zero
+                    };
+                    SetAnchor(rConfig.Direction);
+                    rainMaskRt.sizeDelta = GetSizeDelta(rConfig.Direction);
+                    rainMaskRt.anchoredPosition = GetMaskPosition(rConfig.Direction);
+                    var sprite = Main.GetSprite(rConfig.RainImage);
+                    if (sprite != null) rains.ForEach(kr => kr.image.sprite = sprite);
+                    rains.ForEach(kr => kr.image.color = rConfig.RainColor);
+                    rains.ForEach(kr => kr.ResetSizePos());
+                }
+            }
             layoutUpdated = true;
         }
         public void RenderGUI()
@@ -414,7 +411,7 @@ namespace KeyViewer
             if (config.RainEnabled != newRainEnabled)
             {
                 config.RainEnabled = newRainEnabled;
-                keyManager.UpdateLayout();
+                keyManager.UpdateKeys();
             }
 
             GUILayout.BeginHorizontal();
@@ -1106,22 +1103,6 @@ namespace KeyViewer
                 config.Reset();
                 keyManager.UpdateLayout();
             }
-            if (config.CanUndo)
-            {
-                if (GUILayout.Button(Main.Lang.GetString("UNDO")))
-                {
-                    if (config.Undo())
-                        keyManager.UpdateLayout();
-                }
-            }
-            if (config.CanRedo)
-            {
-                if (GUILayout.Button(Main.Lang.GetString("REDO")))
-                {
-                    if (config.Redo())
-                        keyManager.UpdateLayout();
-                }
-            }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             MoreGUILayout.EndIndent();
@@ -1165,20 +1146,20 @@ namespace KeyViewer
                     return config.PressedBackgroundColor;
             }
         }
-        internal Vector2 GetMaskPosition(Vector2 delta, Direction dir)
+        internal Vector2 GetMaskPosition(Direction dir)
         {
             Vector2 vec = position + offsetVec;
-            var yOffset = (Profile.ShowKeyPressTotal ? 50 : 0) + 5;
+            float x = config.Width, y = config.Height + (Profile.ShowKeyPressTotal ? 50 : 0);
             switch (dir)
             {
                 case Direction.U:
-                    return new Vector2(vec.x, delta.y / 2 + config.Height + yOffset - config.RainConfig.Softness * 2);
+                    return new Vector2(vec.x + config.RainConfig.OffsetX, vec.y + (y / 2 - config.RainConfig.Softness) + 10 + config.RainConfig.OffsetY);
                 case Direction.D:
-                    return new Vector2(vec.x, -delta.y / 2 - 5 + config.RainConfig.Softness * 2);
+                    return new Vector2(vec.x + config.RainConfig.OffsetX, vec.y - (y / 2 - config.RainConfig.Softness) - 10 + config.RainConfig.OffsetY);
                 case Direction.L:
-                    return new Vector2(-delta.x / 2 - config.Width - 5 + config.RainConfig.Softness * 2, vec.y + (config.Height + yOffset) / 2);
+                    return new Vector2(vec.x + config.RainConfig.OffsetX - (x / 2 - config.RainConfig.Softness) - 10, vec.y + config.RainConfig.OffsetY);
                 case Direction.R:
-                    return new Vector2(delta.x / 2 + config.Width + 5 - config.RainConfig.Softness * 2, vec.y + (config.Height + yOffset) / 2);
+                    return new Vector2(vec.x + config.RainConfig.OffsetX + (x / 2 - config.RainConfig.Softness) + 10, vec.y + config.RainConfig.OffsetY);
                 default: return Vector2.zero;
             }
         }
@@ -1194,11 +1175,37 @@ namespace KeyViewer
                         new Vector2(config.Width, rConfig.Softness + rConfig.RainLength);
                 case Direction.L:
                 case Direction.R:
-                    var yOffset = (Profile.ShowKeyPressTotal ? 50 : 0) + 10;
+                    var yOffset = (Profile.ShowKeyPressTotal ? 50 : 0) + 5;
                     return rConfig.RainHeight > 0 ?
                         new Vector2(rConfig.Softness + rConfig.RainLength, rConfig.RainHeight) :
                         new Vector2(rConfig.Softness + rConfig.RainLength, config.Height + yOffset);
                 default: return Vector2.zero;
+            }
+        }
+        internal void SetAnchor(Direction dir)
+        {
+            switch (dir)
+            {
+                case Direction.U:
+                    rainMaskRt.pivot = new Vector2(0.5f, 0);
+                    rainMaskRt.anchorMin = new Vector2(0.5f, 0);
+                    rainMaskRt.anchorMax = new Vector2(0.5f, 0);
+                    break;
+                case Direction.D:
+                    rainMaskRt.pivot = new Vector2(0.5f, 1);
+                    rainMaskRt.anchorMin = new Vector2(0.5f, 1);
+                    rainMaskRt.anchorMax = new Vector2(0.5f, 1);
+                    break;
+                case Direction.R:
+                    rainMaskRt.pivot = new Vector2(0, 0.5f);
+                    rainMaskRt.anchorMin = new Vector2(0, 0.5f);
+                    rainMaskRt.anchorMax = new Vector2(0, 0.5f);
+                    break;
+                case Direction.L:
+                    rainMaskRt.pivot = new Vector2(1, 0.5f);
+                    rainMaskRt.anchorMin = new Vector2(1, 0.5f);
+                    rainMaskRt.anchorMax = new Vector2(1, 0.5f);
+                    break;
             }
         }
         internal static readonly Ease[] eases = (Ease[])Enum.GetValues(typeof(Ease));
@@ -1451,7 +1458,8 @@ namespace KeyViewer
             if (config.RainEnabled != newRainEnabled)
             {
                 config.RainEnabled = newRainEnabled;
-                config.keyManager.UpdateLayout();
+                config.keyManager.UpdateKeys();
+                onChange(config);
             }
 
             GUILayout.BeginHorizontal();
@@ -1945,22 +1953,6 @@ namespace KeyViewer
             {
                 config.Reset();
                 onChange(config);
-            }
-            if (config.CanUndo)
-            {
-                if (GUILayout.Button(Main.Lang.GetString("UNDO")))
-                {
-                    if (config.Undo())
-                        onChange(config);
-                }
-            }
-            if (config.CanRedo)
-            {
-                if (GUILayout.Button(Main.Lang.GetString("REDO")))
-                {
-                    if (config.Redo())
-                        onChange(config);
-                }
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
