@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -8,10 +7,10 @@ namespace KeyViewer
 {
     public class Capture
     {
-        static bool RequireSkip(CaptureMode mode, Type t, string name, IEnumerable<string> toExclude)
+        static bool RequireSkip(CaptureMode mode, Type t, string name, Predicate<string> exclude)
         {
             if (t == null) return true;
-            if (toExclude?.Contains(name) ?? false) return true;
+            if (exclude?.Invoke(name) ?? false) return true;
             switch (mode)
             {
                 case CaptureMode.Class:
@@ -21,7 +20,7 @@ namespace KeyViewer
                 default: return false;
             }
         }
-        public static Capture<T> CaptureValues<T>(T t, bool includePrivate = false, CaptureMode captureMode = CaptureMode.ClassAndStruct, IEnumerable<string> exclude = null)
+        public static Capture<T> CaptureValues<T>(T t, bool includePrivate = false, CaptureMode captureMode = CaptureMode.ClassAndStruct, Predicate<string> exclude = null)
         {
             var bf = BindingFlags.Public | BindingFlags.Instance;
             if (includePrivate) bf |= BindingFlags.NonPublic;
@@ -41,8 +40,8 @@ namespace KeyViewer
             }
             return new Capture<T>(t, includePrivate, captureMode, exclude, values);
         }
-        public static Capture<T> CaptureClasses<T>(T t, bool includePrivate = false, IEnumerable<string> exclude = null) => CaptureValues(t, includePrivate, CaptureMode.Class, exclude);
-        public static Capture<T> CaptureStructs<T>(T t, bool includePrivate = false, IEnumerable<string> exclude = null) => CaptureValues(t, includePrivate, CaptureMode.Struct, exclude);
+        public static Capture<T> CaptureClasses<T>(T t, bool includePrivate = false, Predicate<string> exclude = null) => CaptureValues(t, includePrivate, CaptureMode.Class, exclude);
+        public static Capture<T> CaptureStructs<T>(T t, bool includePrivate = false, Predicate<string> exclude = null) => CaptureValues(t, includePrivate, CaptureMode.Struct, exclude);
         public static void UncaptureValues<T>(Capture<T> capture, T target)
         {
             var bf = BindingFlags.Public | BindingFlags.Instance;
@@ -65,14 +64,14 @@ namespace KeyViewer
         public readonly T original;
         public readonly bool includePrivate;
         public readonly CaptureMode captureMode;
-        public readonly string[] excludedMembers;
+        public readonly Predicate<string> excludePredicate;
         public readonly Dictionary<string, object> values;
-        internal Capture(T original, bool includePrivate, CaptureMode captureMode, IEnumerable<string> excludedMembers, Dictionary<string, object> values)
+        internal Capture(T original, bool includePrivate, CaptureMode captureMode, Predicate<string> excludePredicate, Dictionary<string, object> values)
         {
             this.original = original;
             this.includePrivate = includePrivate;
             this.captureMode = captureMode;
-            this.excludedMembers = excludedMembers.ToArray();
+            this.excludePredicate = excludePredicate;
             this.values = values;
         }
         public static implicit operator Capture<T>(T t) => Capture.CaptureValues(t);

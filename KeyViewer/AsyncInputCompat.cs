@@ -174,8 +174,8 @@ namespace KeyViewer
                 case KeyCode.I: return KeyLabel.I;
                 case KeyCode.O: return KeyLabel.O;
                 case KeyCode.P: return KeyLabel.P;
-                case KeyCode.LeftCurlyBracket: return KeyLabel.LeftBrace;
-                case KeyCode.RightCurlyBracket: return KeyLabel.RightBrace;
+                case KeyCode.LeftBracket: return KeyLabel.LeftBrace;
+                case KeyCode.RightBracket: return KeyLabel.RightBrace;
                 case KeyCode.Backslash: return KeyLabel.BackSlash;
                 case KeyCode.CapsLock: return KeyLabel.CapsLock;
                 case KeyCode.A: return KeyLabel.A;
