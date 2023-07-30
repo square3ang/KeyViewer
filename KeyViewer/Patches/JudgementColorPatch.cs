@@ -40,15 +40,14 @@ namespace KeyViewer.Patches
         {
             if (AsyncInputManager.isActive) return;
             foreach (var code in Main.KeyManager.Codes)
-                if (Input.GetKeyDown(code))
+                if (Input.GetKey(code))
                     keys.Push(code);
         }
         static bool stackFlushed = false;
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrController), "Update")]
-        public static void SyncInput_StackFlushPatch(scrController __instance)
+        public static void StackFlushPatch(scrController __instance)
         {
-            if (AsyncInputManager.isActive) return;
             if (!stackFlushed && __instance.state == States.PlayerControl)
             {
                 keys.Clear();
@@ -57,9 +56,8 @@ namespace KeyViewer.Patches
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrController), "Awake_Rewind")]
-        public static void SyncInput_StackFlushPatch2(scrController __instance)
+        public static void StackFlushPatch2(scrController __instance)
         {
-            if (AsyncInputManager.isActive) return;
             stackFlushed = false;
         }
         [Comment("Change Key's Background Color")]
@@ -70,7 +68,6 @@ namespace KeyViewer.Patches
             KeyCode code;
             while ((code = keys.Pop()) != KeyCode.None)
                 Main.KeyManager[code].ChangeHitMarginColor(hit);
-            keys.Clear();
         }
     }
 }

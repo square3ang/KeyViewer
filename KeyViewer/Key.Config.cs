@@ -32,6 +32,7 @@ namespace KeyViewer
             public uint Count = 0;
             public bool Gradient = false;
             public bool Editing = false;
+            public string KeyTitle = null;
             public bool ChangeBgColorJudge = false;
             public float Width = 100;
             public float Height = 100;

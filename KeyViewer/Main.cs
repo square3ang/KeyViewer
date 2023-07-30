@@ -23,7 +23,7 @@ namespace KeyViewer
     {
         public static bool IsEnabled { get; private set; }
         public static ModEntry Mod { get; private set; }
-        public static ModEntry.ModLogger Log { get; private set; }
+        public static ModEntry.ModLogger Logger { get; private set; }
         public static Settings Settings { get; private set; }
         public static Harmony Harmony { get; private set; }
         public static Sprite KeyOutline { get; private set; }
@@ -40,7 +40,7 @@ namespace KeyViewer
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
-            Log = modEntry.Logger;
+            Logger = modEntry.Logger;
             modEntry.OnToggle = OnToggle;
             modEntry.OnGUI = OnGUI;
             modEntry.OnSaveGUI = OnSaveGUI;
@@ -449,10 +449,10 @@ namespace KeyViewer
         public static bool Inequals(this VertexGradient left, VertexGradient right)
             => left.topLeft != right.topLeft || left.topRight != right.topRight || left.bottomLeft != right.bottomLeft || left.bottomRight != right.bottomRight;
         public static void CheckNull(this object obj, string identifier)
-            => Log.Log($"{identifier} Is {(obj == null ? "Null" : "Not Null")}");
+            => Logger.Log($"{identifier} Is {(obj == null ? "Null" : "Not Null")}");
         public static T LogObject<T>(this T obj)
         {
-            Log.Log(obj.ToString());
+            Logger.Log(obj.ToString());
             return obj;
         }
         public static readonly ISet<KeyCode> SKIPPED_KEYS = new HashSet<KeyCode>()
@@ -515,7 +515,7 @@ namespace KeyViewer
                     sb.AppendLine("(Old == New)");
                 else sb.AppendLine("<color=green>(Old != New)</color>");
             }
-            Log.Log($"\n{sb}");
+            Logger.Log($"\n{sb}");
         }
     }
 }

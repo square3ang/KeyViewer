@@ -21,12 +21,12 @@ namespace KeyViewer
                 if (CalculatingThread == null)
                     (CalculatingThread = GetCalculateThread()).Start();
             }
-            finally { }
+            catch { }
         }
         public static void Stop()
         {
             try { CalculatingThread.Abort(); }
-            finally { }
+            catch { }
         }
         public static void Press() => PressCount++;
         static Thread GetCalculateThread()

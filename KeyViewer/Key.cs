@@ -98,9 +98,14 @@ namespace KeyViewer
                 Text.text = SpecialType.ToString();
             else
             {
-                if (!KeyString.TryGetValue(Code, out string codeString))
-                    codeString = Code.ToString();
-                Text.text = codeString;
+                if (config.KeyTitle != null)
+                    Text.text = config.KeyTitle;
+                else
+                {
+                    if (!KeyString.TryGetValue(Code, out string codeString))
+                        codeString = Code.ToString();
+                    Text.text = config.KeyTitle = codeString;
+                }
             }
 
             GameObject countTextObj = new GameObject("CountText");
@@ -190,7 +195,12 @@ namespace KeyViewer
                 if (config.RainEnabled)
                     toRelease?.Release();
             }
-            Background.color = bgColor;
+            if (Pressed && forceBgColor != null)
+            {
+                Background.color = forceBgColor.Value;
+                forceBgColor = null;
+            }
+            else Background.color = bgColor;
             Outline.color = outlineColor;
             Text.colorGradient = textColor;
             CountText.colorGradient = countTextColor;
@@ -450,6 +460,15 @@ namespace KeyViewer
             {
                 config.Height = height;
                 keyManager.UpdateLayout();
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            string title = MoreGUILayout.NamedTextField(Main.Lang.GetString("KEY_TITLE"), config.KeyTitle, 300f);
+            if (title != config.KeyTitle)
+            {
+                config.KeyTitle = title;
+                Text.text = title;
             }
             GUILayout.EndHorizontal();
 
@@ -1107,14 +1126,11 @@ namespace KeyViewer
             GUILayout.EndHorizontal();
             MoreGUILayout.EndIndent();
         }
+        static Color? forceBgColor = null;
         public void ChangeHitMarginColor(HitMargin hit)
         {
             if (config.ChangeBgColorJudge)
-            {
-                var col = GetHitMarginColor(hit);
-                //Main.Log.Log($"Changing Color {Code} HitMargin:{hit} Color:{col}");
-                Background.color = col;
-            }
+                forceBgColor = GetHitMarginColor(hit);
         }
         public Color GetHitMarginColor(HitMargin hit)
         {
@@ -1426,6 +1442,7 @@ namespace KeyViewer
                 { KeyCode.Delete, "Del" },
                 { KeyCode.PageDown, "Pg↓" },
                 { KeyCode.PageUp, "Pg↑" },
+                { KeyCode.CapsLock, "⇪" },
                 { KeyCode.Insert, "Ins" },
                 { KeyCode.Mouse0, "M0" },
                 { KeyCode.Mouse1, "M1" },
