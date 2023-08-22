@@ -384,6 +384,11 @@ namespace KeyViewer
             MoreGUILayout.BeginIndent();
             KeyManager.Profile.ViewerOnlyGameplay = GUILayout.Toggle(KeyManager.Profile.ViewerOnlyGameplay, Lang.GetString("VIEWER_ONLY_GAMEPLAY"));
             KeyManager.Profile.AnimateKeys = GUILayout.Toggle(KeyManager.Profile.AnimateKeys, Lang.GetString("ANIMATE_KEYS"));
+            if (KeyManager.Profile.LimitNotRegisteredKeys = GUILayout.Toggle(KeyManager.Profile.LimitNotRegisteredKeys, Lang.GetString("LIMIT_NOT_REGISTERED_KEYS")))
+            {
+                KeyManager.Profile.LimitNotRegisteredKeysOnCLS = GUILayout.Toggle(KeyManager.Profile.LimitNotRegisteredKeysOnCLS, Lang.GetString("LIMIT_NOT_REGISTERED_KEYS_ON_CLS"));
+                KeyManager.Profile.LimitNotRegisteredKeysOnMain = GUILayout.Toggle(KeyManager.Profile.LimitNotRegisteredKeysOnMain, Lang.GetString("LIMIT_NOT_REGISTERED_KEYS_ON_MAIN"));
+            }
             bool newShowTotal = GUILayout.Toggle(KeyManager.Profile.ShowKeyPressTotal, Lang.GetString("SHOW_KEY_PRESS_TOTAL"));
             if (newShowTotal != KeyManager.Profile.ShowKeyPressTotal)
             {

@@ -61,7 +61,14 @@ namespace KeyViewer
             keys = new Dictionary<KeyCode, Key>();
             specialKeys = new Dictionary<SpecialKeyType, Key>();
             foreach (Key.Config config in Profile.ActiveKeys.Where(c => c.Code != KeyCode.None))
-                keys.Add(config.Code, new GameObject($"{config.Code} Key").AddComponent<Key>().Init(this, config));
+                if (!keys.ContainsKey(config.Code))
+                    keys.Add(config.Code, new GameObject($"{config.Code} Key").AddComponent<Key>().Init(this, config));
+                else
+                {
+                    var resolvedCode = Main.KeyCodes.First(k => Profile.ActiveKeys.FirstOrDefault(kc => kc.Code == k) == null);
+                    keys.Add(resolvedCode, new GameObject($"{config.Code} Key").AddComponent<Key>().Init(this, config));
+                    Main.Logger.Log($"{config.Code} Is Duplicate! One Of {config.Code} Key Was Changed To {resolvedCode}!");
+                }
             foreach (Key.Config config in Profile.ActiveKeys.Where(c => c.SpecialType != SpecialKeyType.None))
                 specialKeys.Add(config.SpecialType, new GameObject($"{config.SpecialType} Key").AddComponent<Key>().Init(this, config));
             if (!Main.Settings.CurrentProfile.EditEachKeys)
