@@ -317,6 +317,7 @@
     <Compile Include="Capture.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="EnsurePool.cs" />
+    <Compile Include="EnumPatcher.cs" />
     <Compile Include="FontManager.cs" />
     <Compile Include="Group.cs" />
     <Compile Include="Key.Config.cs" />

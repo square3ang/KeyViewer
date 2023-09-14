@@ -11,11 +11,9 @@ using KeyViewer.Migration;
 using KeyViewer.Migration.V2;
 using SFB;
 using System.Xml.Serialization;
-using System.Collections;
-using UnityEngine.Networking;
-using System.Runtime.CompilerServices;
 using KeyViewer.Patches;
 using System.Text;
+using System.Security.AccessControl;
 
 namespace KeyViewer
 {
@@ -71,6 +69,12 @@ namespace KeyViewer
                 if (Settings.CurrentProfile.ResetWhenStart)
                     KeyManager.ClearCounts();
                 JudgementColorPatch.Init();
+                EnumPatcher<CamMovementType>.AddField("SANS", 234324);
+                EnumPatcher<CamMovementType>.AddField("erwra", 2332);
+                EnumPatcher<CamMovementType>.AddField("gfdsgdfg", 654765);
+                EnumPatcher<CamMovementType>.AddField("uheuishfduighf", 6523446);
+                foreach (var e in Enum.GetNames(typeof(CamMovementType)))
+                    Logger.Log(e.ToString());
                 IsEnabled = true;
             }
             else
@@ -522,5 +526,8 @@ namespace KeyViewer
             }
             Logger.Log($"\n{sb}");
         }
+        public static readonly MethodInfo GCVAN = typeof(Enum).GetMethod("GetCachedValuesAndNames", (BindingFlags)15420);
+        public static readonly AccessTools.FieldRef<object, string[]> VAN_Names = AccessTools.FieldRefAccess<string[]>(typeof(Enum).GetNestedType("ValuesAndNames", (BindingFlags)15420), "Names");
+        public static readonly AccessTools.FieldRef<object, ulong[]> VAN_Values = AccessTools.FieldRefAccess<ulong[]>(typeof(Enum).GetNestedType("ValuesAndNames", (BindingFlags)15420), "Values");
     }
 }
