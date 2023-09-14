@@ -69,12 +69,6 @@ namespace KeyViewer
                 if (Settings.CurrentProfile.ResetWhenStart)
                     KeyManager.ClearCounts();
                 JudgementColorPatch.Init();
-                EnumPatcher<CamMovementType>.AddField("SANS", 234324);
-                EnumPatcher<CamMovementType>.AddField("erwra", 2332);
-                EnumPatcher<CamMovementType>.AddField("gfdsgdfg", 654765);
-                EnumPatcher<CamMovementType>.AddField("uheuishfduighf", 6523446);
-                foreach (var e in Enum.GetNames(typeof(CamMovementType)))
-                    Logger.Log(e.ToString());
                 IsEnabled = true;
             }
             else
