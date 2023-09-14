@@ -43,6 +43,7 @@ namespace KeyViewer
             modEntry.OnGUI = OnGUI;
             modEntry.OnSaveGUI = OnSaveGUI;
             modEntry.OnUpdate = OnUpdate;
+            modEntry.OnShowGUI = OnShowGUI;
             modEntry.OnHideGUI = OnHideGUI;
             AssetBundle assets = AssetBundle.LoadFromFile("Mods/KeyViewer/keyviewer.assets");
             KeyOutline = assets.LoadAsset<Sprite>("Assets/KeyOutline.png");
@@ -99,6 +100,12 @@ namespace KeyViewer
                     }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Settings Backup Interval (s): ");
+                int.TryParse(GUILayout.TextField(Settings.BackupInterval.ToString()), out Settings.BackupInterval);
+                GUILayout.Label("s");
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
                 DrawProfileSettingsGUI();
                 GUILayout.Space(12f);
                 MoreGUILayout.HorizontalLine(1f, 400f);
@@ -117,6 +124,10 @@ namespace KeyViewer
         public static void OnSaveGUI(ModEntry modEntry)
         {
             Settings.Save(modEntry);
+        }
+        public static void OnShowGUI(ModEntry modEntry)
+        {
+            BackupManager.Start();
         }
         public static void OnUpdate(ModEntry modEntry, float deltaTime)
         {
@@ -149,6 +160,7 @@ namespace KeyViewer
         }
         public static void OnHideGUI(ModEntry modEntry)
         {
+            BackupManager.Stop();
             IsListening = false;
         }
         private static void DrawMigrateMenu()

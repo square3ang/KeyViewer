@@ -314,6 +314,7 @@
     <Compile Include="API\CommentAttribute.cs" />
     <Compile Include="API\EventAPI.cs" />
     <Compile Include="API\InputAPI.cs" />
+    <Compile Include="BackupManager.cs" />
     <Compile Include="Capture.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="EnsurePool.cs" />

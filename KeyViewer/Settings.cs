@@ -13,6 +13,7 @@ namespace KeyViewer
         public int ProfileIndex = 0;
         public List<Profile> Profiles = new List<Profile>();
         public LanguageType Language = LanguageType.English;
+        public int BackupInterval = 10;
         [XmlIgnore]
         public Profile CurrentProfile => Profiles[ProfileIndex];
     }
