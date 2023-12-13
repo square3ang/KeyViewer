@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace KeyViewer
+namespace KeyViewer.Migration.V3
 {
     public enum LanguageType
     {

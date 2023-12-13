@@ -6,17 +6,18 @@ using UnityEngine;
 using System.Linq;
 using TMPro;
 using System;
+using KeyViewer.Migration.V3;
 
 namespace KeyViewer.Migration.V2
 {
-    public class V2Migrator : IMigrator
+    // V2 To V3
+    public class V2Migrator
     {
         public Dictionary<KeyCode, int> KeyCounts;
         public Dictionary<KeyCode, KeySetting> KeySettings;
         public KeyViewerSettings Settings;
-        public KeyManager manager;
-        public V2Migrator(KeyManager manager, V2MigratorArgument args) : this(manager, args.keyCountsPath, args.keySettingsPath, args.settingsPath) { }
-        public V2Migrator(KeyManager manager, string keyCountsPath, string keySettingsPath, string settingsPath)
+        public V2Migrator(V2MigratorArgument args) : this(args.keyCountsPath, args.keySettingsPath, args.settingsPath) { }
+        public V2Migrator(string keyCountsPath, string keySettingsPath, string settingsPath)
         {
             if (!string.IsNullOrWhiteSpace(keyCountsPath))
                 KeyCounts = JsonConvert.DeserializeObject<Dictionary<KeyCode, int>>(File.ReadAllText(keyCountsPath));
@@ -30,9 +31,8 @@ namespace KeyViewer.Migration.V2
                 Settings = (KeyViewerSettings)serializer.Deserialize(File.Open(settingsPath, FileMode.Open));
             }
             else throw new InvalidOperationException("Settings Path Cannot Be Null!");
-            this.manager = manager;
         }
-        public Settings Migrate()
+        public V3Settings Migrate()
         {
             List<Profile> profiles = new List<Profile>();
             foreach (KeyViewerProfile pf in Settings.Profiles)
@@ -53,17 +53,17 @@ namespace KeyViewer.Migration.V2
                     switch (code)
                     {
                         case KeyCode.None:
-                            return new Key.Config(manager, SpecialKeyType.KPS);
+                            return new Key_Config(SpecialKeyType.KPS);
                         case KeyCode.Joystick1Button0:
-                            return new Key.Config(manager, SpecialKeyType.Total);
+                            return new Key_Config(SpecialKeyType.Total);
                         default:
-                            return new Key.Config(manager, code);
+                            return new Key_Config(code);
                     }
                 }).ToList();
                 MigrateProfile(pf, newProfile.ActiveKeys);
                 profiles.Add(newProfile);
             }
-            Settings settings = new Settings();
+            V3Settings settings = new V3Settings();
             settings.Language = Settings.Language switch
             {
                 LanguageEnum.ENGLISH => LanguageType.English,
@@ -79,7 +79,7 @@ namespace KeyViewer.Migration.V2
             settings.ProfileIndex = Settings.ProfileIndex;
             return settings;
         }
-        void MigrateProfile(KeyViewerProfile pf, List<Key.Config> keyConfs)
+        void MigrateProfile(KeyViewerProfile pf, List<Key_Config> keyConfs)
         {
             foreach (var conf in keyConfs)
             {

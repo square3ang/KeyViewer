@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
+using UnityEditor;
 using static UnityModManagerNet.UnityModManager;
 
-namespace KeyViewer
+namespace KeyViewer.Migration.V3
 {
-    public class Settings : ModSettings
+    public class V3Settings : ModSettings
     {
         public override void Save(ModEntry modEntry) => Save(this, modEntry);
         public int ProfileIndex = 0;

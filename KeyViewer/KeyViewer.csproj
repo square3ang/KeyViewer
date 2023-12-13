@@ -44,9 +44,6 @@
     <Reference Include="DemiLib">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\DemiLib.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetZip">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\DotNetZip.dll</HintPath>
-    </Reference>
     <Reference Include="DOTween">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\DOTween.dll</HintPath>
     </Reference>
@@ -70,6 +67,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Security.AccessControl, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Users\dongs\source\repos\NAudio\NAudio\bin\Release\net472\System.Security.AccessControl.dll</HintPath>
@@ -312,21 +311,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\CommentAttribute.cs" />
-    <Compile Include="API\EventAPI.cs" />
     <Compile Include="API\InputAPI.cs" />
-    <Compile Include="BackupManager.cs" />
-    <Compile Include="Capture.cs" />
-    <Compile Include="Direction.cs" />
-    <Compile Include="EnsurePool.cs" />
-    <Compile Include="EnumPatcher.cs" />
     <Compile Include="FontManager.cs" />
-    <Compile Include="Group.cs" />
-    <Compile Include="Key.Config.cs" />
-    <Compile Include="KeyInput.cs" />
-    <Compile Include="KeyRain.Config.cs" />
-    <Compile Include="KeyRain.cs" />
-    <Compile Include="KPSCalculator.cs" />
-    <Compile Include="Migration\IMigrator.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Migration\V3\Direction.cs" />
+    <Compile Include="Migration\V3\Group.cs" />
+    <Compile Include="Migration\V3\Key_Config.cs" />
+    <Compile Include="Migration\V3\KeyRain.Config.cs" />
     <Compile Include="Migration\MigrateVersion.cs" />
     <Compile Include="Migration\Migrator.cs" />
     <Compile Include="Migration\V2\KeySetting.cs" />
@@ -337,25 +328,25 @@
     <Compile Include="Migration\V2\PoSize.cs" />
     <Compile Include="Migration\V2\V2Migrator.cs" />
     <Compile Include="Migration\V2\V2MigratorArgument.cs" />
-    <Compile Include="AsyncInputCompat.cs" />
-    <Compile Include="Patches\CountValidKeysPressedPatch.cs" />
-    <Compile Include="Key.cs" />
-    <Compile Include="KeyManager.cs" />
-    <Compile Include="LangManager.cs" />
-    <Compile Include="Language.cs" />
-    <Compile Include="Languages.cs" />
-    <Compile Include="Main.cs" />
-    <Compile Include="LanguageEnum.cs" />
-    <Compile Include="MoreGUILayout.cs" />
-    <Compile Include="Patches\JudgementColorPatch.cs" />
-    <Compile Include="Patches\RemoveFuckingUMMDummyLogPatch.cs" />
-    <Compile Include="Profile.cs" />
+    <Compile Include="Migration\V3\LanguageType.cs" />
+    <Compile Include="Migration\V3\V3Migrator.cs" />
+    <Compile Include="Migration\V3\Profile.cs" />
+    <Compile Include="Models\KeyConfig.cs" />
+    <Compile Include="Models\Profile.cs" />
+    <Compile Include="Models\RainConfig.cs" />
+    <Compile Include="Types\RainImageDisplayMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReplayInput.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="ShiftStack.cs" />
-    <Compile Include="SpecialKeyType.cs" />
-    <Compile Include="StaticCoroutine.cs" />
+    <Compile Include="Migration\V3\V3Settings.cs" />
+    <Compile Include="Migration\V3\SpecialKeyType.cs" />
+    <Compile Include="Models\Settings.cs" />
+    <Compile Include="Types\Matrix2x3.cs" />
+    <Compile Include="Unity\UI\UICornersGradient.cs" />
+    <Compile Include="Unity\UI\UIGradient.cs" />
+    <Compile Include="Unity\UI\UITextCornersGradient.cs" />
+    <Compile Include="Unity\UI\UITextGradient.cs" />
+    <Compile Include="Utils\GradientUtils.cs" />
+    <Compile Include="Utils\IOUtils.cs" />
+    <Compile Include="Utils\MiscUtils.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
