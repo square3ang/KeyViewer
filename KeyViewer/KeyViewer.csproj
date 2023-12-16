@@ -328,6 +328,8 @@
     <Compile Include="Models\KeyConfig.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\RainConfig.cs" />
+    <Compile Include="Types\DrawContext.cs" />
+    <Compile Include="Types\IDrawable.cs" />
     <Compile Include="Types\RainImageDisplayMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Migration\V3\V3Settings.cs" />
@@ -338,14 +340,13 @@
     <Compile Include="Unity\UI\UIGradient.cs" />
     <Compile Include="Unity\UI\UITextCornersGradient.cs" />
     <Compile Include="Unity\UI\UITextGradient.cs" />
+    <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\GradientUtils.cs" />
     <Compile Include="Utils\GUIUtils.cs" />
     <Compile Include="Utils\IOUtils.cs" />
     <Compile Include="Utils\MiscUtils.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\Mods\KeyViewer\\KeyViewer.dll"</PostBuildEvent>

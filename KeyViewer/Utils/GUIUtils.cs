@@ -3,115 +3,88 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityModManagerNet;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.UI;
+using KeyViewer.Types;
 
 namespace KeyViewer.Utils
 {
     public static class GUIUtils
     {
-        private static bool Draw(object container, Type type, ModEntry mod, DrawFieldMask defaultMask, int unique)
+        #region Draw
+        public static bool Draw(DrawContext context)
         {
+            object container = context.instance;
+            Type type = context.declaringType;
+            int unique = context.unique;
+            DrawFieldMask defaultMask = context.mask;
             bool changed = false;
             var options = new List<GUILayoutOption>();
-            DrawFieldMask mask = defaultMask;
-            foreach (DrawFieldsAttribute attr in type.GetCustomAttributes(typeof(DrawFieldsAttribute), false))
-            {
-                mask = attr.Mask;
-            }
-            var fields = type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            DrawFieldMask mask = type.GetCustomAttribute<DrawFieldsAttribute>(false)?.Mask ?? defaultMask;
+            var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var f in fields)
             {
-                DrawAttribute a = new DrawAttribute();
-                var attributes = f.GetCustomAttributes(typeof(DrawAttribute), false);
-                if (attributes.Length > 0)
+                DrawAttribute a = f.GetCustomAttribute<DrawAttribute>(false);
+                if (a != null)
                 {
-                    foreach (DrawAttribute a_ in attributes)
-                    {
-                        a = a_;
-                        a.Width = a.Width != 0 ? Scale(a.Width) : 0;
-                        a.Height = a.Height != 0 ? Scale(a.Height) : 0;
-                    }
-
-                    if (a.Type == DrawType.Ignore)
-                        continue;
-
+                    a.Width = a.Width != 0 ? Scale(a.Width) : 0;
+                    a.Height = a.Height != 0 ? Scale(a.Height) : 0;
+                    if (a.Type == DrawType.Ignore) continue;
                     if (!string.IsNullOrEmpty(a.VisibleOn))
                     {
-                        if (!(bool)DependsOn(null, a.VisibleOn, container, type, mod))
-                        {
+                        if (!DependsOn(a.VisibleOn, container, type))
                             continue;
-                        }
                     }
                     else if (!string.IsNullOrEmpty(a.InvisibleOn))
                     {
-                        if ((bool)DependsOn(null, a.InvisibleOn, container, type, mod))
-                        {
+                        if (DependsOn(a.InvisibleOn, container, type))
                             continue;
-                        }
                     }
                 }
                 else
                 {
+                    a = new DrawAttribute();
                     if ((mask & DrawFieldMask.OnlyDrawAttr) == 0 && ((mask & DrawFieldMask.SkipNotSerialized) == 0 || !f.IsNotSerialized)
                         && ((mask & DrawFieldMask.Public) > 0 && f.IsPublic
                         || (mask & DrawFieldMask.Serialized) > 0 && f.GetCustomAttributes(typeof(SerializeField), false).Length > 0
                         || (mask & DrawFieldMask.Public) == 0 && (mask & DrawFieldMask.Serialized) == 0))
                     {
-                        foreach (RangeAttribute a_ in f.GetCustomAttributes(typeof(RangeAttribute), false))
+                        RangeAttribute range = f.GetCustomAttribute<RangeAttribute>();
+                        if (range != null)
                         {
-                            a.Type = DrawType.Slider;
-                            a.Min = a_.min;
-                            a.Max = a_.max;
-                            break;
+                            //a.Type = DrawType.Slider;
+                            a.Min = range.min;
+                            a.Max = range.max;
                         }
                     }
-                    else
-                    {
-                        continue;
-                    }
+                    else continue;
                 }
-
                 foreach (SpaceAttribute a_ in f.GetCustomAttributes(typeof(SpaceAttribute), false))
-                {
                     GUILayout.Space(Scale((int)a_.height));
-                }
-
                 foreach (HeaderAttribute a_ in f.GetCustomAttributes(typeof(HeaderAttribute), false))
-                {
                     GUILayout.Label(a_.header, bold, GUILayout.ExpandWidth(false));
-                }
-
                 var fieldName = a.Label == null ? f.Name : a.Label;
-
                 if ((f.FieldType.IsClass && !f.FieldType.IsArray || f.FieldType.IsValueType && !f.FieldType.IsPrimitive && !f.FieldType.IsEnum) && !Array.Exists(specialTypes, x => x == f.FieldType))
                 {
-                    defaultMask = mask;
-                    foreach (DrawFieldsAttribute attr in f.GetCustomAttributes(typeof(DrawFieldsAttribute), false))
-                    {
-                        defaultMask = attr.Mask;
-                    }
-
+                    defaultMask = f.GetCustomAttribute<DrawFieldsAttribute>()?.Mask ?? mask;
                     var box = a.Box || a.Collapsible && collapsibleStates.Exists(x => x == f.MetadataToken);
-                    var horizontal = f.GetCustomAttributes(typeof(HorizontalAttribute), false).Length > 0 || f.FieldType.GetCustomAttributes(typeof(HorizontalAttribute), false).Length > 0;
+                    var horizontal = f.GetCustomAttribute<HorizontalAttribute>(false) != null || f.FieldType.GetCustomAttributes<HorizontalAttribute>(false) != null;
                     if (horizontal)
                     {
                         GUILayout.BeginHorizontal(box ? "box" : "");
                         box = false;
                     }
-
                     if (a.Collapsible)
                         GUILayout.BeginHorizontal();
-
                     if (!string.IsNullOrEmpty(fieldName))
                     {
                         BeginHorizontalTooltip(null, a);
                         GUILayout.Label(fieldName, GUILayout.ExpandWidth(false));
                         EndHorizontalTooltip(null, a);
                     }
-
                     var visible = true;
                     if (a.Collapsible)
                     {
@@ -121,72 +94,50 @@ namespace KeyViewer.Utils
                         if (GUILayout.Button(visible ? "Hide" : "Show", GUILayout.ExpandWidth(false)))
                         {
                             if (visible)
-                            {
                                 collapsibleStates.Remove(f.MetadataToken);
-                            }
                             else
-                            {
                                 collapsibleStates.Add(f.MetadataToken);
-                            }
                         }
                         GUILayout.EndHorizontal();
                     }
-
                     if (visible)
                     {
-                        if (box)
-                            GUILayout.BeginVertical("box");
+                        if (box) GUILayout.BeginVertical("box");
                         var val = f.GetValue(container);
                         if (typeof(UnityEngine.Object).IsAssignableFrom(f.FieldType) && val is UnityEngine.Object obj)
-                        {
                             GUILayout.Label(obj.name, GUILayout.ExpandWidth(false));
-                        }
                         else
                         {
-                            if (Draw(val, f.FieldType, mod, defaultMask, f.Name.GetHashCode() + unique))
+                            if (Draw(context.GetInnerContext(f.Name, val, defaultMask, f.Name.GetHashCode() + unique)))
                             {
                                 changed = true;
                                 f.SetValue(container, val);
                             }
                         }
-                        if (box)
-                            GUILayout.EndVertical();
+                        if (box) GUILayout.EndVertical();
                     }
-
-                    if (horizontal)
-                        GUILayout.EndHorizontal();
+                    if (horizontal) GUILayout.EndHorizontal();
                     continue;
                 }
-
                 options.Clear();
                 if (a.Type == DrawType.Auto)
                 {
                     if (Array.Exists(fieldTypes, x => x == f.FieldType))
-                    {
                         a.Type = DrawType.Field;
-                    }
                     else if (Array.Exists(toggleTypes, x => x == f.FieldType))
-                    {
                         a.Type = DrawType.Toggle;
-                    }
                     else if (f.FieldType.IsEnum)
                     {
-                        if (f.GetCustomAttributes(typeof(FlagsAttribute), false).Length == 0)
+                        if (f.GetCustomAttribute<FlagsAttribute>(false) != null)
                             a.Type = DrawType.PopupList;
                     }
                     else if (f.FieldType == typeof(KeyBinding))
-                    {
                         a.Type = DrawType.KeyBinding;
-                    }
                 }
-
                 if (a.Type == DrawType.Field)
                 {
                     if (!Array.Exists(fieldTypes, x => x == f.FieldType) && !f.FieldType.IsArray)
-                    {
                         throw new Exception($"Type {f.FieldType} can't be drawn as {DrawType.Field}");
-                    }
-
                     options.Add(a.Width != 0 ? GUILayout.Width(a.Width) : GUILayout.Width(Scale(100)));
                     options.Add(a.Height != 0 ? GUILayout.Height(a.Height) : GUILayout.Height(Scale(a.TextArea ? (int)drawHeight * 3 : (int)drawHeight)));
                     if (f.FieldType == typeof(Vector2))
@@ -465,9 +416,7 @@ namespace KeyViewer.Utils
                 else if (a.Type == DrawType.Slider)
                 {
                     if (!Array.Exists(sliderTypes, x => x == f.FieldType))
-                    {
                         throw new Exception($"Type {f.FieldType} can't be drawn as {DrawType.Slider}");
-                    }
 
                     options.Add(a.Width != 0 ? GUILayout.Width(a.Width) : GUILayout.Width(Scale(200)));
                     options.Add(a.Height != 0 ? GUILayout.Height(a.Height) : GUILayout.Height(Scale((int)drawHeight)));
@@ -511,9 +460,7 @@ namespace KeyViewer.Utils
                 else if (a.Type == DrawType.Toggle)
                 {
                     if (!Array.Exists(toggleTypes, x => x == f.FieldType))
-                    {
                         throw new Exception($"Type {f.FieldType} can't be drawn as {DrawType.Toggle}");
-                    }
 
                     options.Add(GUILayout.ExpandWidth(false));
                     options.Add(a.Height != 0 ? GUILayout.Height(a.Height) : GUILayout.Height(Scale((int)drawHeight)));
@@ -576,9 +523,7 @@ namespace KeyViewer.Utils
                 else if (a.Type == DrawType.PopupList)
                 {
                     if (!f.FieldType.IsEnum)
-                    {
                         throw new Exception($"Type {f.FieldType} can't be drawn as {DrawType.PopupList}");
-                    }
 
                     options.Add(GUILayout.ExpandWidth(false));
                     options.Add(a.Height != 0 ? GUILayout.Height(a.Height) : GUILayout.Height(Scale((int)drawHeight)));
@@ -611,9 +556,7 @@ namespace KeyViewer.Utils
                 else if (a.Type == DrawType.KeyBinding || a.Type == DrawType.KeyBindingNoMod)
                 {
                     if (f.FieldType != typeof(KeyBinding))
-                    {
                         throw new Exception($"Type {f.FieldType} can't be drawn as {DrawType.KeyBinding}");
-                    }
 
                     if (a.Vertical)
                         GUILayout.BeginVertical();
@@ -646,15 +589,81 @@ namespace KeyViewer.Utils
                         GUILayout.EndHorizontal();
                     }
                 }
+                else context.ResolveDrawer(a.Type)?.Invoke(context, f);
             }
             return changed;
         }
+        private static bool DependsOn(string str, object container, Type type)
+        {
+            var param = str.Split('|');
+            if (param.Length != 2)
+            {
+                throw new Exception($"VisibleOn/InvisibleOn({str}) must have 2 params, name and value, e.g (FieldName|True) or (#PropertyName|True).");
+            }
+
+            var isField = !str.StartsWith("#");
+            if (isField)
+            {
+                var dependsOnField = type.GetField(param[0], BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (dependsOnField == null)
+                    throw new Exception($"Field '{param[0]}' not found. Insert # at the beginning for properties.");
+                if (!dependsOnField.FieldType.IsPrimitive && !dependsOnField.FieldType.IsEnum)
+                    throw new Exception($"Type '{dependsOnField.FieldType.Name}' is not supported.");
+                object dependsOnValue;
+                if (dependsOnField.FieldType.IsEnum)
+                {
+                    dependsOnValue = Enum.Parse(dependsOnField.FieldType, param[1]);
+                    if (dependsOnValue == null)
+                        throw new Exception($"Value '{param[1]}' cannot be parsed.");
+                }
+                else if (dependsOnField.FieldType == typeof(string))
+                {
+                    dependsOnValue = param[1];
+                }
+                else
+                {
+                    dependsOnValue = Convert.ChangeType(param[1], dependsOnField.FieldType);
+                    if (dependsOnValue == null)
+                        throw new Exception($"Value '{param[1]}' cannot be parsed.");
+                }
+                var value = dependsOnField.GetValue(container);
+                return value.GetHashCode() == dependsOnValue.GetHashCode();
+            }
+            else
+            {
+                param[0] = param[0].TrimStart('#');
+                var dependsOnProperty = type.GetProperty(param[0], BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (dependsOnProperty == null)
+                    throw new Exception($"Property '{param[0]}' not found.");
+                if (!dependsOnProperty.PropertyType.IsPrimitive && !dependsOnProperty.PropertyType.IsEnum)
+                    throw new Exception($"Type '{dependsOnProperty.PropertyType.Name}' is not supported.");
+                object dependsOnValue;
+                if (dependsOnProperty.PropertyType.IsEnum)
+                {
+                    dependsOnValue = Enum.Parse(dependsOnProperty.PropertyType, param[1]);
+                    if (dependsOnValue == null)
+                        throw new Exception($"Value '{param[1]}' cannot be parsed.");
+                }
+                else if (dependsOnProperty.PropertyType == typeof(string))
+                {
+                    dependsOnValue = param[1];
+                }
+                else
+                {
+                    dependsOnValue = Convert.ChangeType(param[1], dependsOnProperty.PropertyType);
+                    if (dependsOnValue == null)
+                        throw new Exception($"Value '{param[1]}' cannot be parsed.");
+                }
+                var value = dependsOnProperty.GetValue(container, null);
+                return value.GetHashCode() == dependsOnValue.GetHashCode();
+            }
+        }
+        #endregion
         #region UMM.UI Resolves
         private static FastInvokeHandler BeginTooltip = MethodInvoker.GetHandler(AccessTools.Method(typeof(UI), "BeginTooltip"));
         private static FastInvokeHandler EndTooltip = MethodInvoker.GetHandler(AccessTools.Method(typeof(UI), "EndTooltip"));
         private static FastInvokeHandler BeginHorizontalTooltip = MethodInvoker.GetHandler(AccessTools.Method(typeof(UI), "BeginHorizontalTooltip"));
         private static FastInvokeHandler EndHorizontalTooltip = MethodInvoker.GetHandler(AccessTools.Method(typeof(UI), "EndHorizontalTooltip"));
-        private static FastInvokeHandler DependsOn = MethodInvoker.GetHandler(AccessTools.Method(typeof(UI), "DependsOn"));
         private static AccessTools.FieldRef<UI, float> drawHeight_f = AccessTools.FieldRefAccess<UI, float>(AccessTools.Field(typeof(UI), "drawHeight"));
         private static AccessTools.FieldRef<UI, List<int>> collapsibleStates_f = AccessTools.FieldRefAccess<UI, List<int>>(AccessTools.Field(typeof(UI), "collapsibleStates"));
         private static AccessTools.FieldRef<UI, Type[]> fieldTypes_f = AccessTools.FieldRefAccess<UI, Type[]>(AccessTools.Field(typeof(UI), "fieldTypes"));
