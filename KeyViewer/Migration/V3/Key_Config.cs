@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using DG.Tweening;
 using System.Xml.Serialization;
+using KeyViewer.Types;
 
 namespace KeyViewer.Migration.V3
 {

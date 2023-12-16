@@ -245,17 +245,11 @@
     <Reference Include="UnityEngine.UIElementsModule">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.UIElementsNativeModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UIElementsNativeModule.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UmbraModule">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UmbraModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UNETModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UNETModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityAnalyticsModule">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
@@ -337,18 +331,21 @@
     <Compile Include="Types\RainImageDisplayMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Migration\V3\V3Settings.cs" />
-    <Compile Include="Migration\V3\SpecialKeyType.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Types\Matrix2x3.cs" />
+    <Compile Include="Types\SpecialKeyType.cs" />
     <Compile Include="Unity\UI\UICornersGradient.cs" />
     <Compile Include="Unity\UI\UIGradient.cs" />
     <Compile Include="Unity\UI\UITextCornersGradient.cs" />
     <Compile Include="Unity\UI\UITextGradient.cs" />
     <Compile Include="Utils\GradientUtils.cs" />
+    <Compile Include="Utils\GUIUtils.cs" />
     <Compile Include="Utils\IOUtils.cs" />
     <Compile Include="Utils\MiscUtils.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Core\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\Mods\KeyViewer\\KeyViewer.dll"</PostBuildEvent>

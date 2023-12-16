@@ -23,7 +23,5 @@ namespace KeyViewer.Migration.V3
         public bool EditEachKeys = false;
         public bool ResetWhenStart = false;
         public bool ApplyWithOffset = false;
-        internal bool LimitNotRegisteredKeysOnCLS;
-        internal bool LimitNotRegisteredKeysOnMain;
     }
 }

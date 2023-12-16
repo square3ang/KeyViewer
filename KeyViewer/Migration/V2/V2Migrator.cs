@@ -7,6 +7,7 @@ using System.Linq;
 using TMPro;
 using System;
 using KeyViewer.Migration.V3;
+using KeyViewer.Types;
 
 namespace KeyViewer.Migration.V2
 {

@@ -1,4 +1,4 @@
-﻿namespace KeyViewer.Migration.V3
+﻿namespace KeyViewer.Types
 {
     public enum SpecialKeyType
     {

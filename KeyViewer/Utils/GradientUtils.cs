@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using KeyViewer.Unity;
+using KeyViewer.Types;
 
 namespace KeyViewer.Utils
 {
