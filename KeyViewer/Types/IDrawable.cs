@@ -2,7 +2,6 @@
 {
     public interface IDrawable
     {
-        DrawContext Context { get; }
-        void OnChange();
+        void Draw(IDrawer drawer);
     }
 }

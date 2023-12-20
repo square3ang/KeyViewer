@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -328,8 +330,9 @@
     <Compile Include="Models\KeyConfig.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\RainConfig.cs" />
-    <Compile Include="Types\DrawContext.cs" />
+    <Compile Include="Types\Drawer.cs" />
     <Compile Include="Types\IDrawable.cs" />
+    <Compile Include="Types\IDrawer.cs" />
     <Compile Include="Types\RainImageDisplayMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Migration\V3\V3Settings.cs" />
@@ -345,6 +348,7 @@
     <Compile Include="Utils\GUIUtils.cs" />
     <Compile Include="Utils\IOUtils.cs" />
     <Compile Include="Utils\MiscUtils.cs" />
+    <Compile Include="Utils\StringConverter.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
