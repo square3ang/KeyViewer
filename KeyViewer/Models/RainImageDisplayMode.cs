@@ -1,4 +1,4 @@
-﻿namespace KeyViewer.Types
+﻿namespace KeyViewer.Models
 {
     public enum RainImageDisplayMode
     {

@@ -1,4 +1,4 @@
-﻿namespace KeyViewer.Types
+﻿namespace KeyViewer.Core.Interfaces
 {
     public interface IDrawable
     {

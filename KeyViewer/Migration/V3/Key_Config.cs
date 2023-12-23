@@ -2,7 +2,7 @@
 using UnityEngine;
 using DG.Tweening;
 using System.Xml.Serialization;
-using KeyViewer.Types;
+using KeyViewer.Models;
 
 namespace KeyViewer.Migration.V3
 {

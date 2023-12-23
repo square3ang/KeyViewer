@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using KeyViewer.Types;
+using KeyViewer.Core.Interfaces;
 
 namespace KeyViewer.Utils
 {
@@ -11,10 +11,6 @@ namespace KeyViewer.Utils
             key = kvp.Key;
             value = kvp.Value;
         }
-        public static void Draw(this IDrawable drawable)
-        {
-            if (GUIUtils.Draw(drawable.Context))
-                drawable.OnChange();
-        }
+        public static double Round(this double value, int digits = -1) => digits < 0 ? value : Math.Round(value, digits);
     }
 }

@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace KeyViewer.Types
+namespace KeyViewer.Core.Interfaces
 {
     public interface IDrawer
     {
@@ -19,7 +19,7 @@ namespace KeyViewer.Types
         bool DrawDouble(string label, ref double value);
         bool DrawString(string label, ref string value);
         bool DrawEnum<T>(string label, ref T @enum) where T : Enum;
-        bool DrawArray(string label, object[] array);
+        bool DrawArray(string label, ref object[] array);
         bool DrawToggleGroup(string[] labels, bool[] toggleGroup);
         bool DrawColor(string label, ref Color color);
         bool DrawColor(string label, ref VertexGradient color);

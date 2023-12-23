@@ -1,12 +1,19 @@
-﻿using static UnityModManagerNet.UnityModManager;
+﻿using KeyViewer.Core.Translation;
+using KeyViewer.Models;
+using KeyViewer.Unity;
+using System.Collections.Generic;
+using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
 
 namespace KeyViewer
 {
     public static class Main
     {
+        public static Language Lang { get; private set; }
         public static ModEntry Mod { get; private set; }
         public static ModLogger Logger { get; private set; }
+        public static Settings Settings { get; private set; }
+        public static Dictionary<string, KeyManager> Managers { get; private set; }
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
@@ -22,7 +29,7 @@ namespace KeyViewer
         {
             if (toggle)
             {
-
+                
             }
             else
             {

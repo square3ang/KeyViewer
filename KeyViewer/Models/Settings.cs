@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace KeyViewer.Models
@@ -10,7 +6,6 @@ namespace KeyViewer.Models
     public class Settings
     {
         public SystemLanguage Language = SystemLanguage.English;
-        public Dictionary<string, Profile> Profiles = new Dictionary<string, Profile>() { { "Default", new Profile() } };
-        public string CurrentProfile = "Default";
+        public List<string> ActiveProfiles = new List<string>() { "Default.json" };
     }
 }

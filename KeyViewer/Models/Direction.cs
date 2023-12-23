@@ -1,4 +1,4 @@
-﻿namespace KeyViewer.Migration.V3
+﻿namespace KeyViewer.Models
 {
     public enum Direction
     {

@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using KeyViewer.Utils;
-using KeyViewer.Types;
+using KeyViewer.Models;
 
-namespace KeyViewer.Unity
+namespace KeyViewer.Unity.UI
 {
     public class UITextCornersGradient : BaseMeshEffect
     {

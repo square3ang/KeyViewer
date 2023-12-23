@@ -7,7 +7,8 @@ using System.Linq;
 using TMPro;
 using System;
 using KeyViewer.Migration.V3;
-using KeyViewer.Types;
+using KeyViewer.Models;
+using Profile = KeyViewer.Migration.V3.Profile;
 
 namespace KeyViewer.Migration.V2
 {

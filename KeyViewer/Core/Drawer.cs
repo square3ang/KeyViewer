@@ -1,20 +1,35 @@
 ﻿using KeyViewer.Utils;
 using System;
-using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
-using static OptionsPanelsCLS;
+using KeyViewer.Core.Interfaces;
+using System.Linq;
 
-namespace KeyViewer.Types
+namespace KeyViewer.Core
 {
     public class Drawer : IDrawer
     {
         public static Drawer Instance { get; private set; } = new Drawer();
         Drawer() => This = this;
-        IDrawer This;
-        bool IDrawer.DrawArray(string label, object[] array)
+        readonly IDrawer This;
+        bool IDrawer.DrawArray(string label, ref object[] array)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            GUILayout.Label(label);
+            GUILayout.BeginVertical();
+
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("+"))
+                Array.Resize(ref array, array.Length + 1);
+            if (array.Length > 0 && GUILayout.Button("-"))
+                Array.Resize(ref array, array.Length - 1);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            for (int i = 0; i < array.Length; i++)
+                result |= This.DrawObject($"{i}: ", ref array[i]);
+            GUILayout.EndVertical();
+            return result;
         }
         bool IDrawer.DrawBool(string label, ref bool value)
         {
@@ -114,10 +129,21 @@ namespace KeyViewer.Types
                 return;
             }
             Type t = value.GetType();
-            if (t.IsPrimitive) return;
+            if (!t.IsPrimitive && t != typeof(string)) return;
             var fields = t.GetFields();
-
+            foreach (var field in fields)
+            {
+                var fValue = field.GetValue(value);
+                if (This.DrawObject(field.Name, ref fValue))
+                    field.SetValue(value, fValue);
+            }
             var props = t.GetProperties();
+            foreach (var prop in props.Where(p => p.CanRead && p.CanWrite))
+            {
+                var pValue = prop.GetValue(value);
+                if (This.DrawObject(prop.Name, ref pValue))
+                    prop.SetValue(value, pValue);
+            }
         }
         bool IDrawer.DrawObject(string label, ref object obj)
         {
@@ -172,6 +198,9 @@ namespace KeyViewer.Types
                     result = This.DrawString(label, ref str);
                     obj = str;
                     break;
+                default:
+                    GUILayout.Label($"{label}{obj}");
+                    break;
             }
             return result;
         }
@@ -203,7 +232,14 @@ namespace KeyViewer.Types
         {
             bool result = false;
             for (int i = 0; i < labels.Length; i++)
-                result |= This.DrawBool(labels[i], ref toggleGroup[i]);
+                if (This.DrawBool(labels[i], ref toggleGroup[i]))
+                {
+                    result = true;
+                    for (int j = 0; j < toggleGroup.Length; j++)
+                        if (j == i) continue;
+                        else toggleGroup[j] = false;
+                    break;
+                }
             return result;
         }
         bool IDrawer.DrawUInt16(string label, ref ushort value)
