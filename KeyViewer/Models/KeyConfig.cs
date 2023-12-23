@@ -13,19 +13,19 @@ namespace KeyViewer.Models
         public PressRelease<string> Text = new PressRelease<string>(null);
 
         public PressRelease<float> TextSize = 75;
-        public PressRelease<GColor> TextColor = new GColor(Color.white);
+        public PressRelease<GColor> TextColor = new PressRelease<GColor>(Color.black, Color.white);
         public PressRelease<Vector2> TextOffset = Vector2.zero;
         public bool ChangeTextColorWithJudge = false;
         public Judge<GColor> TextJudgeColors = null;
 
         public PressRelease<float> CountTextSize = 50;
-        public PressRelease<GColor> CountTextColor = new GColor(Color.white);
+        public PressRelease<GColor> CountTextColor = new PressRelease<GColor>(Color.black, Color.white);
         public PressRelease<Vector2> CountTextOffset = Vector2.zero;
         public bool ChangeCountTextColorWithJudge = false;
         public Judge<GColor> CountTextJudgeColors = null;
 
         public string Background = null;
-        public PressRelease<GColor> BackgroundColor = new GColor(Color.white);
+        public PressRelease<GColor> BackgroundColor = new PressRelease<GColor>(Color.white, Color.black);
         public bool ChangeBackgroundColorWithJudge = false;
         public Judge<GColor> BackgroundJudgeColors = null;
 

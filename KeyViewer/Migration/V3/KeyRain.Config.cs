@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using UnityEngine;
+using KeyViewer.Models;
 
 namespace KeyViewer.Migration.V3
 {

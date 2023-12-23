@@ -19,10 +19,6 @@ namespace KeyViewer.Views
             ExpandableGUI(() =>
             {
 
-            }, Main.Lang[TranslationKeys.Lorem_Ipsum], )
-            ExpandableGUI(() =>
-            {
-
             }, () =>
             {
 

@@ -8,6 +8,12 @@
         public T Released;
         public PressRelease() { }
         public PressRelease(T value) => Set(value);
+        public PressRelease(T pressed, T released)
+        {
+            Pressed = pressed;
+            Released = released;
+            Enabled = true;
+        }
         public T Get(bool pressed = true) => Enabled ? (pressed ? Pressed : Released) : Pressed;
         public void Set(T value)
         {

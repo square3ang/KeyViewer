@@ -309,6 +309,7 @@
     <Compile Include="API\CommentAttribute.cs" />
     <Compile Include="API\InputAPI.cs" />
     <Compile Include="Core\Constants.cs" />
+    <Compile Include="Core\KPSCalculator.cs" />
     <Compile Include="Core\ModelDrawable.cs" />
     <Compile Include="Core\TextReplacing\Replacer.cs" />
     <Compile Include="Core\TextReplacing\Tag.cs" />
