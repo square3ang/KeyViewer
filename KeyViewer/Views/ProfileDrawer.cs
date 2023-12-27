@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace KeyViewer.Views
 {
-    public class ProfileDrawer : ModelDrawable
+    public class ProfileDrawer : ModelDrawable<Profile>
     {
         public Profile profile;
         public List<KeyConfigDrawer> configs;

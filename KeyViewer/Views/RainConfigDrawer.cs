@@ -6,7 +6,7 @@ using KeyViewer.Core.Translation;
 
 namespace KeyViewer.Views
 {
-    public class RainConfigDrawer : ModelDrawable
+    public class RainConfigDrawer : ModelDrawable<RainConfig>
     {
         public RainConfig config;
         public RainConfigDrawer(KeyManager manager, RainConfig config) : base(manager)

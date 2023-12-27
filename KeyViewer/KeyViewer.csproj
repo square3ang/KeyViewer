@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -309,6 +309,8 @@
     <Compile Include="API\CommentAttribute.cs" />
     <Compile Include="API\InputAPI.cs" />
     <Compile Include="Core\Constants.cs" />
+    <Compile Include="Core\GUIManager.cs" />
+    <Compile Include="Core\Interfaces\IModel.cs" />
     <Compile Include="Core\KPSCalculator.cs" />
     <Compile Include="Core\ModelDrawable.cs" />
     <Compile Include="Core\TextReplacing\Replacer.cs" />

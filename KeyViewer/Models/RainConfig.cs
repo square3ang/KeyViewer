@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using KeyViewer.Core.Interfaces;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace KeyViewer.Models
 {
-    public class RainConfig
+    public class RainConfig : IModel
     {
         public PressRelease<Vector2> Offset = Vector2.zero;
         public PressRelease<float> Speed = 400f;

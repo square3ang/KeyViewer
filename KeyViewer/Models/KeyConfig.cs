@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using DG.Tweening;
+using KeyViewer.Core.Interfaces;
 
 namespace KeyViewer.Models
 {
-    public class KeyConfig
+    public class KeyConfig : IModel
     {
         public uint Count = 0;
         public KeyCode Code = KeyCode.None;

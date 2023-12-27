@@ -5,7 +5,7 @@ using KeyViewer.Unity;
 
 namespace KeyViewer.Views
 {
-    public class KeyConfigDrawer : ModelDrawable
+    public class KeyConfigDrawer : ModelDrawable<KeyConfig>
     {
         public KeyConfig config;
         public KeyConfigDrawer(KeyManager manager, KeyConfig config) : base(manager)

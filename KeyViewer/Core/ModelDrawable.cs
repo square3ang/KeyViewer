@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace KeyViewer.Core
 {
-    public abstract class ModelDrawable : IDrawable
+    public abstract class ModelDrawable<T> : IDrawable where T : IModel
     {
         public KeyManager manager;
         public ModelDrawable(KeyManager manager)
@@ -37,8 +37,9 @@ namespace KeyViewer.Core
             GUILayout.BeginHorizontal();
             bool newIsExpanded = GUILayout.Toggle(
             expanded,
-            //enabled ? (expanded ? "◢" : "▶") : "",
-            expanded ? "◢" : "▶",
+            disGui == null ? 
+                (enabled ? (expanded ? "◢" : "▶") : "") : 
+                (expanded ? "◢" : "▶"),
             new GUIStyle()
                 {
                     fixedWidth = 10,

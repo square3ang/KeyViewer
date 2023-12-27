@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using KeyViewer.Core.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System;
 
 namespace KeyViewer.Models
 {
-    public class Profile
+    public class Profile : IModel
     {
         public List<KeyConfig> Keys = new List<KeyConfig>();
         public bool MakeBarSpecialKeys = true;
