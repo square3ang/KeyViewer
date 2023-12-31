@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using KeyViewer.Utils;
-using KeyViewer.Models;
 
 namespace KeyViewer.Unity.UI
 {

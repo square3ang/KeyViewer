@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine.Networking;
 using KeyViewer.Unity;
+using UnityEngine;
 
 namespace KeyViewer.Core.Translation
 {
@@ -11,8 +12,8 @@ namespace KeyViewer.Core.Translation
     {
         public static string GetUrl(int gid) =>
             $"https://docs.google.com/spreadsheets/d/1wG6wB3q0q1E647mhECPSl5Sd_joqlsYOmkoPyDMs-Rw/edit#gid={gid}";
-        public static readonly Language Korean = new Language(GID.KOREAN);
-        public static readonly Language English = new Language(GID.ENGLISH);
+        private static Language Korean;
+        private static Language English;
         public readonly GID gid;
         public readonly string url;
         public readonly Dictionary<string, string> dict;
@@ -28,6 +29,22 @@ namespace KeyViewer.Core.Translation
         {
             get => dict.TryGetValue(key, out string value) ? value : key;
             set => dict[key] = value;
+        }
+        public static Language GetLanguage(SystemLanguage lang)
+        {
+            switch (lang)
+            {
+                case SystemLanguage.English:
+                    return English ??= new Language(GID.ENGLISH);
+                case SystemLanguage.Korean:
+                    return Korean ??= new Language(GID.KOREAN);
+                default: return English;
+            }
+        }
+        public static void Release()
+        {
+            Korean = null;
+            English = null;
         }
         IEnumerator Download()
         {

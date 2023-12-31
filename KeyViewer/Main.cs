@@ -1,7 +1,13 @@
-﻿using KeyViewer.Core.Translation;
-using KeyViewer.Models;
+﻿using KeyViewer.Models;
+using KeyViewer.Views;
+using KeyViewer.Controllers;
+using KeyViewer.Core;
+using KeyViewer.Core.TextReplacing;
+using KeyViewer.Core.Translation;
 using KeyViewer.Unity;
 using System.Collections.Generic;
+using System.IO;
+using JSON;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
 
@@ -29,11 +35,22 @@ namespace KeyViewer
         {
             if (toggle)
             {
-                
+                Tag.InitializeWrapperAssembly();
+                FontManager.Initialize();
+                AssetManager.Initialize();
+                Settings = new Settings();
+                if (File.Exists(Constants.SettingsPath))
+                    Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
+                Lang = Language.GetLanguage(Settings.Language);
+                GUIController.Push(Lang[TranslationKeys.Lorem_Ipsum], new SettingsDrawer(Settings));
             }
             else
             {
-
+                // TODO: Save Active Profiles And Others...
+                Language.Release();
+                AssetManager.Release();
+                FontManager.Release();
+                Tag.DisposeWrapperAssembly();
             }
             return true;
         }
@@ -43,7 +60,7 @@ namespace KeyViewer
         }
         public static void OnGUI(ModEntry modEntry)
         {
-
+            GUIController.Draw();
         }
         public static void OnSaveGUI(ModEntry modEntry)
         {

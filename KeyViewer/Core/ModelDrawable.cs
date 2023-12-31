@@ -7,11 +7,6 @@ namespace KeyViewer.Core
 {
     public abstract class ModelDrawable<T> : IDrawable where T : IModel
     {
-        public KeyManager manager;
-        public ModelDrawable(KeyManager manager)
-        {
-            this.manager = manager;
-        }
         public abstract void Draw(IDrawer drawer);
         protected static void BeginIndent()
         {

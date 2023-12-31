@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using KeyViewer.Models;
+﻿using UnityEngine;
+using KeyViewer.Unity;
 
 namespace KeyViewer.Utils
 {

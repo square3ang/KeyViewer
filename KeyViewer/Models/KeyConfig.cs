@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using DG.Tweening;
 using KeyViewer.Core.Interfaces;
+using JSON;
+using KeyViewer.Utils;
 
 namespace KeyViewer.Models
 {
@@ -14,26 +16,26 @@ namespace KeyViewer.Models
         public PressRelease<string> Text = new PressRelease<string>(null);
 
         public PressRelease<float> TextSize = 75;
-        public PressRelease<GColor> TextColor = new PressRelease<GColor>(Color.black, Color.white);
+        public PressReleaseM<GColor> TextColor = new PressReleaseM<GColor>(Color.black, Color.white);
         public PressRelease<Vector2> TextOffset = Vector2.zero;
         public bool ChangeTextColorWithJudge = false;
-        public Judge<GColor> TextJudgeColors = null;
+        public JudgeM<GColor> TextJudgeColors = null;
 
         public PressRelease<float> CountTextSize = 50;
-        public PressRelease<GColor> CountTextColor = new PressRelease<GColor>(Color.black, Color.white);
+        public PressReleaseM<GColor> CountTextColor = new PressReleaseM<GColor>(Color.black, Color.white);
         public PressRelease<Vector2> CountTextOffset = Vector2.zero;
         public bool ChangeCountTextColorWithJudge = false;
-        public Judge<GColor> CountTextJudgeColors = null;
+        public JudgeM<GColor> CountTextJudgeColors = null;
 
-        public string Background = null;
-        public PressRelease<GColor> BackgroundColor = new PressRelease<GColor>(Color.white, Color.black);
+        public PressRelease<string> Background = new PressRelease<string>(null);
+        public PressReleaseM<GColor> BackgroundColor = new PressReleaseM<GColor>(Color.white, Color.black);
         public bool ChangeBackgroundColorWithJudge = false;
-        public Judge<GColor> BackgroundJudgeColors = null;
+        public JudgeM<GColor> BackgroundJudgeColors = null;
 
         public PressRelease<Vector2> Offset = Vector2.zero;
         public PressRelease<Vector2> Scale = Vector2.one;
 
-        public PressRelease<EaseConfig> ScaleEasing = new EaseConfig(Ease.OutExpo, 0.1f, 0.9f);
+        public PressReleaseM<EaseConfig> ScaleEasing = new EaseConfig(Ease.OutExpo, 0.1f, 0.9f);
 
         public bool RainEnabled = false;
         public RainConfig Rain = new RainConfig();
@@ -56,7 +58,7 @@ namespace KeyViewer.Models
             newConfig.ChangeCountTextColorWithJudge = ChangeCountTextColorWithJudge;
             newConfig.CountTextJudgeColors = CountTextJudgeColors?.Copy();
 
-            newConfig.Background = Background;
+            newConfig.Background = Background.Copy();
             newConfig.BackgroundColor = BackgroundColor.Copy();
             newConfig.ChangeBackgroundColorWithJudge = ChangeBackgroundColorWithJudge;
             newConfig.BackgroundJudgeColors = BackgroundJudgeColors?.Copy();
@@ -70,6 +72,68 @@ namespace KeyViewer.Models
             newConfig.Rain = Rain.Copy();
 
             return newConfig;
+        }
+        public JsonNode Serialize()
+        {
+            var node = JsonNode.Empty;
+
+            node[nameof(Text)] = Text.Serialize();
+
+            node[nameof(TextSize)] = TextSize.Serialize();
+            node[nameof(TextColor)] = TextColor.Serialize();
+            node[nameof(TextOffset)] = TextOffset.Serialize();
+            node[nameof(ChangeTextColorWithJudge)] = ChangeTextColorWithJudge;
+            node[nameof(TextJudgeColors)] = TextJudgeColors?.Serialize();
+
+            node[nameof(CountTextSize)] = CountTextSize.Serialize();
+            node[nameof(CountTextColor)] = CountTextColor.Serialize();
+            node[nameof(CountTextOffset)] = CountTextOffset.Serialize();
+            node[nameof(ChangeCountTextColorWithJudge)] = ChangeCountTextColorWithJudge;
+            node[nameof(CountTextJudgeColors)] = CountTextJudgeColors?.Serialize();
+
+            node[nameof(Background)] = Background.Serialize();
+            node[nameof(BackgroundColor)] = BackgroundColor.Serialize();
+            node[nameof(ChangeBackgroundColorWithJudge)] = ChangeBackgroundColorWithJudge;
+            node[nameof(BackgroundJudgeColors)] = BackgroundJudgeColors?.Serialize();
+
+            node[nameof(Offset)] = Offset.Serialize();
+            node[nameof(Scale)] = Scale.Serialize();
+
+            node[nameof(ScaleEasing)] = ScaleEasing.Serialize();
+
+            node[nameof(RainEnabled)] = RainEnabled;
+            node[nameof(Rain)] = Rain.Serialize();
+
+            return node;
+        }
+        public void Deserialize(JsonNode node)
+        {
+            Text = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Text)]);
+
+            TextSize = ModelUtils.Unbox<PressRelease<float>>(node[nameof(TextSize)]);
+            TextColor = ModelUtils.Unbox<PressReleaseM<GColor>>(node[nameof(TextColor)]);
+            TextOffset = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(TextOffset)]);
+            ChangeTextColorWithJudge = node[nameof(ChangeTextColorWithJudge)];
+            TextJudgeColors = ModelUtils.Unbox<JudgeM<GColor>>(node[nameof(TextJudgeColors)]);
+
+            CountTextSize = ModelUtils.Unbox<PressRelease<float>>(node[nameof(CountTextSize)]);
+            CountTextColor = ModelUtils.Unbox<PressReleaseM<GColor>>(node[nameof(CountTextColor)]);
+            CountTextOffset = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(CountTextOffset)]);
+            ChangeCountTextColorWithJudge = node[nameof(ChangeCountTextColorWithJudge)];
+            CountTextJudgeColors = ModelUtils.Unbox<JudgeM<GColor>>(node[nameof(CountTextJudgeColors)]);
+
+            Background = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Background)]);
+            BackgroundColor = ModelUtils.Unbox<PressReleaseM<GColor>>(node[nameof(BackgroundColor)]);
+            ChangeBackgroundColorWithJudge = node[nameof(ChangeBackgroundColorWithJudge)];
+            BackgroundJudgeColors = ModelUtils.Unbox<JudgeM<GColor>>(node[nameof(BackgroundJudgeColors)]);
+
+            Offset = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(Offset)]);
+            Scale = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(Scale)]);
+
+            ScaleEasing = ModelUtils.Unbox<PressReleaseM<EaseConfig>>(node[nameof(ScaleEasing)]);
+
+            RainEnabled = node[nameof(RainEnabled)];
+            Rain = ModelUtils.Unbox<RainConfig>(node[nameof(Rain)]);
         }
     }
 }

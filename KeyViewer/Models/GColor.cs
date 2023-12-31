@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using JSON;
+using KeyViewer.Core.Interfaces;
 using TMPro;
 using UnityEngine;
 
 namespace KeyViewer.Models
 {
-    public struct GColor
+    public struct GColor : IModel
     {
         private VertexGradient _color;
         private string _topLeftHex;
@@ -17,22 +18,14 @@ namespace KeyViewer.Models
         public Color bottomLeft { get => _color.bottomLeft; set => SetBottomLeftColor(value); }
         public Color bottomRight { get => _color.bottomRight; set => SetBottomRightColor(value); }
 
-        [JsonIgnore]
         public string topLeftHex { get => _topLeftHex; set => SetTopLeftHex(value); }
-        [JsonIgnore]
         public string topRightHex { get => _topRightHex; set => SetTopRightHex(value); }
-        [JsonIgnore]
         public string bottomLeftHex { get => _bottomLeftHex; set => SetBottomLeftHex(value); }
-        [JsonIgnore]
         public string bottomRightHex { get => _bottomRightHex; set => SetBottomRightHex(value); }
 
-        [JsonIgnore]
         public float r { get => _color.topLeft.r; set => SetTopLeftColor(_color.topLeft with { r = value }); }
-        [JsonIgnore]
         public float g { get => _color.topLeft.g; set => SetTopLeftColor(_color.topLeft with { g = value }); }
-        [JsonIgnore]
         public float b { get => _color.topLeft.b; set => SetTopLeftColor(_color.topLeft with { b = value }); }
-        [JsonIgnore]
         public float a { get => _color.topLeft.a; set => SetTopLeftColor(_color.topLeft with { a = value }); }
 
         public GColor(Color color)
@@ -51,6 +44,23 @@ namespace KeyViewer.Models
             _topRightHex = ColorUtility.ToHtmlStringRGBA(color.topRight);
             _bottomLeftHex = ColorUtility.ToHtmlStringRGBA(color.bottomLeft);
             _bottomRightHex = ColorUtility.ToHtmlStringRGBA(color.bottomRight);
+        }
+
+        public JsonNode Serialize()
+        {
+            JsonNode node = JsonNode.Empty;
+            node[nameof(topLeft)] = topLeft;
+            node[nameof(topRight)] = topRight;
+            node[nameof(bottomLeft)] = bottomLeft;
+            node[nameof(bottomRight)] = bottomRight;
+            return node;
+        }
+        public void Deserialize(JsonNode node) 
+        {
+            topLeft = node[nameof(topLeft)];
+            topRight = node[nameof(topRight)];
+            bottomLeft = node[nameof(bottomLeft)];
+            bottomRight = node[nameof(bottomRight)];
         }
 
         private void SetTopLeftColor(Color color)

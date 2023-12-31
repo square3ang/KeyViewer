@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.TextCore.LowLevel;
 using System.Collections.ObjectModel;
 
-namespace KeyViewer
+namespace KeyViewer.Core
 {
     public static class FontManager
     {
@@ -25,25 +25,6 @@ namespace KeyViewer
         public static FontData GetFont(string name) => TryGetFont(name, out FontData font) ? font : defaultFont;
         public static bool TryGetFont(string name, out FontData font)
         {
-            if (!initialized)
-            {
-                DefaultFont = RDString.GetFontDataForLanguage(SystemLanguage.English).font;
-                DefaultTMPFont = TMP_FontAsset.CreateFontAsset(DefaultFont, 100, 10, GlyphRenderMode.SDFAA, 1024, 1024);
-                FallbackFontDatas = RDString.AvailableLanguages.Select(RDString.GetFontDataForLanguage).ToList().AsReadOnly();
-                FallbackFonts = FallbackFontDatas.Select(f => f.font).ToList().AsReadOnly();
-                FallbackTMPFonts = FallbackFontDatas.Select(f => f.fontTMP).ToList().AsReadOnly();
-                DefaultTMPFont.fallbackFontAssetTable = FallbackTMPFonts.ToList();
-                defaultFont = RDString.fontData;
-                defaultFont.lineSpacing = 1f;
-                defaultFont.lineSpacingTMP = 1;
-                defaultFont.fontScale = 0.5f;
-                defaultFont.font = DefaultFont;
-                defaultFont.fontTMP = DefaultTMPFont;
-                OSFonts = Font.GetOSInstalledFontNames();
-                OSFontPaths = Font.GetPathsToOSFonts();
-                Fonts = new Dictionary<string, FontData>();
-                initialized = true;
-            }
             if (string.IsNullOrEmpty(name))
             {
                 font = defaultFont;
@@ -94,6 +75,40 @@ namespace KeyViewer
                 font = defaultFont;
                 return false;
             }
+        }
+        public static void Initialize()
+        {
+            if (!initialized)
+            {
+                DefaultFont = RDString.GetFontDataForLanguage(SystemLanguage.English).font;
+                DefaultTMPFont = TMP_FontAsset.CreateFontAsset(DefaultFont, 100, 10, GlyphRenderMode.SDFAA, 1024, 1024);
+                FallbackFontDatas = RDString.AvailableLanguages.Select(RDString.GetFontDataForLanguage).ToList().AsReadOnly();
+                FallbackFonts = FallbackFontDatas.Select(f => f.font).ToList().AsReadOnly();
+                FallbackTMPFonts = FallbackFontDatas.Select(f => f.fontTMP).ToList().AsReadOnly();
+                DefaultTMPFont.fallbackFontAssetTable = FallbackTMPFonts.ToList();
+                defaultFont = RDString.fontData;
+                defaultFont.lineSpacing = 1f;
+                defaultFont.lineSpacingTMP = 1;
+                defaultFont.fontScale = 0.5f;
+                defaultFont.font = DefaultFont;
+                defaultFont.fontTMP = DefaultTMPFont;
+                OSFonts = Font.GetOSInstalledFontNames();
+                OSFontPaths = Font.GetPathsToOSFonts();
+                Fonts = new Dictionary<string, FontData>();
+                initialized = true;
+            }
+        }
+        public static void Release()
+        {
+            DefaultFont = null;
+            DefaultTMPFont = null;
+            FallbackFontDatas = null;
+            FallbackFonts = null;
+            defaultFont = default;
+            OSFonts = null;
+            OSFontPaths = null;
+            Fonts = null;
+            initialized = false;
         }
     }
 }

@@ -6,54 +6,66 @@ using System.Diagnostics;
 
 namespace KeyViewer.Core
 {
-    public static class KPSCalculator
+    public class KPSCalculator
     {
-        static Profile Profile;
-        static Thread CalculatingThread;
-        static int PressCount;
-        static CancellationTokenSource cts;
-        static CancellationToken token;
-        public static int Kps;
-        public static int Max;
-        public static double Average;
-        public static void Start(Profile profile)
+        public bool Running { get; private set; }
+        public int Kps;
+        public int Max;
+        public double Average;
+
+        private int pressCount;
+        private Profile profile;
+        private CancellationTokenSource cts;
+        private CancellationToken token;
+        private Thread current;
+
+        public KPSCalculator(Profile profile)
+        {
+            this.profile = profile;
+        }
+        public void Start()
+        {
+            cts = new CancellationTokenSource();
+            token = cts.Token;
+            current = GetCalculateThread();
+            current.Start();
+        }
+        public void Stop()
         {
             try
             {
-                cts?.Cancel();
-                cts = new CancellationTokenSource();
-                token = cts.Token;
-                Profile = profile;
-                Kps = Max = 0;
-                Average = 0;
-                if (CalculatingThread == null)
-                    (CalculatingThread = GetCalculateThread()).Start();
+                cts.Cancel();
+                current.Abort();
             }
             catch { }
+            finally
+            {
+                current = null;
+                cts = null;
+            }
         }
-        public static void Stop()
+        public void Press()
         {
-            try { cts?.Cancel(); CalculatingThread.Abort(); }
-            catch { }
-            finally { CalculatingThread = null; }
+            pressCount++;
         }
-        public static void Press() => PressCount++;
-        static Thread GetCalculateThread()
+
+        Thread GetCalculateThread()
         {
             return new Thread(() =>
             {
                 try
                 {
+                    Running = true;
                     LinkedList<int> timePoints = new LinkedList<int>();
                     int prev = 0, total = 0;
                     long n = 0;
                     Stopwatch watch = Stopwatch.StartNew();
                     while (!token.IsCancellationRequested)
                     {
-                        if (watch.ElapsedMilliseconds >= Profile.KPSUpdateRate)
+                        if (watch.ElapsedMilliseconds >= profile.KPSUpdateRate)
                         {
-                            int temp = PressCount;
-                            PressCount = 0;
+                            int temp = pressCount;
+                            pressCount = 0;
                             int kps = temp;
                             foreach (int i in timePoints)
                                 kps += i;
@@ -66,15 +78,16 @@ namespace KeyViewer.Core
                             }
                             prev = kps;
                             timePoints.AddFirst(temp);
-                            if (timePoints.Count >= 1000 / Profile.KPSUpdateRate)
+                            if (timePoints.Count >= 1000 / profile.KPSUpdateRate)
                                 timePoints.RemoveLast();
                             Kps = kps;
                             watch.Restart();
-                            Thread.Sleep(Math.Max(Profile.KPSUpdateRate - 1, 0));
+                            Thread.Sleep(Math.Max(profile.KPSUpdateRate - 1, 0));
                         }
                     }
                 }
-                finally { CalculatingThread = null; }
+                catch { }
+                finally { Running = false; }
             });
         }
     }

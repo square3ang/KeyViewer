@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace KeyViewer.Models
+namespace KeyViewer.Unity
 {
     public struct Matrix2x3
     {

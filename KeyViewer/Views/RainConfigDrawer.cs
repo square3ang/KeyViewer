@@ -8,21 +8,16 @@ namespace KeyViewer.Views
 {
     public class RainConfigDrawer : ModelDrawable<RainConfig>
     {
+        public KeyManager manager;
         public RainConfig config;
-        public RainConfigDrawer(KeyManager manager, RainConfig config) : base(manager)
+        public RainConfigDrawer(KeyManager manager, RainConfig config)
         {
+            this.manager = manager;
             this.config = config;
         }
         public override void Draw(IDrawer drawer)
         {
-            var offset = config.Offset;
-            ExpandableGUI(() =>
-            {
 
-            }, () =>
-            {
-
-            }, Main.Lang[TranslationKeys.SeparatePressedReleased], ref offset.Enabled, ref offset.Expanded);
         }
     }
 }

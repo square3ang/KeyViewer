@@ -10,10 +10,12 @@ namespace KeyViewer.Views
 {
     public class ProfileDrawer : ModelDrawable<Profile>
     {
+        public KeyManager manager;
         public Profile profile;
         public List<KeyConfigDrawer> configs;
-        public ProfileDrawer(KeyManager manager, Profile profile) : base(manager)
+        public ProfileDrawer(KeyManager manager, Profile profile)
         {
+            this.manager = manager;
             this.profile = profile;
             configs = profile.Keys.Select(k => new KeyConfigDrawer(manager, k)).ToList();
         }
@@ -27,7 +29,6 @@ namespace KeyViewer.Views
             drawer.DrawBool(Main.Lang[TranslationKeys.Lorem_Ipsum], ref profile.ResetOnStart);
             drawer.DrawInt32(Main.Lang[TranslationKeys.Lorem_Ipsum], ref profile.KPSUpdateRate);
             drawer.DrawSingle(Main.Lang[TranslationKeys.Lorem_Ipsum], ref profile.Size);
-
         }
     }
 }
