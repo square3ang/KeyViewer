@@ -8,11 +8,9 @@ namespace KeyViewer.Views
     public class KeyConfigDrawer : ModelDrawable<KeyConfig>
     {
         public KeyManager manager;
-        public KeyConfig config;
-        public KeyConfigDrawer(KeyManager manager, KeyConfig config)
+        public KeyConfigDrawer(KeyManager manager, KeyConfig config) : base(config)
         {
             this.manager = manager;
-            this.config = config;
         }
         public override void Draw(IDrawer drawer)
         {

@@ -9,18 +9,18 @@ namespace KeyViewer.Models
     public class Settings : IModel
     {
         public SystemLanguage Language = SystemLanguage.English;
-        public List<string> ActiveProfiles = new List<string>() { "Default.json" };
+        public List<ActiveProfile> ActiveProfiles = new List<ActiveProfile>() { new ActiveProfile("Default", true) };
         public JsonNode Serialize()
         {
             var node = JsonNode.Empty;
             node[nameof(Language)] = Language.ToString();
-            node[nameof(ActiveProfiles)] = ActiveProfiles;
+            node[nameof(ActiveProfiles)] = ModelUtils.WrapList(ActiveProfiles);
             return node;
         }
         public void Deserialize(JsonNode node)
         {
             Language = EnumHelper<SystemLanguage>.Parse(node[nameof(Language)]);
-            ActiveProfiles = node[nameof(ActiveProfiles)].AsStringList;
+            ActiveProfiles = ModelUtils.UnwrapList<ActiveProfile>(node[nameof(ActiveProfiles)].AsArray);
         }
     }
 }

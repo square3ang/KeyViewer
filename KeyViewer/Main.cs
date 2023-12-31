@@ -1,13 +1,16 @@
-﻿using KeyViewer.Models;
-using KeyViewer.Views;
+﻿using JSON;
 using KeyViewer.Controllers;
 using KeyViewer.Core;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Core.Translation;
+using KeyViewer.Models;
 using KeyViewer.Unity;
+using KeyViewer.Utils;
+using KeyViewer.Views;
 using System.Collections.Generic;
 using System.IO;
-using JSON;
+using System.Linq;
+using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
 
@@ -41,6 +44,19 @@ namespace KeyViewer
                 Settings = new Settings();
                 if (File.Exists(Constants.SettingsPath))
                     Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
+                if (!Settings.ActiveProfiles.Any())
+                {
+                    File.WriteAllText(Path.Combine(Mod.Path, "Default"), 
+                        new Profile().Serialize().ToString(4));
+                    Settings.ActiveProfiles.Add(new ActiveProfile("Default", true));
+                }
+                List<string> notExistProfiles = new List<string>();
+                foreach (var profile in Settings.ActiveProfiles)
+                {
+                    if (!AddManager(profile))
+                        notExistProfiles.Add(profile.Name);
+                }
+                Settings.ActiveProfiles.RemoveAll(p => notExistProfiles.Contains(p.Name));
                 Lang = Language.GetLanguage(Settings.Language);
                 GUIController.Push(Lang[TranslationKeys.Lorem_Ipsum], new SettingsDrawer(Settings));
             }
@@ -51,6 +67,7 @@ namespace KeyViewer
                 AssetManager.Release();
                 FontManager.Release();
                 Tag.DisposeWrapperAssembly();
+                Resources.UnloadUnusedAssets();
             }
             return true;
         }
@@ -73,6 +90,30 @@ namespace KeyViewer
         public static void OnHideGUI(ModEntry modEntry)
         {
 
+        }
+
+        public static bool AddManager(ActiveProfile profile)
+        {
+            var profilePath = Path.Combine(Mod.Path, $"{profile.Name}.json");
+            if (File.Exists(profilePath))
+            {
+                if (profile.Active)
+                {
+                    var profileNode = JsonNode.Parse(File.ReadAllText(profilePath));
+                    var p = ModelUtils.Unbox<Profile>(profileNode);
+                    Managers[profile.Name] = KeyManager.CreateManager(profile.Name, p);
+                }
+                return true;
+            }
+            return false;
+        }
+        public static void RemoveManager(ActiveProfile profile)
+        {
+            if (Managers.TryGetValue(profile.Name, out var manager))
+            {
+                Object.Destroy(manager);
+                Managers.Remove(profile.Name);   
+            }
         }
     }
 }

@@ -7,7 +7,16 @@ namespace KeyViewer.Core
 {
     public abstract class ModelDrawable<T> : IDrawable where T : IModel
     {
+        public T model;
+        public ModelDrawable(T model)
+        {
+            this.model = model;
+        }
         public abstract void Draw(IDrawer drawer);
+        protected static string L(string translationKey)
+        {
+            return Main.Lang[translationKey];
+        }
         protected static void BeginIndent()
         {
             GUILayout.BeginHorizontal();

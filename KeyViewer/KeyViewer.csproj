@@ -323,6 +323,7 @@
     <Compile Include="Lib\JSON.cs" />
     <Compile Include="Lib\JSON.Unity.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="Models\ActiveProfile.cs" />
     <Compile Include="Models\Direction.cs" />
     <Compile Include="Migration\V3\Group.cs" />
     <Compile Include="Migration\V3\Key_Config.cs" />

@@ -61,13 +61,8 @@ namespace KeyViewer.Models
         }
         public new void Deserialize(JsonNode node)
         {
-            T p = new T();
-            p.Deserialize(node[nameof(Pressed)]);
-            Pressed = p;
-
-            T r = new T();
-            r.Deserialize(node[nameof(Released)]);
-            Released = r;
+            Pressed = ModelUtils.Unbox<T>(node[nameof(Pressed)]);
+            Released = ModelUtils.Unbox<T>(node[nameof(Released)]);
         }
         public new PressReleaseM<T> Copy()
         {

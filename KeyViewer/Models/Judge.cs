@@ -135,45 +135,16 @@ namespace KeyViewer.Models
         }
         public new void Deserialize(JsonNode node)
         {
-            T te = new T();
-            te.Deserialize(node[nameof(TooEarly)]);
-            TooEarly = te;
-
-            T ve = new T();
-            ve.Deserialize(node[nameof(VeryEarly)]);
-            VeryEarly = ve;
-
-            T ep = new T();
-            ep.Deserialize(node[nameof(EarlyPerfect)]);
-            EarlyPerfect = ep;
-
-            T p = new T();
-            p.Deserialize(node[nameof(Perfect)]);
-            Perfect = p;
-
-            T lp = new T();
-            lp.Deserialize(node[nameof(LatePerfect)]);
-            LatePerfect = lp;
-
-            T vl = new T();
-            vl.Deserialize(node[nameof(VeryLate)]);
-            VeryLate = vl;
-
-            T tl = new T();
-            tl.Deserialize(node[nameof(TooLate)]);
-            TooLate = tl;
-
-            T mp = new T();
-            mp.Deserialize(node[nameof(Multipress)]);
-            Multipress = mp;
-
-            T fm = new T();
-            fm.Deserialize(node[nameof(FailMiss)]);
-            FailMiss = fm;
-
-            T fo = new T();
-            fo.Deserialize(node[nameof(FailOverload)]);
-            FailOverload = fo;
+            TooEarly = ModelUtils.Unbox<T>(node[nameof(TooEarly)]);
+            VeryEarly = ModelUtils.Unbox<T>(node[nameof(VeryEarly)]);
+            EarlyPerfect = ModelUtils.Unbox<T>(node[nameof(EarlyPerfect)]);
+            Perfect = ModelUtils.Unbox<T>(node[nameof(Perfect)]);
+            LatePerfect = ModelUtils.Unbox<T>(node[nameof(LatePerfect)]);
+            VeryLate = ModelUtils.Unbox<T>(node[nameof(VeryLate)]);
+            TooLate = ModelUtils.Unbox<T>(node[nameof(TooLate)]);
+            Multipress = ModelUtils.Unbox<T>(node[nameof(Multipress)]);
+            FailMiss = ModelUtils.Unbox<T>(node[nameof(FailMiss)]);
+            FailOverload = ModelUtils.Unbox<T>(node[nameof(FailOverload)]);
         }
         public new JudgeM<T> Copy()
         {
