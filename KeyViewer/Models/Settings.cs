@@ -1,15 +1,14 @@
 ﻿using JSON;
 using KeyViewer.Core.Interfaces;
 using System.Collections.Generic;
-using UnityEngine;
 using KeyViewer.Utils;
 
 namespace KeyViewer.Models
 {
     public class Settings : IModel
     {
-        public SystemLanguage Language = SystemLanguage.English;
-        public List<ActiveProfile> ActiveProfiles = new List<ActiveProfile>() { new ActiveProfile("Default", true) };
+        public KeyViewerLanguage Language = KeyViewerLanguage.English;
+        public List<ActiveProfile> ActiveProfiles = new List<ActiveProfile>();// { new ActiveProfile("Default", true) };
         public JsonNode Serialize()
         {
             var node = JsonNode.Empty;
@@ -19,7 +18,7 @@ namespace KeyViewer.Models
         }
         public void Deserialize(JsonNode node)
         {
-            Language = EnumHelper<SystemLanguage>.Parse(node[nameof(Language)]);
+            Language = EnumHelper<KeyViewerLanguage>.Parse(node[nameof(Language)]);
             ActiveProfiles = ModelUtils.UnwrapList<ActiveProfile>(node[nameof(ActiveProfiles)].AsArray);
         }
     }

@@ -18,7 +18,7 @@ namespace KeyViewer
 {
     public static class Main
     {
-        public static Language Lang { get; private set; }
+        public static Language Lang { get; internal set; }
         public static ModEntry Mod { get; private set; }
         public static ModLogger Logger { get; private set; }
         public static Settings Settings { get; private set; }
@@ -44,9 +44,10 @@ namespace KeyViewer
                 Settings = new Settings();
                 if (File.Exists(Constants.SettingsPath))
                     Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
+                Managers = new Dictionary<string, KeyManager>();
                 if (!Settings.ActiveProfiles.Any())
                 {
-                    File.WriteAllText(Path.Combine(Mod.Path, "Default"), 
+                    File.WriteAllText(Path.Combine(Mod.Path, "Default.json"), 
                         new Profile().Serialize().ToString(4));
                     Settings.ActiveProfiles.Add(new ActiveProfile("Default", true));
                 }
@@ -58,7 +59,7 @@ namespace KeyViewer
                 }
                 Settings.ActiveProfiles.RemoveAll(p => notExistProfiles.Contains(p.Name));
                 Lang = Language.GetLanguage(Settings.Language);
-                GUIController.Push(Lang[TranslationKeys.Lorem_Ipsum], new SettingsDrawer(Settings));
+                Lang.OnDownload(() => GUIController.Init(Lang[TranslationKeys.Settings.Prefix], new SettingsDrawer(Settings)));
             }
             else
             {
@@ -77,7 +78,9 @@ namespace KeyViewer
         }
         public static void OnGUI(ModEntry modEntry)
         {
-            GUIController.Draw();
+            if (!Lang.Initialized)
+                GUILayout.Label("Preparing...");
+            else GUIController.Draw();
         }
         public static void OnSaveGUI(ModEntry modEntry)
         {
@@ -85,11 +88,11 @@ namespace KeyViewer
         }
         public static void OnShowGUI(ModEntry modEntry)
         {
-
+            GUIController.Flush();
         }
         public static void OnHideGUI(ModEntry modEntry)
         {
-
+            GUIController.Flush();
         }
 
         public static bool AddManager(ActiveProfile profile)

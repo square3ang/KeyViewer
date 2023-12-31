@@ -2,9 +2,10 @@
 using KeyViewer.Core.Interfaces;
 using KeyViewer.Models;
 using KeyViewer.Unity;
-using KeyViewer.Core.Translation;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
 
 namespace KeyViewer.Views
 {
@@ -19,14 +20,15 @@ namespace KeyViewer.Views
         }
         public override void Draw(IDrawer drawer)
         {
-            drawer.DrawBool(Main.Lang[TranslationKeys.Lorem_Ipsum], ref model.MakeBarSpecialKeys);
-            drawer.DrawBool(Main.Lang[TranslationKeys.Lorem_Ipsum], ref model.ViewOnlyGamePlay);
-            drawer.DrawBool(Main.Lang[TranslationKeys.Lorem_Ipsum], ref model.AnimateKeys);
-            drawer.DrawBool(Main.Lang[TranslationKeys.Lorem_Ipsum], ref model.ShowKeyPressTotal);
-            drawer.DrawBool(Main.Lang[TranslationKeys.Lorem_Ipsum], ref model.LimitNotRegisteredKeys);
-            drawer.DrawBool(Main.Lang[TranslationKeys.Lorem_Ipsum], ref model.ResetOnStart);
-            drawer.DrawInt32(Main.Lang[TranslationKeys.Lorem_Ipsum], ref model.KPSUpdateRate);
-            drawer.DrawSingle(Main.Lang[TranslationKeys.Lorem_Ipsum], ref model.Size);
+            drawer.DrawBool(L(TKP.MakeBarSpecialKeys), ref model.MakeBarSpecialKeys);
+            drawer.DrawBool(L(TKP.ViewOnlyGamePlay), ref model.ViewOnlyGamePlay);
+            drawer.DrawBool(L(TKP.AnimateKeys), ref model.AnimateKeys);
+            drawer.DrawBool(L(TKP.ShowKeyPressTotal), ref model.ShowKeyPressTotal);
+            drawer.DrawBool(L(TKP.LimitNotRegisteredKeys), ref model.LimitNotRegisteredKeys);
+            drawer.DrawBool(L(TKP.ResetOnStart), ref model.ResetOnStart);
+            drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
+            drawer.DrawSingle(L(TKP.Size), ref model.Size);
+
         }
     }
 }
