@@ -1,9 +1,9 @@
+using KeyViewer;
 using UnityEngine;
 
 // Original Is SimpleJSON.Unity
 // Modified By CSNB (c3nb)
 // https://github.com/c3nb
-// ReSharper disable once CheckNamespace
 namespace JSON
 {
     public enum JsonContainerType { Array, Object }
@@ -141,14 +141,14 @@ namespace JSON
             if (IsObject)
             {
                 Inline = true;
-                this[aXName].AsFloat = aVec.x;
-                this[aYName].AsFloat = aVec.y;
+                this[aXName] = aVec.x;
+                this[aYName] = aVec.y;
             }
             else if (IsArray)
             {
                 Inline = true;
-                this[0].AsFloat = aVec.x;
-                this[1].AsFloat = aVec.y;
+                this[0] = aVec.x;
+                this[1] = aVec.y;
             }
             return this;
         }
@@ -177,16 +177,16 @@ namespace JSON
             if (IsObject)
             {
                 Inline = true;
-                this[aXName].AsFloat = aVec.x;
-                this[aYName].AsFloat = aVec.y;
-                this[aZName].AsFloat = aVec.z;
+                this[aXName] = aVec.x;
+                this[aYName] = aVec.y;
+                this[aZName] = aVec.z;
             }
             else if (IsArray)
             {
                 Inline = true;
-                this[0].AsFloat = aVec.x;
-                this[1].AsFloat = aVec.y;
-                this[2].AsFloat = aVec.z;
+                this[0] = aVec.x;
+                this[1] = aVec.y;
+                this[2] = aVec.z;
             }
             return this;
         }
@@ -209,18 +209,18 @@ namespace JSON
             if (IsObject)
             {
                 Inline = true;
-                this["x"].AsFloat = aVec.x;
-                this["y"].AsFloat = aVec.y;
-                this["z"].AsFloat = aVec.z;
-                this["w"].AsFloat = aVec.w;
+                this["x"] = aVec.x;
+                this["y"] = aVec.y;
+                this["z"] = aVec.z;
+                this["w"] = aVec.w;
             }
             else if (IsArray)
             {
                 Inline = true;
-                this[0].AsFloat = aVec.x;
-                this[1].AsFloat = aVec.y;
-                this[2].AsFloat = aVec.z;
-                this[3].AsFloat = aVec.w;
+                this[0] = aVec.x;
+                this[1] = aVec.y;
+                this[2] = aVec.z;
+                this[3] = aVec.w;
             }
             return this;
         }
@@ -243,18 +243,18 @@ namespace JSON
             if (IsObject)
             {
                 Inline = true;
-                this["r"].AsFloat = aCol.r;
-                this["g"].AsFloat = aCol.g;
-                this["b"].AsFloat = aCol.b;
-                this["a"].AsFloat = aCol.a;
+                this["r"] = aCol.r;
+                this["g"] = aCol.g;
+                this["b"] = aCol.b;
+                this["a"] = aCol.a;
             }
             else if (IsArray)
             {
                 Inline = true;
-                this[0].AsFloat = aCol.r;
-                this[1].AsFloat = aCol.g;
-                this[2].AsFloat = aCol.b;
-                this[3].AsFloat = aCol.a;
+                this[0] = aCol.r;
+                this[1] = aCol.g;
+                this[2] = aCol.b;
+                this[3] = aCol.a;
             }
             return this;
         }
@@ -276,18 +276,18 @@ namespace JSON
             if (IsObject)
             {
                 Inline = true;
-                this["r"].AsInt = aCol.r;
-                this["g"].AsInt = aCol.g;
-                this["b"].AsInt = aCol.b;
-                this["a"].AsInt = aCol.a;
+                this["r"] = aCol.r;
+                this["g"] = aCol.g;
+                this["b"] = aCol.b;
+                this["a"] = aCol.a;
             }
             else if (IsArray)
             {
                 Inline = true;
-                this[0].AsInt = aCol.r;
-                this[1].AsInt = aCol.g;
-                this[2].AsInt = aCol.b;
-                this[3].AsInt = aCol.a;
+                this[0] = aCol.r;
+                this[1] = aCol.g;
+                this[2] = aCol.b;
+                this[3] = aCol.a;
             }
             return this;
         }
@@ -311,18 +311,18 @@ namespace JSON
             if (IsObject)
             {
                 Inline = true;
-                this["x"].AsFloat = aRot.x;
-                this["y"].AsFloat = aRot.y;
-                this["z"].AsFloat = aRot.z;
-                this["w"].AsFloat = aRot.w;
+                this["x"] = aRot.x;
+                this["y"] = aRot.y;
+                this["z"] = aRot.z;
+                this["w"] = aRot.w;
             }
             else if (IsArray)
             {
                 Inline = true;
-                this[0].AsFloat = aRot.x;
-                this[1].AsFloat = aRot.y;
-                this[2].AsFloat = aRot.z;
-                this[3].AsFloat = aRot.w;
+                this[0] = aRot.x;
+                this[1] = aRot.y;
+                this[2] = aRot.z;
+                this[3] = aRot.w;
             }
             return this;
         }
@@ -345,18 +345,18 @@ namespace JSON
             if (IsObject)
             {
                 Inline = true;
-                this["x"].AsFloat = aRect.x;
-                this["y"].AsFloat = aRect.y;
-                this["width"].AsFloat = aRect.width;
-                this["height"].AsFloat = aRect.height;
+                this["x"] = aRect.x;
+                this["y"] = aRect.y;
+                this["width"] = aRect.width;
+                this["height"] = aRect.height;
             }
             else if (IsArray)
             {
                 Inline = true;
-                this[0].AsFloat = aRect.x;
-                this[1].AsFloat = aRect.y;
-                this[2].AsFloat = aRect.width;
-                this[3].AsFloat = aRect.height;
+                this[0] = aRect.x;
+                this[1] = aRect.y;
+                this[2] = aRect.width;
+                this[3] = aRect.height;
             }
             return this;
         }
@@ -379,18 +379,18 @@ namespace JSON
             if (IsObject)
             {
                 Inline = true;
-                this["left"].AsInt = aRect.left;
-                this["right"].AsInt = aRect.right;
-                this["top"].AsInt = aRect.top;
-                this["bottom"].AsInt = aRect.bottom;
+                this["left"] = aRect.left;
+                this["right"] = aRect.right;
+                this["top"] = aRect.top;
+                this["bottom"] = aRect.bottom;
             }
             else if (IsArray)
             {
                 Inline = true;
-                this[0].AsInt = aRect.left;
-                this[1].AsInt = aRect.right;
-                this[2].AsInt = aRect.top;
-                this[3].AsInt = aRect.bottom;
+                this[0] = aRect.left;
+                this[1] = aRect.right;
+                this[2] = aRect.top;
+                this[3] = aRect.bottom;
             }
             return this;
         }
@@ -415,7 +415,7 @@ namespace JSON
                 Inline = true;
                 for (int i = 0; i < 16; i++)
                 {
-                    this[i].AsFloat = aMatrix[i];
+                    this[i] = aMatrix[i];
                 }
             }
             return this;

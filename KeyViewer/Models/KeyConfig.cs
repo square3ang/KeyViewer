@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using DG.Tweening;
-using KeyViewer.Core.Interfaces;
+﻿using DG.Tweening;
 using JSON;
+using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using UnityEngine;
 
 namespace KeyViewer.Models
 {
@@ -12,28 +12,19 @@ namespace KeyViewer.Models
         public KeyCode Code = KeyCode.None;
         public SpecialKeyType SpecialKey = SpecialKeyType.None;
         public string Font = "Default";
+        public bool EnableKPSMeter = false;
 
         public PressRelease<string> Text = new PressRelease<string>(null);
-
-        public PressRelease<float> TextSize = 75;
-        public PressReleaseM<GColor> TextColor = new PressReleaseM<GColor>(Color.black, Color.white);
-        public PressRelease<Vector2> TextOffset = Vector2.zero;
-        public bool ChangeTextColorWithJudge = false;
-        public JudgeM<GColor> TextJudgeColors = null;
-
-        public PressRelease<float> CountTextSize = 50;
-        public PressReleaseM<GColor> CountTextColor = new PressReleaseM<GColor>(Color.black, Color.white);
-        public PressRelease<Vector2> CountTextOffset = Vector2.zero;
-        public bool ChangeCountTextColorWithJudge = false;
-        public JudgeM<GColor> CountTextJudgeColors = null;
-
+        public PressRelease<string> CountText = new PressRelease<string>(null);
         public PressRelease<string> Background = new PressRelease<string>(null);
-        public PressReleaseM<GColor> BackgroundColor = new PressReleaseM<GColor>(Color.white, Color.black);
-        public bool ChangeBackgroundColorWithJudge = false;
-        public JudgeM<GColor> BackgroundJudgeColors = null;
+        public PressRelease<string> Outline = new PressRelease<string>(null);
 
-        public PressRelease<Vector2> Offset = Vector2.zero;
-        public PressRelease<Vector2> Scale = Vector2.one;
+        public ObjectConfig TextConfig = new ObjectConfig(75, Color.black, Color.white);
+        public ObjectConfig CountTextConfig = new ObjectConfig(50, Color.black, Color.white);
+        public ObjectConfig BackgroundConfig = new ObjectConfig(1, Color.white, Color.black);
+        public ObjectConfig OutlineConfig = new ObjectConfig(1, Color.white, Color.black);
+
+        public VectorConfig VectorConfig = new VectorConfig();
 
         public PressReleaseM<EaseConfig> ScaleEasing = new EaseConfig(Ease.OutExpo, 0.1f, 0.9f);
 
@@ -44,27 +35,23 @@ namespace KeyViewer.Models
         {
             KeyConfig newConfig = new KeyConfig();
 
+            newConfig.Count = Count;
+            newConfig.Code = Code;
+            newConfig.SpecialKey = SpecialKey;
+            newConfig.Font = Font;
+            newConfig.EnableKPSMeter = EnableKPSMeter;
+
             newConfig.Text = Text.Copy();
-
-            newConfig.TextSize = TextSize.Copy();
-            newConfig.TextColor = TextColor.Copy();
-            newConfig.TextOffset = TextOffset.Copy();
-            newConfig.ChangeTextColorWithJudge = ChangeTextColorWithJudge;
-            newConfig.TextJudgeColors = TextJudgeColors?.Copy();
-
-            newConfig.CountTextSize = CountTextSize.Copy();
-            newConfig.CountTextColor = CountTextColor.Copy();
-            newConfig.CountTextOffset = CountTextOffset.Copy();
-            newConfig.ChangeCountTextColorWithJudge = ChangeCountTextColorWithJudge;
-            newConfig.CountTextJudgeColors = CountTextJudgeColors?.Copy();
-
+            newConfig.CountText = CountText.Copy();
             newConfig.Background = Background.Copy();
-            newConfig.BackgroundColor = BackgroundColor.Copy();
-            newConfig.ChangeBackgroundColorWithJudge = ChangeBackgroundColorWithJudge;
-            newConfig.BackgroundJudgeColors = BackgroundJudgeColors?.Copy();
+            newConfig.Outline = Outline.Copy();
 
-            newConfig.Offset = Offset.Copy();
-            newConfig.Scale = Scale.Copy();
+            newConfig.TextConfig = TextConfig.Copy();
+            newConfig.CountTextConfig = CountTextConfig.Copy();
+            newConfig.BackgroundConfig = BackgroundConfig.Copy();
+            newConfig.OutlineConfig = OutlineConfig.Copy();
+
+            newConfig.VectorConfig = VectorConfig.Copy();
 
             newConfig.ScaleEasing = ScaleEasing.Copy();
 
@@ -77,27 +64,23 @@ namespace KeyViewer.Models
         {
             var node = JsonNode.Empty;
 
+            node[nameof(Count)] = Count;
+            node[nameof(Code)] = Code.ToString();
+            node[nameof(SpecialKey)] = SpecialKey.ToString();
+            node[nameof(Font)] = Font;
+            node[nameof(EnableKPSMeter)] = EnableKPSMeter;
+
             node[nameof(Text)] = Text.Serialize();
-
-            node[nameof(TextSize)] = TextSize.Serialize();
-            node[nameof(TextColor)] = TextColor.Serialize();
-            node[nameof(TextOffset)] = TextOffset.Serialize();
-            node[nameof(ChangeTextColorWithJudge)] = ChangeTextColorWithJudge;
-            node[nameof(TextJudgeColors)] = TextJudgeColors?.Serialize();
-
-            node[nameof(CountTextSize)] = CountTextSize.Serialize();
-            node[nameof(CountTextColor)] = CountTextColor.Serialize();
-            node[nameof(CountTextOffset)] = CountTextOffset.Serialize();
-            node[nameof(ChangeCountTextColorWithJudge)] = ChangeCountTextColorWithJudge;
-            node[nameof(CountTextJudgeColors)] = CountTextJudgeColors?.Serialize();
-
+            node[nameof(CountText)] = CountText.Serialize();
             node[nameof(Background)] = Background.Serialize();
-            node[nameof(BackgroundColor)] = BackgroundColor.Serialize();
-            node[nameof(ChangeBackgroundColorWithJudge)] = ChangeBackgroundColorWithJudge;
-            node[nameof(BackgroundJudgeColors)] = BackgroundJudgeColors?.Serialize();
+            node[nameof(Outline)] = Outline.Serialize();
 
-            node[nameof(Offset)] = Offset.Serialize();
-            node[nameof(Scale)] = Scale.Serialize();
+            node[nameof(TextConfig)] = TextConfig.Serialize();
+            node[nameof(CountTextConfig)] = CountTextConfig.Serialize();
+            node[nameof(BackgroundConfig)] = BackgroundConfig.Serialize();
+            node[nameof(OutlineConfig)] = OutlineConfig.Serialize();
+
+            node[nameof(VectorConfig)] = VectorConfig.Serialize();
 
             node[nameof(ScaleEasing)] = ScaleEasing.Serialize();
 
@@ -108,27 +91,23 @@ namespace KeyViewer.Models
         }
         public void Deserialize(JsonNode node)
         {
+            Count = node[nameof(Count)];
+            Code = EnumHelper<KeyCode>.Parse(node[nameof(Code)]);
+            SpecialKey = EnumHelper<SpecialKeyType>.Parse(node[nameof(SpecialKey)]);
+            Font = node[nameof(Font)];
+            EnableKPSMeter = node[nameof(EnableKPSMeter)];
+
             Text = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Text)]);
-
-            TextSize = ModelUtils.Unbox<PressRelease<float>>(node[nameof(TextSize)]);
-            TextColor = ModelUtils.Unbox<PressReleaseM<GColor>>(node[nameof(TextColor)]);
-            TextOffset = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(TextOffset)]);
-            ChangeTextColorWithJudge = node[nameof(ChangeTextColorWithJudge)];
-            TextJudgeColors = ModelUtils.Unbox<JudgeM<GColor>>(node[nameof(TextJudgeColors)]);
-
-            CountTextSize = ModelUtils.Unbox<PressRelease<float>>(node[nameof(CountTextSize)]);
-            CountTextColor = ModelUtils.Unbox<PressReleaseM<GColor>>(node[nameof(CountTextColor)]);
-            CountTextOffset = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(CountTextOffset)]);
-            ChangeCountTextColorWithJudge = node[nameof(ChangeCountTextColorWithJudge)];
-            CountTextJudgeColors = ModelUtils.Unbox<JudgeM<GColor>>(node[nameof(CountTextJudgeColors)]);
-
+            CountText = ModelUtils.Unbox<PressRelease<string>>(node[nameof(CountText)]);
             Background = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Background)]);
-            BackgroundColor = ModelUtils.Unbox<PressReleaseM<GColor>>(node[nameof(BackgroundColor)]);
-            ChangeBackgroundColorWithJudge = node[nameof(ChangeBackgroundColorWithJudge)];
-            BackgroundJudgeColors = ModelUtils.Unbox<JudgeM<GColor>>(node[nameof(BackgroundJudgeColors)]);
+            Outline = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Outline)]);
 
-            Offset = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(Offset)]);
-            Scale = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(Scale)]);
+            TextConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(TextConfig)]);
+            CountTextConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(CountTextConfig)]);
+            BackgroundConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(BackgroundConfig)]);
+            OutlineConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(OutlineConfig)]);
+
+            VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
 
             ScaleEasing = ModelUtils.Unbox<PressReleaseM<EaseConfig>>(node[nameof(ScaleEasing)]);
 

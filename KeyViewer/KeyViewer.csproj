@@ -312,6 +312,8 @@
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\FontManager.cs" />
     <Compile Include="Controllers\GUIController.cs" />
+    <Compile Include="Core\Input\AsyncInputCompat.cs" />
+    <Compile Include="Core\Input\KeyInput.cs" />
     <Compile Include="Core\Interfaces\IModel.cs" />
     <Compile Include="Core\KPSCalculator.cs" />
     <Compile Include="Core\ModelDrawable.cs" />
@@ -338,6 +340,10 @@
     <Compile Include="Core\Interfaces\IDrawer.cs" />
     <Compile Include="Models\RainImage.cs" />
     <Compile Include="Models\RainImageDisplayMode.cs" />
+    <Compile Include="Models\VectorConfig.cs" />
+    <Compile Include="Models\ObjectConfig.cs" />
+    <Compile Include="Patches\CountValidKeysPressedPatch.cs" />
+    <Compile Include="Patches\RemoveFuckingUMMDummyLogPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Unity\Matrix2x3.cs" />

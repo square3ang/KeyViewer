@@ -21,12 +21,8 @@ namespace KeyViewer.Core.Translation
         public readonly GID gid;
         public readonly string url;
         public readonly Dictionary<string, string> dict;
-        private event Action OnDownloaded = delegate { };
+        public static event Action OnInitialize = delegate { };
         public bool Initialized { get; private set; }
-        public void OnDownload(Action act)
-        {
-            OnDownloaded += act;
-        }
         public Language(GID gid)
         {
             this.gid = gid;
@@ -70,7 +66,6 @@ namespace KeyViewer.Core.Translation
             strData = strData.Substring(47, strData.Length - 49);
             JsonNode data = JsonNode.Parse(strData);
             JsonNode rows = data["table"]["rows"];
-            Main.Logger.Log(rows.ToString(4));
             foreach (JsonNode row in rows)
             {
                 JsonNode keyValue = row["c"];
@@ -81,7 +76,7 @@ namespace KeyViewer.Core.Translation
                 dict.Add(key, value);
             }
             Main.Logger.Log($"Loaded {dict.Count} Localizations from Sheet");
-            OnDownloaded();
+            OnInitialize();
             Initialized = true;
         }
         static string Escape(string str) => str.Replace(@"\", @"\\").Replace(":", @"\:");

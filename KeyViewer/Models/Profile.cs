@@ -3,7 +3,6 @@ using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace KeyViewer.Models
 {
@@ -14,10 +13,9 @@ namespace KeyViewer.Models
         public bool ViewOnlyGamePlay = false;
         public bool AnimateKeys = true;
         public bool ShowKeyPressTotal = true;
-        public bool LimitNotRegisteredKeys = true;
+        public bool LimitNotRegisteredKeys = false;
         public bool ResetOnStart = false;
-        public float Size = 100;
-        public Vector2 Position = Vector2.zero;
+        public VectorConfig VectorConfig = new VectorConfig();
         public int KPSUpdateRate = 1000;
         public Profile Copy()
         {
@@ -29,7 +27,7 @@ namespace KeyViewer.Models
             newProfile.ShowKeyPressTotal = ShowKeyPressTotal;
             newProfile.LimitNotRegisteredKeys = LimitNotRegisteredKeys;
             newProfile.ResetOnStart = ResetOnStart;
-            newProfile.Position = Position;
+            newProfile.VectorConfig = VectorConfig.Copy();
             newProfile.KPSUpdateRate = KPSUpdateRate;
             return newProfile;
         }
@@ -43,8 +41,7 @@ namespace KeyViewer.Models
             node[nameof(ShowKeyPressTotal)] = ShowKeyPressTotal;
             node[nameof(LimitNotRegisteredKeys)] = LimitNotRegisteredKeys;
             node[nameof(ResetOnStart)] = ResetOnStart;
-            node[nameof(Size)] = Size;
-            node[nameof(Position)] = Position;
+            node[nameof(VectorConfig)] = VectorConfig.Serialize();
             node[nameof(KPSUpdateRate)] = KPSUpdateRate;
             return node;
         }
@@ -57,8 +54,7 @@ namespace KeyViewer.Models
             ShowKeyPressTotal = node[nameof(ShowKeyPressTotal)];
             LimitNotRegisteredKeys = node[nameof(LimitNotRegisteredKeys)];
             ResetOnStart = node[nameof(ResetOnStart)];
-            Size = node[nameof(Size)];
-            Position = node[nameof(Position)];
+            VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
             KPSUpdateRate = node[nameof(KPSUpdateRate)];
         }
     }

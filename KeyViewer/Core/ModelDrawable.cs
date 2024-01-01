@@ -13,9 +13,12 @@ namespace KeyViewer.Core
             this.model = model;
         }
         public abstract void Draw(IDrawer drawer);
-        protected static string L(string translationKey)
+        public virtual void OnKeyDown(KeyCode code) { }
+        protected static string L(string translationKey, params object[] formatArgs)
         {
-            return Main.Lang[translationKey];
+            if (formatArgs.Length == 0)
+                return Main.Lang[translationKey];
+            else return string.Format(Main.Lang[translationKey], formatArgs);
         }
         protected static void BeginIndent()
         {

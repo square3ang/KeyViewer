@@ -20,6 +20,7 @@ namespace KeyViewer.Utils
         public static readonly Type m4x4_t = typeof(Matrix4x4);
         public static JsonNode ToNode<T>(object obj)
         {
+            if (obj == null) return JsonNode.Null;
             Type t = typeof(T);
             switch (Type.GetTypeCode(t))
             {
@@ -65,6 +66,7 @@ namespace KeyViewer.Utils
         }
         public static object ToObject<T>(JsonNode node)
         {
+            if (node == null) return null;
             Type t = typeof(T);
             switch (Type.GetTypeCode(t))
             {

@@ -1097,10 +1097,7 @@ namespace JSON
                 if (i > 0)
                     aSB.Append(", ");
                 if (aMode == JsonTextMode.Indent)
-                    aSB.AppendLine();
-
-                if (aMode == JsonTextMode.Indent)
-                    aSB.Append(' ', aIndent + aIndentInc);
+                    aSB.Append(' ', aIndent);
                 m_List[i].WriteToStringBuilder(aSB, aIndent + aIndentInc, aIndentInc, aMode);
             }
             if (aMode == JsonTextMode.Indent)
@@ -1219,7 +1216,7 @@ namespace JSON
                 aMode = JsonTextMode.Compact;
             if (aIndent > 0 && aMode != JsonTextMode.Compact)
                 aSB.AppendLine().Append(' ', aIndent);
-            aSB.Append("{ ");
+            aSB.Append('{');
             bool first = true;
             foreach (var k in m_Dict)
             {
@@ -1236,7 +1233,7 @@ namespace JSON
             }
             if (aMode == JsonTextMode.Indent)
                 aSB.AppendLine().Append(' ', aIndent);
-            aSB.Append(" }");
+            aSB.Append('}');
         }
     }
     public class JsonString : JsonNode

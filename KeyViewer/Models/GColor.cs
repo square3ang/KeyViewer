@@ -13,6 +13,8 @@ namespace KeyViewer.Models
         private string _bottomLeftHex;
         private string _bottomRightHex;
 
+        public bool gradientEnabled = false;
+
         public Color topLeft { get => _color.topLeft; set => SetTopLeftColor(value); }
         public Color topRight { get => _color.topRight; set => SetTopRightColor(value); }
         public Color bottomLeft { get => _color.bottomLeft; set => SetBottomLeftColor(value); }
@@ -49,6 +51,7 @@ namespace KeyViewer.Models
         public JsonNode Serialize()
         {
             JsonNode node = JsonNode.Empty;
+            node[nameof(gradientEnabled)] = gradientEnabled;
             node[nameof(topLeft)] = topLeft;
             node[nameof(topRight)] = topRight;
             node[nameof(bottomLeft)] = bottomLeft;
@@ -57,6 +60,7 @@ namespace KeyViewer.Models
         }
         public void Deserialize(JsonNode node) 
         {
+            gradientEnabled = node[nameof(gradientEnabled)];
             topLeft = node[nameof(topLeft)];
             topRight = node[nameof(topRight)];
             bottomLeft = node[nameof(bottomLeft)];

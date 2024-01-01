@@ -1,4 +1,5 @@
-﻿using JSON;
+﻿using HarmonyLib;
+using JSON;
 using KeyViewer.Controllers;
 using KeyViewer.Core;
 using KeyViewer.Core.TextReplacing;
@@ -10,9 +11,18 @@ using KeyViewer.Views;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
+
+/* TODO List
+ * 지원 가능한 모든 곳에 Gradient 기능 추가
+ * Rain이 위 아래로 늘어나는 버그 고치기
+ * 비동기 입력 Issue 고쳐보기
+ * 키 별 KPS 기능 추가해보기
+ * 모든 숫자 텍스트에 한하여 Tag를 이용한 Text Replacing 지원하기
+ */
 
 namespace KeyViewer
 {
@@ -23,6 +33,9 @@ namespace KeyViewer
         public static ModLogger Logger { get; private set; }
         public static Settings Settings { get; private set; }
         public static Dictionary<string, KeyManager> Managers { get; private set; }
+        public static bool BlockInput { get; internal set; }
+        public static ModelDrawable<Profile> ListeningDrawer { get; internal set; }
+        public static Harmony Harmony { get; private set; }
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
@@ -59,11 +72,15 @@ namespace KeyViewer
                 }
                 Settings.ActiveProfiles.RemoveAll(p => notExistProfiles.Contains(p.Name));
                 Lang = Language.GetLanguage(Settings.Language);
-                Lang.OnDownload(() => GUIController.Init(Lang[TranslationKeys.Settings.Prefix], new SettingsDrawer(Settings)));
+                Language.OnInitialize += OnLanguageInitialize;
+                Harmony = new Harmony(modEntry.Info.Id);
+                Harmony.PatchAll(Assembly.GetExecutingAssembly());
             }
             else
             {
-                // TODO: Save Active Profiles And Others...
+                Harmony.UnpatchAll(Harmony.Id);
+                Harmony = null;
+                Language.OnInitialize -= OnLanguageInitialize;
                 Language.Release();
                 AssetManager.Release();
                 FontManager.Release();
@@ -74,7 +91,10 @@ namespace KeyViewer
         }
         public static void OnUpdate(ModEntry modEntry, float deltaTime)
         {
-
+            if (ListeningDrawer != null)
+                foreach (var code in EnumHelper<KeyCode>.GetValues())
+                    if (Input.GetKeyDown(code))
+                        ListeningDrawer.OnKeyDown(code);
         }
         public static void OnGUI(ModEntry modEntry)
         {
@@ -84,15 +104,29 @@ namespace KeyViewer
         }
         public static void OnSaveGUI(ModEntry modEntry)
         {
-
+            JsonNode settingsNode = Settings.Serialize();
+            File.WriteAllText(Constants.SettingsPath, settingsNode.ToString(4));
+            foreach (var (name, manager) in Managers)
+            {
+                Profile p = manager.profile;
+                File.WriteAllText(Path.Combine(Mod.Path, $"{name}.json"), p.Serialize().ToString(4));
+            }
         }
         public static void OnShowGUI(ModEntry modEntry)
         {
+            BlockInput = true;
             GUIController.Flush();
         }
         public static void OnHideGUI(ModEntry modEntry)
         {
             GUIController.Flush();
+            BlockInput = false;
+        }
+
+        public static void OnLanguageInitialize()
+        {
+            GUIController.Flush();
+            GUIController.Init(Lang[TranslationKeys.Settings.Prefix], new SettingsDrawer(Settings));
         }
 
         public static bool AddManager(ActiveProfile profile)
@@ -104,6 +138,8 @@ namespace KeyViewer
                 {
                     var profileNode = JsonNode.Parse(File.ReadAllText(profilePath));
                     var p = ModelUtils.Unbox<Profile>(profileNode);
+                    if (Managers.TryGetValue(profile.Name, out var manager))
+                        Object.Destroy(manager);
                     Managers[profile.Name] = KeyManager.CreateManager(profile.Name, p);
                 }
                 return true;
