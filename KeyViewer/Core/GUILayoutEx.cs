@@ -14,98 +14,16 @@ namespace KeyViewer.Core
     // Modified By CSNB (c3nb)
     public static class GUILayoutEx
     {
-        public static (GColor, GColor) VertexGradientSlidersPair(GColor gradient1, GColor gradient2)
+        public static void ExpandableGUI(Action en, string title, ref bool expanded)
         {
-            GUILayout.BeginHorizontal();
-            VertexGradient newGradient1 = VertexGradientSlider(gradient1);
-            VertexGradient newGradient2 = VertexGradientSlider(gradient2);
-            GUILayout.EndHorizontal();
-            //if (gradient1.topLeft == newGradient1.topLeft && gradient1.topRight == newGradient1.topRight && gradient1.bottomLeft == newGradient1.bottomLeft && gradient1.bottomRight == newGradient1.bottomRight &&
-            //    gradient2.topLeft == newGradient2.topLeft && gradient2.topRight == newGradient2.topRight && gradient2.bottomLeft == newGradient2.bottomLeft && gradient2.bottomRight == newGradient2.bottomRight)
-            //    return (gradient1, gradient2);
-            return (newGradient1, newGradient2);
-        }
-        public static GColor VertexGradientSlider(GColor gradient)
-        {
-            Color color1 = gradient.topLeft, color2 = gradient.topRight;
-            Color color3 = gradient.bottomLeft, color4 = gradient.bottomRight;
-            float newR1, newR2, newG1, newG2, newB1, newB2, newA1, newA2;
-            float newR3, newR4, newG3, newG4, newB3, newB4, newA3, newA4;
-            float oldR1 = Mathf.Round(color1.r * 255);
-            float oldG1 = Mathf.Round(color1.g * 255);
-            float oldB1 = Mathf.Round(color1.b * 255);
-            float oldA1 = Mathf.Round(color1.a * 255);
-
-            float oldR2 = Mathf.Round(color2.r * 255);
-            float oldG2 = Mathf.Round(color2.g * 255);
-            float oldB2 = Mathf.Round(color2.b * 255);
-            float oldA2 = Mathf.Round(color2.a * 255);
-
-            float oldR3 = Mathf.Round(color3.r * 255);
-            float oldG3 = Mathf.Round(color3.g * 255);
-            float oldB3 = Mathf.Round(color3.b * 255);
-            float oldA3 = Mathf.Round(color3.a * 255);
-
-            float oldR4 = Mathf.Round(color4.r * 255);
-            float oldG4 = Mathf.Round(color4.g * 255);
-            float oldB4 = Mathf.Round(color4.b * 255);
-            float oldA4 = Mathf.Round(color4.a * 255);
-
-            GUILayout.BeginVertical();
-
-            GUILayout.Label("Top Left");
-            GUILayout.BeginVertical();
-            newR1 = NamedSlider("R:", oldR1, 0, 255, 300f, 1, 40f);
-            newG1 = NamedSlider("G:", oldG1, 0, 255, 300f, 1, 40f);
-            newB1 = NamedSlider("B:", oldB1, 0, 255, 300f, 1, 40f);
-            newA1 = NamedSlider("A:", oldA1, 0, 255, 300f, 1, 40f);
-            GUILayout.EndVertical();
-
-            GUILayout.Label("Top Right");
-            GUILayout.BeginVertical();
-            newR2 = NamedSlider("R:", oldR2, 0, 255, 300f, 1, 40f);
-            newG2 = NamedSlider("G:", oldG2, 0, 255, 300f, 1, 40f);
-            newB2 = NamedSlider("B:", oldB2, 0, 255, 300f, 1, 40f);
-            newA2 = NamedSlider("A:", oldA2, 0, 255, 300f, 1, 40f);
-            GUILayout.EndVertical();
-
-            GUILayout.Label("Bottom Left");
-            GUILayout.BeginVertical();
-            newR3 = NamedSlider("R:", oldR3, 0, 255, 300f, 1, 40f);
-            newG3 = NamedSlider("G:", oldG3, 0, 255, 300f, 1, 40f);
-            newB3 = NamedSlider("B:", oldB3, 0, 255, 300f, 1, 40f);
-            newA3 = NamedSlider("A:", oldA3, 0, 255, 300f, 1, 40f);
-            GUILayout.EndVertical();
-
-            GUILayout.Label("Bottom Right");
-            GUILayout.BeginVertical();
-            newR4 = NamedSlider("R:", oldR4, 0, 255, 300f, 1, 40f);
-            newG4 = NamedSlider("G:", oldG4, 0, 255, 300f, 1, 40f);
-            newB4 = NamedSlider("B:", oldB4, 0, 255, 300f, 1, 40f);
-            newA4 = NamedSlider("A:", oldA4, 0, 255, 300f, 1, 40f);
-            GUILayout.EndVertical();
-
-            GUILayout.EndVertical();
-
-            if (oldR1 != newR1 || oldG1 != newG1 || oldB1 != newB1 || oldA1 != newA1)
-                color1 = new Color(newR1 / 255, newG1 / 255, newB1 / 255, newA1 / 255);
-            if (oldR2 != newR2 || oldG2 != newG2 || oldB2 != newB2 || oldA2 != newA2)
-                color2 = new Color(newR2 / 255, newG2 / 255, newB2 / 255, newA2 / 255);
-            if (oldR3 != newR3 || oldG3 != newG3 || oldB3 != newB3 || oldA3 != newA3)
-                color3 = new Color(newR3 / 255, newG3 / 255, newB3 / 255, newA3 / 255);
-            if (oldR4 != newR4 || oldG4 != newG4 || oldB4 != newB4 || oldA4 != newA4)
-                color4 = new Color(newR4 / 255, newG4 / 255, newB4 / 255, newA4 / 255);
-            return new VertexGradient(color1, color2, color3, color4);
+            bool enabled = true;
+            ExpandableGUI(en, null, null, null, null, null, title, null, true, ref enabled, ref expanded);
         }
         public static void ExpandableGUI(Action en, string title, ref bool enabled, ref bool expanded)
         {
-            ExpandableGUI(en, null, title, ref enabled, ref expanded);
+            ExpandableGUI(en, null, null, null, null, null, title, null, false, ref enabled, ref expanded);
         }
-        public static void ExpandableGUI(Action en, Action dis, string title, ref bool enabled, ref bool expanded)
-        {
-            ExpandableGUI(en, dis, null, null, null, null, title, null, ref enabled, ref expanded);
-        }
-        public static void ExpandableGUI(Action enGui, Action disGui, Action onEnable, Action onDisable, Action onHide, Action onShow, string title, string desc, ref bool enabled, ref bool expanded)
+        public static void ExpandableGUI(Action enGui, Action disGui, Action onEnable, Action onDisable, Action onHide, Action onShow, string title, string desc, bool hideEnableToggle, ref bool enabled, ref bool expanded)
         {
             GUILayout.BeginHorizontal();
             bool newIsExpanded = GUILayout.Toggle(
@@ -123,6 +41,14 @@ namespace KeyViewer.Core
             bool newIsEnabled = GUILayout.Toggle(
                 enabled,
                 title,
+                hideEnableToggle ?
+                new GUIStyle()
+                {
+                    fixedWidth = 10,
+                    normal = new GUIStyleState() { textColor = Color.white },
+                    fontSize = 15,
+                    margin = new RectOffset(4, 2, 6, 6),
+                } :
                 new GUIStyle(GUI.skin.toggle)
                 {
                     fontStyle = FontStyle.Normal,

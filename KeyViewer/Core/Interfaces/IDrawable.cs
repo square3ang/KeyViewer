@@ -2,6 +2,7 @@
 {
     public interface IDrawable
     {
+        string Name { get; }
         void Draw();
     }
 }

@@ -126,7 +126,7 @@ namespace KeyViewer
         public static void OnLanguageInitialize()
         {
             GUIController.Flush();
-            GUIController.Init(Lang[TranslationKeys.Settings.Prefix], new SettingsDrawer(Settings));
+            GUIController.Init(new SettingsDrawer(Settings));
         }
 
         public static bool AddManager(ActiveProfile profile)

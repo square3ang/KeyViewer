@@ -8,41 +8,44 @@ namespace KeyViewer.Controllers
 {
     public static class GUIController
     {
-        private static List<(string bts, IDrawable drawable)> drawables = new List<(string, IDrawable)>();
+        private static List<IDrawable> drawables = new List<IDrawable>();
         private static int depth;
-        private static bool isAvailable => depth > 0;
+        private static bool isUndoAvailable => depth > 0;
+        private static bool isRedoAvailable => depth < drawables.Count;
         private static IDrawable current;
-        private static string bts;
+        private static IDrawable first;
         private static int skipFrames = 0;
         private static Stack<Action> onSkipCallbacks = new Stack<Action>();
-        private static (string bts, IDrawable drawable) prev;
-        public static void Init(string backToStr, IDrawable drawable)
+        public static void Init(IDrawable drawable)
         {
-            current = drawable;
-            bts = backToStr;
+            first = current = drawable;
         }
-        public static void Push(string backToStr, IDrawable drawable)
+        public static void Push(IDrawable drawable)
         {
-            if (drawables.Count <= depth)
+            if (drawables.Count == depth)
             {
-                drawables.Add((bts, current));
+                drawables.Add(current);
                 depth++;
             }
-            else drawables[depth++] = (bts, current);
+            else
+            {
+                drawables[depth++] = current;
+            }
             current = drawable;
-            bts = backToStr;
         }
         public static void Pop()
         {
-            if (!isAvailable) return;
-            prev = (bts, current);
-            (bts, current) = drawables[--depth];
+            if (!isUndoAvailable) return;
+            var cache = current;
+            current = drawables[--depth];
+            drawables[depth] = cache;
         }
         public static void Draw()
         {
 #if DEBUG
             GUILayout.Label($"DEPTH:{depth}, COUNT:{drawables.Count}");
-            GUILayout.Label($"PREV BTS:{prev.bts}, CURRENT BTS:{bts}");
+            for (int i = 0; i < drawables.Count; i++)
+                GUILayout.Label($"{i}:{drawables[i].Name}");
 #endif
             if (skipFrames > 0)
             {
@@ -51,23 +54,23 @@ namespace KeyViewer.Controllers
                     onSkipCallbacks.Pop()?.Invoke();
                 return;
             }
-            if (depth > 0)
+            GUILayout.BeginHorizontal();
             {
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("◀ " + drawables[depth - 1].bts))
-                    Pop();
-                GUILayout.FlexibleSpace();
-                GUILayout.EndHorizontal();
+                if (isUndoAvailable)
+                {
+                    if (GUILayout.Button("◀ " + drawables[depth - 1].Name))
+                        Pop();
+                }
+                if (isRedoAvailable)
+                {
+                    var draw = drawables[depth];
+                    if (GUILayout.Button(draw.Name + " ▶"))
+                        Push(draw);
+                }
             }
-            if (drawables.Count > depth)
-            {
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button(prev.bts + " ▶"))
-                    Push(prev.bts, prev.drawable);
-                GUILayout.FlexibleSpace();
-                GUILayout.EndHorizontal();
-            }
-            current.Draw(Drawer.Instance);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            current.Draw();
         }
         public static void Skip(Action onSkip = null, int frames = 1)
         {
@@ -77,9 +80,9 @@ namespace KeyViewer.Controllers
 
         public static void Flush()
         {
-            drawables = new List<(string, IDrawable)>();
+            current = first;
+            drawables = new List<IDrawable>();
             depth = 0;
-            prev = (null, null);
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized, false);
         }
     }

@@ -5,12 +5,42 @@ using UnityEngine;
 using KeyViewer.Core.Interfaces;
 using System.Linq;
 using KeyViewer.Models;
+using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 
 namespace KeyViewer.Core
 {
-    public delegate void RefAction<T>(ref T t);
+    public delegate bool CustomDrawer<T>(ref T t);
     public static class Drawer
     {
+        #region Custom Drawers
+        /*
+         * CD_[H/V]_[TYPE][[Additional Attributes]]
+         * CD => Custom Drawer
+         * H/V => Horizontal Or Vertical
+         * TYPE => Drawing Type
+         * 
+         * Additional Attributes
+         * A_B => A to B
+         * A_B_C => A to B & Width Is C
+         */
+
+        public static bool CD_V_VEC2_0_1_300(ref Vector2 vec2)
+        {
+            bool result = false;
+            result |= DrawSingleWithSlider("X:", ref vec2.x, 0, 1, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec2.y, 0, 1, 300f);
+            return result;
+        }
+        public static bool CD_V_VEC3_0_1_300(ref Vector3 vec3)
+        {
+            bool result = false;
+            result |= DrawSingleWithSlider("X:", ref vec3.x, 0, 1, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec3.y, 0, 1, 300f);
+            result |= DrawSingleWithSlider("Z:", ref vec3.z, 0, 1, 300f);
+            return result;
+        }
+        #endregion
+
         public static bool DrawVector2WithSlider(string label, ref Vector2 vec2, float lValue, float rValue)
         {
             bool result = false;
@@ -28,13 +58,57 @@ namespace KeyViewer.Core
             result |= DrawSingleWithSlider("Z:", ref vec3.z, lValue, rValue, 300f);
             return result;
         }
-        public static bool DrawPressRelease<T>(string label, PressRelease<T> pr, RefAction<T> drawer)
+        public static bool DrawPressReleaseH<T>(string label, PressRelease<T> pr, CustomDrawer<T> drawer)
         {
-            GUILayoutEx.ExpandableGUI(drawer, label, )
+            GUIStatus status = pr.Status;
+
+            bool changed = false;
+            GUILayoutEx.ExpandableGUI(() =>
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label(Main.Lang[TKM.Pressed]);
+                    changed = drawer(ref pr.Pressed);
+                }
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label(Main.Lang[TKM.Released]);
+                    changed = drawer(ref pr.Released);
+                }
+                GUILayout.EndHorizontal();
+            }, label, ref status.Expanded);
+            return changed;
+        }
+        public static bool DrawPressReleaseV<T>(string label, PressRelease<T> pr, CustomDrawer<T> drawer)
+        {
+            GUIStatus status = pr.Status;
+
+            bool changed = false;
+            GUILayoutEx.ExpandableGUI(() =>
+            {
+                GUILayout.BeginVertical();
+                {
+                    GUILayout.Label(Main.Lang[TKM.Pressed]);
+                    changed = drawer(ref pr.Pressed);
+                }
+                GUILayout.EndVertical();
+
+                GUILayout.BeginVertical();
+                {
+                    GUILayout.Label(Main.Lang[TKM.Released]);
+                    changed = drawer(ref pr.Released);
+                }
+                GUILayout.EndVertical();
+            }, label, ref status.Expanded);
+            return changed;
         }
         public static bool DrawSingleWithSlider(string label, ref float value, float lValue, float rValue, float width)
         {
+            GUILayout.BeginHorizontal();
             float newValue = GUILayoutEx.NamedSliderContent(label, value, lValue, rValue, width);
+            GUILayout.EndHorizontal();
             bool result = newValue != value;
             value = newValue;
             return result;
@@ -126,22 +200,22 @@ namespace KeyViewer.Core
         {
             bool result = false;  
             GUILayout.BeginHorizontal();
-            result |= DrawColor("Top Left", ref color.topLeft);
+            result |= DrawColor(Main.Lang[TKM.TopLeft], ref color.topLeft);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            result |= DrawColor("Top Right", ref color.topRight);
+            result |= DrawColor(Main.Lang[TKM.TopRight], ref color.topRight);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            result |= DrawColor("Bottom Left", ref color.bottomLeft);
+            result |= DrawColor(Main.Lang[TKM.BottomLeft], ref color.bottomLeft);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            result |= DrawColor("Bottom Right", ref color.bottomRight);
+            result |= DrawColor(Main.Lang[TKM.BottomRight], ref color.bottomRight);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             return result;

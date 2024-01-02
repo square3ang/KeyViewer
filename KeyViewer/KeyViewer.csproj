@@ -330,6 +330,7 @@
     <Compile Include="Models\Direction.cs" />
     <Compile Include="Models\EaseConfig.cs" />
     <Compile Include="Models\GColor.cs" />
+    <Compile Include="Models\GUIStatus.cs" />
     <Compile Include="Models\Judge.cs" />
     <Compile Include="Models\KeyConfig.cs" />
     <Compile Include="Models\KeyViewerLanguage.cs" />

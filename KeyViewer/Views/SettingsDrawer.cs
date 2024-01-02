@@ -7,12 +7,13 @@ using SFB;
 using System.IO;
 using UnityEngine;
 using TKS = KeyViewer.Core.Translation.TranslationKeys.Settings;
+using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
 
 namespace KeyViewer.Views
 {
     public class SettingsDrawer : ModelDrawable<Settings>
     {
-        public SettingsDrawer(Settings settings) : base(settings) { }
+        public SettingsDrawer(Settings settings) : base(settings, L(TKS.Prefix)) { }
         public override void Draw()
         {
             GUILayout.BeginHorizontal();
@@ -81,10 +82,10 @@ namespace KeyViewer.Views
                     }
                     if (profile.Active)
                     {
-                        if (GUILayout.Button(L(TKS.ConfigurateProfile, profile.Name)))
+                        if (GUILayout.Button(L(TKP.ConfigurateProfile, profile.Name)))
                         {
                             var manager = Main.Managers[profile.Name];
-                            GUIController.Push(L(TKS.ConfigurateProfile, profile.Name), new ProfileDrawer(manager, manager.profile));
+                            GUIController.Push(new ProfileDrawer(manager, manager.profile, profile.Name));
                         }
                     }
                 }

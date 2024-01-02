@@ -8,6 +8,7 @@ namespace KeyViewer.Models
     {
         public T Pressed;
         public T Released;
+        public GUIStatus Status;
         public PressRelease() { }
         public PressRelease(T value) => Set(value);
         public PressRelease(T pressed, T released)
@@ -26,6 +27,7 @@ namespace KeyViewer.Models
             var newPR = new PressRelease<T>();
             newPR.Pressed = Pressed;
             newPR.Released = Released;
+            newPR.Status = Status.Copy();
             return newPR;
         }
         public JsonNode Serialize()
@@ -33,12 +35,14 @@ namespace KeyViewer.Models
             JsonNode node = JsonNode.Empty;
             node[nameof(Pressed)] = ModelUtils.ToNode<T>(Pressed);
             node[nameof(Released)] = ModelUtils.ToNode<T>(Released);
+            node[nameof(Status)] = Status.Serialize();
             return node;
         }
         public void Deserialize(JsonNode node)
         {
             Pressed = (T)ModelUtils.ToObject<T>(node[nameof(Pressed)]);
             Released = (T)ModelUtils.ToObject<T>(node[nameof(Released)]);
+            Status = ModelUtils.Unbox<GUIStatus>(node[nameof(Status)]) ?? new GUIStatus();
         }
         public bool IsSame => Equals(Pressed, Released);
         public static implicit operator PressRelease<T>(T value) => new PressRelease<T>(value);
