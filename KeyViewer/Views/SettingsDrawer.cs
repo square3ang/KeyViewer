@@ -13,12 +13,12 @@ namespace KeyViewer.Views
     public class SettingsDrawer : ModelDrawable<Settings>
     {
         public SettingsDrawer(Settings settings) : base(settings) { }
-        public override void Draw(IDrawer drawer)
+        public override void Draw()
         {
             GUILayout.BeginHorizontal();
             {
                 GUILayout.Label(L(TKS.SelectLanguage));
-                if (drawer.DrawEnum(L(TKS.Language), ref model.Language))
+                if (Drawer.DrawEnum(L(TKS.Language), ref model.Language))
                 {
                     GUIController.Skip(() =>
                     {

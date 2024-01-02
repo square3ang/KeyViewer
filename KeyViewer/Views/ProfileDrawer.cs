@@ -27,16 +27,17 @@ namespace KeyViewer.Views
                 .Select(kc => new KeyConfigDrawer(manager, kc))
                 .ToList();
         }
-        public override void Draw(IDrawer drawer)
+        public override void Draw()
         {
-            drawer.DrawBool(L(TKP.MakeBarSpecialKeys), ref model.MakeBarSpecialKeys);
-            drawer.DrawBool(L(TKP.ViewOnlyGamePlay), ref model.ViewOnlyGamePlay);
-            drawer.DrawBool(L(TKP.AnimateKeys), ref model.AnimateKeys);
-            drawer.DrawBool(L(TKP.ShowKeyPressTotal), ref model.ShowKeyPressTotal);
-            drawer.DrawBool(L(TKP.LimitNotRegisteredKeys), ref model.LimitNotRegisteredKeys);
-            drawer.DrawBool(L(TKP.ResetOnStart), ref model.ResetOnStart);
-            drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
-            //drawer.DrawSingle(L(TKP.Size), ref model.VectorConfig.Scale);
+            Drawer.DrawBool(L(TKP.MakeBarSpecialKeys), ref model.MakeBarSpecialKeys);
+            Drawer.DrawBool(L(TKP.ViewOnlyGamePlay), ref model.ViewOnlyGamePlay);
+            Drawer.DrawBool(L(TKP.AnimateKeys), ref model.AnimateKeys);
+            Drawer.DrawBool(L(TKP.ShowKeyPressTotal), ref model.ShowKeyPressTotal);
+            Drawer.DrawBool(L(TKP.LimitNotRegisteredKeys), ref model.LimitNotRegisteredKeys);
+            Drawer.DrawBool(L(TKP.ResetOnStart), ref model.ResetOnStart);
+            Drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
+            
+            Drawer.DrawVector2WithSlider(L(TKP.Size), ref model.VectorConfig.Scale);
             DrawKeyRegisterGUI();
         }
         public override void OnKeyDown(KeyCode code)

@@ -4,15 +4,77 @@ using TMPro;
 using UnityEngine;
 using KeyViewer.Core.Interfaces;
 using System.Linq;
+using KeyViewer.Models;
 
 namespace KeyViewer.Core
 {
-    public class Drawer : IDrawer
+    public delegate void RefAction<T>(ref T t);
+    public static class Drawer
     {
-        public static Drawer Instance { get; private set; } = new Drawer();
-        Drawer() => This = this;
-        readonly IDrawer This;
-        bool IDrawer.DrawArray(string label, ref object[] array)
+        public static bool DrawVector2WithSlider(string label, ref Vector2 vec2, float lValue, float rValue)
+        {
+            bool result = false;
+            GUILayout.Label($"<b>{label}</b>");
+            result |= DrawSingleWithSlider("X:", ref vec2.x, lValue, rValue, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec2.y, lValue, rValue, 300f);
+            return result;
+        }
+        public static bool DrawVector3WithSlider(string label, ref Vector3 vec3, float lValue, float rValue)
+        {
+            bool result = false;
+            GUILayout.Label($"<b>{label}</b>");
+            result |= DrawSingleWithSlider("X:", ref vec3.x, lValue, rValue, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec3.y, lValue, rValue, 300f);
+            result |= DrawSingleWithSlider("Z:", ref vec3.z, lValue, rValue, 300f);
+            return result;
+        }
+        public static bool DrawPressRelease<T>(string label, PressRelease<T> pr, RefAction<T> drawer)
+        {
+            GUILayoutEx.ExpandableGUI(drawer, label, )
+        }
+        public static bool DrawSingleWithSlider(string label, ref float value, float lValue, float rValue, float width)
+        {
+            float newValue = GUILayoutEx.NamedSliderContent(label, value, lValue, rValue, width);
+            bool result = newValue != value;
+            value = newValue;
+            return result;
+        }
+        public static bool DrawStringArray(ref string[] array, Action<int> arrayResized = null, Action<int> elementRightGUI = null, Action<int, string> onElementChange = null)
+        {
+            bool result = false;
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("+"))
+            {
+                Array.Resize(ref array, array.Length + 1);
+                arrayResized?.Invoke(array.Length);
+                result = true;
+            }
+            if (array.Length > 0 && GUILayout.Button("-"))
+            {
+                Array.Resize(ref array, array.Length - 1);
+                arrayResized?.Invoke(array.Length);
+                result = true;
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            for (int i = 0; i < array.Length; i++)
+            {
+                string cache = array[i];
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"{i}: ");
+                cache = GUILayout.TextField(cache);
+                elementRightGUI?.Invoke(i);
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+                if (cache != array[i])
+                {
+                    array[i] = cache;
+                    onElementChange?.Invoke(i, cache);
+                }
+            }
+            return result;
+        }
+        public static bool DrawArray(string label, ref object[] array)
         {
             bool result = false;
             GUILayout.Label(label);
@@ -27,11 +89,11 @@ namespace KeyViewer.Core
             GUILayout.EndHorizontal();
 
             for (int i = 0; i < array.Length; i++)
-                result |= This.DrawObject($"{i}: ", ref array[i]);
+                result |= DrawObject($"{i}: ", ref array[i]);
             GUILayout.EndVertical();
             return result;
         }
-        bool IDrawer.DrawBool(string label, ref bool value)
+        public static bool DrawBool(string label, ref bool value)
         {
             bool prev = value;
             GUILayout.BeginHorizontal();
@@ -41,57 +103,57 @@ namespace KeyViewer.Core
             GUILayout.EndHorizontal();
             return prev != value;
         }
-        bool IDrawer.DrawByte(string label, ref byte value)
+        public static bool DrawByte(string label, ref byte value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToUInt8(str);
             return result;
         }
-        bool IDrawer.DrawColor(string label, ref Color color)
+        public static bool DrawColor(string label, ref Color color)
         {
             bool result = false;
             GUILayout.BeginHorizontal();
             GUILayout.Label(label);
-            result |= This.DrawSingle("<color=#FF0000>R</color>", ref color.r);
-            result |= This.DrawSingle("<color=#00FF00>G</color>", ref color.g);
-            result |= This.DrawSingle("<color=#0000FF>B</color>", ref color.b);
-            result |= This.DrawSingle("A", ref color.a);
+            result |= DrawSingle("<color=#FF0000>R</color>", ref color.r);
+            result |= DrawSingle("<color=#00FF00>G</color>", ref color.g);
+            result |= DrawSingle("<color=#0000FF>B</color>", ref color.b);
+            result |= DrawSingle("A", ref color.a);
             GUILayout.EndHorizontal();
             return result;
         }
-        bool IDrawer.DrawColor(string label, ref VertexGradient color)
+        public static bool DrawColor(string label, ref VertexGradient color)
         {
             bool result = false;  
             GUILayout.BeginHorizontal();
-            result |= This.DrawColor("Top Left", ref color.topLeft);
+            result |= DrawColor("Top Left", ref color.topLeft);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            result |= This.DrawColor("Top Right", ref color.topRight);
+            result |= DrawColor("Top Right", ref color.topRight);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            result |= This.DrawColor("Bottom Left", ref color.bottomLeft);
+            result |= DrawColor("Bottom Left", ref color.bottomLeft);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            result |= This.DrawColor("Bottom Right", ref color.bottomRight);
+            result |= DrawColor("Bottom Right", ref color.bottomRight);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             return result;
         }
-        bool IDrawer.DrawDouble(string label, ref double value)
+        public static bool DrawDouble(string label, ref double value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToDouble(str);
             return result;
         }
-        bool IDrawer.DrawEnum<T>(string label, ref T @enum)
+        public static bool DrawEnum<T>(string label, ref T @enum) where T : Enum
         {
             int current = EnumHelper<T>.IndexOf(@enum);
             string[] names = EnumHelper<T>.GetNames();
@@ -99,33 +161,33 @@ namespace KeyViewer.Core
             @enum = EnumHelper<T>.GetValues()[current];
             return result;
         }
-        bool IDrawer.DrawInt16(string label, ref short value)
+        public static bool DrawInt16(string label, ref short value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToInt16(str);
             return result;
         }
-        bool IDrawer.DrawInt32(string label, ref int value)
+        public static bool DrawInt32(string label, ref int value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToInt32(str);
             return result;
         }
-        bool IDrawer.DrawInt64(string label, ref long value)
+        public static bool DrawInt64(string label, ref long value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToInt64(str);
             return result;
         }
-        void IDrawer.DrawObject(string label, object value)
+        public static void DrawObject(string label, object value)
         {
             if (value == null) return;
             if (value is IDrawable drawable)
             {
-                drawable.Draw(this);
+                drawable.Draw();
                 return;
             }
             Type t = value.GetType();
@@ -134,68 +196,68 @@ namespace KeyViewer.Core
             foreach (var field in fields)
             {
                 var fValue = field.GetValue(value);
-                if (This.DrawObject(field.Name, ref fValue))
+                if (DrawObject(field.Name, ref fValue))
                     field.SetValue(value, fValue);
             }
             var props = t.GetProperties();
             foreach (var prop in props.Where(p => p.CanRead && p.CanWrite))
             {
                 var pValue = prop.GetValue(value);
-                if (This.DrawObject(prop.Name, ref pValue))
+                if (DrawObject(prop.Name, ref pValue))
                     prop.SetValue(value, pValue);
             }
         }
-        bool IDrawer.DrawObject(string label, ref object obj)
+        public static bool DrawObject(string label, ref object obj)
         {
             bool result = false;
             switch (obj)
             {
                 case bool bb:
-                    result = This.DrawBool(label, ref bb);
+                    result = DrawBool(label, ref bb);
                     obj = bb;
                     break;
                 case sbyte sb:
-                    result = This.DrawSByte(label, ref sb);
+                    result = DrawSByte(label, ref sb);
                     obj = sb;
                     break;
                 case byte b:
-                    result = This.DrawByte(label, ref b);
+                    result = DrawByte(label, ref b);
                     obj = b;
                     break;
                 case short s:
-                    result = This.DrawInt16(label, ref s);
+                    result = DrawInt16(label, ref s);
                     obj = s;
                     break;
                 case ushort us:
-                    result = This.DrawUInt16(label, ref us);
+                    result = DrawUInt16(label, ref us);
                     obj = us;
                     break;
                 case int i:
-                    result = This.DrawInt32(label, ref i);
+                    result = DrawInt32(label, ref i);
                     obj = i;
                     break;
                 case uint ui:
-                    result = This.DrawUInt32(label, ref ui);
+                    result = DrawUInt32(label, ref ui);
                     obj = ui;
                     break;
                 case long l:
-                    result = This.DrawInt64(label, ref l);
+                    result = DrawInt64(label, ref l);
                     obj = l;
                     break;
                 case ulong ul:
-                    result = This.DrawUInt64(label, ref ul);
+                    result = DrawUInt64(label, ref ul);
                     obj = ul;
                     break;
                 case float f:
-                    result = This.DrawSingle(label, ref f);
+                    result = DrawSingle(label, ref f);
                     obj = f;
                     break;
                 case double d:
-                    result = This.DrawDouble(label, ref d);
+                    result = DrawDouble(label, ref d);
                     obj = d;
                     break;
                 case string str:
-                    result = This.DrawString(label, ref str);
+                    result = DrawString(label, ref str);
                     obj = str;
                     break;
                 default:
@@ -204,21 +266,21 @@ namespace KeyViewer.Core
             }
             return result;
         }
-        bool IDrawer.DrawSByte(string label, ref sbyte value)
+        public static bool DrawSByte(string label, ref sbyte value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToInt8(str);
             return result;
         }
-        bool IDrawer.DrawSingle(string label, ref float value)
+        public static bool DrawSingle(string label, ref float value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToFloat(str);
             return result;
         }
-        bool IDrawer.DrawString(string label, ref string value)
+        public static bool DrawString(string label, ref string value)
         {
             string prev = value;
             GUILayout.BeginHorizontal();
@@ -228,11 +290,11 @@ namespace KeyViewer.Core
             GUILayout.EndHorizontal();
             return prev != value;
         }
-        bool IDrawer.DrawToggleGroup(string[] labels, bool[] toggleGroup)
+        public static bool DrawToggleGroup(string[] labels, bool[] toggleGroup)
         {
             bool result = false;
             for (int i = 0; i < labels.Length; i++)
-                if (This.DrawBool(labels[i], ref toggleGroup[i]))
+                if (DrawBool(labels[i], ref toggleGroup[i]))
                 {
                     result = true;
                     for (int j = 0; j < toggleGroup.Length; j++)
@@ -242,24 +304,24 @@ namespace KeyViewer.Core
                 }
             return result;
         }
-        bool IDrawer.DrawUInt16(string label, ref ushort value)
+        public static bool DrawUInt16(string label, ref ushort value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToUInt16(str);
             return result;
         }
-        bool IDrawer.DrawUInt32(string label, ref uint value)
+        public static bool DrawUInt32(string label, ref uint value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToUInt32(str);
             return result;
         }
-        bool IDrawer.DrawUInt64(string label, ref ulong value)
+        public static bool DrawUInt64(string label, ref ulong value)
         {
             string str = value.ToString();
-            bool result = This.DrawString(label, ref str);
+            bool result = DrawString(label, ref str);
             value = StringConverter.ToUInt64(str);
             return result;
         }

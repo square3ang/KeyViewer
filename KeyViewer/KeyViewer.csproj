@@ -312,6 +312,7 @@
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\FontManager.cs" />
     <Compile Include="Controllers\GUIController.cs" />
+    <Compile Include="Core\GUILayoutEx.cs" />
     <Compile Include="Core\Input\AsyncInputCompat.cs" />
     <Compile Include="Core\Input\KeyInput.cs" />
     <Compile Include="Core\Interfaces\IModel.cs" />
@@ -337,7 +338,6 @@
     <Compile Include="Models\RainConfig.cs" />
     <Compile Include="Core\Drawer.cs" />
     <Compile Include="Core\Interfaces\IDrawable.cs" />
-    <Compile Include="Core\Interfaces\IDrawer.cs" />
     <Compile Include="Models\RainImage.cs" />
     <Compile Include="Models\RainImageDisplayMode.cs" />
     <Compile Include="Models\VectorConfig.cs" />

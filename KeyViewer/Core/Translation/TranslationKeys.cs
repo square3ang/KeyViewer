@@ -32,5 +32,9 @@ namespace KeyViewer.Core.Translation
             internal static readonly string RegisterTotalKey = Prefix + "REGISTER_TOTAL_KEY";
             internal static readonly string RegisterMouse0Key = Prefix + "REGISTER_MOUSE0_KEY";
         }
+        public static class Misc
+        {
+            public const string Prefix = "MISC_";
+        }
     }
 }

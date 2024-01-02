@@ -12,7 +12,7 @@ namespace KeyViewer.Views
         {
             this.manager = manager;
         }
-        public override void Draw(IDrawer drawer)
+        public override void Draw()
         {
             
         }
