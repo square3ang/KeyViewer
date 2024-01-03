@@ -351,6 +351,8 @@
     <Compile Include="Models\SpecialKeyType.cs" />
     <Compile Include="Unity\KeyManager.cs" />
     <Compile Include="Unity\StaticCoroutine.cs" />
+    <Compile Include="Unity\UI\ImageWithIndependentRoundedCorners.cs" />
+    <Compile Include="Unity\UI\ImageWithRoundedCorners.cs" />
     <Compile Include="Unity\UI\UICornersGradient.cs" />
     <Compile Include="Unity\UI\UIGradient.cs" />
     <Compile Include="Unity\UI\UITextCornersGradient.cs" />

@@ -8,20 +8,24 @@ namespace KeyViewer.Core
     {
         public static Sprite Background { get; private set; }
         public static Sprite Outline { get; private set; }
+        public static Shader RoundedCorners { get; private set; }
+        public static Shader IndependentRoundedCorners { get; private set; }
         private static Dictionary<string, Sprite> others;
         public static void Initialize()
         {
-            Texture2D t = new Texture2D(1, 1);
-            t.LoadImage(File.ReadAllBytes(Path.Combine(Main.Mod.Path, "Assets", "KeyBackground.png")));
-            Background = Sprite.Create(t, new Rect(0, 0, t.width, t.height), new Vector2(.5f, .5f));
-            t.LoadImage(File.ReadAllBytes(Path.Combine(Main.Mod.Path, "Assets", "KeyOutline.png")));
-            Outline = Sprite.Create(t, new Rect(0, 0, t.width, t.height), new Vector2(.5f, .5f));
+            AssetBundle assets = AssetBundle.LoadFromFile(Path.Combine(Main.Mod.Path, "KeyViewer.assets"));
+            Background = assets.LoadAsset<Sprite>("Assets/Images/KeyBackground.png");
+            Outline = assets.LoadAsset<Sprite>("Assets/Images/KeyOutline.png");
+            RoundedCorners = assets.LoadAsset<Shader>("Assets/Shaders/RoundedCorners.shader");
+            IndependentRoundedCorners = assets.LoadAsset<Shader>("Assets/Shaders/IndependentRoundedCorners.shader");
             others = new Dictionary<string, Sprite>();
         }
         public static void Release()
         {
             Object.Destroy(Background);
             Object.Destroy(Outline);
+            Object.Destroy(RoundedCorners);
+            Object.Destroy(IndependentRoundedCorners);
             foreach (var spr in others.Values)
                 Object.Destroy(spr);
             Background = null;

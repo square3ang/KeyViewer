@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 3845468237
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: a957112eaa76069617730f7e61009068
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: b4f2efbdb85a500017afd875df75d980
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Shaders/RoundedCorners.shader
+- Assets/Images/KeyOutline.png
+- Assets/Shaders/IndependentRoundedCorners.shader
+- Assets/Images/KeyBackground.png
+Dependencies: []

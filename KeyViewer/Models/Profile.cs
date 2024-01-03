@@ -9,7 +9,6 @@ namespace KeyViewer.Models
     public class Profile : IModel
     {
         public List<KeyConfig> Keys = new List<KeyConfig>();
-        public bool MakeBarSpecialKeys = true;
         public bool ViewOnlyGamePlay = false;
         public bool AnimateKeys = true;
         public bool ShowKeyPressTotal = true;

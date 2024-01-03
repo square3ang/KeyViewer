@@ -32,7 +32,6 @@ namespace KeyViewer.Views
         }
         public override void Draw()
         {
-            Drawer.DrawBool(L(TKP.MakeBarSpecialKeys), ref model.MakeBarSpecialKeys);
             Drawer.DrawBool(L(TKP.ViewOnlyGamePlay), ref model.ViewOnlyGamePlay);
             Drawer.DrawBool(L(TKP.AnimateKeys), ref model.AnimateKeys);
             Drawer.DrawBool(L(TKP.ShowKeyPressTotal), ref model.ShowKeyPressTotal);
