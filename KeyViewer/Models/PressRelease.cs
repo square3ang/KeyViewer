@@ -8,7 +8,7 @@ namespace KeyViewer.Models
     {
         public T Pressed;
         public T Released;
-        public GUIStatus Status;
+        public GUIStatus Status = new GUIStatus();
         public PressRelease() { }
         public PressRelease(T value) => Set(value);
         public PressRelease(T pressed, T released)

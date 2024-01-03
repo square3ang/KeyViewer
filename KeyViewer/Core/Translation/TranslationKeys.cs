@@ -24,9 +24,6 @@ namespace KeyViewer.Core.Translation
             internal static readonly string LimitNotRegisteredKeys = Prefix + "LIMIT_NOT_REGISTERED_KEYS";
             internal static readonly string ResetOnStart = Prefix + "RESET_ON_START";
             internal static readonly string KPSUpdateRate = Prefix + "KPS_UPDATE_RATE";
-            internal static readonly string Scale = Prefix + "SCALE";
-            internal static readonly string Offset = Prefix + "OFFSET";
-            internal static readonly string Rotation = Prefix + "ROTATION";
             internal static readonly string StartKeyRegistering = Prefix + "START_KEY_REGISTERING";
             internal static readonly string StopKeyRegistering = Prefix + "STOP_KEY_REGISTERING";
             internal static readonly string RegisterKPSKey = Prefix + "REGISTER_KPS_KEY";
@@ -35,6 +32,8 @@ namespace KeyViewer.Core.Translation
             internal static readonly string RegisteredKeys = Prefix + "REGISTERED_KEYS";
             internal static readonly string ConfigurationMode = Prefix + "CONFIGURATION_MODE";
             internal static readonly string ConfigurateProfile = Prefix + "CONFIGURATE_PROFILE";
+            internal static readonly string CreateDummyKey = Prefix + "CREATE_DUMMY_KEY";
+            internal static readonly string DummyName = Prefix + "DUMMY_NAME";
         }
         public static class Misc
         {
@@ -47,11 +46,55 @@ namespace KeyViewer.Core.Translation
             internal static readonly string Released = Prefix + "RELEASED";
             internal static readonly string Enable = Prefix + "ENABLE";
             internal static readonly string Disable = Prefix + "DISABLE";
+            internal static readonly string Scale = Prefix + "SCALE";
+            internal static readonly string Offset = Prefix + "OFFSET";
+            internal static readonly string Rotation = Prefix + "ROTATION";
+            internal static readonly string ChangeColorWithJudge = Prefix + "CHANGE_COLOR_WITH_JUDGE";
+            internal static readonly string ObjectConfigFrom = Prefix + "OBJECTCONFIG_FROM";
+            internal static readonly string Edit = Prefix + "EDIT";
+            internal static readonly string EditThis = Prefix + "EDIT_THIS";
+            internal static readonly string JudgeColorFrom = Prefix + "JUDGECOLOR_FROM";
+            internal static readonly string JudgeColor = Prefix + "JUDGECOLOR";
+            internal static readonly string Color = Prefix + "COLOR";
+            internal static readonly string EnableGradient = Prefix + "ENABLE_GRADIENT";
+            internal static readonly string TooEarly = Prefix + "TOO_EARLY";
+            internal static readonly string VeryEarly = Prefix + "VERY_EARLY";
+            internal static readonly string EarlyPerfect = Prefix + "EARLY_PERFECT";
+            internal static readonly string Perfect = Prefix + "PERFECT";
+            internal static readonly string LatePerfect = Prefix + "LATE_PERFECT";
+            internal static readonly string VeryLate = Prefix + "VERY_LATE";
+            internal static readonly string TooLate = Prefix + "TOO_LATE";
+            internal static readonly string Multipress = Prefix + "MULTI_PRESS";
+            internal static readonly string FailMiss = Prefix + "FAIL_MISS";
+            internal static readonly string FailOverload = Prefix + "FAIL_OVERLOAD";
+            internal static readonly string Size = Prefix + "SIZE";
         }
         public static class KeyConfig
         {
             public const string Prefix = "KEYCONFIG_";
             internal static readonly string KeyConfiguration = Prefix + "KEY_CONFIGURATION";
+            internal static readonly string DummyKeyName = Prefix + "DUMMY_KEY_NAME";
+            internal static readonly string KeyCode = Prefix + "KEY_CODE";
+            internal static readonly string TextFont = Prefix + "TEXT_FONT";
+            internal static readonly string EnableKPSMeter = Prefix + "ENABLE_KPS_METER";
+            internal static readonly string EnableCountText = Prefix + "ENABLE_COUNT_TEXT";
+            internal static readonly string Text = Prefix + "TEXT";
+            internal static readonly string CountText = Prefix + "COUNT_TEXT";
+            internal static readonly string BackgroundImage = Prefix + "BACKGROUND_IMAGE";
+            internal static readonly string OutlineImage = Prefix + "OUTLINE_IMAGE";
+            internal static readonly string BackgroundImageRoundness = Prefix + "BACKGROUND_IMAGE_ROUNDNESS";
+            internal static readonly string OutlineImageRoundness = Prefix + "OUTLINE_IMAGE_ROUNDNESS";
+            internal static readonly string EditTextConfig = Prefix + "EDIT_TEXT_CONFIG";
+            internal static readonly string Key = Prefix + "KEY";
+            internal static readonly string KeyText = Prefix + "KEY_TEXT";
+            internal static readonly string EditCountTextConfig = Prefix + "EDIT_COUNT_TEXT_CONFIG";
+            internal static readonly string KeyCountText = Prefix + "KEY_COUNT_TEXT";
+            internal static readonly string EditBackgroundConfig = Prefix + "EDIT_BACKGROUND_CONFIG";
+            internal static readonly string KeyBackground = Prefix + "KEY_BACKGROUND";
+            internal static readonly string EditOutlineConfig = Prefix + "EDIT_OUTLINE_CONFIG";
+            internal static readonly string KeyOutline = Prefix + "KEY_OUTLINE";
+            internal static readonly string EditRainConfig = Prefix + "EDIT_RAIN_CONFIG";
+            internal static readonly string EnableRain = Prefix + "ENABLE_RAIN";
         }
         public static class RainConfig
         {

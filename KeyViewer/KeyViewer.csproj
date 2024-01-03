@@ -317,6 +317,7 @@
     <Compile Include="Core\Input\KeyInput.cs" />
     <Compile Include="Core\Interfaces\IModel.cs" />
     <Compile Include="Core\KPSCalculator.cs" />
+    <Compile Include="Core\MethodDrawable.cs" />
     <Compile Include="Core\ModelDrawable.cs" />
     <Compile Include="Core\TextReplacing\Replacer.cs" />
     <Compile Include="Core\TextReplacing\Tag.cs" />
@@ -348,7 +349,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Unity\Matrix2x3.cs" />
-    <Compile Include="Models\SpecialKeyType.cs" />
     <Compile Include="Unity\KeyManager.cs" />
     <Compile Include="Unity\StaticCoroutine.cs" />
     <Compile Include="Unity\UI\ImageWithIndependentRoundedCorners.cs" />

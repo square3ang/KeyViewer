@@ -10,9 +10,10 @@ namespace KeyViewer.Models
     {
         public uint Count = 0;
         public KeyCode Code = KeyCode.None;
-        public SpecialKeyType SpecialKey = SpecialKeyType.None;
+        public string DummyName = null;
         public string Font = "Default";
         public bool EnableKPSMeter = false;
+        public bool EnableCountText = true;
 
         public PressRelease<string> Text = new PressRelease<string>(null);
         public PressRelease<string> CountText = new PressRelease<string>(null);
@@ -21,8 +22,10 @@ namespace KeyViewer.Models
 
         public ObjectConfig TextConfig = new ObjectConfig(75, Color.black, Color.white);
         public ObjectConfig CountTextConfig = new ObjectConfig(50, Color.black, Color.white);
-        public ObjectConfig BackgroundConfig = new ObjectConfig(1, Color.white, Color.black);
-        public ObjectConfig OutlineConfig = new ObjectConfig(1, Color.white, Color.black);
+        public ObjectConfig BackgroundConfig = new ObjectConfig(Vector2.one, Color.white, Color.black);
+        public ObjectConfig OutlineConfig = new ObjectConfig(Vector2.one, Color.white, Color.black);
+        public float BackgroundRoundness = 1f;
+        public float OutlineRoundness = 1f;
 
         public VectorConfig VectorConfig = new VectorConfig();
 
@@ -37,9 +40,10 @@ namespace KeyViewer.Models
 
             newConfig.Count = Count;
             newConfig.Code = Code;
-            newConfig.SpecialKey = SpecialKey;
+            newConfig.DummyName = DummyName;
             newConfig.Font = Font;
             newConfig.EnableKPSMeter = EnableKPSMeter;
+            newConfig.EnableCountText = EnableCountText;
 
             newConfig.Text = Text.Copy();
             newConfig.CountText = CountText.Copy();
@@ -50,6 +54,8 @@ namespace KeyViewer.Models
             newConfig.CountTextConfig = CountTextConfig.Copy();
             newConfig.BackgroundConfig = BackgroundConfig.Copy();
             newConfig.OutlineConfig = OutlineConfig.Copy();
+            newConfig.BackgroundRoundness = BackgroundRoundness;
+            newConfig.OutlineRoundness = OutlineRoundness;
 
             newConfig.VectorConfig = VectorConfig.Copy();
 
@@ -66,9 +72,10 @@ namespace KeyViewer.Models
 
             node[nameof(Count)] = Count;
             node[nameof(Code)] = Code.ToString();
-            node[nameof(SpecialKey)] = SpecialKey.ToString();
+            node[nameof(DummyName)] = DummyName;
             node[nameof(Font)] = Font;
             node[nameof(EnableKPSMeter)] = EnableKPSMeter;
+            node[nameof(EnableCountText)] = EnableCountText;
 
             node[nameof(Text)] = Text.Serialize();
             node[nameof(CountText)] = CountText.Serialize();
@@ -79,6 +86,8 @@ namespace KeyViewer.Models
             node[nameof(CountTextConfig)] = CountTextConfig.Serialize();
             node[nameof(BackgroundConfig)] = BackgroundConfig.Serialize();
             node[nameof(OutlineConfig)] = OutlineConfig.Serialize();
+            node[nameof(BackgroundRoundness)] = BackgroundRoundness;
+            node[nameof(OutlineRoundness)] = OutlineRoundness;
 
             node[nameof(VectorConfig)] = VectorConfig.Serialize();
 
@@ -93,9 +102,11 @@ namespace KeyViewer.Models
         {
             Count = node[nameof(Count)];
             Code = EnumHelper<KeyCode>.Parse(node[nameof(Code)]);
-            SpecialKey = EnumHelper<SpecialKeyType>.Parse(node[nameof(SpecialKey)]);
+            var dum = node[nameof(DummyName)];
+            DummyName = dum == null ? null : dum.Value;
             Font = node[nameof(Font)];
             EnableKPSMeter = node[nameof(EnableKPSMeter)];
+            EnableCountText = node[nameof(EnableCountText)];
 
             Text = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Text)]);
             CountText = ModelUtils.Unbox<PressRelease<string>>(node[nameof(CountText)]);
@@ -106,6 +117,8 @@ namespace KeyViewer.Models
             CountTextConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(CountTextConfig)]);
             BackgroundConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(BackgroundConfig)]);
             OutlineConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(OutlineConfig)]);
+            BackgroundRoundness = node[nameof(BackgroundRoundness)];
+            OutlineRoundness = node[nameof(OutlineRoundness)];
 
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
 

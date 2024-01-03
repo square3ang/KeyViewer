@@ -11,6 +11,7 @@ namespace KeyViewer.Models
         public ObjectConfig(float defaultSize, Color defaultPressed, Color defaultReleased)
         {
             VectorConfig = new VectorConfig();
+            VectorConfig.UseSize = true;
             VectorConfig.Size = defaultSize;
             Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
         }

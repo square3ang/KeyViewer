@@ -10,7 +10,7 @@ namespace KeyViewer.Views
     public class RainConfigDrawer : ModelDrawable<RainConfig>
     {
         public KeyManager manager;
-        public RainConfigDrawer(KeyManager manager, KeyConfig config) : base(config.Rain, L(TKRC.KeyConfiguration, config.SpecialKey != SpecialKeyType.None ? config.SpecialKey : config.Code))
+        public RainConfigDrawer(KeyManager manager, KeyConfig config) : base(config.Rain, L(TKRC.KeyConfiguration, config.DummyName != null ? config.DummyName : config.Code))
         {
             this.manager = manager;
         }

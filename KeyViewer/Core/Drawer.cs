@@ -6,10 +6,13 @@ using KeyViewer.Core.Interfaces;
 using System.Linq;
 using KeyViewer.Models;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
+using Newtonsoft.Json.Linq;
+using KeyViewer.Controllers;
 
 namespace KeyViewer.Core
 {
-    public delegate bool CustomDrawer<T>(ref T t);
+    public delegate bool CustomDrawer<T>(T t);
+    public delegate bool CustomDrawerRef<T>(ref T t);
     public static class Drawer
     {
         #region Custom Drawers
@@ -39,8 +42,146 @@ namespace KeyViewer.Core
             result |= DrawSingleWithSlider("Z:", ref vec3.z, 0, 1, 300f);
             return result;
         }
+        public static bool CD_H_STR(ref string str)
+        {
+            string prev = str;
+            GUILayout.BeginHorizontal();
+            str = GUILayout.TextField(str);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            return prev != str;
+        }
+        public static bool CD_H_FLT(ref float val)
+        {
+            string str = val.ToString();
+            bool result = CD_H_STR(ref str);
+            if (result) val = StringConverter.ToFloat(str);
+            return result;
+        }
+        public static bool CD_H_FLT_SIZEONLY(ref float val)
+        {
+            return DrawSingleWithSlider(Main.Lang[TKM.Size], ref val, 0, 500, 300f);
+        }
         #endregion
 
+        public static bool DrawObjectConfig(string label, string objName, ObjectConfig objConfig)
+        {
+            bool result = false;
+            TitleButtonPush(label, Main.Lang[TKM.EditThis], () =>
+            {
+                string bts = string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ObjectConfigFrom], objName));
+                GUIController.Push(new MethodDrawable(() =>
+                {
+                    string title = string.Format(string.Format(Main.Lang[TKM.JudgeColorFrom], objName));
+                    result |= DrawObjectConfig(objConfig, j =>
+                    {
+                        bool judgeChanged = false;
+                        TitleButtonPush(string.Format(Main.Lang[TKM.Edit], Main.Lang[TKM.JudgeColor]), Main.Lang[TKM.EditThis], () =>
+                        {
+                            GUIController.Push(new MethodDrawable(() =>
+                            {
+                                var colors = objConfig.JudgeColors;
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.TooEarly]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.TooEarly), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.TooEarly])))));
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.VeryEarly]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.VeryEarly), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.VeryEarly])))));
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.EarlyPerfect]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.EarlyPerfect), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.EarlyPerfect])))));
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.Perfect]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.Perfect), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.Perfect])))));
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.LatePerfect]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.LatePerfect), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.LatePerfect])))));
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.VeryLate]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.VeryLate), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.VeryLate])))));
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.TooLate]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.TooLate), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.TooLate])))));
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.Multipress]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.Multipress), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.Multipress])))));
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.FailMiss]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.FailMiss), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.FailMiss])))));
+                                TitleButtonPush(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.FailOverload]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.FailOverload), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.FailOverload])))));
+                            }, title));
+                        });
+                        return judgeChanged;
+                    });
+                }, bts));
+            });
+            return result;
+        }
+        public static void TitleButtonPush(string label, string btnLabel, Action pressed)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(label);
+            if (GUILayout.Button(btnLabel))
+                pressed?.Invoke();
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+        }
+        public static bool DrawGColor(ref GColor color)
+        {
+            bool ge = color.gradientEnabled;
+            if (DrawBool(Main.Lang[TKM.EnableGradient], ref ge))
+                color = color with { gradientEnabled = ge };
+            bool result = false;
+            if (color.gradientEnabled)
+            {
+                Color tl = color.topLeft, tr = color.topRight,
+                bl = color.bottomLeft, br = color.bottomRight;
+                ExpandableGUI(color.topLeftStatus, Main.Lang[TKM.TopLeft], () => result |= DrawColor(ref tl));
+                ExpandableGUI(color.topRightStatus, Main.Lang[TKM.TopRight], () => result |= DrawColor(ref tr));
+                ExpandableGUI(color.bottomLeftStatus, Main.Lang[TKM.BottomLeft], () => result |= DrawColor(ref bl));
+                ExpandableGUI(color.bottomRightStatus, Main.Lang[TKM.BottomRight], () => result |= DrawColor(ref br));
+                if (result) color = new VertexGradient(tl, tr, bl, br);
+            }
+            else
+            {
+                Color dummy = color.topLeft;
+                if (result = DrawColor(ref dummy)) color = dummy;
+            }
+            return result;
+        }
+        public static bool DrawColor(ref Color color)
+        {
+            bool result = false;
+            result |= DrawSingleWithSlider("<color=#FF0000>R</color>", ref color.r, 0, 1, 300f);
+            result |= DrawSingleWithSlider("<color=#00FF00>G</color>", ref color.g, 0, 1, 300f);
+            result |= DrawSingleWithSlider("<color=#0000FF>B</color>", ref color.b, 0, 1, 300f);
+            result |= DrawSingleWithSlider("A", ref color.a, 0, 1, 300f);
+            string hex = ColorUtility.ToHtmlStringRGBA(color);
+            if (DrawString("Hex:", ref hex))
+            {
+                result = true;
+                ColorUtility.TryParseHtmlString("#" + hex, out color);
+            }
+            return result;
+        }
+        public static bool DrawObjectConfig(ObjectConfig objConfig, CustomDrawer<JudgeM<GColor>> judgeColorDrawer)
+        {
+            bool result = DrawVectorConfig(objConfig.VectorConfig);
+            if (DrawBool(Main.Lang[TKM.ChangeColorWithJudge], ref objConfig.ChangeColorWithJudge))
+            {
+                result = true;
+                if (objConfig.ChangeColorWithJudge)
+                {
+                    var jc = objConfig.JudgeColors = new JudgeM<GColor>();
+                    jc.TooEarly = Constants.TooEarlyColor;
+                    jc.VeryEarly = Constants.VeryEarlyColor;
+                    jc.EarlyPerfect = Constants.EarlyPerfectColor;
+                    jc.Perfect = Constants.PerfectColor;
+                    jc.LatePerfect = Constants.LatePerfectColor;
+                    jc.VeryLate = Constants.VeryLateColor;
+                    jc.TooLate = Constants.TooLateColor;
+                    jc.Multipress = Constants.MultipressColor;
+                    jc.FailMiss = Constants.FailMissColor;
+                    jc.FailOverload = Constants.FailOverloadColor;
+                }
+                else objConfig.JudgeColors = null;
+            }    
+            if (objConfig.ChangeColorWithJudge)
+                result |= judgeColorDrawer?.Invoke(objConfig.JudgeColors) ?? false;
+            return result;
+        }
+        public static bool DrawVectorConfig(VectorConfig vConfig)
+        {
+            bool result = false;
+            if (vConfig.UseSize)
+                result |= DrawPressReleaseH(Main.Lang[TKM.Size], vConfig.Size, CD_H_FLT_SIZEONLY);
+            else result |= DrawPressReleaseV(Main.Lang[TKM.Scale], vConfig.Scale, CD_V_VEC2_0_1_300);
+            result |= DrawPressReleaseV(Main.Lang[TKM.Offset], vConfig.Offset, CD_V_VEC2_0_1_300);
+            result |= DrawPressReleaseV(Main.Lang[TKM.Rotation], vConfig.Rotation, CD_V_VEC3_0_1_300);
+            return result;
+        }
         public static bool DrawVector2WithSlider(string label, ref Vector2 vec2, float lValue, float rValue)
         {
             bool result = false;
@@ -58,7 +199,7 @@ namespace KeyViewer.Core
             result |= DrawSingleWithSlider("Z:", ref vec3.z, lValue, rValue, 300f);
             return result;
         }
-        public static bool DrawPressReleaseH<T>(string label, PressRelease<T> pr, CustomDrawer<T> drawer)
+        public static bool DrawPressReleaseH<T>(string label, PressRelease<T> pr, CustomDrawerRef<T> drawer)
         {
             GUIStatus status = pr.Status;
 
@@ -81,7 +222,7 @@ namespace KeyViewer.Core
             }, label, ref status.Expanded);
             return changed;
         }
-        public static bool DrawPressReleaseV<T>(string label, PressRelease<T> pr, CustomDrawer<T> drawer)
+        public static bool DrawPressReleaseV<T>(string label, PressRelease<T> pr, CustomDrawerRef<T> drawer)
         {
             GUIStatus status = pr.Status;
 
@@ -103,6 +244,10 @@ namespace KeyViewer.Core
                 GUILayout.EndVertical();
             }, label, ref status.Expanded);
             return changed;
+        }
+        public static void ExpandableGUI(GUIStatus status, string label, Action drawer)
+        {
+            GUILayoutEx.ExpandableGUI(drawer, label, ref status.Expanded);
         }
         public static bool DrawSingleWithSlider(string label, ref float value, float lValue, float rValue, float width)
         {
@@ -182,42 +327,6 @@ namespace KeyViewer.Core
             string str = value.ToString();
             bool result = DrawString(label, ref str);
             value = StringConverter.ToUInt8(str);
-            return result;
-        }
-        public static bool DrawColor(string label, ref Color color)
-        {
-            bool result = false;
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(label);
-            result |= DrawSingle("<color=#FF0000>R</color>", ref color.r);
-            result |= DrawSingle("<color=#00FF00>G</color>", ref color.g);
-            result |= DrawSingle("<color=#0000FF>B</color>", ref color.b);
-            result |= DrawSingle("A", ref color.a);
-            GUILayout.EndHorizontal();
-            return result;
-        }
-        public static bool DrawColor(string label, ref VertexGradient color)
-        {
-            bool result = false;  
-            GUILayout.BeginHorizontal();
-            result |= DrawColor(Main.Lang[TKM.TopLeft], ref color.topLeft);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            result |= DrawColor(Main.Lang[TKM.TopRight], ref color.topRight);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            result |= DrawColor(Main.Lang[TKM.BottomLeft], ref color.bottomLeft);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            result |= DrawColor(Main.Lang[TKM.BottomRight], ref color.bottomRight);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
             return result;
         }
         public static bool DrawDouble(string label, ref double value)

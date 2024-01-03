@@ -14,33 +14,21 @@ namespace KeyViewer.Views
     public class ProfileDrawer : ModelDrawable<Profile>
     {
         public KeyManager manager;
-        public List<KeyConfigDrawer> drawers = new List<KeyConfigDrawer>();
-        public List<KeyConfigDrawer> specialDrawers = new List<KeyConfigDrawer>();
         private bool listening = false;
         private bool configMode = false;
+        private int dummyNumber = 1;
         public ProfileDrawer(KeyManager manager, Profile profile, string name) : base(profile, L(TKP.ConfigurateProfile, name))
         {
             this.manager = manager;
-            drawers = profile.Keys.Where(kc => kc.SpecialKey == SpecialKeyType.None)
-                .OrderBy(kc => kc.Code)
-                .Select(kc => new KeyConfigDrawer(manager, kc))
-                .ToList();
-            specialDrawers = profile.Keys.Where(kc => kc.SpecialKey != SpecialKeyType.None)
-                .OrderBy(kc => kc.SpecialKey)
-                .Select(kc => new KeyConfigDrawer(manager, kc))
-                .ToList();
         }
         public override void Draw()
         {
             Drawer.DrawBool(L(TKP.ViewOnlyGamePlay), ref model.ViewOnlyGamePlay);
             Drawer.DrawBool(L(TKP.AnimateKeys), ref model.AnimateKeys);
-            Drawer.DrawBool(L(TKP.ShowKeyPressTotal), ref model.ShowKeyPressTotal);
             Drawer.DrawBool(L(TKP.LimitNotRegisteredKeys), ref model.LimitNotRegisteredKeys);
             Drawer.DrawBool(L(TKP.ResetOnStart), ref model.ResetOnStart);
             Drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
-            Drawer.DrawPressReleaseV(L(TKP.Scale), model.VectorConfig.Scale, Drawer.CD_V_VEC2_0_1_300);
-            Drawer.DrawPressReleaseV(L(TKP.Offset), model.VectorConfig.Offset, Drawer.CD_V_VEC2_0_1_300);
-            Drawer.DrawPressReleaseV(L(TKP.Rotation), model.VectorConfig.Rotation, Drawer.CD_V_VEC3_0_1_300);
+            Drawer.DrawVectorConfig(model.VectorConfig);
             GUILayoutEx.HorizontalLine(1);
             GUILayout.Label(L(TKP.RegisteredKeys));
             DrawKeyConfigGUI();
@@ -49,16 +37,8 @@ namespace KeyViewer.Views
         {
             if (code == KeyCode.Mouse0) return;
             if (model.Keys.Any(kc => kc.Code == code))
-            {
                 model.Keys.RemoveAll(kc => kc.Code == code);
-                drawers.RemoveAll(kcd => kcd.model.Code == code);
-            }
-            else
-            {
-                var config = new KeyConfig() { Code = code };
-                model.Keys.Add(config);
-                drawers.Add(new KeyConfigDrawer(manager, config));
-            }
+            else model.Keys.Add(new KeyConfig() { Code = code });
         }
         private void DrawKeyConfigGUI()
         {
@@ -71,7 +51,7 @@ namespace KeyViewer.Views
                         GUILayout.BeginHorizontal();
                         {
                             var key = model.Keys[i];
-                            var str = key.SpecialKey != SpecialKeyType.None ? key.SpecialKey.ToString() : key.Code.ToString();
+                            var str = key.DummyName != null ? key.DummyName : key.Code.ToString();
                             if (GUILayout.Button(str))
                             {
                                 if (configMode)
@@ -100,14 +80,14 @@ namespace KeyViewer.Views
                     if (GUILayout.Button(!configMode ? L(TKM.Enable, L(TKP.ConfigurationMode)) : L(TKM.Disable, L(TKP.ConfigurationMode))))
                         configMode = !configMode;
                     GUILayout.Space(10);
+                    if (GUILayout.Button(L(TKP.CreateDummyKey)))
+                    {
+                        var dummy = new KeyConfig() { DummyName = L(TKP.DummyName, dummyNumber++) };
+                        model.Keys.Add(dummy);
+                    }
+                    GUILayout.Space(10);
                     if (!model.Keys.Any(k => k.Code == KeyCode.Mouse0) && GUILayout.Button(L(TKP.RegisterMouse0Key)))
                         model.Keys.Add(new KeyConfig() { Code = KeyCode.Mouse0 });
-                    GUILayout.Space(10);
-                    if (!model.Keys.Any(k => k.SpecialKey == SpecialKeyType.KPS) && GUILayout.Button(L(TKP.RegisterKPSKey)))
-                        model.Keys.Add(new KeyConfig() { SpecialKey = SpecialKeyType.KPS });
-                    GUILayout.Space(10);
-                    if (!model.Keys.Any(k => k.SpecialKey == SpecialKeyType.Total) && GUILayout.Button(L(TKP.RegisterTotalKey)))
-                        model.Keys.Add(new KeyConfig() { SpecialKey = SpecialKeyType.Total });
                 }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();

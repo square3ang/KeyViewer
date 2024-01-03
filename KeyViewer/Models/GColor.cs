@@ -1,5 +1,6 @@
 ﻿using JSON;
 using KeyViewer.Core.Interfaces;
+using KeyViewer.Utils;
 using TMPro;
 using UnityEngine;
 
@@ -20,6 +21,11 @@ namespace KeyViewer.Models
         public Color bottomLeft { get => _color.bottomLeft; set => SetBottomLeftColor(value); }
         public Color bottomRight { get => _color.bottomRight; set => SetBottomRightColor(value); }
 
+        public GUIStatus topLeftStatus;
+        public GUIStatus topRightStatus;
+        public GUIStatus bottomLeftStatus;
+        public GUIStatus bottomRightStatus;
+
         public string topLeftHex { get => _topLeftHex; set => SetTopLeftHex(value); }
         public string topRightHex { get => _topRightHex; set => SetTopRightHex(value); }
         public string bottomLeftHex { get => _bottomLeftHex; set => SetBottomLeftHex(value); }
@@ -38,6 +44,10 @@ namespace KeyViewer.Models
             _topRightHex = hex;
             _bottomLeftHex = hex;
             _bottomRightHex = hex;
+            topLeftStatus = new GUIStatus();
+            topRightStatus = new GUIStatus();
+            bottomLeftStatus = new GUIStatus();
+            bottomRightStatus = new GUIStatus();
         }
         public GColor(VertexGradient color)
         {
@@ -46,6 +56,10 @@ namespace KeyViewer.Models
             _topRightHex = ColorUtility.ToHtmlStringRGBA(color.topRight);
             _bottomLeftHex = ColorUtility.ToHtmlStringRGBA(color.bottomLeft);
             _bottomRightHex = ColorUtility.ToHtmlStringRGBA(color.bottomRight);
+            topLeftStatus = new GUIStatus();
+            topRightStatus = new GUIStatus();
+            bottomLeftStatus = new GUIStatus();
+            bottomRightStatus = new GUIStatus();
         }
 
         public JsonNode Serialize()
@@ -56,6 +70,10 @@ namespace KeyViewer.Models
             node[nameof(topRight)] = topRight;
             node[nameof(bottomLeft)] = bottomLeft;
             node[nameof(bottomRight)] = bottomRight;
+            node[nameof(topLeftStatus)] = topLeftStatus.Serialize();
+            node[nameof(topRightStatus)] = topRightStatus.Serialize();
+            node[nameof(bottomLeftStatus)] = bottomLeftStatus.Serialize();
+            node[nameof(bottomRightStatus)] = bottomRightStatus.Serialize();
             return node;
         }
         public void Deserialize(JsonNode node) 
@@ -65,6 +83,10 @@ namespace KeyViewer.Models
             topRight = node[nameof(topRight)];
             bottomLeft = node[nameof(bottomLeft)];
             bottomRight = node[nameof(bottomRight)];
+            topLeftStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(topLeftStatus)]);
+            topRightStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(topRightStatus)]);
+            bottomLeftStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(bottomLeftStatus)]);
+            bottomRightStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(bottomRightStatus)]);
         }
 
         private void SetTopLeftColor(Color color)
