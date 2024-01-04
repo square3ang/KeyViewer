@@ -64,12 +64,6 @@ namespace KeyViewer
                 if (File.Exists(Constants.SettingsPath))
                     Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
                 Managers = new Dictionary<string, KeyManager>();
-                if (!Settings.ActiveProfiles.Any())
-                {
-                    File.WriteAllText(Path.Combine(Mod.Path, "Default.json"),
-                        new Profile().Serialize().ToString(4));
-                    Settings.ActiveProfiles.Add(new ActiveProfile("Default", true));
-                }
                 List<string> notExistProfiles = new List<string>();
                 foreach (var profile in Settings.ActiveProfiles)
                 {
@@ -77,6 +71,14 @@ namespace KeyViewer
                         notExistProfiles.Add(profile.Name);
                 }
                 Settings.ActiveProfiles.RemoveAll(p => notExistProfiles.Contains(p.Name));
+                if (!Settings.ActiveProfiles.Any())
+                {
+                    File.WriteAllText(Path.Combine(Mod.Path, "Default.json"),
+                        new Profile().Serialize().ToString(4));
+                    var def = new ActiveProfile("Default", true);
+                    Settings.ActiveProfiles.Add(def);
+                    AddManager(def);
+                }
                 Lang = Language.GetLanguage(Settings.Language);
                 Language.OnInitialize += OnLanguageInitialize;
                 Harmony = new Harmony(modEntry.Info.Id);
@@ -168,7 +170,7 @@ namespace KeyViewer
             foreach (var (name, manager) in Managers)
             {
                 manager.Init();
-                Logger.Log($"Manager {name} Initialized");
+                Logger.Log($"Initialized Key Manager {name}.");
                 yield return null;
             }
         }

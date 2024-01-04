@@ -186,12 +186,9 @@ namespace KeyViewer.Core.TextReplacing
             if (wrapperInitialized) return;
             uniqueId = 0;
             wrapperInitialized = true;
-            new Task(() =>
-            {
-                TagWrapperAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("KeyViewer.TagWrapper"), AssemblyBuilderAccess.RunAndCollect);
-                TagWrapperModule = TagWrapperAssembly.DefineDynamicModule("KeyViewer.TagWrapper");
-                Main.Logger.Log("Initialized Tag Wrapper Assembly.");
-            }).Start();
+            TagWrapperAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("KeyViewer.TagWrapper"), AssemblyBuilderAccess.RunAndCollect);
+            TagWrapperModule = TagWrapperAssembly.DefineDynamicModule("KeyViewer.TagWrapper");
+            Main.Logger.Log("Initialized Tag Wrapper Assembly.");
         }
         public static void DisposeWrapperAssembly()
         {
