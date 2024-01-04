@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using System.Xml.Linq;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
@@ -150,7 +150,11 @@ namespace KeyViewer
                     if (Managers.TryGetValue(profile.Name, out var manager))
                         Object.Destroy(manager);
                     Managers[profile.Name] = KeyManager.CreateManager(profile.Name, p);
-                    if (forceInit) Managers[profile.Name].Init();
+                    if (forceInit)
+                    {
+                        Managers[profile.Name].Init();
+                        Logger.Log($"Initialized Key Manager {profile.Name}.");
+                    }
                 }
                 return true;
             }

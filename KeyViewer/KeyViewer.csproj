@@ -348,6 +348,7 @@
     <Compile Include="Patches\RemoveFuckingUMMDummyLogPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Settings.cs" />
+    <Compile Include="Unity\Key.cs" />
     <Compile Include="Unity\Matrix2x3.cs" />
     <Compile Include="Unity\KeyManager.cs" />
     <Compile Include="Unity\StaticCoroutine.cs" />

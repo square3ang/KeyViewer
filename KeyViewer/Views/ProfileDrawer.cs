@@ -13,7 +13,7 @@ namespace KeyViewer.Views
     {
         public KeyManager manager;
         private bool listening = false;
-        private bool configMode = false;
+        private bool configMode = true;
         private int dummyNumber = 1;
         public ProfileDrawer(KeyManager manager, Profile profile, string name) : base(profile, L(TKP.ConfigurateProfile, name))
         {

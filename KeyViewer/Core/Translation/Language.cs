@@ -86,6 +86,5 @@ namespace KeyViewer.Core.Translation
             OnInitialize();
             Initialized = true;
         }
-        static string Escape(string str) => str.Replace(@"\", @"\\").Replace(":", @"\:");
     }
 }
