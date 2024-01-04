@@ -24,7 +24,8 @@ namespace KeyViewer.Views
             }
             else GUILayout.Label(L(TKKC.KeyCode) + ":" + model.Code);
             Drawer.DrawString(L(TKKC.TextFont), ref model.Font);
-            Drawer.DrawBool(L(TKKC.EnableKPSMeter), ref model.EnableKPSMeter);
+            if (model.DummyName == null)
+                Drawer.DrawBool(L(TKKC.EnableKPSMeter), ref model.EnableKPSMeter);
             Drawer.DrawBool(L(TKKC.EnableCountText), ref model.EnableCountText);
 
             Drawer.DrawPressReleaseH(L(TKKC.Text), model.Text, Drawer.CD_H_STR);
@@ -46,7 +47,7 @@ namespace KeyViewer.Views
 
             Drawer.DrawBool(L(TKKC.EnableRain), ref model.RainEnabled);
             if (model.RainEnabled)
-                Drawer.TitleButtonPush(L(TKKC.EditRainConfig), L(TKM.EditThis), () => GUIController.Push(new RainConfigDrawer(manager, model)));
+                Drawer.TitleButton(L(TKKC.EditRainConfig), L(TKM.EditThis), () => GUIController.Push(new RainConfigDrawer(manager, model)));
         }
     }
 }

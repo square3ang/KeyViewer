@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ namespace KeyViewer.Core
 {
     public static class AssetManager
     {
+        public static bool Initialized { get; private set; }
         public static Sprite Background { get; private set; }
         public static Sprite Outline { get; private set; }
         public static Shader RoundedCorners { get; private set; }
@@ -13,15 +15,23 @@ namespace KeyViewer.Core
         private static Dictionary<string, Sprite> others;
         public static void Initialize()
         {
-            AssetBundle assets = AssetBundle.LoadFromFile(Path.Combine(Main.Mod.Path, "KeyViewer.assets"));
-            Background = assets.LoadAsset<Sprite>("Assets/Images/KeyBackground.png");
-            Outline = assets.LoadAsset<Sprite>("Assets/Images/KeyOutline.png");
-            RoundedCorners = assets.LoadAsset<Shader>("Assets/Shaders/RoundedCorners.shader");
-            IndependentRoundedCorners = assets.LoadAsset<Shader>("Assets/Shaders/IndependentRoundedCorners.shader");
-            others = new Dictionary<string, Sprite>();
+            if (Initialized) return;
+            var request = AssetBundle.LoadFromFileAsync(Path.Combine(Main.Mod.Path, "KeyViewer.assets"));
+            request.completed += o =>
+            {
+                var assets = request.assetBundle;
+                Background = assets.LoadAsset<Sprite>("Assets/Images/KeyBackground.png");
+                Outline = assets.LoadAsset<Sprite>("Assets/Images/KeyOutline.png");
+                RoundedCorners = assets.LoadAsset<Shader>("Assets/Shaders/RoundedCorners.shader");
+                IndependentRoundedCorners = assets.LoadAsset<Shader>("Assets/Shaders/IndependentRoundedCorners.shader");
+                others = new Dictionary<string, Sprite>();
+                Main.Logger.Log($"Loaded Key Viewer's Assets");
+                Initialized = true;
+            };
         }
         public static void Release()
         {
+            if (!Initialized) return;
             Object.Destroy(Background);
             Object.Destroy(Outline);
             Object.Destroy(RoundedCorners);
@@ -31,6 +41,7 @@ namespace KeyViewer.Core
             Background = null;
             Outline = null;
             others = null;
+            Initialized = false;
         }
         public static Sprite Get(string path)
         {

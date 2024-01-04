@@ -1,13 +1,12 @@
 ﻿using KeyViewer.Controllers;
 using KeyViewer.Core;
-using KeyViewer.Core.Interfaces;
 using KeyViewer.Core.Translation;
 using KeyViewer.Models;
 using SFB;
 using System.IO;
 using UnityEngine;
-using TKS = KeyViewer.Core.Translation.TranslationKeys.Settings;
 using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
+using TKS = KeyViewer.Core.Translation.TranslationKeys.Settings;
 
 namespace KeyViewer.Views
 {
@@ -43,7 +42,7 @@ namespace KeyViewer.Views
                             file.CopyTo(Path.Combine(Main.Mod.Path, file.Name));
                         var activeProfile = new ActiveProfile(Path.GetFileNameWithoutExtension(file.FullName), true);
                         model.ActiveProfiles.Add(activeProfile);
-                        Main.AddManager(activeProfile);
+                        Main.AddManager(activeProfile, true);
                     }
                 }
                 if (GUILayout.Button(L(TKS.CreateProfile)))
@@ -52,7 +51,7 @@ namespace KeyViewer.Views
                     model.ActiveProfiles.Add(profile);
                     Profile newProfile = new Profile();
                     File.WriteAllText(Path.Combine(Main.Mod.Path, $"{profile.Name}.json"), newProfile.Serialize().ToString(4));
-                    Main.AddManager(profile);
+                    Main.AddManager(profile, true);
                 }
             }
             GUILayout.FlexibleSpace();
@@ -70,7 +69,7 @@ namespace KeyViewer.Views
                         profile.Active = newActive;
                         if (profile.Active)
                         {
-                            Main.AddManager(profile);
+                            Main.AddManager(profile, true);
                             model.ActiveProfiles.Add(profile);
                         }
                         else

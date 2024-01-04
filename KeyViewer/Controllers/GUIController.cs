@@ -42,11 +42,9 @@ namespace KeyViewer.Controllers
         }
         public static void Draw()
         {
-#if DEBUG
-            GUILayout.Label($"DEPTH:{depth}, COUNT:{drawables.Count}");
-            for (int i = 0; i < drawables.Count; i++)
-                GUILayout.Label($"{i}:{drawables[i].Name}");
-#endif
+            //GUILayout.Label($"DEPTH:{depth}, COUNT:{drawables.Count}");
+            //for (int i = 0; i < drawables.Count; i++)
+            //    GUILayout.Label($"{i}:{drawables[i].Name}");
             if (skipFrames > 0)
             {
                 skipFrames--;

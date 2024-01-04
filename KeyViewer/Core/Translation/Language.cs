@@ -4,6 +4,7 @@ using KeyViewer.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -74,6 +75,12 @@ namespace KeyViewer.Core.Translation
                 if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value))
                     continue;
                 dict.Add(key, value);
+            }
+            if (Version.Parse(dict[TranslationKeys.Version]) > Main.Mod.Version)
+            {
+                var update = dict[TranslationKeys.Update];
+                foreach (var key in dict.Keys.ToList())
+                    dict[key] = update;
             }
             Main.Logger.Log($"Loaded {dict.Count} Localizations from Sheet");
             OnInitialize();

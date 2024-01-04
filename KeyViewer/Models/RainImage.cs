@@ -17,7 +17,10 @@ namespace KeyViewer.Models
         public void Deserialize(JsonNode node)
         {
             Count = node[nameof(Count)];
-            Image = node[nameof(Image)];
+            var img = node[nameof(Image)];
+            if (img == null)
+                Image = null;
+            else Image = img.Value;
         }
     }
 }

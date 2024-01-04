@@ -8,10 +8,12 @@ using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using KeyViewer.Views;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
@@ -64,7 +66,7 @@ namespace KeyViewer
                 Managers = new Dictionary<string, KeyManager>();
                 if (!Settings.ActiveProfiles.Any())
                 {
-                    File.WriteAllText(Path.Combine(Mod.Path, "Default.json"), 
+                    File.WriteAllText(Path.Combine(Mod.Path, "Default.json"),
                         new Profile().Serialize().ToString(4));
                     Settings.ActiveProfiles.Add(new ActiveProfile("Default", true));
                 }
@@ -79,6 +81,7 @@ namespace KeyViewer
                 Language.OnInitialize += OnLanguageInitialize;
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
+                StaticCoroutine.Run(InitializeManagerCo());
             }
             else
             {
@@ -133,7 +136,7 @@ namespace KeyViewer
             GUIController.Init(new SettingsDrawer(Settings));
         }
 
-        public static bool AddManager(ActiveProfile profile)
+        public static bool AddManager(ActiveProfile profile, bool forceInit = false)
         {
             var profilePath = Path.Combine(Mod.Path, $"{profile.Name}.json");
             if (File.Exists(profilePath))
@@ -145,6 +148,7 @@ namespace KeyViewer
                     if (Managers.TryGetValue(profile.Name, out var manager))
                         Object.Destroy(manager);
                     Managers[profile.Name] = KeyManager.CreateManager(profile.Name, p);
+                    if (forceInit) Managers[profile.Name].Init();
                 }
                 return true;
             }
@@ -156,6 +160,16 @@ namespace KeyViewer
             {
                 Object.Destroy(manager);
                 Managers.Remove(profile.Name);   
+            }
+        }
+        public static IEnumerator InitializeManagerCo()
+        {
+            yield return new WaitUntil(() => !AssetManager.Initialized);
+            foreach (var (name, manager) in Managers)
+            {
+                manager.Init();
+                Logger.Log($"Manager {name} Initialized");
+                yield return null;
             }
         }
     }

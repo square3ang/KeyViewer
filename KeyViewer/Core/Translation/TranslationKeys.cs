@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-
-namespace KeyViewer.Core.Translation
+﻿namespace KeyViewer.Core.Translation
 {
     public static class TranslationKeys
     {
         public static string Lorem_Ipsum => "LOREM_IPSUM";
+        public static string Version = "V_E_R_S_I_O_N";
+        public static string Update = "U_P_D_A_T_E";
         public static class Settings
         {
             public const string Prefix = "SETTINGS_";
@@ -68,6 +68,10 @@ namespace KeyViewer.Core.Translation
             internal static readonly string FailMiss = Prefix + "FAIL_MISS";
             internal static readonly string FailOverload = Prefix + "FAIL_OVERLOAD";
             internal static readonly string Size = Prefix + "SIZE";
+            internal static readonly string Speed = Prefix + "SPEED";
+            internal static readonly string Length = Prefix + "LENGTH";
+            internal static readonly string Softness = Prefix + "SOFTNESS";
+            internal static readonly string PoolSize = Prefix + "POOL_SIZE";
         }
         public static class KeyConfig
         {
@@ -100,6 +104,17 @@ namespace KeyViewer.Core.Translation
         {
             public const string Prefix = "RAINCONFIG_";
             internal static readonly string KeyConfiguration = Prefix + "RAIN_CONFIGURATION";
+            internal static readonly string RainSpeed = Prefix + "RAIN_SPEED";
+            internal static readonly string RainLength = Prefix + "RAIN_LENGTH";
+            internal static readonly string RainSoftness = Prefix + "RAIN_SOFTNESS";
+            internal static readonly string RainPoolSize = Prefix + "RAIN_POOL_SIZE";
+            internal static readonly string EditRainConfig = Prefix + "EDIT_RAIN_CONFIG";
+            internal static readonly string KeyRain = Prefix + "KEY_RAIN";
+            internal static readonly string ImageDisplayMode = Prefix + "IMAGE_DISPLAY_MODE";
+            internal static readonly string Direction = Prefix + "DIRECTION";
+            internal static readonly string RainImages = Prefix + "RAIN_IMAGES";
+            internal static readonly string RainImagePath = Prefix + "RAIN_IMAGE_PATH";
+            internal static readonly string RainImageCount = Prefix + "RAIN_IMAGE_COUNT";
         }
     }
 }

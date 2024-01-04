@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using KeyViewer.Utils;
 using KeyViewer.API;
+using System.Threading.Tasks;
 
 namespace KeyViewer.Core.TextReplacing
 {
@@ -121,7 +122,6 @@ namespace KeyViewer.Core.TextReplacing
             ArgumentCount = parameters.Length;
             return this;
         }
-        static Tag() => InitializeWrapperAssembly();
         static AssemblyBuilder TagWrapperAssembly;
         static ModuleBuilder TagWrapperModule;
         static int uniqueId = 0;
@@ -185,9 +185,13 @@ namespace KeyViewer.Core.TextReplacing
         {
             if (wrapperInitialized) return;
             uniqueId = 0;
-            TagWrapperAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("KeyViewer.TagWrapper"), AssemblyBuilderAccess.RunAndCollect);
-            TagWrapperModule = TagWrapperAssembly.DefineDynamicModule("KeyViewer.TagWrapper");
             wrapperInitialized = true;
+            new Task(() =>
+            {
+                TagWrapperAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("KeyViewer.TagWrapper"), AssemblyBuilderAccess.RunAndCollect);
+                TagWrapperModule = TagWrapperAssembly.DefineDynamicModule("KeyViewer.TagWrapper");
+                Main.Logger.Log("Initialized Tag Wrapper Assembly.");
+            }).Start();
         }
         public static void DisposeWrapperAssembly()
         {

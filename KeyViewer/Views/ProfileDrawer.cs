@@ -1,13 +1,11 @@
-﻿using KeyViewer.Core;
+﻿using KeyViewer.Controllers;
+using KeyViewer.Core;
 using KeyViewer.Models;
 using KeyViewer.Unity;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
-using TKKC = KeyViewer.Core.Translation.TranslationKeys.KeyConfig;
-using KeyViewer.Controllers;
+using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
 
 namespace KeyViewer.Views
 {

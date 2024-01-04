@@ -8,9 +8,10 @@ namespace KeyViewer.Unity
         public Profile profile;
 
         private bool initialized;
-        public void Init(Profile profile)
+        public void Init()
         {
-            this.profile = profile;
+            if (initialized) return;
+            initialized = true;
         }
         void Update()
         {
@@ -21,9 +22,10 @@ namespace KeyViewer.Unity
         {
             if (profile == null) return null;
             GameObject manager = new GameObject(name ?? "KeyManager");
-            KeyManager keyManager = manager.AddComponent<KeyManager>();
-            keyManager.Init(profile);
-            return keyManager;
+            DontDestroyOnLoad(manager);
+            var km = manager.AddComponent<KeyManager>();
+            km.profile = profile;
+            return km;
         }
     }
 }

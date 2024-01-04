@@ -15,7 +15,7 @@ namespace KeyViewer.Models
         public ObjectConfig ObjectConfig = new ObjectConfig(Vector2.one, Color.white, Color.white);
         public List<RainImage> RainImages = new List<RainImage>();
         public RainImageDisplayMode ImageDisplayMode = RainImageDisplayMode.Sequential;
-        public Direction Direction = Direction.U;
+        public Direction Direction = Direction.Up;
         public RainConfig Copy()
         {
             RainConfig newConfig = new RainConfig();
