@@ -97,7 +97,7 @@ namespace KeyViewer.Core
             GUILayout.BeginHorizontal();
             {
                 GUILayout.Label(Main.Lang[TKM.Ease]);
-                result |= DrawEnum(Main.Lang[TKM.Ease], ref config.Ease, config.Ease.GetUnique());
+                result |= DrawEnum(Main.Lang[TKM.Ease], ref config.Ease, config.EaseUniqueObject.GetHashCode());
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -106,16 +106,31 @@ namespace KeyViewer.Core
         }
         #endregion
 
-        public static bool DrawObjectConfig(string label, string objName, ObjectConfig objConfig)
+        public static void DrawObjectConfig(string label, string objName, ObjectConfig objConfig, Action onChange)
         {
-            bool result = false;
             TitleButton(label, Main.Lang[TKM.EditThis], () =>
             {
                 string bts = string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ObjectConfigFrom], objName));
                 GUIController.Push(new MethodDrawable(() =>
                 {
+                    GUILayoutEx.ExpandableGUI(() =>
+                    {
+                        GUILayout.BeginVertical();
+                        {
+                            GUILayout.Label(Main.Lang[TKM.Pressed]);
+                            DrawGColor(ref objConfig.Color.Pressed).IfTrue(onChange);
+                        }
+                        GUILayout.EndVertical();
+
+                        GUILayout.BeginVertical();
+                        {
+                            GUILayout.Label(Main.Lang[TKM.Released]);
+                            DrawGColor(ref objConfig.Color.Released).IfTrue(onChange);
+                        }
+                        GUILayout.EndVertical();
+                    }, Main.Lang[TKM.Color], ref objConfig.Color.Status.Expanded);
                     string title = string.Format(string.Format(Main.Lang[TKM.JudgeColorFrom], objName));
-                    result |= DrawObjectConfig(objConfig, j =>
+                    DrawObjectConfig(objConfig, j =>
                     {
                         bool judgeChanged = false;
                         TitleButton(string.Format(Main.Lang[TKM.Edit], Main.Lang[TKM.JudgeColor]), Main.Lang[TKM.EditThis], () =>
@@ -123,23 +138,22 @@ namespace KeyViewer.Core
                             GUIController.Push(new MethodDrawable(() =>
                             {
                                 var colors = objConfig.JudgeColors;
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.TooEarly]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.TooEarly), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.TooEarly])))));
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.VeryEarly]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.VeryEarly), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.VeryEarly])))));
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.EarlyPerfect]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.EarlyPerfect), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.EarlyPerfect])))));
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.Perfect]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.Perfect), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.Perfect])))));
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.LatePerfect]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.LatePerfect), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.LatePerfect])))));
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.VeryLate]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.VeryLate), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.VeryLate])))));
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.TooLate]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.TooLate), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.TooLate])))));
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.Multipress]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.Multipress), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.Multipress])))));
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.FailMiss]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.FailMiss), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.FailMiss])))));
-                                TitleButton(string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.FailOverload]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => result |= DrawGColor(ref colors.FailOverload), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.Color], Main.Lang[TKM.FailOverload])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.TooEarly]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.TooEarly).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.TooEarly])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.VeryEarly]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.VeryEarly).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.VeryEarly])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.EarlyPerfect]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.EarlyPerfect).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.EarlyPerfect])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.Perfect]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.Perfect).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.Perfect])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.LatePerfect]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.LatePerfect).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.LatePerfect])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.VeryLate]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.VeryLate).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.VeryLate])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.TooLate]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.TooLate).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.TooLate])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.Multipress]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.Multipress).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.Multipress])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.FailMiss]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.FailMiss).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.FailMiss])))));
+                                TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.FailOverload]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.FailOverload).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.FailOverload])))));
                             }, title));
                         });
                         return judgeChanged;
-                    });
+                    }).IfTrue(onChange);
                 }, bts));
             });
-            return result;
         }
         public static void TitleButton(string label, string btnLabel, Action pressed)
         {
@@ -164,7 +178,13 @@ namespace KeyViewer.Core
                 ExpandableGUI(color.topRightStatus, Main.Lang[TKM.TopRight], () => result |= DrawColor(ref tr));
                 ExpandableGUI(color.bottomLeftStatus, Main.Lang[TKM.BottomLeft], () => result |= DrawColor(ref bl));
                 ExpandableGUI(color.bottomRightStatus, Main.Lang[TKM.BottomRight], () => result |= DrawColor(ref br));
-                if (result) color = new VertexGradient(tl, tr, bl, br);
+                if (result)
+                {
+                    color.topLeft = tl;
+                    color.topRight = tr;
+                    color.bottomLeft = bl;
+                    color.bottomRight = br;
+                }
             }
             else
             {

@@ -42,6 +42,7 @@ namespace KeyViewer.Core
             {
                 current = null;
                 cts = null;
+                Running = false;
             }
         }
         public void Press()

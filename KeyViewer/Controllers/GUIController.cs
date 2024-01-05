@@ -81,6 +81,7 @@ namespace KeyViewer.Controllers
             current = first;
             drawables = new List<IDrawable>();
             depth = 0;
+            Main.ListeningDrawer = null;
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized, false);
         }
     }

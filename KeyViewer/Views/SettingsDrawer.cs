@@ -67,16 +67,8 @@ namespace KeyViewer.Views
                     if (profile.Active != newActive)
                     {
                         profile.Active = newActive;
-                        if (profile.Active)
-                        {
-                            Main.AddManager(profile, true);
-                            model.ActiveProfiles.Add(profile);
-                        }
-                        else
-                        {
-                            Main.RemoveManager(profile);
-                            model.ActiveProfiles.RemoveAll(p => p.Name == profile.Name);
-                        }
+                        if (Main.Managers.TryGetValue(profile.Name, out var newManager))
+                            newManager.gameObject.SetActive(newActive);
                         model.ActiveProfiles[i] = profile;
                     }
                     if (profile.Active)

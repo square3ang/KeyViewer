@@ -8,7 +8,7 @@ namespace KeyViewer.Models
 {
     public class KeyConfig : IModel, ICopyable<KeyConfig>
     {
-        public uint Count = 0;
+        public int Count = 0;
         public KeyCode Code = KeyCode.None;
         public string DummyName = null;
         public string Font = "Default";
@@ -22,12 +22,12 @@ namespace KeyViewer.Models
 
         public ObjectConfig TextConfig = new ObjectConfig(75, Color.black, Color.white);
         public ObjectConfig CountTextConfig = new ObjectConfig(50, Color.black, Color.white);
-        public ObjectConfig BackgroundConfig = new ObjectConfig(Vector2.one, Color.white, Color.black);
-        public ObjectConfig OutlineConfig = new ObjectConfig(Vector2.one, Color.white, Color.black);
-        public float BackgroundRoundness = 1f;
-        public float OutlineRoundness = 1f;
+        public ObjectConfig BackgroundConfig = new ObjectConfig(Vector2.one, Color.white, Color.black.WithAlpha(0.4f));
+        public ObjectConfig OutlineConfig = new ObjectConfig(Vector2.one, Color.white, Color.white);
+        public float BackgroundRoundness = 0f;
+        public float OutlineRoundness = 0f;
 
-        public VectorConfig VectorConfig = new VectorConfig();
+        public VectorConfig VectorConfig = new VectorConfig() { Scale = new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one), ScaleEase = new PressRelease<EaseConfig>(new EaseConfig(Ease.OutQuad, 0.1f)) };
 
         public PressReleaseM<EaseConfig> ScaleEasing = new EaseConfig(Ease.OutExpo, 0.1f);
 

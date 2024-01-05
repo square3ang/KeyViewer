@@ -1,4 +1,8 @@
-﻿using KeyViewer.Models;
+﻿using KeyViewer.Core;
+using KeyViewer.Core.TextReplacing;
+using KeyViewer.Models;
+using KeyViewer.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,19 +12,67 @@ namespace KeyViewer.Unity
 {
     public class KeyManager : MonoBehaviour
     {
+        public Tag CurKPSTag { get; private set; }
+        public Tag MaxKPSTag { get; private set; }
+        public Tag AvgKPSTag { get; private set; }
+        public Tag CountTag { get; private set; }
+        public Tag[] AllTags => new Tag[] { CurKPSTag, MaxKPSTag, AvgKPSTag, CountTag };
+
         public Profile profile;
-        private Canvas keysCanvas;
+        public Canvas keysCanvas;
+
+        internal KPSCalculator kpsCalc;
         private RectTransform keysRt;
         private List<Key> keys;
         private bool initialized;
         public void Init()
         {
             if (initialized) return;
+            kpsCalc = new KPSCalculator(profile);
+            kpsCalc.Start();
             Canvas canvas = gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             CanvasScaler scaler = gameObject.AddComponent<CanvasScaler>();
             scaler.referenceResolution = new Vector2(1280, 720);
             keys = new List<Key>();
+            CurKPSTag = new Tag("CurKPS").SetGetter(new Func<string, int>(name =>
+            {
+                if (string.IsNullOrEmpty(name)) return kpsCalc.Kps;
+                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.config) == name);
+                if (key == null) return -1;
+                if (!key.kpsCalc.Running) return 0;
+                return key.kpsCalc.Kps;
+            }));
+            MaxKPSTag = new Tag("MaxKPS").SetGetter(new Func<string, int>(name =>
+            {
+                if (string.IsNullOrEmpty(name)) return kpsCalc.Max;
+                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.config) == name);
+                if (key == null) return -1;
+                if (!key.kpsCalc.Running) return 0;
+                return key.kpsCalc.Max;
+            }));
+            AvgKPSTag = new Tag("AvgKPS").SetGetter(new Func<string, double>(name =>
+            {
+                if (string.IsNullOrEmpty(name)) return kpsCalc.Average;
+                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.config) == name);
+                if (key == null) return -1;
+                if (!key.kpsCalc.Running) return 0;
+                return key.kpsCalc.Average;
+            }));
+            CountTag = new Tag("Count").SetGetter(new Func<string, int>(name =>
+            {
+                if (string.IsNullOrEmpty(name))
+                {
+                    int total = 0;
+                    foreach (var k in keys)
+                        total += k.config.Count;
+                    return total;
+                }
+                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.config) == name);
+                if (key == null) return -1;
+                if (!key.kpsCalc.Running) return 0;
+                return key.config.Count;
+            }));
             initialized = true;
         }
         public Key this[string dummyName]
@@ -86,9 +138,8 @@ namespace KeyViewer.Unity
             keysRt.localRotation = Quaternion.Euler(vecConfig.Rotation.Released);
             keysRt.localScale = vecConfig.Scale.Released;
 
-            float x = 0, tempX = 0;
-            int updateCount = 0;
-            keys.ForEach(k => k.UpdateLayout(ref x, ref tempX, updateCount++));
+            float x = 0;
+            keys.ForEach(k => k.UpdateLayout(ref x));
         }
         public static KeyManager CreateManager(string name, Profile profile)
         {

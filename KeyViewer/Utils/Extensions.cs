@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using KeyViewer.Core.Interfaces;
+using UnityEngine;
 
 namespace KeyViewer.Utils
 {
@@ -21,5 +21,10 @@ namespace KeyViewer.Utils
         }
         public static int GetUnique<T>(this T obj) where T : class => (int)GetAddress(ref obj);
         public static int GetUnique<T>(this ref T obj) where T : struct => (int)GetAddress(ref obj);
+        public static bool IfTrue(this bool b, Action a)
+        {
+            if (b) a();
+            return b;
+        }
     }
 }

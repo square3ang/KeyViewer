@@ -15,6 +15,7 @@ namespace KeyViewer.Models
         }
         public Ease Ease = Ease.Unset;
         public float Duration = 0;
+        internal object EaseUniqueObject = new object();
         public EaseConfig Copy()
         {
             var config = new EaseConfig();

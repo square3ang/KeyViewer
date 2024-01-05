@@ -35,7 +35,7 @@ namespace KeyViewer.Views
                 });
             }, L(TKRC.RainImages), ref imageListExpanded);
 
-            Drawer.DrawObjectConfig(L(TKRC.EditRainConfig), L(TKRC.KeyRain, name), model.ObjectConfig);
+            Drawer.DrawObjectConfig(L(TKRC.EditRainConfig), L(TKRC.KeyRain, name), model.ObjectConfig, () => manager.UpdateLayout());
 
             GUILayout.BeginHorizontal();
             {

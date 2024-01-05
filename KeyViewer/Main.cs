@@ -152,6 +152,7 @@ namespace KeyViewer
                     if (forceInit)
                     {
                         Managers[profile.Name].Init();
+                        Managers[profile.Name].UpdateKeys();
                         Logger.Log($"Initialized Key Manager {profile.Name}.");
                     }
                 }
@@ -173,6 +174,7 @@ namespace KeyViewer
             foreach (var (name, manager) in Managers)
             {
                 manager.Init();
+                manager.UpdateKeys();
                 Logger.Log($"Initialized Key Manager {name}.");
                 yield return null;
             }

@@ -37,6 +37,7 @@ namespace KeyViewer.Views
             if (model.Keys.Any(kc => kc.Code == code))
                 model.Keys.RemoveAll(kc => kc.Code == code);
             else model.Keys.Add(new KeyConfig() { Code = code });
+            manager.UpdateKeys();
         }
         private void DrawKeyConfigGUI()
         {
@@ -54,7 +55,11 @@ namespace KeyViewer.Views
                             {
                                 if (configMode)
                                     GUIController.Push(new KeyConfigDrawer(manager, key));
-                                else model.Keys.RemoveAt(i);
+                                else
+                                {
+                                    model.Keys.RemoveAt(i);
+                                    manager.UpdateKeys();
+                                }
                                 break;
                             }
                         }
@@ -82,10 +87,14 @@ namespace KeyViewer.Views
                     {
                         var dummy = new KeyConfig() { DummyName = L(TKP.DummyName, dummyNumber++) };
                         model.Keys.Add(dummy);
+                        manager.UpdateKeys();
                     }
                     GUILayout.Space(10);
                     if (!model.Keys.Any(k => k.Code == KeyCode.Mouse0) && GUILayout.Button(L(TKP.RegisterMouse0Key)))
+                    {
                         model.Keys.Add(new KeyConfig() { Code = KeyCode.Mouse0 });
+                        manager.UpdateKeys();
+                    }
                 }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();

@@ -55,7 +55,7 @@
             internal static readonly string EditThis = Prefix + "EDIT_THIS";
             internal static readonly string JudgeColorFrom = Prefix + "JUDGECOLOR_FROM";
             internal static readonly string JudgeColor = Prefix + "JUDGECOLOR";
-            internal static readonly string Color = Prefix + "COLOR";
+            internal static readonly string ThisColor = Prefix + "THIS_COLOR";
             internal static readonly string EnableGradient = Prefix + "ENABLE_GRADIENT";
             internal static readonly string TooEarly = Prefix + "TOO_EARLY";
             internal static readonly string VeryEarly = Prefix + "VERY_EARLY";
@@ -79,6 +79,7 @@
             internal static readonly string ScaleEase = Prefix + "SCALE_EASE";
             internal static readonly string OffsetEase = Prefix + "OFFSET_EASE";
             internal static readonly string RotationEase = Prefix + "ROTATION_EASE";
+            internal static readonly string Color = Prefix + "COLOR";
         }
         public static class KeyConfig
         {
