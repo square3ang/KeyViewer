@@ -13,7 +13,7 @@ namespace KeyViewer.Models
             Ease = ease;
             Duration = duration;
         }
-        public Ease Ease = Ease.INTERNAL_Zero;
+        public Ease Ease = Ease.Unset;
         public float Duration = 0;
         public EaseConfig Copy()
         {
