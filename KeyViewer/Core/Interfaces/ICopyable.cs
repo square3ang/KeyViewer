@@ -1,6 +1,6 @@
 ﻿namespace KeyViewer.Core.Interfaces
 {
-    public interface ICopyable<T> where T : ICopyable<T>
+    public interface ICopyable<T>
     {
         T Copy();
     }

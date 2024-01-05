@@ -121,6 +121,11 @@ namespace KeyViewer.Core
                             DrawGColor(ref objConfig.Color.Pressed).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();
+                        TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
+                        {
+                            objConfig.Color.Pressed = objConfig.Color.Released._color;
+                            onChange();
+                        });
 
                         GUILayout.BeginVertical();
                         {
@@ -128,6 +133,11 @@ namespace KeyViewer.Core
                             DrawGColor(ref objConfig.Color.Released).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();
+                        TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
+                        {
+                            objConfig.Color.Released = objConfig.Color.Pressed._color;
+                            onChange();
+                        });
                     }, Main.Lang[TKM.Color], ref objConfig.Color.Status.Expanded);
                     string title = string.Format(string.Format(Main.Lang[TKM.JudgeColorFrom], objName));
                     DrawObjectConfig(objConfig, j =>
@@ -285,6 +295,14 @@ namespace KeyViewer.Core
                     changed = drawer(ref pr.Pressed);
                 }
                 GUILayout.EndHorizontal();
+                TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
+                {
+                    object released = pr.Released;
+                    if (released is ICopyable<T> copyable)
+                        pr.Pressed = copyable.Copy();
+                    else pr.Pressed = pr.Released;
+                    changed = true;
+                });
 
                 GUILayout.BeginHorizontal();
                 {
@@ -292,6 +310,14 @@ namespace KeyViewer.Core
                     changed = drawer(ref pr.Released);
                 }
                 GUILayout.EndHorizontal();
+                TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
+                {
+                    object pressed = pr.Pressed;
+                    if (pressed is ICopyable<T> copyable)
+                        pr.Released = copyable.Copy();
+                    else pr.Released = pr.Pressed;
+                    changed = true;
+                });
             }, label, ref status.Expanded);
             return changed;
         }
@@ -308,6 +334,14 @@ namespace KeyViewer.Core
                     changed = drawer(ref pr.Pressed);
                 }
                 GUILayout.EndVertical();
+                TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
+                {
+                    object released = pr.Released;
+                    if (released is ICopyable<T> copyable)
+                        pr.Pressed = copyable.Copy();
+                    else pr.Pressed = pr.Released;
+                    changed = true;
+                });
 
                 GUILayout.BeginVertical();
                 {
@@ -315,6 +349,14 @@ namespace KeyViewer.Core
                     changed = drawer(ref pr.Released);
                 }
                 GUILayout.EndVertical();
+                TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
+                {
+                    object pressed = pr.Pressed;
+                    if (pressed is ICopyable<T> copyable)
+                        pr.Released = copyable.Copy();
+                    else pr.Released = pr.Pressed;
+                    changed = true;
+                });
             }, label, ref status.Expanded);
             return changed;
         }
@@ -331,6 +373,14 @@ namespace KeyViewer.Core
                     changed = drawer(pr.Pressed);
                 }
                 GUILayout.EndHorizontal();
+                TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
+                {
+                    object released = pr.Released;
+                    if (released is ICopyable<T> copyable)
+                        pr.Pressed = copyable.Copy();
+                    else pr.Pressed = pr.Released;
+                    changed = true;
+                });
 
                 GUILayout.BeginHorizontal();
                 {
@@ -338,6 +388,14 @@ namespace KeyViewer.Core
                     changed = drawer(pr.Released);
                 }
                 GUILayout.EndHorizontal();
+                TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
+                {
+                    object pressed = pr.Pressed;
+                    if (pressed is ICopyable<T> copyable)
+                        pr.Released = copyable.Copy();
+                    else pr.Released = pr.Pressed;
+                    changed = true;
+                });
             }, label, ref status.Expanded);
             return changed;
         }
@@ -354,6 +412,14 @@ namespace KeyViewer.Core
                     changed = drawer(pr.Pressed);
                 }
                 GUILayout.EndVertical();
+                TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
+                {
+                    object released = pr.Released;
+                    if (released is ICopyable<T> copyable)
+                        pr.Pressed = copyable.Copy();
+                    else pr.Pressed = pr.Released;
+                    changed = true;
+                });
 
                 GUILayout.BeginVertical();
                 {
@@ -361,6 +427,14 @@ namespace KeyViewer.Core
                     changed = drawer(pr.Released);
                 }
                 GUILayout.EndVertical();
+                TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
+                {
+                    object pressed = pr.Pressed;
+                    if (pressed is ICopyable<T> copyable)
+                        pr.Released = copyable.Copy();
+                    else pr.Released = pr.Pressed;
+                    changed = true;
+                });
             }, label, ref status.Expanded);
             return changed;
         }

@@ -8,7 +8,8 @@ namespace KeyViewer.Models
 {
     public struct GColor : IModel, ICopyable<GColor>
     {
-        private VertexGradient _color;
+        internal VertexGradient _color;
+
         private string _topLeftHex;
         private string _topRightHex;
         private string _bottomLeftHex;

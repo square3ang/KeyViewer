@@ -80,6 +80,9 @@
             internal static readonly string OffsetEase = Prefix + "OFFSET_EASE";
             internal static readonly string RotationEase = Prefix + "ROTATION_EASE";
             internal static readonly string Color = Prefix + "COLOR";
+            internal static readonly string CopyFromPressed = Prefix + "COPY_FROM_PRESSED";
+            internal static readonly string CopyFromReleased = Prefix + "COPY_FROM_RELEASED";
+            internal static readonly string Copy = Prefix + "COPY";
         }
         public static class KeyConfig
         {
