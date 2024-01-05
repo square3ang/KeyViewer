@@ -91,6 +91,19 @@ namespace KeyViewer.Core
             }
             return false;
         }
+        public static bool CD_V_EASECONFIG(EaseConfig config)
+        {
+            bool result = false;
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label(Main.Lang[TKM.Ease]);
+                result |= DrawEnum(Main.Lang[TKM.Ease], ref config.Ease, config.GetHashCode());
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            result |= DrawSingleWithSlider(Main.Lang[TKM.Duration], ref config.Duration, 0, 5, 300);
+            return result;
+        }
         #endregion
 
         public static bool DrawObjectConfig(string label, string objName, ObjectConfig objConfig)
@@ -209,6 +222,17 @@ namespace KeyViewer.Core
             else result |= DrawPressReleaseV(Main.Lang[TKM.Scale], vConfig.Scale, CD_V_VEC2_0_1_300);
             result |= DrawPressReleaseV(Main.Lang[TKM.Offset], vConfig.Offset, CD_V_VEC2_0_1_300);
             result |= DrawPressReleaseV(Main.Lang[TKM.Rotation], vConfig.Rotation, CD_V_VEC3_0_1_300);
+            TitleButton(Main.Lang[TKM.EditEaseConfig], Main.Lang[TKM.EditThis], () =>
+            {
+                GUIController.Push(new MethodDrawable(() =>
+                {
+                    if (vConfig.UseSize)
+                        DrawPressReleaseV(Main.Lang[TKM.SizeEase], vConfig.SizeEase, CD_V_EASECONFIG);
+                    else DrawPressReleaseV(Main.Lang[TKM.ScaleEase], vConfig.ScaleEase, CD_V_EASECONFIG);
+                    DrawPressReleaseV(Main.Lang[TKM.OffsetEase], vConfig.OffsetEase, CD_V_EASECONFIG);
+                    DrawPressReleaseV(Main.Lang[TKM.RotationEase], vConfig.RotationEase, CD_V_EASECONFIG);
+                }, Main.Lang[TKM.EditEaseConfig]));
+            });
             return result;
         }
         public static bool DrawVector2WithSlider(string label, ref Vector2 vec2, float lValue, float rValue)
@@ -269,6 +293,52 @@ namespace KeyViewer.Core
                 {
                     GUILayout.Label(Main.Lang[TKM.Released]);
                     changed = drawer(ref pr.Released);
+                }
+                GUILayout.EndVertical();
+            }, label, ref status.Expanded);
+            return changed;
+        }
+        public static bool DrawPressReleaseH<T>(string label, PressRelease<T> pr, CustomDrawer<T> drawer)
+        {
+            GUIStatus status = pr.Status;
+
+            bool changed = false;
+            GUILayoutEx.ExpandableGUI(() =>
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label(Main.Lang[TKM.Pressed]);
+                    changed = drawer(pr.Pressed);
+                }
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label(Main.Lang[TKM.Released]);
+                    changed = drawer(pr.Released);
+                }
+                GUILayout.EndHorizontal();
+            }, label, ref status.Expanded);
+            return changed;
+        }
+        public static bool DrawPressReleaseV<T>(string label, PressRelease<T> pr, CustomDrawer<T> drawer)
+        {
+            GUIStatus status = pr.Status;
+
+            bool changed = false;
+            GUILayoutEx.ExpandableGUI(() =>
+            {
+                GUILayout.BeginVertical();
+                {
+                    GUILayout.Label(Main.Lang[TKM.Pressed]);
+                    changed = drawer(pr.Pressed);
+                }
+                GUILayout.EndVertical();
+
+                GUILayout.BeginVertical();
+                {
+                    GUILayout.Label(Main.Lang[TKM.Released]);
+                    changed = drawer(pr.Released);
                 }
                 GUILayout.EndVertical();
             }, label, ref status.Expanded);
@@ -399,11 +469,11 @@ namespace KeyViewer.Core
             value = StringConverter.ToDouble(str);
             return result;
         }
-        public static bool DrawEnum<T>(string label, ref T @enum) where T : Enum
+        public static bool DrawEnum<T>(string label, ref T @enum, int unique = 0) where T : Enum
         {
             int current = EnumHelper<T>.IndexOf(@enum);
             string[] names = EnumHelper<T>.GetNames();
-            bool result = UnityModManagerNet.UnityModManager.UI.PopupToggleGroup(ref current, names, label);
+            bool result = UnityModManagerNet.UnityModManager.UI.PopupToggleGroup(ref current, names, label, unique);
             @enum = EnumHelper<T>.GetValues()[current];
             return result;
         }

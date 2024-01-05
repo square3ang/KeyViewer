@@ -47,7 +47,7 @@ namespace KeyViewer.Models
         public bool IsSame => Equals(Pressed, Released);
         public static implicit operator PressRelease<T>(T value) => new PressRelease<T>(value);
     }
-    public class PressReleaseM<T> : PressRelease<T> where T : IModel, new()
+    public class PressReleaseM<T> : PressRelease<T> where T : IModel, ICopyable<T>, new()
     {
         public PressReleaseM() { }
         public PressReleaseM(T value) => Set(value);
@@ -61,18 +61,20 @@ namespace KeyViewer.Models
             JsonNode node = JsonNode.Empty;
             node[nameof(Pressed)] = Pressed.Serialize();
             node[nameof(Released)] = Released.Serialize();
+            node[nameof(Status)] = Status.Serialize();
             return node;
         }
         public new void Deserialize(JsonNode node)
         {
             Pressed = ModelUtils.Unbox<T>(node[nameof(Pressed)]);
             Released = ModelUtils.Unbox<T>(node[nameof(Released)]);
+            Status = ModelUtils.Unbox<GUIStatus>(node[nameof(Status)]) ?? new GUIStatus();
         }
         public new PressReleaseM<T> Copy()
         {
             var newPR = new PressReleaseM<T>();
-            newPR.Pressed = Pressed;
-            newPR.Released = Released;
+            newPR.Pressed = Pressed.Copy();
+            newPR.Released = Released.Copy();
             return newPR;
         }
         public static implicit operator PressReleaseM<T>(T value) => new PressReleaseM<T>(value);

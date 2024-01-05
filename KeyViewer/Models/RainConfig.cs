@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace KeyViewer.Models
 {
-    public class RainConfig : IModel
+    public class RainConfig : IModel, ICopyable<RainConfig>
     {
         public PressRelease<float> Speed = 400f;
         public PressRelease<float> Length = 400f;

@@ -3,7 +3,7 @@ using KeyViewer.Core.Interfaces;
 
 namespace KeyViewer.Models
 {
-    public class GUIStatus : IModel
+    public class GUIStatus : IModel, ICopyable<GUIStatus>
     {
         public bool Expanded = false;
         public bool Enabled = true;

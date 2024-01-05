@@ -4,7 +4,7 @@ using KeyViewer.Utils;
 
 namespace KeyViewer.Models
 {
-    public class Judge<T> : IModel
+    public class Judge<T> : IModel, ICopyable<Judge<T>>
     {
         public T TooEarly;
         public T VeryEarly;     
@@ -116,7 +116,7 @@ namespace KeyViewer.Models
             return newJudge;
         }
     }
-    public class JudgeM<T> : Judge<T>, IModel where T : IModel, new()
+    public class JudgeM<T> : Judge<T>, IModel where T : IModel, ICopyable<T>, new()
     {
         public new JsonNode Serialize()
         {
@@ -149,16 +149,16 @@ namespace KeyViewer.Models
         public new JudgeM<T> Copy()
         {
             var newJudge = new JudgeM<T>();
-            newJudge.TooEarly = TooEarly;
-            newJudge.VeryEarly = VeryEarly;
-            newJudge.EarlyPerfect = EarlyPerfect;
-            newJudge.Perfect = Perfect;
-            newJudge.LatePerfect = LatePerfect;
-            newJudge.VeryLate = VeryLate;
-            newJudge.TooLate = TooLate;
-            newJudge.Multipress = Multipress;
-            newJudge.FailMiss = FailMiss;
-            newJudge.FailOverload = FailOverload;
+            newJudge.TooEarly = TooEarly.Copy();
+            newJudge.VeryEarly = VeryEarly.Copy();
+            newJudge.EarlyPerfect = EarlyPerfect.Copy();
+            newJudge.Perfect = Perfect.Copy();
+            newJudge.LatePerfect = LatePerfect.Copy();
+            newJudge.VeryLate = VeryLate.Copy();
+            newJudge.TooLate = TooLate.Copy();
+            newJudge.Multipress = Multipress.Copy();
+            newJudge.FailMiss = FailMiss.Copy();
+            newJudge.FailOverload = FailOverload.Copy();
             return newJudge;
         }
     }

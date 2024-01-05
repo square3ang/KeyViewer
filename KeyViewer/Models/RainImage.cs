@@ -3,10 +3,17 @@ using KeyViewer.Core.Interfaces;
 
 namespace KeyViewer.Models
 {
-    public struct RainImage : IModel
+    public struct RainImage : IModel, ICopyable<RainImage>
     {
         public int Count;
         public string Image;
+        public RainImage Copy()
+        {
+            var image = new RainImage();
+            image.Count = Count;
+            image.Image = Image;
+            return image;
+        }
         public JsonNode Serialize()
         {
             var node = JsonNode.Empty;

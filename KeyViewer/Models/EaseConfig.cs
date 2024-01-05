@@ -5,30 +5,34 @@ using KeyViewer.Utils;
 
 namespace KeyViewer.Models
 {
-    public struct EaseConfig : IModel
+    public class EaseConfig : IModel, ICopyable<EaseConfig>
     {
-        public EaseConfig(Ease ease, float duration, float shrinkFactor)
+        public EaseConfig() { }
+        public EaseConfig(Ease ease, float duration)
         {
             Ease = ease;
             Duration = duration;
-            ShrinkFactor = shrinkFactor;
         }
-        public Ease Ease;
-        public float Duration;
-        public float ShrinkFactor;
+        public Ease Ease = Ease.INTERNAL_Zero;
+        public float Duration = 0;
+        public EaseConfig Copy()
+        {
+            var config = new EaseConfig();
+            config.Ease = Ease;
+            config.Duration = Duration;
+            return config;
+        }
         public JsonNode Serialize()
         {
             var node = JsonNode.Empty;
             node[nameof(Ease)] = Ease.ToString();
             node[nameof(Duration)] = Duration;
-            node[nameof(ShrinkFactor)] = ShrinkFactor;
             return node;
         }
         public void Deserialize(JsonNode node)
         {
             Ease = EnumHelper<Ease>.Parse(node[nameof(Ease)]);
             Duration = node[nameof(Duration)];
-            ShrinkFactor = node[nameof(ShrinkFactor)];
         }
     }
 }

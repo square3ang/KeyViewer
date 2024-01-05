@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace KeyViewer.Models
 {
-    public class Profile : IModel
+    public class Profile : IModel, ICopyable<Profile>
     {
         public List<KeyConfig> Keys = new List<KeyConfig>();
         public bool ViewOnlyGamePlay = false;

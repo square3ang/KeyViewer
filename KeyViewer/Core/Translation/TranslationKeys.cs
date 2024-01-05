@@ -72,6 +72,13 @@
             internal static readonly string Length = Prefix + "LENGTH";
             internal static readonly string Softness = Prefix + "SOFTNESS";
             internal static readonly string PoolSize = Prefix + "POOL_SIZE";
+            internal static readonly string Ease = Prefix + "EASE";
+            internal static readonly string Duration = Prefix + "DURATION";
+            internal static readonly string EditEaseConfig = Prefix + "EDIT_EASE_CONFIG";
+            internal static readonly string SizeEase = Prefix + "SIZE_EASE";
+            internal static readonly string ScaleEase = Prefix + "SCALE_EASE";
+            internal static readonly string OffsetEase = Prefix + "OFFSET_EASE";
+            internal static readonly string RotationEase = Prefix + "ROTATION_EASE";
         }
         public static class KeyConfig
         {

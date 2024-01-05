@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace KeyViewer.Models
 {
-    public struct GColor : IModel
+    public struct GColor : IModel, ICopyable<GColor>
     {
         private VertexGradient _color;
         private string _topLeftHex;
@@ -61,7 +61,20 @@ namespace KeyViewer.Models
             bottomLeftStatus = new GUIStatus();
             bottomRightStatus = new GUIStatus();
         }
-
+        public GColor Copy()
+        {
+            var col = new GColor();
+            col.gradientEnabled = gradientEnabled;
+            col.topLeft = topLeft;
+            col.topRight = topRight;
+            col.bottomLeft = bottomLeft;
+            col.bottomRight = bottomRight;
+            col.topLeftStatus = topLeftStatus.Copy();
+            col.topRightStatus = topRightStatus.Copy();
+            col.bottomLeftStatus = bottomLeftStatus.Copy();
+            col.bottomRightStatus = bottomRightStatus.Copy();
+            return col;
+        }
         public JsonNode Serialize()
         {
             JsonNode node = JsonNode.Empty;
@@ -83,10 +96,10 @@ namespace KeyViewer.Models
             topRight = node[nameof(topRight)];
             bottomLeft = node[nameof(bottomLeft)];
             bottomRight = node[nameof(bottomRight)];
-            topLeftStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(topLeftStatus)]);
-            topRightStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(topRightStatus)]);
-            bottomLeftStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(bottomLeftStatus)]);
-            bottomRightStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(bottomRightStatus)]);
+            topLeftStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(topLeftStatus)]) ?? new GUIStatus();
+            topRightStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(topRightStatus)]) ?? new GUIStatus();
+            bottomLeftStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(bottomLeftStatus)]) ?? new GUIStatus();
+            bottomRightStatus = ModelUtils.Unbox<GUIStatus>(node[nameof(bottomRightStatus)]) ?? new GUIStatus();
         }
 
         private void SetTopLeftColor(Color color)

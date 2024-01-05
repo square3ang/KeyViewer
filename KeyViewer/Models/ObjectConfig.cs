@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace KeyViewer.Models
 {
-    public class ObjectConfig : IModel
+    public class ObjectConfig : IModel, ICopyable<ObjectConfig>
     {
         public ObjectConfig() { }
         public ObjectConfig(float defaultSize, Color defaultPressed, Color defaultReleased)
@@ -19,6 +19,13 @@ namespace KeyViewer.Models
         {
             VectorConfig = new VectorConfig();
             VectorConfig.Scale = defaultScale;
+            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
+        }
+        public ObjectConfig(Vector2 pressedScale, Vector2 releasedScale, Color defaultPressed, Color defaultReleased)
+        {
+            VectorConfig = new VectorConfig();
+            VectorConfig.Scale.Pressed = pressedScale;
+            VectorConfig.Scale.Released = releasedScale;
             Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
         }
         public VectorConfig VectorConfig;

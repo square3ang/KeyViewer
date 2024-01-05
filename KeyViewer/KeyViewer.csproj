@@ -315,6 +315,7 @@
     <Compile Include="Core\GUILayoutEx.cs" />
     <Compile Include="Core\Input\AsyncInputCompat.cs" />
     <Compile Include="Core\Input\KeyInput.cs" />
+    <Compile Include="Core\Interfaces\ICopyable.cs" />
     <Compile Include="Core\Interfaces\IModel.cs" />
     <Compile Include="Core\KPSCalculator.cs" />
     <Compile Include="Core\MethodDrawable.cs" />

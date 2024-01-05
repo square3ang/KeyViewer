@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace KeyViewer.Models
 {
-    public class KeyConfig : IModel
+    public class KeyConfig : IModel, ICopyable<KeyConfig>
     {
         public uint Count = 0;
         public KeyCode Code = KeyCode.None;
@@ -29,7 +29,7 @@ namespace KeyViewer.Models
 
         public VectorConfig VectorConfig = new VectorConfig();
 
-        public PressReleaseM<EaseConfig> ScaleEasing = new EaseConfig(Ease.OutExpo, 0.1f, 0.9f);
+        public PressReleaseM<EaseConfig> ScaleEasing = new EaseConfig(Ease.OutExpo, 0.1f);
 
         public bool RainEnabled = false;
         public RainConfig Rain = new RainConfig();

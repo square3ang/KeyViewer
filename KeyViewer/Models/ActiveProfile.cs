@@ -3,7 +3,7 @@ using KeyViewer.Core.Interfaces;
 
 namespace KeyViewer.Models
 {
-    public struct ActiveProfile : IModel
+    public struct ActiveProfile : IModel, ICopyable<ActiveProfile>
     {
         public ActiveProfile(string name, bool active)
         {
@@ -12,6 +12,13 @@ namespace KeyViewer.Models
         }
         public string Name;
         public bool Active;
+        public ActiveProfile Copy()
+        {
+            var profile = new ActiveProfile();
+            profile.Name = Name;
+            profile.Active = Active;
+            return profile;
+        }
         public JsonNode Serialize()
         {
             var node = JsonNode.Empty;
