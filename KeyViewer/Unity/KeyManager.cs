@@ -22,9 +22,10 @@ namespace KeyViewer.Unity
         public Canvas keysCanvas;
 
         internal KPSCalculator kpsCalc;
-        private RectTransform keysRt;
         internal List<Key> keys;
+        private RectTransform keysRt;
         private bool initialized;
+        private bool prevPressed;
         public void Init()
         {
             if (initialized) return;
@@ -98,6 +99,8 @@ namespace KeyViewer.Unity
         {
             if (!initialized) return;
             var pressed = keys.Any(k => k.Pressed);
+            if (prevPressed == pressed) return;
+            prevPressed = pressed;
             KeyViewerUtils.ApplyVectorConfig(keysRt, profile.VectorConfig, pressed);
         }
         public void UpdateKeys()

@@ -96,7 +96,8 @@ namespace KeyViewer.Unity
             float keyWidth = vConfig.Scale.Released.x * 100, keyHeight = vConfig.Scale.Released.y * 100;
             if (config.EnableCountText)
                 keyHeight += 50;
-            Vector2 position = new Vector2(keyWidth / 2f + x, keyHeight / 2f);
+            float _x = config.DisableSorting ? 0 : x;
+            Vector2 position = new Vector2(keyWidth / 2f + _x, keyHeight / 2f);
             Vector2 anchoredPos = position + vConfig.Offset.Released;
             Vector2 releasedOffset;
             transform.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
@@ -158,7 +159,8 @@ namespace KeyViewer.Unity
 
             CountText.gameObject.SetActive(config.EnableCountText);
 
-            x += keyWidth + 10;
+            if (!config.DisableSorting)
+                x += keyWidth + 10;
             ReplaceText();
         }
 
@@ -166,6 +168,7 @@ namespace KeyViewer.Unity
         {
             if (!initialized) return;
             if (config.UpdateTextAlways) ReplaceText();
+            if (!string.IsNullOrEmpty(config.DummyName)) return;
             Pressed = KeyInput.GetKey(config.Code);
             if (prevPressed == Pressed) return;
             prevPressed = Pressed;
@@ -178,6 +181,7 @@ namespace KeyViewer.Unity
             if (!config.UpdateTextAlways)
                 ReplaceText();
             ApplyColor();
+            ApplySprite();
             ApplyVectorConfig();
         }
         private void ReplaceText()
@@ -214,6 +218,11 @@ namespace KeyViewer.Unity
             KeyViewerUtils.ApplyColor(Background, bgColor.Get(!Pressed), bgColor.Get(Pressed), bgColor.GetEase(Pressed));
             var olColor = config.OutlineConfig.Color;
             KeyViewerUtils.ApplyColor(Outline, olColor.Get(!Pressed), olColor.Get(Pressed), olColor.GetEase(Pressed));
+        }
+        private void ApplySprite()
+        {
+            Background.sprite = AssetManager.Get(config.Background.Get(Pressed), AssetManager.Background);
+            Outline.sprite = AssetManager.Get(config.Outline.Get(Pressed), AssetManager.Outline);
         }
         private void ApplyVectorConfig()
         {

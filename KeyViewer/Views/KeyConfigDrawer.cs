@@ -39,6 +39,7 @@ namespace KeyViewer.Views
             }
             changed |= Drawer.DrawBool(L(TKKC.UpdateTextAlways), ref model.UpdateTextAlways);
             changed |= Drawer.DrawBool(L(TKKC.EnableCountText), ref model.EnableCountText);
+            changed |= Drawer.DrawBool(L(TKKC.DisableSorting), ref model.DisableSorting);
 
             changed |= Drawer.DrawPressReleaseH(L(TKKC.Text), model.Text, Drawer.CD_H_STR);
             if (model.EnableCountText)

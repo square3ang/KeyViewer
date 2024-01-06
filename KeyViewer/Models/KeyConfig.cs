@@ -15,6 +15,7 @@ namespace KeyViewer.Models
         public bool EnableKPSMeter = false;
         public bool UpdateTextAlways = false;
         public bool EnableCountText = true;
+        public bool DisableSorting = false;
 
         public PressRelease<string> Text = new PressRelease<string>(null);
         public PressRelease<string> CountText = new PressRelease<string>(null);
@@ -44,6 +45,7 @@ namespace KeyViewer.Models
             newConfig.EnableKPSMeter = EnableKPSMeter;
             newConfig.UpdateTextAlways = UpdateTextAlways;
             newConfig.EnableCountText = EnableCountText;
+            newConfig.DisableSorting = DisableSorting;
 
             newConfig.Text = Text.Copy();
             newConfig.CountText = CountText.Copy();
@@ -75,6 +77,7 @@ namespace KeyViewer.Models
             node[nameof(EnableKPSMeter)] = EnableKPSMeter;
             node[nameof(UpdateTextAlways)] = UpdateTextAlways;
             node[nameof(EnableCountText)] = EnableCountText;
+            node[nameof(DisableSorting)] = DisableSorting;
 
             node[nameof(Text)] = Text.Serialize();
             node[nameof(CountText)] = CountText.Serialize();
@@ -105,6 +108,7 @@ namespace KeyViewer.Models
             EnableKPSMeter = node[nameof(EnableKPSMeter)];
             UpdateTextAlways = node[nameof(UpdateTextAlways)];
             EnableCountText = node[nameof(EnableCountText)];
+            DisableSorting = node[nameof(DisableSorting)];
 
             Text = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Text)]);
             CountText = ModelUtils.Unbox<PressRelease<string>>(node[nameof(CountText)]);

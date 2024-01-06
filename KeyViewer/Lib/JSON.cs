@@ -45,7 +45,7 @@ namespace JSON
         public static bool forceASCII = false; // Use Unicode by default
         public static bool longAsString = false; // lazy creator creates a JsonString instead of JsonNumber
         public static bool allowLineComments = true; // allow "//"-style comments at the end of a line
-        public static bool escapeEscapeSequence = false;
+        public static bool escapeEscapeSequence = true;
         public abstract JsonNodeType Tag { get; }
         public virtual JsonNode this[int aIndex] { get => null; set { } }
         public virtual JsonNode this[string aKey] { get => null; set { } }

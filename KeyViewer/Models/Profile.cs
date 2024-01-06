@@ -10,7 +10,6 @@ namespace KeyViewer.Models
     {
         public List<KeyConfig> Keys = new List<KeyConfig>();
         public bool ViewOnlyGamePlay = false;
-        public bool AnimateKeys = true;
         public bool LimitNotRegisteredKeys = false;
         public bool ResetOnStart = false;
         public VectorConfig VectorConfig = new VectorConfig();
@@ -20,7 +19,6 @@ namespace KeyViewer.Models
             Profile newProfile = new Profile();
             newProfile.Keys = Keys.Select(k => k.Copy()).ToList();
             newProfile.ViewOnlyGamePlay = ViewOnlyGamePlay;
-            newProfile.AnimateKeys = AnimateKeys;
             newProfile.LimitNotRegisteredKeys = LimitNotRegisteredKeys;
             newProfile.ResetOnStart = ResetOnStart;
             newProfile.VectorConfig = VectorConfig.Copy();
@@ -32,7 +30,6 @@ namespace KeyViewer.Models
             var node = JsonNode.Empty;
             node[nameof(Keys)] = ModelUtils.WrapList(Keys);
             node[nameof(ViewOnlyGamePlay)] = ViewOnlyGamePlay;
-            node[nameof(AnimateKeys)] = AnimateKeys;
             node[nameof(LimitNotRegisteredKeys)] = LimitNotRegisteredKeys;
             node[nameof(ResetOnStart)] = ResetOnStart;
             node[nameof(VectorConfig)] = VectorConfig.Serialize();
@@ -43,7 +40,6 @@ namespace KeyViewer.Models
         {
             Keys = ModelUtils.UnwrapList<KeyConfig>(node[nameof(Keys)].AsArray);
             ViewOnlyGamePlay = node[nameof(ViewOnlyGamePlay)];
-            AnimateKeys = node[nameof(AnimateKeys)];
             LimitNotRegisteredKeys = node[nameof(LimitNotRegisteredKeys)];
             ResetOnStart = node[nameof(ResetOnStart)];
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);

@@ -21,15 +21,16 @@ namespace KeyViewer.Views
         }
         public override void Draw()
         {
+            bool changed = false;
             Drawer.DrawBool(L(TKP.ViewOnlyGamePlay), ref model.ViewOnlyGamePlay);
-            Drawer.DrawBool(L(TKP.AnimateKeys), ref model.AnimateKeys);
-            Drawer.DrawBool(L(TKP.LimitNotRegisteredKeys), ref model.LimitNotRegisteredKeys);
-            Drawer.DrawBool(L(TKP.ResetOnStart), ref model.ResetOnStart);
-            Drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
-            Drawer.DrawVectorConfig(model.VectorConfig);
+            changed |= Drawer.DrawBool(L(TKP.LimitNotRegisteredKeys), ref model.LimitNotRegisteredKeys);
+            changed |= Drawer.DrawBool(L(TKP.ResetOnStart), ref model.ResetOnStart);
+            changed |= Drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
+            changed |= Drawer.DrawVectorConfig(model.VectorConfig);
             GUILayoutEx.HorizontalLine(1);
             GUILayout.Label(L(TKP.RegisteredKeys));
             DrawKeyConfigGUI();
+            if (changed) manager.UpdateLayout();
         }
         public override void OnKeyDown(KeyCode code)
         {

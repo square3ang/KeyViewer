@@ -19,7 +19,6 @@
             public const string Prefix = "PROFILE_";
             internal static readonly string MakeBarSpecialKeys = Prefix + "MAKE_BAR_SPECIAL_KEYS";
             internal static readonly string ViewOnlyGamePlay = Prefix + "VIEW_ONLY_GAME_PLAY";
-            internal static readonly string AnimateKeys = Prefix + "ANIMATE_KEYS";
             internal static readonly string ShowKeyPressTotal = Prefix + "SHOW_KEY_PRESS_TOTAL";
             internal static readonly string LimitNotRegisteredKeys = Prefix + "LIMIT_NOT_REGISTERED_KEYS";
             internal static readonly string ResetOnStart = Prefix + "RESET_ON_START";
@@ -113,6 +112,7 @@
             internal static readonly string EditRainConfig = Prefix + "EDIT_RAIN_CONFIG";
             internal static readonly string EnableRain = Prefix + "ENABLE_RAIN";
             internal static readonly string UpdateTextAlways = Prefix + "UPDATE_TEXT_ALWAYS";
+            internal static readonly string DisableSorting = Prefix + "DISABLE_SORTING";
         }
         public static class RainConfig
         {
