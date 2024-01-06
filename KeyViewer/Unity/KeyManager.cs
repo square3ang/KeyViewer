@@ -121,7 +121,6 @@ namespace KeyViewer.Unity
         }
         public void UpdateLayout()
         {
-            Main.Logger.Log("Update Layout");
             int count = keys.Count;
             float keyHeight = profile.Keys.Any(k => k.EnableCountText) ? 150 : 100;
             float spacing = 10;
