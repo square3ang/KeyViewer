@@ -65,7 +65,7 @@ namespace KeyViewer.Views
                         }
                         GUILayout.EndHorizontal();
                         GUILayout.Space(10);
-                    }    
+                    }
                 }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using KeyViewer.Models;
+using System;
 using System.Collections.Generic;
-using System.Threading;
-using KeyViewer.Models;
 using System.Diagnostics;
+using System.Threading;
 
 namespace KeyViewer.Core
 {
@@ -19,6 +19,14 @@ namespace KeyViewer.Core
         private CancellationToken token;
         private Thread current;
 
+        public static void Sync(IEnumerable<KPSCalculator> calcs)
+        {
+            foreach (var calc in calcs)
+            {
+                calc?.Stop();
+                calc?.Start();
+            }
+        }
         public KPSCalculator(Profile profile)
         {
             this.profile = profile;
@@ -34,8 +42,8 @@ namespace KeyViewer.Core
         {
             try
             {
-                cts.Cancel();
-                current.Abort();
+                cts?.Cancel();
+                current?.Abort();
             }
             catch { }
             finally
@@ -49,7 +57,6 @@ namespace KeyViewer.Core
         {
             pressCount++;
         }
-
         Thread GetCalculateThread()
         {
             return new Thread(() =>

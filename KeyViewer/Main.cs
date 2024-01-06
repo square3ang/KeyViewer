@@ -18,12 +18,12 @@ using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
 
 /* TODO List
- * 지원 가능한 모든 곳에 Gradient 기능 추가하기
+ * 지원 가능한 모든 곳에 Gradient 기능 추가하기 => Completed
  * Rain이 위 아래로 늘어나는 버그 고치기
- * 비동기 입력 Issue 고기기
- * 키 별 KPS 기능 추가하기
- * 모든 텍스트에 Tag를 이용한 Text Replacing 지원하기
- * 이미지 Rounding 지원하기
+ * 비동기 입력 Issue 고치기
+ * 키 별 KPS 기능 추가하기 => Completed
+ * 모든 텍스트에 Tag를 이용한 Text Replacing 지원하기 => Completed
+ * 이미지 Rounding 지원하기 => Completed
  * 
  * Maybe TODO List
  * Rain이 켜져있을 때 키를 누르면 파티클 효과 추가해보기
@@ -165,7 +165,7 @@ namespace KeyViewer
             if (Managers.TryGetValue(profile.Name, out var manager))
             {
                 Object.Destroy(manager);
-                Managers.Remove(profile.Name);   
+                Managers.Remove(profile.Name);
             }
         }
         public static IEnumerator InitializeManagerCo()

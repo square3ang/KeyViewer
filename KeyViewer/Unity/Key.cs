@@ -1,5 +1,4 @@
-﻿using DG.Tweening;
-using KeyViewer.Core;
+﻿using KeyViewer.Core;
 using KeyViewer.Core.Input;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Models;
@@ -33,6 +32,10 @@ namespace KeyViewer.Unity
             if (initialized) return;
             this.manager = manager;
             this.config = config;
+            textReplacerP = new Replacer(manager.AllTags);
+            textReplacerR = new Replacer(manager.AllTags);
+            countTextReplacerP = new Replacer(manager.AllTags);
+            countTextReplacerR = new Replacer(manager.AllTags);
             kpsCalc = new KPSCalculator(manager.profile);
             transform.SetParent(manager.keysCanvas.transform);
 
@@ -41,16 +44,16 @@ namespace KeyViewer.Unity
             bgObj.transform.SetParent(transform);
             Background = bgObj.AddComponent<Image>();
             Background.type = Image.Type.Sliced;
-            KeyViewerUtils.ApplyColor(Background, bgConfig.Color.Released);
-            KeyViewerUtils.ApplyRoundness(Background, config.BackgroundRoundness);
+            KeyViewerUtils.ApplyColorLayout(Background, bgConfig.Color.Released);
+            KeyViewerUtils.ApplyRoundnessLayout(Background, config.BackgroundRoundness);
 
             ObjectConfig olConfig = config.OutlineConfig;
             GameObject olObj = new GameObject("Outline");
             olObj.transform.SetParent(transform);
             Outline = olObj.AddComponent<Image>();
             Outline.type = Image.Type.Sliced;
-            KeyViewerUtils.ApplyColor(Outline, olConfig.Color.Released);
-            KeyViewerUtils.ApplyRoundness(Outline, config.OutlineRoundness);
+            KeyViewerUtils.ApplyColorLayout(Outline, olConfig.Color.Released);
+            KeyViewerUtils.ApplyRoundnessLayout(Outline, config.OutlineRoundness);
 
             ObjectConfig textConfig = config.TextConfig;
             GameObject textObj = new GameObject("Text");
@@ -61,7 +64,7 @@ namespace KeyViewer.Unity
             Text = textObj.AddComponent<TextMeshProUGUI>();
             Text.font = FontManager.GetFont(config.Font).fontTMP;
             Text.enableVertexGradient = true;
-            KeyViewerUtils.ApplyColor(Text, textConfig.Color.Released);
+            KeyViewerUtils.ApplyColorLayout(Text, textConfig.Color.Released);
             Text.alignment = TextAlignmentOptions.Midline;
 
             ObjectConfig cTextConfig = config.CountTextConfig;
@@ -73,7 +76,7 @@ namespace KeyViewer.Unity
             CountText = countTextObj.AddComponent<TextMeshProUGUI>();
             CountText.font = FontManager.GetFont(config.Font).fontTMP;
             CountText.enableVertexGradient = true;
-            KeyViewerUtils.ApplyColor(Text, cTextConfig.Color.Released);
+            KeyViewerUtils.ApplyColorLayout(CountText, cTextConfig.Color.Released);
             CountText.alignment = TextAlignmentOptions.Midline;
 
             if (config.EnableKPSMeter)
@@ -96,6 +99,7 @@ namespace KeyViewer.Unity
             Vector2 position = new Vector2(keyWidth / 2f + x, keyHeight / 2f);
             Vector2 anchoredPos = position + vConfig.Offset.Released;
             Vector2 releasedOffset;
+            transform.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
 
             Background.sprite = AssetManager.Get(config.Background.Released, AssetManager.Background);
             Background.rectTransform.anchorMin = Vector2.zero;
@@ -103,8 +107,8 @@ namespace KeyViewer.Unity
             Background.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Background.rectTransform.sizeDelta = new Vector2(keyWidth, keyHeight);
             Background.rectTransform.anchoredPosition = anchoredPos;
-            KeyViewerUtils.ApplyConfig(Background, config.BackgroundConfig);
-            KeyViewerUtils.ApplyRoundness(Background, config.BackgroundRoundness);
+            KeyViewerUtils.ApplyConfigLayout(Background, config.BackgroundConfig);
+            KeyViewerUtils.ApplyRoundnessLayout(Background, config.BackgroundRoundness);
 
             Outline.sprite = AssetManager.Get(config.Outline.Released, AssetManager.Outline);
             Outline.rectTransform.anchorMin = Vector2.zero;
@@ -112,8 +116,8 @@ namespace KeyViewer.Unity
             Outline.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Outline.rectTransform.sizeDelta = new Vector2(keyWidth, keyHeight);
             Outline.rectTransform.anchoredPosition = anchoredPos;
-            KeyViewerUtils.ApplyConfig(Outline, config.OutlineConfig);
-            KeyViewerUtils.ApplyRoundness(Outline, config.OutlineRoundness);
+            KeyViewerUtils.ApplyConfigLayout(Outline, config.OutlineConfig);
+            KeyViewerUtils.ApplyRoundnessLayout(Outline, config.OutlineRoundness);
 
             ObjectConfig textConfig = config.TextConfig;
             float heightOffset = keyHeight / 4f;
@@ -125,24 +129,15 @@ namespace KeyViewer.Unity
             if (config.EnableCountText)
                 Text.rectTransform.anchoredPosition = anchoredPos + new Vector2(releasedOffset.x, releasedOffset.y + heightOffset);
             else Text.rectTransform.anchoredPosition = anchoredPos + releasedOffset;
-            Text.fontSize = textConfig.VectorConfig.Size.Released;
-            Text.fontSizeMax = textConfig.VectorConfig.Size.Released;
+            Text.fontSize = 75;
+            Text.fontSizeMax = 75;
             Text.enableAutoSizing = true;
-            KeyViewerUtils.ApplyConfig(Text, textConfig);
+            KeyViewerUtils.ApplyConfigLayout(Text, textConfig);
 
-            if (!string.IsNullOrEmpty(config.Text.Released))
-            {
-                Text.text = config.Text.Released;
-                textReplacerR = new Replacer(config.Text.Released, manager.AllTags);
-            }
-            else
-            {
-                if (!Constants.KeyString.TryGetValue(config.Code, out string codeString))
-                    codeString = KeyViewerUtils.KeyName(config);
-                Text.text = codeString;
-                textReplacerR = null;
-            }
-            textReplacerP = !string.IsNullOrEmpty(config.Text.Pressed) ? new Replacer(config.Text.Pressed, manager.AllTags) : null;
+            var defaultSource = Constants.KeyString.TryGetValue(config.Code, out string codeStr) ? codeStr : KeyViewerUtils.KeyName(config);
+            textReplacerP.Source = string.IsNullOrEmpty(config.Text.Pressed) ? defaultSource : config.Text.Pressed;
+            textReplacerR.Source = string.IsNullOrEmpty(config.Text.Released) ? defaultSource : config.Text.Released;
+            Text.text = textReplacerR.Source;
 
             ObjectConfig cTextConfig = config.CountTextConfig;
             CountText.rectTransform.anchorMin = Vector2.zero;
@@ -152,22 +147,14 @@ namespace KeyViewer.Unity
             releasedOffset = cTextConfig.VectorConfig.Offset.Released;
             CountText.rectTransform.anchoredPosition = anchoredPos + new Vector2(releasedOffset.x, releasedOffset.y - heightOffset);
             CountText.fontSizeMin = 0;
-            CountText.fontSize = cTextConfig.VectorConfig.Size.Released;
-            CountText.fontSizeMax = cTextConfig.VectorConfig.Size.Released;
+            CountText.fontSize = 50;
+            CountText.fontSizeMax = 50;
             CountText.enableAutoSizing = true;
-            KeyViewerUtils.ApplyConfig(CountText, cTextConfig);
+            KeyViewerUtils.ApplyConfigLayout(CountText, cTextConfig);
 
-            if (!string.IsNullOrEmpty(config.CountText.Released))
-            {
-                CountText.text = config.CountText.Released;
-                countTextReplacerR = new Replacer(config.CountText.Released, manager.AllTags);
-            }
-            else
-            {
-                CountText.text = $"{{Count:{KeyViewerUtils.KeyName(config)}}}";
-                countTextReplacerR = new Replacer(CountText.text, manager.AllTags);
-            }
-            countTextReplacerP = !string.IsNullOrEmpty(config.CountText.Pressed) ? new Replacer(config.CountText.Pressed, manager.AllTags) : null;
+            countTextReplacerP.Source = string.IsNullOrEmpty(config.CountText.Pressed) ? $"{{Count:{KeyViewerUtils.KeyName(config)}}}" : config.CountText.Pressed;
+            countTextReplacerR.Source = string.IsNullOrEmpty(config.CountText.Released) ? $"{{Count:{KeyViewerUtils.KeyName(config)}}}" : config.CountText.Released;
+            CountText.text = countTextReplacerR.Source;
 
             CountText.gameObject.SetActive(config.EnableCountText);
 
@@ -178,14 +165,20 @@ namespace KeyViewer.Unity
         private void Update()
         {
             if (!initialized) return;
+            if (config.UpdateTextAlways) ReplaceText();
             Pressed = KeyInput.GetKey(config.Code);
             if (prevPressed == Pressed) return;
             prevPressed = Pressed;
-            config.Count++;
-            kpsCalc.Press();
-            manager.kpsCalc.Press();
-            ReplaceText();
-
+            if (Pressed)
+            {
+                config.Count++;
+                kpsCalc.Press();
+                manager.kpsCalc.Press();
+            }
+            if (!config.UpdateTextAlways)
+                ReplaceText();
+            ApplyColor();
+            ApplyVectorConfig();
         }
         private void ReplaceText()
         {
@@ -193,26 +186,42 @@ namespace KeyViewer.Unity
             {
                 if (Pressed)
                 {
-                    if (textReplacerP != null)
-                        Text.text = textReplacerP.Replace();
-                    if (countTextReplacerP != null)
+                    Text.text = textReplacerP.Replace();
+                    if (config.EnableCountText)
                         CountText.text = countTextReplacerP.Replace();
                 }
                 else
                 {
-                    if (textReplacerR != null)
-                        Text.text = textReplacerR.Replace();
-                    if (countTextReplacerR != null)
+                    Text.text = textReplacerR.Replace();
+                    if (config.EnableCountText)
                         CountText.text = countTextReplacerR.Replace();
                 }
             }
             else
             {
-                if (textReplacerR != null)
-                    Text.text = textReplacerR.Replace();
-                if (countTextReplacerR != null)
+                Text.text = textReplacerR.Replace();
+                if (config.EnableCountText)
                     CountText.text = countTextReplacerR.Replace();
             }
+        }
+        private void ApplyColor()
+        {
+            var textColor = config.TextConfig.Color;
+            KeyViewerUtils.ApplyColor(Text, textColor.Get(!Pressed), textColor.Get(Pressed), textColor.GetEase(Pressed));
+            var countTextColor = config.CountTextConfig.Color;
+            KeyViewerUtils.ApplyColor(CountText, countTextColor.Get(!Pressed), countTextColor.Get(Pressed), countTextColor.GetEase(Pressed));
+            var bgColor = config.BackgroundConfig.Color;
+            KeyViewerUtils.ApplyColor(Background, bgColor.Get(!Pressed), bgColor.Get(Pressed), bgColor.GetEase(Pressed));
+            var olColor = config.OutlineConfig.Color;
+            KeyViewerUtils.ApplyColor(Outline, olColor.Get(!Pressed), olColor.Get(Pressed), olColor.GetEase(Pressed));
+        }
+        private void ApplyVectorConfig()
+        {
+            KeyViewerUtils.ApplyVectorConfig(transform, config.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(Text.rectTransform, config.TextConfig.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(CountText.rectTransform, config.CountTextConfig.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(Background.rectTransform, config.BackgroundConfig.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(Outline.rectTransform, config.OutlineConfig.VectorConfig, Pressed);
         }
     }
 }

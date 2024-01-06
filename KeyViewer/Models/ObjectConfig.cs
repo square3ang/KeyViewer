@@ -15,6 +15,20 @@ namespace KeyViewer.Models
             VectorConfig.Size = defaultSize;
             Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
         }
+        public ObjectConfig(float pressedSize, float releasedSize, Color defaultPressed, Color defaultReleased)
+        {
+            VectorConfig = new VectorConfig();
+            VectorConfig.UseSize = true;
+            VectorConfig.Size = new PressRelease<float>(pressedSize, releasedSize);
+            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
+        }
+        public ObjectConfig(PressRelease<float> size, Color defaultPressed, Color defaultReleased)
+        {
+            VectorConfig = new VectorConfig();
+            VectorConfig.UseSize = true;
+            VectorConfig.Size = size;
+            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
+        }
         public ObjectConfig(Vector2 defaultScale, Color defaultPressed, Color defaultReleased)
         {
             VectorConfig = new VectorConfig();
@@ -26,6 +40,12 @@ namespace KeyViewer.Models
             VectorConfig = new VectorConfig();
             VectorConfig.Scale.Pressed = pressedScale;
             VectorConfig.Scale.Released = releasedScale;
+            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
+        }
+        public ObjectConfig(PressRelease<Vector2> scale, Color defaultPressed, Color defaultReleased)
+        {
+            VectorConfig = new VectorConfig();
+            VectorConfig.Scale = scale;
             Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
         }
         public VectorConfig VectorConfig;

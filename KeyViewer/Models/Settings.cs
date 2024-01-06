@@ -1,7 +1,7 @@
 ﻿using JSON;
 using KeyViewer.Core.Interfaces;
-using System.Collections.Generic;
 using KeyViewer.Utils;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace KeyViewer.Models

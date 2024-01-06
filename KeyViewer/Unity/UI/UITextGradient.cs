@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using KeyViewer.Utils;
+using UnityEngine;
 using UnityEngine.UI;
-using KeyViewer.Utils;
 
 namespace KeyViewer.Unity.UI
 {

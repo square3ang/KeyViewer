@@ -7,7 +7,7 @@ namespace KeyViewer.Models
     public class Judge<T> : IModel, ICopyable<Judge<T>>
     {
         public T TooEarly;
-        public T VeryEarly;     
+        public T VeryEarly;
         public T EarlyPerfect;
         public T Perfect;
         public T LatePerfect;
@@ -37,37 +37,37 @@ namespace KeyViewer.Models
         {
             switch (hitMargin)
             {
-                case HitMargin.TooEarly: 
+                case HitMargin.TooEarly:
                     TooEarly = value;
                     break;
-                case HitMargin.VeryEarly: 
+                case HitMargin.VeryEarly:
                     VeryEarly = value;
                     break;
-                case HitMargin.EarlyPerfect: 
+                case HitMargin.EarlyPerfect:
                     EarlyPerfect = value;
                     break;
-                case HitMargin.Perfect: 
+                case HitMargin.Perfect:
                     Perfect = value;
                     break;
-                case HitMargin.LatePerfect: 
+                case HitMargin.LatePerfect:
                     LatePerfect = value;
                     break;
-                case HitMargin.VeryLate: 
+                case HitMargin.VeryLate:
                     VeryLate = value;
                     break;
-                case HitMargin.TooLate: 
+                case HitMargin.TooLate:
                     TooLate = value;
                     break;
-                case HitMargin.Multipress: 
+                case HitMargin.Multipress:
                     Multipress = value;
                     break;
-                case HitMargin.FailMiss: 
+                case HitMargin.FailMiss:
                     FailMiss = value;
                     break;
-                case HitMargin.FailOverload: 
+                case HitMargin.FailOverload:
                     FailOverload = value;
                     break;
-                default: 
+                default:
                     Perfect = value;
                     break;
             }

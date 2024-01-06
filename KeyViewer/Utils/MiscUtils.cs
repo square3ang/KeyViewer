@@ -19,7 +19,7 @@ namespace KeyViewer.Utils
         public static Type[] loadedTypes { get; private set; }
         public static void UpdateAssTypes()
         {
-            loadedAsss = loadedAsss != null ? 
+            loadedAsss = loadedAsss != null ?
                 loadedAsss.Union(AppDomain.CurrentDomain.GetAssemblies()).ToArray() :
                 AppDomain.CurrentDomain.GetAssemblies();
             loadedTypes = loadedAsss.Select(ass => ExecuteSafe(ass.GetTypes, out _))

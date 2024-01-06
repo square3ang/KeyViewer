@@ -1,8 +1,8 @@
-﻿using System.IO;
-using System.IO.Compression;
+﻿using KeyViewer.API;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Text;
-using KeyViewer.API;
 
 namespace KeyViewer.Utils
 {

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using KeyViewer.API;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Collections.Generic;
-using KeyViewer.API;
+using System.Text;
 
 namespace KeyViewer.Core.TextReplacing
 {

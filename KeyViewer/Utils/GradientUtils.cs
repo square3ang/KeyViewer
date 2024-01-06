@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using KeyViewer.Unity;
+﻿using KeyViewer.Unity;
+using UnityEngine;
 
 namespace KeyViewer.Utils
 {

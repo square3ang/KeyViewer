@@ -1,5 +1,4 @@
-﻿using KeyViewer.Core;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

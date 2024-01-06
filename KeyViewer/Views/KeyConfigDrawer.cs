@@ -2,6 +2,7 @@
 using KeyViewer.Core;
 using KeyViewer.Models;
 using KeyViewer.Unity;
+using System.Linq;
 using UnityEngine;
 using TKKC = KeyViewer.Core.Translation.TranslationKeys.KeyConfig;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
@@ -27,7 +28,16 @@ namespace KeyViewer.Views
             bool changed = false;
             changed |= Drawer.DrawString(L(TKKC.TextFont), ref model.Font);
             if (model.DummyName == null)
-                changed |= Drawer.DrawBool(L(TKKC.EnableKPSMeter), ref model.EnableKPSMeter);
+            {
+                if (Drawer.DrawBool(L(TKKC.EnableKPSMeter), ref model.EnableKPSMeter))
+                {
+                    changed = true;
+                    if (model.EnableKPSMeter)
+                        KPSCalculator.Sync(manager.keys.Select(k => k.config.EnableKPSMeter ? k.kpsCalc : null).Where(c => c != null));
+                    else manager[model.Code].kpsCalc.Stop();
+                }
+            }
+            changed |= Drawer.DrawBool(L(TKKC.UpdateTextAlways), ref model.UpdateTextAlways);
             changed |= Drawer.DrawBool(L(TKKC.EnableCountText), ref model.EnableCountText);
 
             changed |= Drawer.DrawPressReleaseH(L(TKKC.Text), model.Text, Drawer.CD_H_STR);
@@ -35,6 +45,8 @@ namespace KeyViewer.Views
                 changed |= Drawer.DrawPressReleaseH(L(TKKC.CountText), model.CountText, Drawer.CD_H_STR);
             changed |= Drawer.DrawPressReleaseH(L(TKKC.BackgroundImage), model.Background, Drawer.CD_H_STR);
             changed |= Drawer.DrawPressReleaseH(L(TKKC.OutlineImage), model.Outline, Drawer.CD_H_STR);
+
+            changed |= Drawer.DrawVectorConfig(model.VectorConfig);
 
             Drawer.DrawObjectConfig(L(TKKC.EditTextConfig), L(TKKC.KeyText, model.DummyName != null ? model.DummyName : model.Code), model.TextConfig, () => manager.UpdateLayout());
             if (model.EnableCountText)
@@ -44,8 +56,6 @@ namespace KeyViewer.Views
 
             changed |= Drawer.DrawSingleWithSlider(L(TKKC.BackgroundImageRoundness), ref model.BackgroundRoundness, 0, 1, 300);
             changed |= Drawer.DrawSingleWithSlider(L(TKKC.OutlineImageRoundness), ref model.OutlineRoundness, 0, 1, 300);
-
-            changed |= Drawer.DrawVectorConfig(model.VectorConfig);
 
             changed |= Drawer.DrawBool(L(TKKC.EnableRain), ref model.RainEnabled);
             if (model.RainEnabled)

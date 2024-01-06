@@ -20,7 +20,7 @@ namespace KeyViewer.Core
         public static readonly Color FailMissColor = new Color(0.851f, 0.346f, 1.000f, 1.000f);
         public static readonly Color FailOverloadColor = new Color(0.851f, 0.346f, 1.000f, 1.000f);
         public static readonly Dictionary<KeyCode, string> KeyString =
-            new Dictionary<KeyCode, string>() 
+            new Dictionary<KeyCode, string>()
             {
                 { KeyCode.Alpha0, "0" },
                 { KeyCode.Alpha1, "1" },

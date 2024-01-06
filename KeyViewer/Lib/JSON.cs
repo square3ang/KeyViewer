@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
-using System.Text;
-using System.Collections;
-using System.Reflection;
-using System.Collections.Generic;
 using JSON.Attributes;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace JSON
 {

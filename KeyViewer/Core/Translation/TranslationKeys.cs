@@ -83,6 +83,8 @@
             internal static readonly string CopyFromPressed = Prefix + "COPY_FROM_PRESSED";
             internal static readonly string CopyFromReleased = Prefix + "COPY_FROM_RELEASED";
             internal static readonly string Copy = Prefix + "COPY";
+            internal static readonly string PressedEase = Prefix + "PRESSED_EASE";
+            internal static readonly string ReleasedEase = Prefix + "RELEASED_EASE";
         }
         public static class KeyConfig
         {
@@ -110,6 +112,7 @@
             internal static readonly string KeyOutline = Prefix + "KEY_OUTLINE";
             internal static readonly string EditRainConfig = Prefix + "EDIT_RAIN_CONFIG";
             internal static readonly string EnableRain = Prefix + "ENABLE_RAIN";
+            internal static readonly string UpdateTextAlways = Prefix + "UPDATE_TEXT_ALWAYS";
         }
         public static class RainConfig
         {

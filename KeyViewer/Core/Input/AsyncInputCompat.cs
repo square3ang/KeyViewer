@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using SkyHook;
+﻿using SkyHook;
 using System.Linq;
+using UnityEngine;
 
 namespace KeyViewer.Core.Input
 {

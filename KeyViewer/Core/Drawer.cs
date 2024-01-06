@@ -1,14 +1,12 @@
-﻿using KeyViewer.Utils;
-using System;
-using TMPro;
-using UnityEngine;
+﻿using KeyViewer.Controllers;
 using KeyViewer.Core.Interfaces;
-using System.Linq;
 using KeyViewer.Models;
-using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
-using Newtonsoft.Json.Linq;
-using KeyViewer.Controllers;
+using KeyViewer.Utils;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 
 namespace KeyViewer.Core
 {
@@ -26,21 +24,29 @@ namespace KeyViewer.Core
          * Additional Attributes
          * A_B => A to B
          * A_B_C => A to B & Width Is C
+         * *ONLY => * Only Drawer
          */
 
-        public static bool CD_V_VEC2_0_1_300(ref Vector2 vec2)
+        public static bool CD_V_VEC2_0_10_300(ref Vector2 vec2)
         {
             bool result = false;
-            result |= DrawSingleWithSlider("X:", ref vec2.x, 0, 1, 300f);
-            result |= DrawSingleWithSlider("Y:", ref vec2.y, 0, 1, 300f);
+            result |= DrawSingleWithSlider("X:", ref vec2.x, 0, 10, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec2.y, 0, 10, 300f);
             return result;
         }
-        public static bool CD_V_VEC3_0_1_300(ref Vector3 vec3)
+        public static bool CD_V_VEC2_WIDTH_HEIGHT_300(ref Vector2 vec2)
         {
             bool result = false;
-            result |= DrawSingleWithSlider("X:", ref vec3.x, 0, 1, 300f);
-            result |= DrawSingleWithSlider("Y:", ref vec3.y, 0, 1, 300f);
-            result |= DrawSingleWithSlider("Z:", ref vec3.z, 0, 1, 300f);
+            result |= DrawSingleWithSlider("X:", ref vec2.x, -Screen.width, Screen.width, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec2.y, -Screen.height, Screen.height, 300f);
+            return result;
+        }
+        public static bool CD_V_VEC3_M180_180_300(ref Vector3 vec3)
+        {
+            bool result = false;
+            result |= DrawSingleWithSlider("X:", ref vec3.x, -180, 180, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec3.y, -180, 180, 300f);
+            result |= DrawSingleWithSlider("Z:", ref vec3.z, -180, 180, 300f);
             return result;
         }
         public static bool CD_H_STR(ref string str)
@@ -121,9 +127,12 @@ namespace KeyViewer.Core
                             DrawGColor(ref objConfig.Color.Pressed).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();
+                        if (CanEase<GColor>.Value)
+                            DrawEaseConfig(Main.Lang[TKM.PressedEase], objConfig.Color.PressedEase);
                         TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
                         {
-                            objConfig.Color.Pressed = objConfig.Color.Released._color;
+                            objConfig.Color.Pressed = objConfig.Color.Released.Copy();
+                            objConfig.Color.PressedEase = objConfig.Color.ReleasedEase.Copy();
                             onChange();
                         });
 
@@ -133,9 +142,12 @@ namespace KeyViewer.Core
                             DrawGColor(ref objConfig.Color.Released).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();
+                        if (CanEase<GColor>.Value)
+                            DrawEaseConfig(Main.Lang[TKM.ReleasedEase], objConfig.Color.ReleasedEase);
                         TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
                         {
-                            objConfig.Color.Released = objConfig.Color.Pressed._color;
+                            objConfig.Color.Released = objConfig.Color.Pressed;
+                            objConfig.Color.ReleasedEase = objConfig.Color.PressedEase.Copy();
                             onChange();
                         });
                     }, Main.Lang[TKM.Color], ref objConfig.Color.Status.Expanded);
@@ -239,7 +251,7 @@ namespace KeyViewer.Core
                     jc.FailOverload = Constants.FailOverloadColor;
                 }
                 else objConfig.JudgeColors = null;
-            }    
+            }
             if (objConfig.ChangeColorWithJudge)
                 result |= judgeColorDrawer?.Invoke(objConfig.JudgeColors) ?? false;
             return result;
@@ -249,20 +261,9 @@ namespace KeyViewer.Core
             bool result = false;
             if (vConfig.UseSize)
                 result |= DrawPressReleaseH(Main.Lang[TKM.Size], vConfig.Size, CD_H_FLT_SIZEONLY);
-            else result |= DrawPressReleaseV(Main.Lang[TKM.Scale], vConfig.Scale, CD_V_VEC2_0_1_300);
-            result |= DrawPressReleaseV(Main.Lang[TKM.Offset], vConfig.Offset, CD_V_VEC2_0_1_300);
-            result |= DrawPressReleaseV(Main.Lang[TKM.Rotation], vConfig.Rotation, CD_V_VEC3_0_1_300);
-            TitleButton(Main.Lang[TKM.EditEaseConfig], Main.Lang[TKM.EditThis], () =>
-            {
-                GUIController.Push(new MethodDrawable(() =>
-                {
-                    if (vConfig.UseSize)
-                        DrawPressReleaseV(Main.Lang[TKM.SizeEase], vConfig.SizeEase, CD_V_EASECONFIG);
-                    else DrawPressReleaseV(Main.Lang[TKM.ScaleEase], vConfig.ScaleEase, CD_V_EASECONFIG);
-                    DrawPressReleaseV(Main.Lang[TKM.OffsetEase], vConfig.OffsetEase, CD_V_EASECONFIG);
-                    DrawPressReleaseV(Main.Lang[TKM.RotationEase], vConfig.RotationEase, CD_V_EASECONFIG);
-                }, Main.Lang[TKM.EditEaseConfig]));
-            });
+            else result |= DrawPressReleaseV(Main.Lang[TKM.Scale], vConfig.Scale, CD_V_VEC2_0_10_300);
+            result |= DrawPressReleaseV(Main.Lang[TKM.Offset], vConfig.Offset, CD_V_VEC2_WIDTH_HEIGHT_300);
+            result |= DrawPressReleaseV(Main.Lang[TKM.Rotation], vConfig.Rotation, CD_V_VEC3_M180_180_300);
             return result;
         }
         public static bool DrawVector2WithSlider(string label, ref Vector2 vec2, float lValue, float rValue)
@@ -284,158 +285,65 @@ namespace KeyViewer.Core
         }
         public static bool DrawPressReleaseH<T>(string label, PressRelease<T> pr, CustomDrawerRef<T> drawer)
         {
-            GUIStatus status = pr.Status;
-
-            bool changed = false;
-            GUILayoutEx.ExpandableGUI(() =>
-            {
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Label(Main.Lang[TKM.Pressed]);
-                    changed = drawer(ref pr.Pressed);
-                }
-                GUILayout.EndHorizontal();
-                TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
-                {
-                    object released = pr.Released;
-                    if (released is ICopyable<T> copyable)
-                        pr.Pressed = copyable.Copy();
-                    else pr.Pressed = pr.Released;
-                    changed = true;
-                });
-
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Label(Main.Lang[TKM.Released]);
-                    changed = drawer(ref pr.Released);
-                }
-                GUILayout.EndHorizontal();
-                TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
-                {
-                    object pressed = pr.Pressed;
-                    if (pressed is ICopyable<T> copyable)
-                        pr.Released = copyable.Copy();
-                    else pr.Released = pr.Pressed;
-                    changed = true;
-                });
-            }, label, ref status.Expanded);
-            return changed;
+            return DrawPressReleaseBase(label, pr, drawer, GUILayout.BeginHorizontal, GUILayout.EndHorizontal);
         }
         public static bool DrawPressReleaseV<T>(string label, PressRelease<T> pr, CustomDrawerRef<T> drawer)
         {
+            return DrawPressReleaseBase(label, pr, drawer, GUILayout.BeginVertical, GUILayout.EndVertical);
+        }
+        public static bool DrawPressReleaseBase<T>(string label, PressRelease<T> pr, CustomDrawerRef<T> drawer, Action<GUILayoutOption[]> begin, Action end)
+        {
             GUIStatus status = pr.Status;
 
+            var emptyOptions = Array.Empty<GUILayoutOption>();
             bool changed = false;
             GUILayoutEx.ExpandableGUI(() =>
             {
-                GUILayout.BeginVertical();
+                begin(emptyOptions);
                 {
                     GUILayout.Label(Main.Lang[TKM.Pressed]);
-                    changed = drawer(ref pr.Pressed);
+                    changed |= drawer(ref pr.Pressed);
                 }
-                GUILayout.EndVertical();
+                end();
+                if (CanEase<T>.Value)
+                    DrawEaseConfig(Main.Lang[TKM.PressedEase], pr.PressedEase);
                 TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
                 {
                     object released = pr.Released;
                     if (released is ICopyable<T> copyable)
                         pr.Pressed = copyable.Copy();
                     else pr.Pressed = pr.Released;
+                    pr.PressedEase = pr.ReleasedEase.Copy();
                     changed = true;
                 });
 
-                GUILayout.BeginVertical();
+                begin(emptyOptions);
                 {
                     GUILayout.Label(Main.Lang[TKM.Released]);
-                    changed = drawer(ref pr.Released);
+                    changed |= drawer(ref pr.Released);
                 }
-                GUILayout.EndVertical();
+                end();
+                if (CanEase<T>.Value)
+                    DrawEaseConfig(Main.Lang[TKM.ReleasedEase], pr.ReleasedEase);
                 TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
                 {
                     object pressed = pr.Pressed;
                     if (pressed is ICopyable<T> copyable)
                         pr.Released = copyable.Copy();
                     else pr.Released = pr.Pressed;
+                    pr.ReleasedEase = pr.PressedEase.Copy();
                     changed = true;
                 });
             }, label, ref status.Expanded);
             return changed;
         }
-        public static bool DrawPressReleaseH<T>(string label, PressRelease<T> pr, CustomDrawer<T> drawer)
+        public static bool DrawEaseConfig(string label, EaseConfig easeConfig)
         {
-            GUIStatus status = pr.Status;
-
             bool changed = false;
             GUILayoutEx.ExpandableGUI(() =>
             {
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Label(Main.Lang[TKM.Pressed]);
-                    changed = drawer(pr.Pressed);
-                }
-                GUILayout.EndHorizontal();
-                TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
-                {
-                    object released = pr.Released;
-                    if (released is ICopyable<T> copyable)
-                        pr.Pressed = copyable.Copy();
-                    else pr.Pressed = pr.Released;
-                    changed = true;
-                });
-
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Label(Main.Lang[TKM.Released]);
-                    changed = drawer(pr.Released);
-                }
-                GUILayout.EndHorizontal();
-                TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
-                {
-                    object pressed = pr.Pressed;
-                    if (pressed is ICopyable<T> copyable)
-                        pr.Released = copyable.Copy();
-                    else pr.Released = pr.Pressed;
-                    changed = true;
-                });
-            }, label, ref status.Expanded);
-            return changed;
-        }
-        public static bool DrawPressReleaseV<T>(string label, PressRelease<T> pr, CustomDrawer<T> drawer)
-        {
-            GUIStatus status = pr.Status;
-
-            bool changed = false;
-            GUILayoutEx.ExpandableGUI(() =>
-            {
-                GUILayout.BeginVertical();
-                {
-                    GUILayout.Label(Main.Lang[TKM.Pressed]);
-                    changed = drawer(pr.Pressed);
-                }
-                GUILayout.EndVertical();
-                TitleButton(Main.Lang[TKM.CopyFromReleased], Main.Lang[TKM.Copy], () =>
-                {
-                    object released = pr.Released;
-                    if (released is ICopyable<T> copyable)
-                        pr.Pressed = copyable.Copy();
-                    else pr.Pressed = pr.Released;
-                    changed = true;
-                });
-
-                GUILayout.BeginVertical();
-                {
-                    GUILayout.Label(Main.Lang[TKM.Released]);
-                    changed = drawer(pr.Released);
-                }
-                GUILayout.EndVertical();
-                TitleButton(Main.Lang[TKM.CopyFromPressed], Main.Lang[TKM.Copy], () =>
-                {
-                    object pressed = pr.Pressed;
-                    if (pressed is ICopyable<T> copyable)
-                        pr.Released = copyable.Copy();
-                    else pr.Released = pr.Pressed;
-                    changed = true;
-                });
-            }, label, ref status.Expanded);
+                changed = CD_V_EASECONFIG(easeConfig);
+            }, label, ref easeConfig.Status.Expanded);
             return changed;
         }
         public static void ExpandableGUI(GUIStatus status, string label, Action drawer)

@@ -23,7 +23,7 @@ namespace KeyViewer.Unity
 
         internal KPSCalculator kpsCalc;
         private RectTransform keysRt;
-        private List<Key> keys;
+        internal List<Key> keys;
         private bool initialized;
         public void Init()
         {
@@ -70,7 +70,6 @@ namespace KeyViewer.Unity
                 }
                 Key key = keys.Find(k => KeyViewerUtils.KeyName(k.config) == name);
                 if (key == null) return -1;
-                if (!key.kpsCalc.Running) return 0;
                 return key.config.Count;
             }));
             initialized = true;
@@ -95,15 +94,11 @@ namespace KeyViewer.Unity
                 keys[index] = value;
             }
         }
-        public Vector2 Position
+        private void Update()
         {
-            get => keysRt.pivot;
-            set
-            {
-                keysRt.anchorMin = value;
-                keysRt.anchorMax = value;
-                keysRt.pivot = value;
-            }
+            if (!initialized) return;
+            var pressed = keys.Any(k => k.Pressed);
+            KeyViewerUtils.ApplyVectorConfig(keysRt, profile.VectorConfig, pressed);
         }
         public void UpdateKeys()
         {
@@ -116,7 +111,7 @@ namespace KeyViewer.Unity
             keys = new List<Key>();
             foreach (KeyConfig config in profile.Keys)
             {
-                string name = config.DummyName ?? config.Code.ToString();
+                string name = KeyViewerUtils.KeyName(config);
                 GameObject keyObject = new GameObject($"Key {name}");
                 Key key = keyObject.AddComponent<Key>();
                 key.Init(this, config);
@@ -126,20 +121,36 @@ namespace KeyViewer.Unity
         }
         public void UpdateLayout()
         {
+            Main.Logger.Log("Update Layout");
             int count = keys.Count;
             float keyHeight = profile.Keys.Any(k => k.EnableCountText) ? 150 : 100;
             float spacing = 10;
             float width = count * 100 + (count - 1) * spacing;
 
             var vecConfig = profile.VectorConfig;
-            Position = vecConfig.Offset.Released;
+            keysRt.anchorMin = Vector2.zero;
+            keysRt.anchorMax = Vector2.zero;
             keysRt.sizeDelta = new Vector2(width, keyHeight);
-            keysRt.anchoredPosition = Vector2.zero;
+            keysRt.anchoredPosition = vecConfig.Offset.Released;
+            keysRt.pivot = new Vector2(0.5f, 0.5f);
             keysRt.localRotation = Quaternion.Euler(vecConfig.Rotation.Released);
             keysRt.localScale = vecConfig.Scale.Released;
 
             float x = 0;
             keys.ForEach(k => k.UpdateLayout(ref x));
+
+            Vector2 offset = new Vector2(x / 2, keyHeight / 2);
+            keys.ForEach(k =>
+            {
+                k.Background.rectTransform.anchoredPosition -= offset;
+                KeyViewerUtils.ApplyConfigLayout(k.Background, k.config.BackgroundConfig);
+                k.Outline.rectTransform.anchoredPosition -= offset;
+                KeyViewerUtils.ApplyConfigLayout(k.Outline, k.config.OutlineConfig);
+                k.Text.rectTransform.anchoredPosition -= offset;
+                KeyViewerUtils.ApplyConfigLayout(k.Text, k.config.TextConfig);
+                k.CountText.rectTransform.anchoredPosition -= offset;
+                KeyViewerUtils.ApplyConfigLayout(k.CountText, k.config.CountTextConfig);
+            });
         }
         public static KeyManager CreateManager(string name, Profile profile)
         {

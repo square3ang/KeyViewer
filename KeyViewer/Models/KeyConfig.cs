@@ -13,6 +13,7 @@ namespace KeyViewer.Models
         public string DummyName = null;
         public string Font = "Default";
         public bool EnableKPSMeter = false;
+        public bool UpdateTextAlways = false;
         public bool EnableCountText = true;
 
         public PressRelease<string> Text = new PressRelease<string>(null);
@@ -20,16 +21,14 @@ namespace KeyViewer.Models
         public PressRelease<string> Background = new PressRelease<string>(null);
         public PressRelease<string> Outline = new PressRelease<string>(null);
 
-        public ObjectConfig TextConfig = new ObjectConfig(75, Color.black, Color.white);
-        public ObjectConfig CountTextConfig = new ObjectConfig(50, Color.black, Color.white);
-        public ObjectConfig BackgroundConfig = new ObjectConfig(Vector2.one, Color.white, Color.black.WithAlpha(0.4f));
-        public ObjectConfig OutlineConfig = new ObjectConfig(Vector2.one, Color.white, Color.white);
+        public ObjectConfig TextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
+        public ObjectConfig CountTextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
+        public ObjectConfig BackgroundConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.black.WithAlpha(0.4f));
+        public ObjectConfig OutlineConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.white);
         public float BackgroundRoundness = 0f;
         public float OutlineRoundness = 0f;
 
-        public VectorConfig VectorConfig = new VectorConfig() { Scale = new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one), ScaleEase = new PressRelease<EaseConfig>(new EaseConfig(Ease.OutQuad, 0.1f)) };
-
-        public PressReleaseM<EaseConfig> ScaleEasing = new EaseConfig(Ease.OutExpo, 0.1f);
+        public VectorConfig VectorConfig = new VectorConfig();
 
         public bool RainEnabled = false;
         public RainConfig Rain = new RainConfig();
@@ -43,6 +42,7 @@ namespace KeyViewer.Models
             newConfig.DummyName = DummyName;
             newConfig.Font = Font;
             newConfig.EnableKPSMeter = EnableKPSMeter;
+            newConfig.UpdateTextAlways = UpdateTextAlways;
             newConfig.EnableCountText = EnableCountText;
 
             newConfig.Text = Text.Copy();
@@ -59,8 +59,6 @@ namespace KeyViewer.Models
 
             newConfig.VectorConfig = VectorConfig.Copy();
 
-            newConfig.ScaleEasing = ScaleEasing.Copy();
-
             newConfig.RainEnabled = RainEnabled;
             newConfig.Rain = Rain.Copy();
 
@@ -75,6 +73,7 @@ namespace KeyViewer.Models
             node[nameof(DummyName)] = DummyName;
             node[nameof(Font)] = Font;
             node[nameof(EnableKPSMeter)] = EnableKPSMeter;
+            node[nameof(UpdateTextAlways)] = UpdateTextAlways;
             node[nameof(EnableCountText)] = EnableCountText;
 
             node[nameof(Text)] = Text.Serialize();
@@ -91,8 +90,6 @@ namespace KeyViewer.Models
 
             node[nameof(VectorConfig)] = VectorConfig.Serialize();
 
-            node[nameof(ScaleEasing)] = ScaleEasing.Serialize();
-
             node[nameof(RainEnabled)] = RainEnabled;
             node[nameof(Rain)] = Rain.Serialize();
 
@@ -106,6 +103,7 @@ namespace KeyViewer.Models
             DummyName = dum == null ? null : dum.Value;
             Font = node[nameof(Font)];
             EnableKPSMeter = node[nameof(EnableKPSMeter)];
+            UpdateTextAlways = node[nameof(UpdateTextAlways)];
             EnableCountText = node[nameof(EnableCountText)];
 
             Text = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Text)]);
@@ -121,8 +119,6 @@ namespace KeyViewer.Models
             OutlineRoundness = node[nameof(OutlineRoundness)];
 
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
-
-            ScaleEasing = ModelUtils.Unbox<PressReleaseM<EaseConfig>>(node[nameof(ScaleEasing)]);
 
             RainEnabled = node[nameof(RainEnabled)];
             Rain = ModelUtils.Unbox<RainConfig>(node[nameof(Rain)]);

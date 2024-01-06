@@ -1,6 +1,4 @@
 ﻿using KeyViewer.Core.Interfaces;
-using KeyViewer.Unity;
-using System;
 using UnityEngine;
 
 namespace KeyViewer.Core
