@@ -46,7 +46,8 @@ namespace KeyViewer.Views
             if (model.EnableCountText)
                 changed |= Drawer.DrawPressReleaseH(L(TKKC.CountText), model.CountText, Drawer.CD_H_STR);
             changed |= Drawer.DrawPressReleaseH(L(TKKC.BackgroundImage), model.Background, Drawer.CD_H_STR);
-            changed |= Drawer.DrawPressReleaseH(L(TKKC.OutlineImage), model.Outline, Drawer.CD_H_STR);
+            if (model.EnableOutlineImage)
+                changed |= Drawer.DrawPressReleaseH(L(TKKC.OutlineImage), model.Outline, Drawer.CD_H_STR);
 
             changed |= Drawer.DrawVectorConfig(model.VectorConfig);
 
@@ -54,7 +55,8 @@ namespace KeyViewer.Views
             if (model.EnableCountText)
                 Drawer.DrawObjectConfig(L(TKKC.EditCountTextConfig), L(TKKC.KeyCountText, model.DummyName != null ? model.DummyName : model.Code), model.CountTextConfig, () => manager.UpdateLayout());
             Drawer.DrawObjectConfig(L(TKKC.EditBackgroundConfig), L(TKKC.KeyBackground, model.DummyName != null ? model.DummyName : model.Code), model.BackgroundConfig, () => manager.UpdateLayout());
-            Drawer.DrawObjectConfig(L(TKKC.EditOutlineConfig), L(TKKC.KeyOutline, model.DummyName != null ? model.DummyName : model.Code), model.OutlineConfig, () => manager.UpdateLayout());
+            if (model.EnableOutlineImage)
+                Drawer.DrawObjectConfig(L(TKKC.EditOutlineConfig), L(TKKC.KeyOutline, model.DummyName != null ? model.DummyName : model.Code), model.OutlineConfig, () => manager.UpdateLayout());
 
             changed |= Drawer.DrawSingleWithSlider(L(TKKC.BackgroundImageRoundness), ref model.BackgroundRoundness, 0, Constants.Rad2Deg100, 300);
             changed |= Drawer.DrawSingleWithSlider(L(TKKC.OutlineImageRoundness), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300);

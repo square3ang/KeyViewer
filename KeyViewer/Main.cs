@@ -5,6 +5,7 @@ using KeyViewer.Core;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Core.Translation;
 using KeyViewer.Models;
+using KeyViewer.Patches;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using KeyViewer.Views;
@@ -19,14 +20,11 @@ using static UnityModManagerNet.UnityModManager.ModEntry;
 
 /* TODO List
  * 지원 가능한 모든 곳에 Gradient 기능 추가하기 => Completed
- * Rain이 위 아래로 늘어나는 버그 고치기
- * 비동기 입력 Issue 고치기
+ * Rain이 위 아래로 늘어나는 버그 고치기 => Completed
+ * 비동기 입력 Issue 고치기 => FUCK
  * 키 별 KPS 기능 추가하기 => Completed
  * 모든 텍스트에 Tag를 이용한 Text Replacing 지원하기 => Completed
  * 이미지 Rounding 지원하기 => Completed
- * GUIController Stack 이상 FIX
- * Rain Mask 위치 이상 FIX
- * Offset 위치 이상 FIX
  * 
  * Maybe TODO List
  * Rain이 켜져있을 때 키를 누르면 파티클 효과 추가해보기
@@ -36,6 +34,8 @@ namespace KeyViewer
 {
     public static class Main
     {
+        public static bool IsEnabled { get; private set; }
+        public static bool IsPlaying { get; private set; }
         public static Language Lang { get; internal set; }
         public static ModEntry Mod { get; private set; }
         public static ModLogger Logger { get; private set; }
@@ -62,6 +62,7 @@ namespace KeyViewer
                 Tag.InitializeWrapperAssembly();
                 FontManager.Initialize();
                 AssetManager.Initialize();
+                JudgementColorPatch.Initialize();
                 Settings = new Settings();
                 if (File.Exists(Constants.SettingsPath))
                     Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
@@ -85,14 +86,18 @@ namespace KeyViewer
                 Language.OnInitialize += OnLanguageInitialize;
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
-                StaticCoroutine.Run(InitializeManagerCo());
+                StaticCoroutine.Run(InitializeManagersCo());
+                IsEnabled = true;
             }
             else
             {
+                IsEnabled = false;
+                StaticCoroutine.Run(ReleaseManagersCo());
                 Harmony.UnpatchAll(Harmony.Id);
                 Harmony = null;
                 Language.OnInitialize -= OnLanguageInitialize;
                 Language.Release();
+                JudgementColorPatch.Release();
                 AssetManager.Release();
                 FontManager.Release();
                 Tag.DisposeWrapperAssembly();
@@ -106,6 +111,16 @@ namespace KeyViewer
                 foreach (var code in EnumHelper<KeyCode>.GetValues())
                     if (Input.GetKeyDown(code))
                         ListeningDrawer.OnKeyDown(code);
+            bool showViewer = true;
+            foreach (var manager in Managers.Values)
+            {
+                if (scrController.instance && scrConductor.instance)
+                    IsPlaying = !scrController.instance.paused && scrConductor.instance.isGameWorld;
+                if (manager.profile.ViewOnlyGamePlay)
+                    showViewer = IsPlaying;
+                if (showViewer != manager.gameObject.activeSelf)
+                    manager.gameObject.SetActive(showViewer);
+            }
         }
         public static void OnGUI(ModEntry modEntry)
         {
@@ -171,7 +186,7 @@ namespace KeyViewer
                 Managers.Remove(profile.Name);
             }
         }
-        public static IEnumerator InitializeManagerCo()
+        public static IEnumerator InitializeManagersCo()
         {
             yield return new WaitUntil(() => !AssetManager.Initialized);
             foreach (var (name, manager) in Managers)
@@ -179,6 +194,15 @@ namespace KeyViewer
                 manager.Init();
                 manager.UpdateKeys();
                 Logger.Log($"Initialized Key Manager {name}.");
+                yield return null;
+            }
+        }
+        public static IEnumerator ReleaseManagersCo()
+        {
+            foreach (var (name, manager) in Managers)
+            {
+                Object.Destroy(manager);
+                Logger.Log($"Released Key Manager {name}.");
                 yield return null;
             }
         }

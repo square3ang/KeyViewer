@@ -52,6 +52,7 @@ namespace KeyViewer.Models
         public PressReleaseM<GColor> Color;
         public bool ChangeColorWithJudge = false;
         public JudgeM<GColor> JudgeColors = null;
+        public EaseConfig JudgeColorEase = new EaseConfig();
         public ObjectConfig Copy()
         {
             ObjectConfig newConfig = new ObjectConfig();
@@ -59,6 +60,7 @@ namespace KeyViewer.Models
             newConfig.Color = Color.Copy();
             newConfig.ChangeColorWithJudge = ChangeColorWithJudge;
             newConfig.JudgeColors = JudgeColors?.Copy();
+            newConfig.JudgeColorEase = JudgeColorEase.Copy();
             return newConfig;
         }
         public JsonNode Serialize()
@@ -68,6 +70,7 @@ namespace KeyViewer.Models
             node[nameof(Color)] = Color.Serialize();
             node[nameof(ChangeColorWithJudge)] = ChangeColorWithJudge;
             node[nameof(JudgeColors)] = JudgeColors?.Serialize();
+            node[nameof(JudgeColorEase)] = JudgeColorEase?.Serialize();
             return node;
         }
         public void Deserialize(JsonNode node)
@@ -76,6 +79,7 @@ namespace KeyViewer.Models
             Color = ModelUtils.Unbox<PressReleaseM<GColor>>(node[nameof(Color)]);
             ChangeColorWithJudge = node[nameof(ChangeColorWithJudge)];
             JudgeColors = ModelUtils.Unbox<JudgeM<GColor>>(node[nameof(JudgeColors)]);
+            JudgeColorEase = ModelUtils.Unbox<EaseConfig>(node[nameof(JudgeColorEase)]) ?? new EaseConfig();
         }
     }
 }

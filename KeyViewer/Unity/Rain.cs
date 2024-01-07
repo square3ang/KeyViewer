@@ -10,38 +10,49 @@ namespace KeyViewer.Unity
         public bool IsAlive { get; private set; }
         private bool stretching = false;
         private RainConfig config;
-        private Image image;
         private Key key;
         private RectTransform rt;
         private ObjectConfig objConfig;
-        void Awake()
-        {
-            gameObject.transform.SetParent(key.transform);
-            image = gameObject.AddComponent<Image>();
-            rt = image.rectTransform;
-            rt.anchoredPosition = Vector2.zero;
-        }
+        private int colorUpdateIgnores;
+
+        internal Image image;
         public void Init(Key key)
         {
             this.key = key;
+            image = gameObject.AddComponent<Image>();
+            rt = image.rectTransform;
             config = key.Config.Rain;
             objConfig = config.ObjectConfig;
             image.sprite = key.RainImageManager.Get();
+
             KeyViewerUtils.ApplyColorLayout(image, objConfig.Color.Released);
-            ResetSizePos();
+            Reset();
         }
         public void Press()
         {
             stretching = true;
-        }
-        public void ResetSizePos()
-        {
-            rt.sizeDelta = GetInitialSize();
-            rt.anchoredPosition = GetPosition(config.Direction);
+            var color = config.ObjectConfig.Color;
+            if (colorUpdateIgnores == 0)
+                KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase);
+            else colorUpdateIgnores--;
         }
         public void Release()
         {
             stretching = false;
+            var color = config.ObjectConfig.Color;
+            if (colorUpdateIgnores == 0)
+                KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase);
+            else colorUpdateIgnores--;
+        }
+        public void Reset()
+        {
+            colorUpdateIgnores = 0;
+            rt.sizeDelta = GetInitialSize();
+            rt.anchoredPosition = GetPosition(config.Direction);
+        }
+        public void IgnoreColorUpdate()
+        {
+            colorUpdateIgnores++;
         }
         private void Update()
         {
@@ -65,7 +76,7 @@ namespace KeyViewer.Unity
             else
             {
                 stretching = false;
-                ResetSizePos();
+                Reset();
                 gameObject.SetActive(false);
             }
         }

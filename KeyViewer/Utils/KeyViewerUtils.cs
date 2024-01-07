@@ -1,9 +1,11 @@
 ﻿using DG.Tweening;
 using KeyViewer.Models;
+using KeyViewer.Unity;
 using KeyViewer.Unity.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static CameraFilterPack_NightVisionFX;
 
 namespace KeyViewer.Utils
 {
@@ -150,10 +152,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                t.DOLocalMove(vConfig.Offset.Get(pressed), oEase.Duration)
+                t.DOLocalMove(vConfig.Offset.Get(pressed) + vConfig.anchorCache, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else t.localPosition = vConfig.Offset.Get(pressed);
+            else t.localPosition = vConfig.Offset.Get(pressed) + vConfig.anchorCache;
 
             var sEase = vConfig.Scale.GetEase(pressed);
             if (sEase.IsValid)
@@ -175,10 +177,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                rt.DOAnchorPos(vConfig.anchorCache + vConfig.Offset.Get(pressed), oEase.Duration)
+                rt.DOAnchorPos(vConfig.Offset.Get(pressed) + vConfig.anchorCache, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else rt.anchoredPosition = vConfig.anchorCache + vConfig.Offset.Get(pressed);
+            else rt.anchoredPosition = vConfig.Offset.Get(pressed) + vConfig.anchorCache;
 
             var sEase = vConfig.Scale.GetEase(pressed);
             if (sEase.IsValid)

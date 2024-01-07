@@ -28,7 +28,13 @@ namespace KeyViewer.Controllers
             }
             else
             {
-                drawables[depth++] = current;
+                if (drawable.Name != drawables[depth].Name)
+                {
+                    drawables.RemoveRange(depth, drawables.Count - 1);
+                    drawables.Add(current);
+                    depth++;
+                }
+                else drawables[depth++] = current;
             }
             current = drawable;
         }

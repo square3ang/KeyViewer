@@ -129,12 +129,11 @@ namespace KeyViewer.Unity
             keysRt.localRotation = Quaternion.Euler(vecConfig.Rotation.Released);
             keysRt.localScale = vecConfig.Scale.Released;
 
-
             float totalX = 0;
             foreach (Key k in keys)
                 if (!k.Config.DisableSorting)
                     totalX += k.Config.VectorConfig.Scale.Released.x * 100 + 10;
-            centerOffset = new Vector2(totalX / 2, keyHeight / 2);
+            centerOffset = new Vector2(totalX / 2 - 5, keyHeight / 2);
 
             float x = 0;
             keys.ForEach(k => k.UpdateLayout(ref x));

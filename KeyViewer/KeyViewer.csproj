@@ -310,6 +310,7 @@
     <Compile Include="API\InputAPI.cs" />
     <Compile Include="Core\AssetManager.cs" />
     <Compile Include="Core\Constants.cs" />
+    <Compile Include="Core\EnsurePool.cs" />
     <Compile Include="Core\FontManager.cs" />
     <Compile Include="Controllers\GUIController.cs" />
     <Compile Include="Core\GUILayoutEx.cs" />
@@ -347,6 +348,8 @@
     <Compile Include="Models\VectorConfig.cs" />
     <Compile Include="Models\ObjectConfig.cs" />
     <Compile Include="Patches\CountValidKeysPressedPatch.cs" />
+    <Compile Include="Patches\JudgementColorPatch.cs" />
+    <Compile Include="Patches\OnResetScenePatch.cs" />
     <Compile Include="Patches\RemoveFuckingUMMDummyLogPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Settings.cs" />

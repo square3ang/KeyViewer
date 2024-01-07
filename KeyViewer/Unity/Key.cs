@@ -4,10 +4,10 @@ using KeyViewer.Core.Input;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Models;
 using KeyViewer.Utils;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Pool;
 
 namespace KeyViewer.Unity
 {
@@ -22,8 +22,9 @@ namespace KeyViewer.Unity
         private Replacer countTextReplacerR;
         private GameObject rainContainer;
         private RectMask2D rainMask;
-        private ObjectPool<Rain> rainPool;
-        private Rain rain;
+        private EnsurePool<Rain> rainPool;
+        private Vector3 initialPosition;
+        private int[] colorUpdateIgnores = new int[4];
 
         public bool Pressed;
         public Vector2 Size;
@@ -37,6 +38,8 @@ namespace KeyViewer.Unity
         public RectTransform RainMaskRt;
         public RainImageManager RainImageManager;
 
+        internal Rain rain;
+
         public void Init(KeyManager manager, KeyConfig config)
         {
             if (initialized) return;
@@ -49,6 +52,8 @@ namespace KeyViewer.Unity
             KpsCalc = new KPSCalculator(manager.profile);
             RainImageManager = new RainImageManager(config.Rain);
             transform.SetParent(manager.keysCanvas.transform);
+            initialPosition = transform.localPosition;
+            Config.VectorConfig.anchorCache = initialPosition;
 
             rainContainer = new GameObject("Rain Container");
             var containerTransform = rainContainer.transform;
@@ -59,16 +64,16 @@ namespace KeyViewer.Unity
             rainMask = rainContainer.AddComponent<RectMask2D>();
             RainMaskRt = rainMask.rectTransform;
             RainMaskRt.anchorMin = RainMaskRt.anchorMax = Vector2.zero;
-            rainPool = new ObjectPool<Rain>(() =>
+            rainPool = new EnsurePool<Rain>(() =>
             {
                 GameObject rainObj = new GameObject($"Rain {config.Code}");
                 rainObj.transform.SetParent(rainMask.transform);
-                Rain rain = rainObj.AddComponent<Rain>();
+                var rain = rainObj.AddComponent<Rain>();
                 rain.Init(this);
                 rainObj.SetActive(false);
                 return rain;
-            }, r => r.gameObject.SetActive(true),
-            defaultCapacity: config.Rain.PoolSize, maxSize: config.Rain.PoolSize);
+            }, kr => !kr.IsAlive, kr => kr.gameObject.SetActive(true), Destroy);
+            rainPool.Fill(Config.Rain.PoolSize);
 
             ObjectConfig bgConfig = config.BackgroundConfig;
             GameObject bgObj = new GameObject("Background");
@@ -130,8 +135,8 @@ namespace KeyViewer.Unity
             if (Config.EnableCountText)
                 keyHeight += 50;
             float _x = Config.DisableSorting ? 0 : x;
-            Position = new Vector2(keyWidth / 2f + _x, keyHeight / 2f);
-            Vector2 anchoredPos = Position + vConfig.Offset.Released - manager.centerOffset, releasedOffset;
+            Vector2 position = new Vector2(keyWidth / 2f + _x, keyHeight / 2f);
+            Vector2 anchoredPos = Position = position + vConfig.Offset.Released - manager.centerOffset, releasedOffset;
             transform.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
 
             Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
@@ -192,17 +197,33 @@ namespace KeyViewer.Unity
             Outline.gameObject.SetActive(Config.EnableOutlineImage);
             CountText.gameObject.SetActive(Config.EnableCountText);
 
-            if (!Config.DisableSorting)
-                x += keyWidth + 10;
-            ReplaceText();
-
             var rainConfig = Config.Rain;
-            rainContainer.SetActive(Config.RainEnabled);
             rainMask.softness = GetSoftness(rainConfig.Direction);
+            rainPool.ForEach(r => r.Reset());
             KeyViewerUtils.SetAnchor(RainMaskRt, rainConfig.Direction);
             RainImageManager.Refresh();
             RainUpdate();
+            rainContainer.SetActive(Config.RainEnabled);
+
+            if (!Config.DisableSorting)
+                x += keyWidth + 10;
+            ReplaceText();
         }
+        public void ResetRains()
+        {
+            rainPool.ForEach(r =>
+            {
+                r.Release();
+                r.Reset();
+                r.gameObject.SetActive(false);
+            });
+        }
+        public void IgnoreColorUpdate(Element e)
+        {
+            colorUpdateIgnores[(int)e]++;
+        }
+
+        #region Privates
 
         #region Rain
         private Vector2 GetSizeDelta(Direction dir)
@@ -283,6 +304,7 @@ namespace KeyViewer.Unity
                 InputAPI.KeyRelease(Config.Code);
             if (!Config.UpdateTextAlways)
                 ReplaceText();
+
             ApplyColor();
             ApplySprite();
             ApplyVectorConfig();
@@ -314,14 +336,33 @@ namespace KeyViewer.Unity
         }
         private void ApplyColor()
         {
-            var textColor = Config.TextConfig.Color;
-            KeyViewerUtils.ApplyColor(Text, textColor.Get(!Pressed), textColor.Get(Pressed), textColor.GetEase(Pressed));
-            var countTextColor = Config.CountTextConfig.Color;
-            KeyViewerUtils.ApplyColor(CountText, countTextColor.Get(!Pressed), countTextColor.Get(Pressed), countTextColor.GetEase(Pressed));
-            var bgColor = Config.BackgroundConfig.Color;
-            KeyViewerUtils.ApplyColor(Background, bgColor.Get(!Pressed), bgColor.Get(Pressed), bgColor.GetEase(Pressed));
-            var olColor = Config.OutlineConfig.Color;
-            KeyViewerUtils.ApplyColor(Outline, olColor.Get(!Pressed), olColor.Get(Pressed), olColor.GetEase(Pressed));
+            if (colorUpdateIgnores[(int)Element.Text] == 0)
+            {
+                var textColor = Config.TextConfig.Color;
+                KeyViewerUtils.ApplyColor(Text, textColor.Get(!Pressed), textColor.Get(Pressed), textColor.GetEase(Pressed));
+            }
+            else colorUpdateIgnores[(int)Element.Text]--;
+
+            if (colorUpdateIgnores[(int)Element.CountText] == 0)
+            {
+                var countTextColor = Config.CountTextConfig.Color;
+                KeyViewerUtils.ApplyColor(CountText, countTextColor.Get(!Pressed), countTextColor.Get(Pressed), countTextColor.GetEase(Pressed));
+            }
+            else colorUpdateIgnores[(int)Element.CountText]--;
+
+            if (colorUpdateIgnores[(int)Element.Background] == 0)
+            {
+                var bgColor = Config.BackgroundConfig.Color;
+                KeyViewerUtils.ApplyColor(Background, bgColor.Get(!Pressed), bgColor.Get(Pressed), bgColor.GetEase(Pressed));
+            }
+            else colorUpdateIgnores[(int)Element.Background]--;
+
+            if (colorUpdateIgnores[(int)Element.Outline] == 0)
+            {
+                var olColor = Config.OutlineConfig.Color;
+                KeyViewerUtils.ApplyColor(Outline, olColor.Get(!Pressed), olColor.Get(Pressed), olColor.GetEase(Pressed));
+            }
+            else colorUpdateIgnores[(int)Element.Outline]--;
         }
         private void ApplySprite()
         {
@@ -338,6 +379,7 @@ namespace KeyViewer.Unity
         }
         private void RainUpdate()
         {
+            if (!Config.RainEnabled) return;
             var rainConfig = Config.Rain;
             rainMask.softness = GetSoftness(rainConfig.Direction);
             RainMaskRt.sizeDelta = GetSizeDelta(rainConfig.Direction);
@@ -345,14 +387,24 @@ namespace KeyViewer.Unity
             if (Pressed)
             {
                 rain = rainPool.Get();
+                rain.Reset();
                 rain.Press();
             }
             else if (rain != null)
             {
                 rain.Release();
-                rainPool.Release(rain);
             }
         }
         #endregion
+
+        #endregion
+
+        public enum Element
+        {
+            Background,
+            Outline,
+            Text,
+            CountText
+        }
     }
 }

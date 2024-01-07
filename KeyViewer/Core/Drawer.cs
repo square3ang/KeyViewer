@@ -170,6 +170,8 @@ namespace KeyViewer.Core
                                 TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.Multipress]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.Multipress).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.Multipress])))));
                                 TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.FailMiss]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.FailMiss).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.FailMiss])))));
                                 TitleButton(string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.FailOverload]), Main.Lang[TKM.EditThis], () => GUIController.Push(new MethodDrawable(() => DrawGColor(ref colors.FailOverload).IfTrue(onChange), string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ThisColor], Main.Lang[TKM.FailOverload])))));
+                                if (CanEase<GColor>.Value)
+                                    DrawEaseConfig(Main.Lang[TKM.Ease], objConfig.JudgeColorEase);
                             }, title));
                         });
                         return judgeChanged;
