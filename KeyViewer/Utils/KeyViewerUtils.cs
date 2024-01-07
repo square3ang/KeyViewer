@@ -175,7 +175,7 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                rt.DOMove(vConfig.anchorCache + vConfig.Offset.Get(pressed), oEase.Duration)
+                rt.DOAnchorPos(vConfig.anchorCache + vConfig.Offset.Get(pressed), oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
             else rt.anchoredPosition = vConfig.anchorCache + vConfig.Offset.Get(pressed);
@@ -186,6 +186,32 @@ namespace KeyViewer.Utils
                 .SetEase(sEase.Ease)
                 .SetAutoKill(false);
             else rt.localScale = vConfig.Scale.Get(pressed);
+        }
+        public static void SetAnchor(RectTransform rt, Direction dir)
+        {
+            switch (dir)
+            {
+                case Direction.Up:
+                    rt.pivot = new Vector2(0.5f, 0);
+                    rt.anchorMin = new Vector2(0.5f, 0);
+                    rt.anchorMax = new Vector2(0.5f, 0);
+                    break;
+                case Direction.Down:
+                    rt.pivot = new Vector2(0.5f, 1);
+                    rt.anchorMin = new Vector2(0.5f, 1);
+                    rt.anchorMax = new Vector2(0.5f, 1);
+                    break;
+                case Direction.Right:
+                    rt.pivot = new Vector2(0, 0.5f);
+                    rt.anchorMin = new Vector2(0, 0.5f);
+                    rt.anchorMax = new Vector2(0, 0.5f);
+                    break;
+                case Direction.Left:
+                    rt.pivot = new Vector2(1, 0.5f);
+                    rt.anchorMin = new Vector2(1, 0.5f);
+                    rt.anchorMax = new Vector2(1, 0.5f);
+                    break;
+            }
         }
     }
 }

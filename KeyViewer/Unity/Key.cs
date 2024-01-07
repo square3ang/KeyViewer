@@ -1,4 +1,5 @@
-﻿using KeyViewer.Core;
+﻿using KeyViewer.API;
+using KeyViewer.Core;
 using KeyViewer.Core.Input;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Models;
@@ -6,6 +7,7 @@ using KeyViewer.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Pool;
 
 namespace KeyViewer.Unity
 {
@@ -13,31 +15,60 @@ namespace KeyViewer.Unity
     {
         private bool initialized;
         private bool prevPressed;
+        private KeyManager manager;
         private Replacer textReplacerP;
         private Replacer textReplacerR;
         private Replacer countTextReplacerP;
         private Replacer countTextReplacerR;
-        internal KPSCalculator kpsCalc;
+        private GameObject rainContainer;
+        private RectMask2D rainMask;
+        private ObjectPool<Rain> rainPool;
+        private Rain rain;
 
         public bool Pressed;
-        public KeyManager manager;
-        public KeyConfig config;
+        public Vector2 Size;
+        public Vector2 Position;
+        public KeyConfig Config;
         public Image Background;
         public Image Outline;
         public TextMeshProUGUI Text;
         public TextMeshProUGUI CountText;
+        public KPSCalculator KpsCalc;
+        public RectTransform RainMaskRt;
+        public RainImageManager RainImageManager;
 
         public void Init(KeyManager manager, KeyConfig config)
         {
             if (initialized) return;
             this.manager = manager;
-            this.config = config;
+            Config = config;
             textReplacerP = new Replacer(manager.AllTags);
             textReplacerR = new Replacer(manager.AllTags);
             countTextReplacerP = new Replacer(manager.AllTags);
             countTextReplacerR = new Replacer(manager.AllTags);
-            kpsCalc = new KPSCalculator(manager.profile);
+            KpsCalc = new KPSCalculator(manager.profile);
+            RainImageManager = new RainImageManager(config.Rain);
             transform.SetParent(manager.keysCanvas.transform);
+
+            rainContainer = new GameObject("Rain Container");
+            var containerTransform = rainContainer.transform;
+            containerTransform.position = transform.position;
+            containerTransform.SetParent(transform);
+            var image = rainContainer.AddComponent<Image>();
+            image.color = new Color(1, 1, 1, 0);
+            rainMask = rainContainer.AddComponent<RectMask2D>();
+            RainMaskRt = rainMask.rectTransform;
+            RainMaskRt.anchorMin = RainMaskRt.anchorMax = Vector2.zero;
+            rainPool = new ObjectPool<Rain>(() =>
+            {
+                GameObject rainObj = new GameObject($"Rain {config.Code}");
+                rainObj.transform.SetParent(rainMask.transform);
+                Rain rain = rainObj.AddComponent<Rain>();
+                rain.Init(this);
+                rainObj.SetActive(false);
+                return rain;
+            }, r => r.gameObject.SetActive(true),
+            defaultCapacity: config.Rain.PoolSize, maxSize: config.Rain.PoolSize);
 
             ObjectConfig bgConfig = config.BackgroundConfig;
             GameObject bgObj = new GameObject("Background");
@@ -80,54 +111,55 @@ namespace KeyViewer.Unity
             CountText.alignment = TextAlignmentOptions.Midline;
 
             if (config.EnableKPSMeter)
-                kpsCalc.Start();
+                KpsCalc.Start();
 
             initialized = true;
         }
         public void UpdateLayout(ref float x)
         {
-            if (FontManager.TryGetFont(config.Font, out var font))
+            Pressed = false;
+            if (FontManager.TryGetFont(Config.Font, out var font))
             {
                 Text.font = font.fontTMP;
                 CountText.font = font.fontTMP;
             }
 
-            VectorConfig vConfig = config.VectorConfig;
+            VectorConfig vConfig = Config.VectorConfig;
             float keyWidth = vConfig.Scale.Released.x * 100, keyHeight = vConfig.Scale.Released.y * 100;
-            if (config.EnableCountText)
+            Size = new Vector2(keyWidth, keyHeight);
+            if (Config.EnableCountText)
                 keyHeight += 50;
-            float _x = config.DisableSorting ? 0 : x;
-            Vector2 position = new Vector2(keyWidth / 2f + _x, keyHeight / 2f);
-            Vector2 anchoredPos = position + vConfig.Offset.Released;
-            Vector2 releasedOffset;
+            float _x = Config.DisableSorting ? 0 : x;
+            Position = new Vector2(keyWidth / 2f + _x, keyHeight / 2f);
+            Vector2 anchoredPos = Position + vConfig.Offset.Released - manager.centerOffset, releasedOffset;
             transform.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
 
-            Background.sprite = AssetManager.Get(config.Background.Released, AssetManager.Background);
+            Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
             Background.rectTransform.anchorMin = Vector2.zero;
             Background.rectTransform.anchorMax = Vector2.zero;
             Background.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Background.rectTransform.sizeDelta = new Vector2(keyWidth, keyHeight);
             Background.rectTransform.anchoredPosition = anchoredPos;
-            KeyViewerUtils.ApplyConfigLayout(Background, config.BackgroundConfig);
-            KeyViewerUtils.ApplyRoundnessLayout(Background, config.BackgroundRoundness);
+            KeyViewerUtils.ApplyConfigLayout(Background, Config.BackgroundConfig);
+            KeyViewerUtils.ApplyRoundnessLayout(Background, Config.BackgroundRoundness);
 
-            Outline.sprite = AssetManager.Get(config.Outline.Released, AssetManager.Outline);
+            Outline.sprite = AssetManager.Get(Config.Outline.Released, AssetManager.Outline);
             Outline.rectTransform.anchorMin = Vector2.zero;
             Outline.rectTransform.anchorMax = Vector2.zero;
             Outline.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Outline.rectTransform.sizeDelta = new Vector2(keyWidth, keyHeight);
             Outline.rectTransform.anchoredPosition = anchoredPos;
-            KeyViewerUtils.ApplyConfigLayout(Outline, config.OutlineConfig);
-            KeyViewerUtils.ApplyRoundnessLayout(Outline, config.OutlineRoundness);
+            KeyViewerUtils.ApplyConfigLayout(Outline, Config.OutlineConfig);
+            KeyViewerUtils.ApplyRoundnessLayout(Outline, Config.OutlineRoundness);
 
-            ObjectConfig textConfig = config.TextConfig;
+            ObjectConfig textConfig = Config.TextConfig;
             float heightOffset = keyHeight / 4f;
             Text.rectTransform.anchorMin = Vector2.zero;
             Text.rectTransform.anchorMax = Vector2.zero;
             Text.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             Text.rectTransform.sizeDelta = new Vector2(keyWidth, keyHeight * 1.03f);
             releasedOffset = textConfig.VectorConfig.Offset.Released;
-            if (config.EnableCountText)
+            if (Config.EnableCountText)
                 Text.rectTransform.anchoredPosition = anchoredPos + new Vector2(releasedOffset.x, releasedOffset.y + heightOffset);
             else Text.rectTransform.anchoredPosition = anchoredPos + releasedOffset;
             Text.fontSize = 75;
@@ -135,12 +167,12 @@ namespace KeyViewer.Unity
             Text.enableAutoSizing = true;
             KeyViewerUtils.ApplyConfigLayout(Text, textConfig);
 
-            var defaultSource = Constants.KeyString.TryGetValue(config.Code, out string codeStr) ? codeStr : KeyViewerUtils.KeyName(config);
-            textReplacerP.Source = string.IsNullOrEmpty(config.Text.Pressed) ? defaultSource : config.Text.Pressed;
-            textReplacerR.Source = string.IsNullOrEmpty(config.Text.Released) ? defaultSource : config.Text.Released;
+            var defaultSource = Constants.KeyString.TryGetValue(Config.Code, out string codeStr) ? codeStr : KeyViewerUtils.KeyName(Config);
+            textReplacerP.Source = string.IsNullOrEmpty(Config.Text.Pressed) ? defaultSource : Config.Text.Pressed;
+            textReplacerR.Source = string.IsNullOrEmpty(Config.Text.Released) ? defaultSource : Config.Text.Released;
             Text.text = textReplacerR.Source;
 
-            ObjectConfig cTextConfig = config.CountTextConfig;
+            ObjectConfig cTextConfig = Config.CountTextConfig;
             CountText.rectTransform.anchorMin = Vector2.zero;
             CountText.rectTransform.anchorMax = Vector2.zero;
             CountText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
@@ -153,84 +185,174 @@ namespace KeyViewer.Unity
             CountText.enableAutoSizing = true;
             KeyViewerUtils.ApplyConfigLayout(CountText, cTextConfig);
 
-            countTextReplacerP.Source = string.IsNullOrEmpty(config.CountText.Pressed) ? $"{{Count:{KeyViewerUtils.KeyName(config)}}}" : config.CountText.Pressed;
-            countTextReplacerR.Source = string.IsNullOrEmpty(config.CountText.Released) ? $"{{Count:{KeyViewerUtils.KeyName(config)}}}" : config.CountText.Released;
+            countTextReplacerP.Source = string.IsNullOrEmpty(Config.CountText.Pressed) ? $"{{Count:{KeyViewerUtils.KeyName(Config)}}}" : Config.CountText.Pressed;
+            countTextReplacerR.Source = string.IsNullOrEmpty(Config.CountText.Released) ? $"{{Count:{KeyViewerUtils.KeyName(Config)}}}" : Config.CountText.Released;
             CountText.text = countTextReplacerR.Source;
 
-            CountText.gameObject.SetActive(config.EnableCountText);
+            Outline.gameObject.SetActive(Config.EnableOutlineImage);
+            CountText.gameObject.SetActive(Config.EnableCountText);
 
-            if (!config.DisableSorting)
+            if (!Config.DisableSorting)
                 x += keyWidth + 10;
             ReplaceText();
+
+            var rainConfig = Config.Rain;
+            rainContainer.SetActive(Config.RainEnabled);
+            rainMask.softness = GetSoftness(rainConfig.Direction);
+            KeyViewerUtils.SetAnchor(RainMaskRt, rainConfig.Direction);
+            RainImageManager.Refresh();
+            RainUpdate();
         }
 
+        #region Rain
+        private Vector2 GetSizeDelta(Direction dir)
+        {
+            var rConfig = Config.Rain;
+            var scale = rConfig.ObjectConfig.VectorConfig.Scale.Get(Pressed);
+            switch (dir)
+            {
+                case Direction.Up:
+                case Direction.Down:
+                    return scale.x > 0 ?
+                        new Vector2(Size.x * scale.x, rConfig.Softness.Get(Pressed) + rConfig.Length.Get(Pressed)) :
+                        new Vector2(Size.x, rConfig.Softness.Get(Pressed) + rConfig.Length.Get(Pressed));
+                case Direction.Left:
+                case Direction.Right:
+                    var yOffset = (Config.EnableCountText ? 50 : 0) + 5;
+                    return scale.y > 0 ?
+                        new Vector2(rConfig.Softness.Get(Pressed) + rConfig.Length.Get(Pressed), Size.y * scale.y + yOffset) :
+                        new Vector2(rConfig.Softness.Get(Pressed) + rConfig.Length.Get(Pressed), Size.y + yOffset);
+                default: return Vector2.zero;
+            }
+        }
+        private Vector2 GetMaskPosition(Direction dir)
+        {
+            Vector2 vec = Position + Config.VectorConfig.Offset.Get(Pressed);
+            float x = Size.x, y = Size.y + (Config.EnableCountText ? 50 : 0);
+            Vector2 offset = Config.Rain.ObjectConfig.VectorConfig.Offset.Get(Pressed);
+            int softness = Config.Rain.Softness.Get(Pressed);
+            switch (dir)
+            {
+                case Direction.Up:
+                    return new Vector2(vec.x + offset.x, vec.y + (y / 2 - softness) + 10 + offset.y);
+                case Direction.Down:
+                    return new Vector2(vec.x + offset.x, vec.y - (y / 2 - softness) - 10 + offset.y);
+                case Direction.Left:
+                    return new Vector2(vec.x + offset.x - (x / 2 - softness) - 10, vec.y + offset.y);
+                case Direction.Right:
+                    return new Vector2(vec.x + offset.x + (x / 2 - softness) + 10, vec.y + offset.y);
+                default: return Vector2.zero;
+            }
+        }
+        private Vector2Int GetSoftness(Direction dir)
+        {
+            switch (dir)
+            {
+                case Direction.Up:
+                case Direction.Down:
+                    return new Vector2Int(0, Config.Rain.Softness.Get(Pressed));
+                case Direction.Left:
+                case Direction.Right:
+                    return new Vector2Int(Config.Rain.Softness.Get(Pressed), 0);
+                default: return Vector2Int.zero;
+            }
+        }
+        #endregion
+
+        #region Update
         private void Update()
         {
             if (!initialized) return;
-            if (config.UpdateTextAlways) ReplaceText();
-            if (!string.IsNullOrEmpty(config.DummyName)) return;
-            Pressed = KeyInput.GetKey(config.Code);
+            if (Config.UpdateTextAlways) ReplaceText();
+            if (!string.IsNullOrEmpty(Config.DummyName)) return;
+            if (InputAPI.Active)
+                Pressed = InputAPI.APIFlags.TryGetValue(Config.Code, out var p) ? p : false;
+            else Pressed = KeyInput.GetKey(Config.Code);
             if (prevPressed == Pressed) return;
             prevPressed = Pressed;
             if (Pressed)
             {
-                config.Count++;
-                kpsCalc.Press();
+                if (InputAPI.Active)
+                    InputAPI.KeyPress(Config.Code);
+                Config.Count++;
+                if (Config.EnableKPSMeter)
+                    KpsCalc.Press();
                 manager.kpsCalc.Press();
             }
-            if (!config.UpdateTextAlways)
+            else if (InputAPI.Active)
+                InputAPI.KeyRelease(Config.Code);
+            if (!Config.UpdateTextAlways)
                 ReplaceText();
             ApplyColor();
             ApplySprite();
             ApplyVectorConfig();
+            RainUpdate();
         }
         private void ReplaceText()
         {
-            if (string.IsNullOrEmpty(config.DummyName))
+            if (string.IsNullOrEmpty(Config.DummyName))
             {
                 if (Pressed)
                 {
                     Text.text = textReplacerP.Replace();
-                    if (config.EnableCountText)
+                    if (Config.EnableCountText)
                         CountText.text = countTextReplacerP.Replace();
                 }
                 else
                 {
                     Text.text = textReplacerR.Replace();
-                    if (config.EnableCountText)
+                    if (Config.EnableCountText)
                         CountText.text = countTextReplacerR.Replace();
                 }
             }
             else
             {
                 Text.text = textReplacerR.Replace();
-                if (config.EnableCountText)
+                if (Config.EnableCountText)
                     CountText.text = countTextReplacerR.Replace();
             }
         }
         private void ApplyColor()
         {
-            var textColor = config.TextConfig.Color;
+            var textColor = Config.TextConfig.Color;
             KeyViewerUtils.ApplyColor(Text, textColor.Get(!Pressed), textColor.Get(Pressed), textColor.GetEase(Pressed));
-            var countTextColor = config.CountTextConfig.Color;
+            var countTextColor = Config.CountTextConfig.Color;
             KeyViewerUtils.ApplyColor(CountText, countTextColor.Get(!Pressed), countTextColor.Get(Pressed), countTextColor.GetEase(Pressed));
-            var bgColor = config.BackgroundConfig.Color;
+            var bgColor = Config.BackgroundConfig.Color;
             KeyViewerUtils.ApplyColor(Background, bgColor.Get(!Pressed), bgColor.Get(Pressed), bgColor.GetEase(Pressed));
-            var olColor = config.OutlineConfig.Color;
+            var olColor = Config.OutlineConfig.Color;
             KeyViewerUtils.ApplyColor(Outline, olColor.Get(!Pressed), olColor.Get(Pressed), olColor.GetEase(Pressed));
         }
         private void ApplySprite()
         {
-            Background.sprite = AssetManager.Get(config.Background.Get(Pressed), AssetManager.Background);
-            Outline.sprite = AssetManager.Get(config.Outline.Get(Pressed), AssetManager.Outline);
+            Background.sprite = AssetManager.Get(Config.Background.Get(Pressed), AssetManager.Background);
+            Outline.sprite = AssetManager.Get(Config.Outline.Get(Pressed), AssetManager.Outline);
         }
         private void ApplyVectorConfig()
         {
-            KeyViewerUtils.ApplyVectorConfig(transform, config.VectorConfig, Pressed);
-            KeyViewerUtils.ApplyVectorConfig(Text.rectTransform, config.TextConfig.VectorConfig, Pressed);
-            KeyViewerUtils.ApplyVectorConfig(CountText.rectTransform, config.CountTextConfig.VectorConfig, Pressed);
-            KeyViewerUtils.ApplyVectorConfig(Background.rectTransform, config.BackgroundConfig.VectorConfig, Pressed);
-            KeyViewerUtils.ApplyVectorConfig(Outline.rectTransform, config.OutlineConfig.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(transform, Config.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(Text.rectTransform, Config.TextConfig.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(CountText.rectTransform, Config.CountTextConfig.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(Background.rectTransform, Config.BackgroundConfig.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(Outline.rectTransform, Config.OutlineConfig.VectorConfig, Pressed);
         }
+        private void RainUpdate()
+        {
+            var rainConfig = Config.Rain;
+            rainMask.softness = GetSoftness(rainConfig.Direction);
+            RainMaskRt.sizeDelta = GetSizeDelta(rainConfig.Direction);
+            RainMaskRt.anchoredPosition = GetMaskPosition(rainConfig.Direction);
+            if (Pressed)
+            {
+                rain = rainPool.Get();
+                rain.Press();
+            }
+            else if (rain != null)
+            {
+                rain.Release();
+                rainPool.Release(rain);
+            }
+        }
+        #endregion
     }
 }

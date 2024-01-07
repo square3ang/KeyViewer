@@ -17,7 +17,6 @@ namespace KeyViewer.Models
         public float Duration = 0;
         public bool IsValid => Ease != Ease.Unset && Duration != 0;
         public GUIStatus Status = new GUIStatus();
-        internal object EaseUniqueObject = new object();
         public EaseConfig Copy()
         {
             var config = new EaseConfig();

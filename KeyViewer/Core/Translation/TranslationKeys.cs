@@ -2,9 +2,9 @@
 {
     public static class TranslationKeys
     {
-        public static string Lorem_Ipsum => "LOREM_IPSUM";
-        public static string Version = "V_E_R_S_I_O_N";
-        public static string Update = "U_P_D_A_T_E";
+        public static readonly string Lorem_Ipsum = "LOREM_IPSUM";
+        public static readonly string Version = "V_E_R_S_I_O_N";
+        public static readonly string Update = "U_P_D_A_T_E";
         public static class Settings
         {
             public const string Prefix = "SETTINGS_";
@@ -113,6 +113,7 @@
             internal static readonly string EnableRain = Prefix + "ENABLE_RAIN";
             internal static readonly string UpdateTextAlways = Prefix + "UPDATE_TEXT_ALWAYS";
             internal static readonly string DisableSorting = Prefix + "DISABLE_SORTING";
+            internal static readonly string EnableOutlineImage = Prefix + "ENABLE_OUTLINE_IMAGE";
         }
         public static class RainConfig
         {

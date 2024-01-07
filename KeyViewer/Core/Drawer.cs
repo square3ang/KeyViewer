@@ -103,7 +103,7 @@ namespace KeyViewer.Core
             GUILayout.BeginHorizontal();
             {
                 GUILayout.Label(Main.Lang[TKM.Ease]);
-                result |= DrawEnum(Main.Lang[TKM.Ease], ref config.Ease, config.EaseUniqueObject.GetHashCode());
+                result |= DrawEnum(Main.Lang[TKM.Ease], ref config.Ease, config.GetHashCode());
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();

@@ -11,7 +11,7 @@ namespace KeyViewer.Models
         public PressRelease<float> Speed = 400f;
         public PressRelease<float> Length = 400f;
         public PressRelease<int> Softness = 100;
-        public PressRelease<int> PoolSize = 25;
+        public int PoolSize = 25;
         public ObjectConfig ObjectConfig = new ObjectConfig(Vector2.one, Color.white, Color.white);
         public List<RainImage> RainImages = new List<RainImage>();
         public RainImageDisplayMode ImageDisplayMode = RainImageDisplayMode.Sequential;
@@ -22,7 +22,7 @@ namespace KeyViewer.Models
             newConfig.Speed = Speed.Copy();
             newConfig.Length = Length.Copy();
             newConfig.Softness = Softness.Copy();
-            newConfig.PoolSize = PoolSize.Copy();
+            newConfig.PoolSize = PoolSize;
             newConfig.ObjectConfig = ObjectConfig.Copy();
             newConfig.RainImages = new List<RainImage>(RainImages);
             newConfig.ImageDisplayMode = ImageDisplayMode;
@@ -35,7 +35,7 @@ namespace KeyViewer.Models
             node[nameof(Speed)] = Speed.Serialize();
             node[nameof(Length)] = Length.Serialize();
             node[nameof(Softness)] = Softness.Serialize();
-            node[nameof(PoolSize)] = PoolSize.Serialize();
+            node[nameof(PoolSize)] = PoolSize;
             node[nameof(ObjectConfig)] = ObjectConfig.Serialize();
             node[nameof(RainImages)] = ModelUtils.WrapList(RainImages);
             node[nameof(ImageDisplayMode)] = ImageDisplayMode.ToString();
@@ -47,7 +47,7 @@ namespace KeyViewer.Models
             Speed = ModelUtils.Unbox<PressRelease<float>>(node[nameof(Speed)]);
             Length = ModelUtils.Unbox<PressRelease<float>>(node[nameof(Length)]);
             Softness = ModelUtils.Unbox<PressRelease<int>>(node[nameof(Softness)]);
-            PoolSize = ModelUtils.Unbox<PressRelease<int>>(node[nameof(PoolSize)]);
+            PoolSize = node[nameof(PoolSize)];
             ObjectConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(ObjectConfig)]);
             RainImages = ModelUtils.UnwrapList<RainImage>(node[nameof(RainImages)].AsArray);
             ImageDisplayMode = EnumHelper<RainImageDisplayMode>.Parse(node[nameof(ImageDisplayMode)]);

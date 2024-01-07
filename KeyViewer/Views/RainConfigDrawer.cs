@@ -18,15 +18,16 @@ namespace KeyViewer.Views
         }
         public override void Draw()
         {
+            bool changed = false;
             string name = config.DummyName ?? config.Code.ToString();
-            Drawer.DrawPressReleaseH(L(TKRC.RainSpeed), model.Speed, Drawer.CD_H_FLT_SPEEDONLY);
-            Drawer.DrawPressReleaseH(L(TKRC.RainLength), model.Length, Drawer.CD_H_FLT_LENGTHONLY);
-            Drawer.DrawPressReleaseH(L(TKRC.RainSoftness), model.Softness, Drawer.CD_H_INT32_SOFTNESSONLY);
-            Drawer.DrawPressReleaseH(L(TKRC.RainPoolSize), model.PoolSize, Drawer.CD_H_INT32_POOLSIZEONLY);
+            changed |= Drawer.DrawInt32(L(TKRC.RainPoolSize), ref model.PoolSize);
+            changed |= Drawer.DrawPressReleaseH(L(TKRC.RainSpeed), model.Speed, Drawer.CD_H_FLT_SPEEDONLY);
+            changed |= Drawer.DrawPressReleaseH(L(TKRC.RainLength), model.Length, Drawer.CD_H_FLT_LENGTHONLY);
+            changed |= Drawer.DrawPressReleaseH(L(TKRC.RainSoftness), model.Softness, Drawer.CD_H_INT32_SOFTNESSONLY);
 
             GUILayoutEx.ExpandableGUI(() =>
             {
-                Drawer.DrawList(model.RainImages, (ref RainImage i) =>
+                changed |= Drawer.DrawList(model.RainImages, (ref RainImage i) =>
                 {
                     bool result = false;
                     result |= Drawer.DrawString(L(TKRC.RainImagePath), ref i.Image);
@@ -40,7 +41,7 @@ namespace KeyViewer.Views
             GUILayout.BeginHorizontal();
             {
                 GUILayout.Label(L(TKRC.Direction, name));
-                Drawer.DrawEnum(L(TKRC.Direction, name), ref model.Direction);
+                changed |= Drawer.DrawEnum(L(TKRC.Direction, name), ref model.Direction);
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -48,10 +49,11 @@ namespace KeyViewer.Views
             GUILayout.BeginHorizontal();
             {
                 GUILayout.Label(L(TKRC.ImageDisplayMode, name));
-                Drawer.DrawEnum(L(TKRC.ImageDisplayMode, name), ref model.ImageDisplayMode);
+                changed |= Drawer.DrawEnum(L(TKRC.ImageDisplayMode, name), ref model.ImageDisplayMode);
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+            if (changed) manager.UpdateLayout();
         }
     }
 }

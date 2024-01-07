@@ -24,6 +24,9 @@ using static UnityModManagerNet.UnityModManager.ModEntry;
  * 키 별 KPS 기능 추가하기 => Completed
  * 모든 텍스트에 Tag를 이용한 Text Replacing 지원하기 => Completed
  * 이미지 Rounding 지원하기 => Completed
+ * GUIController Stack 이상 FIX
+ * Rain Mask 위치 이상 FIX
+ * Offset 위치 이상 FIX
  * 
  * Maybe TODO List
  * Rain이 켜져있을 때 키를 누르면 파티클 효과 추가해보기

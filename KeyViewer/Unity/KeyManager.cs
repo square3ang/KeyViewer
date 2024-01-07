@@ -23,6 +23,7 @@ namespace KeyViewer.Unity
 
         internal KPSCalculator kpsCalc;
         internal List<Key> keys;
+        internal Vector2 centerOffset;
         private RectTransform keysRt;
         private bool initialized;
         private bool prevPressed;
@@ -39,26 +40,26 @@ namespace KeyViewer.Unity
             CurKPSTag = new Tag("CurKPS").SetGetter(new Func<string, int>(name =>
             {
                 if (string.IsNullOrEmpty(name)) return kpsCalc.Kps;
-                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.config) == name);
+                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.Config) == name);
                 if (key == null) return -1;
-                if (!key.kpsCalc.Running) return 0;
-                return key.kpsCalc.Kps;
+                if (!key.KpsCalc.Running) return 0;
+                return key.KpsCalc.Kps;
             }));
             MaxKPSTag = new Tag("MaxKPS").SetGetter(new Func<string, int>(name =>
             {
                 if (string.IsNullOrEmpty(name)) return kpsCalc.Max;
-                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.config) == name);
+                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.Config) == name);
                 if (key == null) return -1;
-                if (!key.kpsCalc.Running) return 0;
-                return key.kpsCalc.Max;
+                if (!key.KpsCalc.Running) return 0;
+                return key.KpsCalc.Max;
             }));
             AvgKPSTag = new Tag("AvgKPS").SetGetter(new Func<string, double>(name =>
             {
                 if (string.IsNullOrEmpty(name)) return kpsCalc.Average;
-                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.config) == name);
+                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.Config) == name);
                 if (key == null) return -1;
-                if (!key.kpsCalc.Running) return 0;
-                return key.kpsCalc.Average;
+                if (!key.KpsCalc.Running) return 0;
+                return key.KpsCalc.Average;
             }));
             CountTag = new Tag("Count").SetGetter(new Func<string, int>(name =>
             {
@@ -66,31 +67,21 @@ namespace KeyViewer.Unity
                 {
                     int total = 0;
                     foreach (var k in keys)
-                        total += k.config.Count;
+                        total += k.Config.Count;
                     return total;
                 }
-                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.config) == name);
+                Key key = keys.Find(k => KeyViewerUtils.KeyName(k.Config) == name);
                 if (key == null) return -1;
-                return key.config.Count;
+                return key.Config.Count;
             }));
             initialized = true;
         }
-        public Key this[string dummyName]
+        public Key this[string keyName]
         {
-            get => keys.Find(k => k.config.DummyName.Equals(dummyName));
+            get => keys.Find(k => KeyViewerUtils.KeyName(k.Config) == keyName);
             set
             {
-                int index = keys.FindIndex(k => k.config.DummyName.Equals(dummyName));
-                if (index < 0) return;
-                keys[index] = value;
-            }
-        }
-        public Key this[KeyCode code]
-        {
-            get => keys.Find(k => k.config.Code.Equals(code));
-            set
-            {
-                int index = keys.FindIndex(k => k.config.Code.Equals(code));
+                int index = keys.FindIndex(k => KeyViewerUtils.KeyName(k.Config) == keyName);
                 if (index < 0) return;
                 keys[index] = value;
             }
@@ -138,26 +129,20 @@ namespace KeyViewer.Unity
             keysRt.localRotation = Quaternion.Euler(vecConfig.Rotation.Released);
             keysRt.localScale = vecConfig.Scale.Released;
 
+
+            float totalX = 0;
+            foreach (Key k in keys)
+                if (!k.Config.DisableSorting)
+                    totalX += k.Config.VectorConfig.Scale.Released.x * 100 + 10;
+            centerOffset = new Vector2(totalX / 2, keyHeight / 2);
+
             float x = 0;
             keys.ForEach(k => k.UpdateLayout(ref x));
-
-            Vector2 offset = new Vector2(x / 2, keyHeight / 2);
-            keys.ForEach(k =>
-            {
-                k.Background.rectTransform.anchoredPosition -= offset;
-                KeyViewerUtils.ApplyConfigLayout(k.Background, k.config.BackgroundConfig);
-                k.Outline.rectTransform.anchoredPosition -= offset;
-                KeyViewerUtils.ApplyConfigLayout(k.Outline, k.config.OutlineConfig);
-                k.Text.rectTransform.anchoredPosition -= offset;
-                KeyViewerUtils.ApplyConfigLayout(k.Text, k.config.TextConfig);
-                k.CountText.rectTransform.anchoredPosition -= offset;
-                KeyViewerUtils.ApplyConfigLayout(k.CountText, k.config.CountTextConfig);
-            });
         }
         public static KeyManager CreateManager(string name, Profile profile)
         {
             if (profile == null) return null;
-            GameObject manager = new GameObject(name ?? "KeyManager");
+            GameObject manager = new GameObject($"KeyViewer {name} Profile");
             DontDestroyOnLoad(manager);
             var km = manager.AddComponent<KeyManager>();
             km.profile = profile;

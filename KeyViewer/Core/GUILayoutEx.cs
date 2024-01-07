@@ -366,7 +366,7 @@ namespace KeyViewer.Core
             GUILayout.Space(8f);
             if (valueFormat != "{0}")
                 GUILayout.Label(string.Format(valueFormat, newValue));
-            else newValue = StringConverter.ToFloat(GUILayout.TextField(newValue.ToString("F2")));
+            else newValue = StringConverter.ToFloat(GUILayout.TextField(newValue.ToString("F4")));
             GUILayout.FlexibleSpace();
             return newValue;
         }

@@ -33,12 +33,13 @@ namespace KeyViewer.Views
                 {
                     changed = true;
                     if (model.EnableKPSMeter)
-                        KPSCalculator.Sync(manager.keys.Select(k => k.config.EnableKPSMeter ? k.kpsCalc : null).Where(c => c != null));
-                    else manager[model.Code].kpsCalc.Stop();
+                        KPSCalculator.Sync(manager.keys.Select(k => k.Config.EnableKPSMeter ? k.KpsCalc : null).Where(c => c != null));
+                    else manager[model.Code.ToString()].KpsCalc.Stop();
                 }
             }
             changed |= Drawer.DrawBool(L(TKKC.UpdateTextAlways), ref model.UpdateTextAlways);
             changed |= Drawer.DrawBool(L(TKKC.EnableCountText), ref model.EnableCountText);
+            changed |= Drawer.DrawBool(L(TKKC.EnableOutlineImage), ref model.EnableOutlineImage);
             changed |= Drawer.DrawBool(L(TKKC.DisableSorting), ref model.DisableSorting);
 
             changed |= Drawer.DrawPressReleaseH(L(TKKC.Text), model.Text, Drawer.CD_H_STR);
@@ -55,8 +56,8 @@ namespace KeyViewer.Views
             Drawer.DrawObjectConfig(L(TKKC.EditBackgroundConfig), L(TKKC.KeyBackground, model.DummyName != null ? model.DummyName : model.Code), model.BackgroundConfig, () => manager.UpdateLayout());
             Drawer.DrawObjectConfig(L(TKKC.EditOutlineConfig), L(TKKC.KeyOutline, model.DummyName != null ? model.DummyName : model.Code), model.OutlineConfig, () => manager.UpdateLayout());
 
-            changed |= Drawer.DrawSingleWithSlider(L(TKKC.BackgroundImageRoundness), ref model.BackgroundRoundness, 0, 1, 300);
-            changed |= Drawer.DrawSingleWithSlider(L(TKKC.OutlineImageRoundness), ref model.OutlineRoundness, 0, 1, 300);
+            changed |= Drawer.DrawSingleWithSlider(L(TKKC.BackgroundImageRoundness), ref model.BackgroundRoundness, 0, Constants.Rad2Deg100, 300);
+            changed |= Drawer.DrawSingleWithSlider(L(TKKC.OutlineImageRoundness), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300);
 
             changed |= Drawer.DrawBool(L(TKKC.EnableRain), ref model.RainEnabled);
             if (model.RainEnabled)
