@@ -20,6 +20,8 @@ namespace KeyViewer.Core
         public Sprite Get() => count <= 0 ? null : sprites[Index];
         public void Refresh()
         {
+            index = count = 0;
+            sprites = new List<Sprite>();
             if (config.RainImages.Count > 0)
             {
                 foreach (RainImage image in config.RainImages)

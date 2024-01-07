@@ -422,9 +422,15 @@ namespace KeyViewer.Core
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("+"))
+            {
                 list.Add(default);
+                result = true;
+            }
             if (list.Count > 0 && GUILayout.Button("-"))
+            {
                 list.RemoveAt(list.Count - 1);
+                result = true;
+            }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -432,7 +438,10 @@ namespace KeyViewer.Core
             {
                 T t = list[i];
                 if (drawer(ref t))
+                {
                     list[i] = t;
+                    result = true;
+                }
                 GUIStyle style = new GUIStyle()
                 {
                     margin = new RectOffset(0, 0, 0, 10),

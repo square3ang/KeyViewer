@@ -47,6 +47,7 @@ namespace KeyViewer.Unity
         public void Reset()
         {
             colorUpdateIgnores = 0;
+            image.sprite = key.RainImageManager.Get();
             rt.sizeDelta = GetInitialSize();
             rt.anchoredPosition = GetPosition(config.Direction);
         }

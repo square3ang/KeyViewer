@@ -197,11 +197,11 @@ namespace KeyViewer.Unity
             Outline.gameObject.SetActive(Config.EnableOutlineImage);
             CountText.gameObject.SetActive(Config.EnableCountText);
 
+            RainImageManager.Refresh();
             var rainConfig = Config.Rain;
             rainMask.softness = GetSoftness(rainConfig.Direction);
             rainPool.ForEach(r => r.Reset());
             KeyViewerUtils.SetAnchor(RainMaskRt, rainConfig.Direction);
-            RainImageManager.Refresh();
             RainUpdate();
             rainContainer.SetActive(Config.RainEnabled);
 
