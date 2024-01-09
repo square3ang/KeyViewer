@@ -189,12 +189,12 @@ namespace KeyViewer.Core.TextReplacing
             TagWrapperModule = TagWrapperAssembly.DefineDynamicModule("KeyViewer.TagWrapper");
             Main.Logger.Log("Initialized Tag Wrapper Assembly.");
         }
-        public static void DisposeWrapperAssembly()
+        public static void ReleaseWrapperAssembly()
         {
             TagWrapperAssembly = null;
             TagWrapperModule = null;
-            GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, false);
             wrapperInitialized = false;
+            Main.Logger.Log("Released Tag Wrapper Assembly.");
         }
     }
 }

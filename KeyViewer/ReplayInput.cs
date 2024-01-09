@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using KeyViewer.API;
+﻿using KeyViewer.API;
+using UnityEngine;
 
 namespace KeyViewer
 {

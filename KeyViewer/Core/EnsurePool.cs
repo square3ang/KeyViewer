@@ -11,7 +11,7 @@ namespace KeyViewer.Core
         private Action<T> onGet;
         private Action<T> onRemove;
         private T last;
-        public EnsurePool(Func<T> ensurer, Predicate<T> ensureCriteria, Action<T> onGet = null, Action<T> onRemove = null, int capacity = -1) 
+        public EnsurePool(Func<T> ensurer, Predicate<T> ensureCriteria, Action<T> onGet = null, Action<T> onRemove = null, int capacity = -1)
         {
             if (ensurer == null)
                 throw new ArgumentNullException(nameof(ensurer), "Ensurer Cannot Be Null!");

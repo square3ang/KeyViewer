@@ -98,7 +98,7 @@ namespace KeyViewer.Unity
         {
             if (keysCanvas)
                 Destroy(keysCanvas.gameObject);
-            GameObject keysObject = new GameObject("Canvas");
+            GameObject keysObject = new GameObject("Keys Canvas");
             keysObject.transform.SetParent(transform);
             keysCanvas = keysObject.AddComponent<Canvas>();
             keysRt = keysCanvas.GetComponent<RectTransform>();

@@ -1,39 +1,46 @@
-﻿using JSON;
-using KeyViewer.Models;
-using KeyViewer.Unity;
+﻿using KeyViewer.Models;
+using KeyViewer.Utils;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using UnityEngine.Networking;
 
 namespace KeyViewer.Core.Translation
 {
     public class Language
     {
-        private const string SPREADSHEET_URL_START = "https://docs.google.com/spreadsheets/d/";
-        private const string SPREADSHEET_URL_END = "/gviz/tq?tqx=out:json&tq&gid=";
-        private const string SPREADSHEET_URL_KEY = "1wG6wB3q0q1E647mhECPSl5Sd_joqlsYOmkoPyDMs-Rw";
-        private static string GetUrl(GID gid) => SPREADSHEET_URL_START + SPREADSHEET_URL_KEY + SPREADSHEET_URL_END + (int)gid;
+        private const string KEY = "1wG6wB3q0q1E647mhECPSl5Sd_joqlsYOmkoPyDMs-Rw";
         private static Language Korean;
         private static Language English;
-        public readonly GID gid;
-        public readonly string url;
-        public readonly Dictionary<string, string> dict;
+        private static SpreadSheet sheet = new SpreadSheet(KEY);
         public static event Action OnInitialize = delegate { };
+        public static bool HasUpdate = false;
         public bool Initialized { get; private set; }
+        public int Gid { get; }
         public Language(GID gid)
         {
-            this.gid = gid;
-            url = GetUrl(gid);
-            dict = new Dictionary<string, string>();
-            StaticCoroutine.Run(Download());
+            Gid = (int)gid;
+            sheet.Download((int)gid, d =>
+            {
+                if (Version.Parse(d[TranslationKeys.Version]) > Main.Mod.Version)
+                {
+                    HasUpdate = true;
+                    var update = d[TranslationKeys.Update];
+                    foreach (var key in d.Keys.Where(key =>
+                    key != TranslationKeys.Lorem_Ipsum &&
+                    key != TranslationKeys.Version &&
+                    key != TranslationKeys.Update &&
+                    key != TranslationKeys.DiscordLink &&
+                    key != TranslationKeys.DownloadLink).ToList())
+                        d[key] = update;
+                }
+                Main.Logger.Log($"Loaded {d.Count} Localizations from Sheet");
+                OnInitialize();
+                Initialized = true;
+            }).Await();
         }
         public string this[string key]
         {
-            get => dict.TryGetValue(key, out string value) ? value : key;
-            set => dict[key] = value;
+            get => sheet[Gid, key];
+            set => sheet[Gid, key] = value;
         }
         public static Language GetLanguage(KeyViewerLanguage lang)
         {
@@ -50,40 +57,6 @@ namespace KeyViewer.Core.Translation
         {
             Korean = null;
             English = null;
-        }
-        IEnumerator Download()
-        {
-            if (Initialized) yield break;
-            UnityWebRequest request = UnityWebRequest.Get(url);
-            yield return request.SendWebRequest();
-            byte[] bytes = request.downloadHandler.data;
-            if (bytes == null)
-            {
-                Initialized = true;
-                yield break;
-            }
-            string strData = Encoding.UTF8.GetString(bytes);
-            strData = strData.Substring(47, strData.Length - 49);
-            JsonNode data = JsonNode.Parse(strData);
-            JsonNode rows = data["table"]["rows"];
-            foreach (JsonNode row in rows)
-            {
-                JsonNode keyValue = row["c"];
-                string key = keyValue[0]["v"];
-                string value = keyValue[1]["v"];
-                if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value))
-                    continue;
-                dict.Add(key, value);
-            }
-            if (Version.Parse(dict[TranslationKeys.Version]) > Main.Mod.Version)
-            {
-                var update = dict[TranslationKeys.Update];
-                foreach (var key in dict.Keys.ToList())
-                    dict[key] = update;
-            }
-            Main.Logger.Log($"Loaded {dict.Count} Localizations from Sheet");
-            OnInitialize();
-            Initialized = true;
         }
     }
 }

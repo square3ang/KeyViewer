@@ -92,15 +92,16 @@ namespace KeyViewer
             else
             {
                 IsEnabled = false;
-                StaticCoroutine.Run(ReleaseManagersCo());
+                ReleaseManagers();
                 Harmony.UnpatchAll(Harmony.Id);
                 Harmony = null;
                 Language.OnInitialize -= OnLanguageInitialize;
                 Language.Release();
                 JudgementColorPatch.Release();
-                AssetManager.Release();
+                //AssetManager.Release();
                 FontManager.Release();
-                Tag.DisposeWrapperAssembly();
+                Tag.ReleaseWrapperAssembly();
+                System.GC.Collect(System.GC.MaxGeneration, System.GCCollectionMode.Forced, true);
                 Resources.UnloadUnusedAssets();
             }
             return true;
@@ -125,7 +126,7 @@ namespace KeyViewer
         public static void OnGUI(ModEntry modEntry)
         {
             if (!Lang.Initialized)
-                GUILayout.Label("Preparing...");
+                Drawer.ButtonLabel("Preparing...", KeyViewerUtils.OpenUpdateUrl);
             else GUIController.Draw();
         }
         public static void OnSaveGUI(ModEntry modEntry)
@@ -182,29 +183,43 @@ namespace KeyViewer
         {
             if (Managers.TryGetValue(profile.Name, out var manager))
             {
-                Object.Destroy(manager);
+                Object.Destroy(manager.gameObject);
                 Managers.Remove(profile.Name);
+                Logger.Log($"Released Key Manager {profile.Name}.");
             }
         }
         public static IEnumerator InitializeManagersCo()
         {
-            yield return new WaitUntil(() => !AssetManager.Initialized);
-            foreach (var (name, manager) in Managers)
+            if (AssetManager.Initialized)
             {
-                manager.Init();
-                manager.UpdateKeys();
-                Logger.Log($"Initialized Key Manager {name}.");
-                yield return null;
+                foreach (var (name, manager) in Managers)
+                {
+                    manager.Init();
+                    manager.UpdateKeys();
+                    Logger.Log($"Initialized Key Manager {name}.");
+                    yield return null;
+                }
+            }
+            else
+            {
+                yield return new WaitUntil(() => !AssetManager.Initialized);
+                foreach (var (name, manager) in Managers)
+                {
+                    manager.Init();
+                    manager.UpdateKeys();
+                    Logger.Log($"Initialized Key Manager {name}.");
+                    yield return null;
+                }
             }
         }
-        public static IEnumerator ReleaseManagersCo()
+        public static void ReleaseManagers()
         {
             foreach (var (name, manager) in Managers)
             {
-                Object.Destroy(manager);
+                Object.Destroy(manager.gameObject);
                 Logger.Log($"Released Key Manager {name}.");
-                yield return null;
             }
+            Managers = null;
         }
     }
 }

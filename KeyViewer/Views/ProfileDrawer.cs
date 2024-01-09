@@ -2,6 +2,7 @@
 using KeyViewer.Core;
 using KeyViewer.Models;
 using KeyViewer.Unity;
+using KeyViewer.Utils;
 using System.Linq;
 using UnityEngine;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
@@ -28,7 +29,7 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
             changed |= Drawer.DrawVectorConfig(model.VectorConfig);
             GUILayoutEx.HorizontalLine(1);
-            GUILayout.Label(L(TKP.RegisteredKeys));
+            Drawer.ButtonLabel(L(TKP.RegisteredKeys), KeyViewerUtils.OpenUpdateUrl);
             DrawKeyConfigGUI();
             if (changed) manager.UpdateLayout();
         }

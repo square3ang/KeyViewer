@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using KeyViewer.Models;
+﻿using KeyViewer.Models;
 using KeyViewer.Utils;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace KeyViewer.Unity
 {

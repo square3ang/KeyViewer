@@ -102,7 +102,7 @@ namespace KeyViewer.Core
             bool result = false;
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label(Main.Lang[TKM.Ease]);
+                Drawer.ButtonLabel(Main.Lang[TKM.Ease], KeyViewerUtils.OpenUpdateUrl);
                 result |= DrawEnum(Main.Lang[TKM.Ease], ref config.Ease, config.GetHashCode());
             }
             GUILayout.FlexibleSpace();
@@ -123,7 +123,7 @@ namespace KeyViewer.Core
                     {
                         GUILayout.BeginVertical();
                         {
-                            GUILayout.Label(Main.Lang[TKM.Pressed]);
+                            Drawer.ButtonLabel(Main.Lang[TKM.Pressed], KeyViewerUtils.OpenUpdateUrl);
                             DrawGColor(ref objConfig.Color.Pressed).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();
@@ -138,7 +138,7 @@ namespace KeyViewer.Core
 
                         GUILayout.BeginVertical();
                         {
-                            GUILayout.Label(Main.Lang[TKM.Released]);
+                            Drawer.ButtonLabel(Main.Lang[TKM.Released], KeyViewerUtils.OpenUpdateUrl);
                             DrawGColor(ref objConfig.Color.Released).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();
@@ -182,7 +182,7 @@ namespace KeyViewer.Core
         public static void TitleButton(string label, string btnLabel, Action pressed)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(label);
+            Drawer.ButtonLabel(label, KeyViewerUtils.OpenUpdateUrl);
             if (GUILayout.Button(btnLabel))
                 pressed?.Invoke();
             GUILayout.FlexibleSpace();
@@ -271,7 +271,7 @@ namespace KeyViewer.Core
         public static bool DrawVector2WithSlider(string label, ref Vector2 vec2, float lValue, float rValue)
         {
             bool result = false;
-            GUILayout.Label($"<b>{label}</b>");
+            Drawer.ButtonLabel($"<b>{label}</b>", KeyViewerUtils.OpenUpdateUrl);
             result |= DrawSingleWithSlider("X:", ref vec2.x, lValue, rValue, 300f);
             result |= DrawSingleWithSlider("Y:", ref vec2.y, lValue, rValue, 300f);
             return result;
@@ -279,7 +279,7 @@ namespace KeyViewer.Core
         public static bool DrawVector3WithSlider(string label, ref Vector3 vec3, float lValue, float rValue)
         {
             bool result = false;
-            GUILayout.Label($"<b>{label}</b>");
+            Drawer.ButtonLabel($"<b>{label}</b>", KeyViewerUtils.OpenUpdateUrl);
             result |= DrawSingleWithSlider("X:", ref vec3.x, lValue, rValue, 300f);
             result |= DrawSingleWithSlider("Y:", ref vec3.y, lValue, rValue, 300f);
             result |= DrawSingleWithSlider("Z:", ref vec3.z, lValue, rValue, 300f);
@@ -303,7 +303,7 @@ namespace KeyViewer.Core
             {
                 begin(emptyOptions);
                 {
-                    GUILayout.Label(Main.Lang[TKM.Pressed]);
+                    Drawer.ButtonLabel(Main.Lang[TKM.Pressed], KeyViewerUtils.OpenUpdateUrl);
                     changed |= drawer(ref pr.Pressed);
                 }
                 end();
@@ -321,7 +321,7 @@ namespace KeyViewer.Core
 
                 begin(emptyOptions);
                 {
-                    GUILayout.Label(Main.Lang[TKM.Released]);
+                    Drawer.ButtonLabel(Main.Lang[TKM.Released], KeyViewerUtils.OpenUpdateUrl);
                     changed |= drawer(ref pr.Released);
                 }
                 end();
@@ -383,7 +383,7 @@ namespace KeyViewer.Core
             {
                 string cache = array[i];
                 GUILayout.BeginHorizontal();
-                GUILayout.Label($"{i}: ");
+                Drawer.ButtonLabel($"{i}: ", KeyViewerUtils.OpenUpdateUrl);
                 cache = GUILayout.TextField(cache);
                 elementRightGUI?.Invoke(i);
                 GUILayout.FlexibleSpace();
@@ -399,7 +399,7 @@ namespace KeyViewer.Core
         public static bool DrawArray(string label, ref object[] array)
         {
             bool result = false;
-            GUILayout.Label(label);
+            Drawer.ButtonLabel(label, KeyViewerUtils.OpenUpdateUrl);
             GUILayout.BeginVertical();
 
             GUILayout.BeginHorizontal();
@@ -462,7 +462,7 @@ namespace KeyViewer.Core
         {
             bool prev = value;
             GUILayout.BeginHorizontal();
-            GUILayout.Label(label);
+            Drawer.ButtonLabel(label, KeyViewerUtils.OpenUpdateUrl);
             value = GUILayout.Toggle(value, string.Empty);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -590,7 +590,7 @@ namespace KeyViewer.Core
                     obj = str;
                     break;
                 default:
-                    GUILayout.Label($"{label}{obj}");
+                    Drawer.ButtonLabel($"{label}{obj}", KeyViewerUtils.OpenUpdateUrl);
                     break;
             }
             return result;
@@ -613,7 +613,7 @@ namespace KeyViewer.Core
         {
             string prev = value;
             GUILayout.BeginHorizontal();
-            GUILayout.Label(label);
+            Drawer.ButtonLabel(label, KeyViewerUtils.OpenUpdateUrl);
             value = GUILayout.TextField(value);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -653,6 +653,11 @@ namespace KeyViewer.Core
             bool result = DrawString(label, ref str);
             value = StringConverter.ToUInt64(str);
             return result;
+        }
+        public static void ButtonLabel(string label, Action onPressed, params GUILayoutOption[] options)
+        {
+            if (GUILayout.Button(label, GUI.skin.label, options))
+                onPressed?.Invoke();
         }
     }
 }

@@ -52,7 +52,7 @@ namespace KeyViewer.Core
                 });
             if (!string.IsNullOrEmpty(desc))
             {
-                GUILayout.Label("-");
+                Drawer.ButtonLabel("-", KeyViewerUtils.OpenUpdateUrl);
                 GUILayout.Label(
                     desc,
                     new GUIStyle(GUI.skin.label) { fontStyle = FontStyle.Bold });
@@ -349,12 +349,12 @@ namespace KeyViewer.Core
         {
             if (labelWidth == 0)
             {
-                GUILayout.Label(name);
+                Drawer.ButtonLabel(name, KeyViewerUtils.OpenUpdateUrl);
                 GUILayout.Space(4f);
             }
             else
             {
-                GUILayout.Label(name, GUILayout.Width(labelWidth));
+                Drawer.ButtonLabel(name, KeyViewerUtils.OpenUpdateUrl, GUILayout.Width(labelWidth));
             }
             float newValue =
                 GUILayout.HorizontalSlider(
@@ -365,7 +365,7 @@ namespace KeyViewer.Core
             }
             GUILayout.Space(8f);
             if (valueFormat != "{0}")
-                GUILayout.Label(string.Format(valueFormat, newValue));
+                Drawer.ButtonLabel(string.Format(valueFormat, newValue), KeyViewerUtils.OpenUpdateUrl);
             else newValue = StringConverter.ToFloat(GUILayout.TextField(newValue.ToString("F4")));
             GUILayout.FlexibleSpace();
             return newValue;
@@ -439,12 +439,12 @@ namespace KeyViewer.Core
         {
             if (labelWidth == 0)
             {
-                GUILayout.Label(name);
+                Drawer.ButtonLabel(name, KeyViewerUtils.OpenUpdateUrl);
                 GUILayout.Space(4f);
             }
             else
             {
-                GUILayout.Label(name, GUILayout.Width(labelWidth));
+                Drawer.ButtonLabel(name, KeyViewerUtils.OpenUpdateUrl, GUILayout.Width(labelWidth));
             }
             string newValue = fieldWidth <= 0 ? GUILayout.TextField(value) : GUILayout.TextField(value, GUILayout.Width(fieldWidth));
             GUILayout.FlexibleSpace();
@@ -465,23 +465,23 @@ namespace KeyViewer.Core
             GUILayout.BeginHorizontal();
             if (textWidth == 0)
             {
-                GUILayout.Label(text1);
+                Drawer.ButtonLabel(text1, KeyViewerUtils.OpenUpdateUrl);
                 GUILayout.Space(4f);
             }
             else
             {
-                GUILayout.Label(text1, GUILayout.Width(textWidth));
+                Drawer.ButtonLabel(text1, KeyViewerUtils.OpenUpdateUrl, GUILayout.Width(textWidth));
             }
             GUILayout.FlexibleSpace();
             GUILayout.Space(8f);
             if (textWidth == 0)
             {
-                GUILayout.Label(text2);
+                Drawer.ButtonLabel(text2, KeyViewerUtils.OpenUpdateUrl);
                 GUILayout.Space(4f);
             }
             else
             {
-                GUILayout.Label(text2, GUILayout.Width(textWidth));
+                Drawer.ButtonLabel(text2, KeyViewerUtils.OpenUpdateUrl, GUILayout.Width(textWidth));
             }
             GUILayout.FlexibleSpace();
             GUILayout.Space(20f);

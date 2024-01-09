@@ -1,11 +1,10 @@
 ﻿using DG.Tweening;
+using KeyViewer.Core.Translation;
 using KeyViewer.Models;
-using KeyViewer.Unity;
 using KeyViewer.Unity.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static CameraFilterPack_NightVisionFX;
 
 namespace KeyViewer.Utils
 {
@@ -214,6 +213,15 @@ namespace KeyViewer.Utils
                     rt.anchorMax = new Vector2(1, 0.5f);
                     break;
             }
+        }
+        public static void OpenUpdateUrl()
+        {
+            if (Language.HasUpdate)
+                Application.OpenURL(Main.Lang[TranslationKeys.DownloadLink]);
+        }
+        public static void OpenDiscordUrl()
+        {
+            Application.OpenURL(Main.Lang[TranslationKeys.DiscordLink]);
         }
     }
 }

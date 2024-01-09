@@ -1,13 +1,9 @@
 ﻿using HarmonyLib;
-using KeyViewer.API;
 using KeyViewer.Core.Input;
-using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
-using Mono.Cecil.Cil;
 using SkyHook;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace KeyViewer.Patches

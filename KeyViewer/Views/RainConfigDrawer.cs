@@ -1,6 +1,7 @@
 ﻿using KeyViewer.Core;
 using KeyViewer.Models;
 using KeyViewer.Unity;
+using KeyViewer.Utils;
 using UnityEngine;
 using TKRC = KeyViewer.Core.Translation.TranslationKeys.RainConfig;
 
@@ -40,7 +41,7 @@ namespace KeyViewer.Views
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label(L(TKRC.Direction, name));
+                Drawer.ButtonLabel(L(TKRC.Direction, name), KeyViewerUtils.OpenUpdateUrl);
                 changed |= Drawer.DrawEnum(L(TKRC.Direction, name), ref model.Direction);
             }
             GUILayout.FlexibleSpace();
@@ -48,7 +49,7 @@ namespace KeyViewer.Views
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label(L(TKRC.ImageDisplayMode, name));
+                Drawer.ButtonLabel(L(TKRC.ImageDisplayMode, name), KeyViewerUtils.OpenUpdateUrl);
                 changed |= Drawer.DrawEnum(L(TKRC.ImageDisplayMode, name), ref model.ImageDisplayMode);
             }
             GUILayout.FlexibleSpace();

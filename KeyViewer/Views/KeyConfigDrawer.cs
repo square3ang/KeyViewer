@@ -2,8 +2,8 @@
 using KeyViewer.Core;
 using KeyViewer.Models;
 using KeyViewer.Unity;
+using KeyViewer.Utils;
 using System.Linq;
-using UnityEngine;
 using TKKC = KeyViewer.Core.Translation.TranslationKeys.KeyConfig;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 
@@ -23,7 +23,7 @@ namespace KeyViewer.Views
                 if (Drawer.DrawString(L(TKKC.DummyKeyName), ref model.DummyName))
                     Name = model.DummyName;
             }
-            else GUILayout.Label(L(TKKC.KeyCode) + ":" + model.Code);
+            else Drawer.ButtonLabel(L(TKKC.KeyCode) + ":" + model.Code, KeyViewerUtils.OpenUpdateUrl);
 
             bool changed = false;
             changed |= Drawer.DrawString(L(TKKC.TextFont), ref model.Font);

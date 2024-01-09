@@ -2,6 +2,7 @@
 using KeyViewer.Core;
 using KeyViewer.Core.Translation;
 using KeyViewer.Models;
+using KeyViewer.Utils;
 using SFB;
 using System.IO;
 using UnityEngine;
@@ -17,11 +18,12 @@ namespace KeyViewer.Views
         {
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label(L(TKS.SelectLanguage));
+                Drawer.ButtonLabel(L(TKS.SelectLanguage), KeyViewerUtils.OpenUpdateUrl);
                 if (Drawer.DrawEnum(L(TKS.Language), ref model.Language))
                 {
                     GUIController.Skip(() =>
                     {
+                        KeyViewerUtils.OpenDiscordUrl();
                         Main.Lang = Language.GetLanguage(model.Language);
                         Main.OnLanguageInitialize();
                     });
@@ -62,13 +64,15 @@ namespace KeyViewer.Views
                 GUILayout.BeginHorizontal();
                 {
                     var profile = model.ActiveProfiles[i];
-                    GUILayout.Label(profile.Name);
+                    Drawer.ButtonLabel(profile.Name, KeyViewerUtils.OpenUpdateUrl);
                     var newActive = GUILayout.Toggle(profile.Active, string.Empty);
                     if (profile.Active != newActive)
                     {
                         profile.Active = newActive;
-                        if (Main.Managers.TryGetValue(profile.Name, out var newManager))
-                            newManager.gameObject.SetActive(newActive);
+                        if (newActive && !Main.Managers.TryGetValue(profile.Name, out _))
+                            Main.AddManager(profile, true);
+                        if (!newActive && Main.Managers.TryGetValue(profile.Name, out var m))
+                            Main.RemoveManager(profile);
                         model.ActiveProfiles[i] = profile;
                     }
                     if (profile.Active)

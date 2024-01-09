@@ -4,7 +4,6 @@ using KeyViewer.Core.Input;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Models;
 using KeyViewer.Utils;
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

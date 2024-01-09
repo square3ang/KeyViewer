@@ -5,6 +5,8 @@
         public static readonly string Lorem_Ipsum = "LOREM_IPSUM";
         public static readonly string Version = "V_E_R_S_I_O_N";
         public static readonly string Update = "U_P_D_A_T_E";
+        public static readonly string DiscordLink = "DISCORD_LINK";
+        public static readonly string DownloadLink = "DOWNLOAD_LINK";
         public static class Settings
         {
             public const string Prefix = "SETTINGS_";

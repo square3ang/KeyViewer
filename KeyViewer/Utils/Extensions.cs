@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace KeyViewer.Utils
 {
@@ -24,6 +25,15 @@ namespace KeyViewer.Utils
         {
             if (b) a();
             return b;
+        }
+        /// <summary>
+        /// For Avoid Warning
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static async void Await(this Task task)
+        {
+            await task;
         }
     }
 }
