@@ -126,7 +126,7 @@ namespace KeyViewer
         public static void OnGUI(ModEntry modEntry)
         {
             if (!Lang.Initialized)
-                Drawer.ButtonLabel("Preparing...", KeyViewerUtils.OpenUpdateUrl);
+                Drawer.ButtonLabel("Preparing...", KeyViewerUtils.OpenDiscordUrl);
             else GUIController.Draw();
         }
         public static void OnSaveGUI(ModEntry modEntry)

@@ -29,7 +29,7 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
             changed |= Drawer.DrawVectorConfig(model.VectorConfig);
             GUILayoutEx.HorizontalLine(1);
-            Drawer.ButtonLabel(L(TKP.RegisteredKeys), KeyViewerUtils.OpenUpdateUrl);
+            Drawer.ButtonLabel(L(TKP.RegisteredKeys), KeyViewerUtils.OpenDiscordUrl);
             DrawKeyConfigGUI();
             if (changed) manager.UpdateLayout();
         }

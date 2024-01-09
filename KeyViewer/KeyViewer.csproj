@@ -366,6 +366,7 @@
     <Compile Include="Unity\UI\UIGradient.cs" />
     <Compile Include="Unity\UI\UITextCornersGradient.cs" />
     <Compile Include="Unity\UI\UITextGradient.cs" />
+    <Compile Include="Utils\ADOUtils.cs" />
     <Compile Include="Utils\CanEase.cs" />
     <Compile Include="Utils\EnumHelper.cs" />
     <Compile Include="Utils\Extensions.cs" />

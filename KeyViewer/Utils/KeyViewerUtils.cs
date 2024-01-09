@@ -214,14 +214,14 @@ namespace KeyViewer.Utils
                     break;
             }
         }
-        public static void OpenUpdateUrl()
-        {
-            if (Language.HasUpdate)
-                Application.OpenURL(Main.Lang[TranslationKeys.DownloadLink]);
-        }
         public static void OpenDiscordUrl()
         {
             Application.OpenURL(Main.Lang[TranslationKeys.DiscordLink]);
+        }
+        public static void OpenDownloadUrl()
+        {
+            if (Language.HasUpdate)
+                Application.OpenURL(Main.Lang[TranslationKeys.DownloadLink]);
         }
     }
 }

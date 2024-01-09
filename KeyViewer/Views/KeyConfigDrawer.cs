@@ -23,7 +23,7 @@ namespace KeyViewer.Views
                 if (Drawer.DrawString(L(TKKC.DummyKeyName), ref model.DummyName))
                     Name = model.DummyName;
             }
-            else Drawer.ButtonLabel(L(TKKC.KeyCode) + ":" + model.Code, KeyViewerUtils.OpenUpdateUrl);
+            else Drawer.ButtonLabel(L(TKKC.KeyCode) + ":" + model.Code, KeyViewerUtils.OpenDiscordUrl);
 
             bool changed = false;
             changed |= Drawer.DrawString(L(TKKC.TextFont), ref model.Font);

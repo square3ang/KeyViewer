@@ -41,7 +41,7 @@ namespace KeyViewer.Views
 
             GUILayout.BeginHorizontal();
             {
-                Drawer.ButtonLabel(L(TKRC.Direction, name), KeyViewerUtils.OpenUpdateUrl);
+                Drawer.ButtonLabel(L(TKRC.Direction, name), KeyViewerUtils.OpenDiscordUrl);
                 changed |= Drawer.DrawEnum(L(TKRC.Direction, name), ref model.Direction);
             }
             GUILayout.FlexibleSpace();
@@ -49,7 +49,7 @@ namespace KeyViewer.Views
 
             GUILayout.BeginHorizontal();
             {
-                Drawer.ButtonLabel(L(TKRC.ImageDisplayMode, name), KeyViewerUtils.OpenUpdateUrl);
+                Drawer.ButtonLabel(L(TKRC.ImageDisplayMode, name), KeyViewerUtils.OpenDiscordUrl);
                 changed |= Drawer.DrawEnum(L(TKRC.ImageDisplayMode, name), ref model.ImageDisplayMode);
             }
             GUILayout.FlexibleSpace();

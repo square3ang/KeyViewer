@@ -102,7 +102,7 @@ namespace KeyViewer.Core
             bool result = false;
             GUILayout.BeginHorizontal();
             {
-                Drawer.ButtonLabel(Main.Lang[TKM.Ease], KeyViewerUtils.OpenUpdateUrl);
+                Drawer.ButtonLabel(Main.Lang[TKM.Ease], KeyViewerUtils.OpenDiscordUrl);
                 result |= DrawEnum(Main.Lang[TKM.Ease], ref config.Ease, config.GetHashCode());
             }
             GUILayout.FlexibleSpace();
@@ -119,11 +119,11 @@ namespace KeyViewer.Core
                 string bts = string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ObjectConfigFrom], objName));
                 GUIController.Push(new MethodDrawable(() =>
                 {
-                    GUILayoutEx.ExpandableGUI(() =>
+                    GUILayoutEx.ExpandableGUI((Action)(() =>
                     {
                         GUILayout.BeginVertical();
                         {
-                            Drawer.ButtonLabel(Main.Lang[TKM.Pressed], KeyViewerUtils.OpenUpdateUrl);
+                            Drawer.ButtonLabel(Main.Lang[TKM.Pressed], (Action)KeyViewerUtils.OpenDiscordUrl);
                             DrawGColor(ref objConfig.Color.Pressed).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();
@@ -138,7 +138,7 @@ namespace KeyViewer.Core
 
                         GUILayout.BeginVertical();
                         {
-                            Drawer.ButtonLabel(Main.Lang[TKM.Released], KeyViewerUtils.OpenUpdateUrl);
+                            Drawer.ButtonLabel(Main.Lang[TKM.Released], (Action)KeyViewerUtils.OpenDiscordUrl);
                             DrawGColor(ref objConfig.Color.Released).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();
@@ -150,7 +150,7 @@ namespace KeyViewer.Core
                             objConfig.Color.ReleasedEase = objConfig.Color.PressedEase.Copy();
                             onChange();
                         });
-                    }, Main.Lang[TKM.Color], ref objConfig.Color.Status.Expanded);
+                    }), Main.Lang[TKM.Color], ref objConfig.Color.Status.Expanded);
                     string title = string.Format(string.Format(Main.Lang[TKM.JudgeColorFrom], objName));
                     DrawObjectConfig(objConfig, j =>
                     {
@@ -182,7 +182,7 @@ namespace KeyViewer.Core
         public static void TitleButton(string label, string btnLabel, Action pressed)
         {
             GUILayout.BeginHorizontal();
-            Drawer.ButtonLabel(label, KeyViewerUtils.OpenUpdateUrl);
+            Drawer.ButtonLabel(label, KeyViewerUtils.OpenDiscordUrl);
             if (GUILayout.Button(btnLabel))
                 pressed?.Invoke();
             GUILayout.FlexibleSpace();
@@ -271,7 +271,7 @@ namespace KeyViewer.Core
         public static bool DrawVector2WithSlider(string label, ref Vector2 vec2, float lValue, float rValue)
         {
             bool result = false;
-            Drawer.ButtonLabel($"<b>{label}</b>", KeyViewerUtils.OpenUpdateUrl);
+            Drawer.ButtonLabel($"<b>{label}</b>", KeyViewerUtils.OpenDiscordUrl);
             result |= DrawSingleWithSlider("X:", ref vec2.x, lValue, rValue, 300f);
             result |= DrawSingleWithSlider("Y:", ref vec2.y, lValue, rValue, 300f);
             return result;
@@ -279,7 +279,7 @@ namespace KeyViewer.Core
         public static bool DrawVector3WithSlider(string label, ref Vector3 vec3, float lValue, float rValue)
         {
             bool result = false;
-            Drawer.ButtonLabel($"<b>{label}</b>", KeyViewerUtils.OpenUpdateUrl);
+            Drawer.ButtonLabel($"<b>{label}</b>", KeyViewerUtils.OpenDiscordUrl);
             result |= DrawSingleWithSlider("X:", ref vec3.x, lValue, rValue, 300f);
             result |= DrawSingleWithSlider("Y:", ref vec3.y, lValue, rValue, 300f);
             result |= DrawSingleWithSlider("Z:", ref vec3.z, lValue, rValue, 300f);
@@ -299,11 +299,11 @@ namespace KeyViewer.Core
 
             var emptyOptions = Array.Empty<GUILayoutOption>();
             bool changed = false;
-            GUILayoutEx.ExpandableGUI(() =>
+            GUILayoutEx.ExpandableGUI((Action)(() =>
             {
                 begin(emptyOptions);
                 {
-                    Drawer.ButtonLabel(Main.Lang[TKM.Pressed], KeyViewerUtils.OpenUpdateUrl);
+                    Drawer.ButtonLabel(Main.Lang[TKM.Pressed], (Action)KeyViewerUtils.OpenDiscordUrl);
                     changed |= drawer(ref pr.Pressed);
                 }
                 end();
@@ -321,7 +321,7 @@ namespace KeyViewer.Core
 
                 begin(emptyOptions);
                 {
-                    Drawer.ButtonLabel(Main.Lang[TKM.Released], KeyViewerUtils.OpenUpdateUrl);
+                    Drawer.ButtonLabel(Main.Lang[TKM.Released], (Action)KeyViewerUtils.OpenDiscordUrl);
                     changed |= drawer(ref pr.Released);
                 }
                 end();
@@ -336,7 +336,7 @@ namespace KeyViewer.Core
                     pr.ReleasedEase = pr.PressedEase.Copy();
                     changed = true;
                 });
-            }, label, ref status.Expanded);
+            }), label, ref status.Expanded);
             return changed;
         }
         public static bool DrawEaseConfig(string label, EaseConfig easeConfig)
@@ -383,7 +383,7 @@ namespace KeyViewer.Core
             {
                 string cache = array[i];
                 GUILayout.BeginHorizontal();
-                Drawer.ButtonLabel($"{i}: ", KeyViewerUtils.OpenUpdateUrl);
+                Drawer.ButtonLabel($"{i}: ", KeyViewerUtils.OpenDiscordUrl);
                 cache = GUILayout.TextField(cache);
                 elementRightGUI?.Invoke(i);
                 GUILayout.FlexibleSpace();
@@ -399,7 +399,7 @@ namespace KeyViewer.Core
         public static bool DrawArray(string label, ref object[] array)
         {
             bool result = false;
-            Drawer.ButtonLabel(label, KeyViewerUtils.OpenUpdateUrl);
+            Drawer.ButtonLabel(label, KeyViewerUtils.OpenDiscordUrl);
             GUILayout.BeginVertical();
 
             GUILayout.BeginHorizontal();
@@ -462,7 +462,7 @@ namespace KeyViewer.Core
         {
             bool prev = value;
             GUILayout.BeginHorizontal();
-            Drawer.ButtonLabel(label, KeyViewerUtils.OpenUpdateUrl);
+            Drawer.ButtonLabel(label, KeyViewerUtils.OpenDiscordUrl);
             value = GUILayout.Toggle(value, string.Empty);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -590,7 +590,7 @@ namespace KeyViewer.Core
                     obj = str;
                     break;
                 default:
-                    Drawer.ButtonLabel($"{label}{obj}", KeyViewerUtils.OpenUpdateUrl);
+                    Drawer.ButtonLabel($"{label}{obj}", KeyViewerUtils.OpenDiscordUrl);
                     break;
             }
             return result;
@@ -613,7 +613,7 @@ namespace KeyViewer.Core
         {
             string prev = value;
             GUILayout.BeginHorizontal();
-            Drawer.ButtonLabel(label, KeyViewerUtils.OpenUpdateUrl);
+            Drawer.ButtonLabel(label, KeyViewerUtils.OpenDiscordUrl);
             value = GUILayout.TextField(value);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();

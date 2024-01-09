@@ -18,15 +18,15 @@ namespace KeyViewer.Views
         {
             GUILayout.BeginHorizontal();
             {
-                Drawer.ButtonLabel(L(TKS.SelectLanguage), KeyViewerUtils.OpenUpdateUrl);
+                Drawer.ButtonLabel(L(TKS.SelectLanguage), KeyViewerUtils.OpenDiscordUrl);
                 if (Drawer.DrawEnum(L(TKS.Language), ref model.Language))
                 {
-                    GUIController.Skip(() =>
+                    GUIController.Skip((System.Action)(() =>
                     {
                         KeyViewerUtils.OpenDiscordUrl();
                         Main.Lang = Language.GetLanguage(model.Language);
                         Main.OnLanguageInitialize();
-                    });
+                    }));
                 }
             }
             GUILayout.FlexibleSpace();
@@ -64,7 +64,7 @@ namespace KeyViewer.Views
                 GUILayout.BeginHorizontal();
                 {
                     var profile = model.ActiveProfiles[i];
-                    Drawer.ButtonLabel(profile.Name, KeyViewerUtils.OpenUpdateUrl);
+                    Drawer.ButtonLabel(profile.Name, KeyViewerUtils.OpenDiscordUrl);
                     var newActive = GUILayout.Toggle(profile.Active, string.Empty);
                     if (profile.Active != newActive)
                     {

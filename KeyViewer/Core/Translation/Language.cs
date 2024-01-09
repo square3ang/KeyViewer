@@ -20,7 +20,8 @@ namespace KeyViewer.Core.Translation
             Gid = (int)gid;
             sheet.Download((int)gid, d =>
             {
-                if (Version.Parse(d[TranslationKeys.Version]) > Main.Mod.Version)
+                Version newVersion;
+                if ((newVersion = Version.Parse(d[TranslationKeys.Version])) > Main.Mod.Version)
                 {
                     HasUpdate = true;
                     var update = d[TranslationKeys.Update];
@@ -31,6 +32,18 @@ namespace KeyViewer.Core.Translation
                     key != TranslationKeys.DiscordLink &&
                     key != TranslationKeys.DownloadLink).ToList())
                         d[key] = update;
+                    ErrorCanvasContext ecc = new ErrorCanvasContext();
+                    ecc.titleText = "WOW YOUR KEYVIEWER VERSION IS BEAUTIFUL!";
+                    ecc.errorMessage =
+                        $"Current KeyViewer Version v{Main.Mod.Version}.\n" +
+                        $"But Latest KeyViewer Is v{newVersion}.\n" +
+                        $"PlEaSe UpDaTe YoUr KeYvIeWeR!";
+                    ecc.ignoreBtnCallback = () =>
+                    {
+                        ADOUtils.HideError(ecc);
+                        KeyViewerUtils.OpenDownloadUrl();
+                    };
+                    ADOUtils.ShowError(ecc);
                 }
                 Main.Logger.Log($"Loaded {d.Count} Localizations from Sheet");
                 OnInitialize();
