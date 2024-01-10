@@ -30,7 +30,7 @@ namespace KeyViewer.Controllers
             {
                 if (drawable.Name != drawables[depth].Name)
                 {
-                    drawables.RemoveRange(depth, drawables.Count - 1);
+                    drawables.RemoveRange(depth, drawables.Count - depth);
                     drawables.Add(current);
                     depth++;
                 }

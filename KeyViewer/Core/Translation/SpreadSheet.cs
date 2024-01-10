@@ -38,7 +38,7 @@ namespace KeyViewer.Core.Translation
         {
             return dict.TryGetValue(gid, out var kv) ? kv : null;
         }
-        public async Task<Dictionary<string, string>> Download(int gid, Action<Dictionary<string, string>> onDownloaded = null, bool force = false)
+        public async Task<Dictionary<string, string>> Download(int gid, Action<Dictionary<string, string>> onDownloaded = null, bool filterEmptyKeyValue = true, bool force = false)
         {
             var exist = Get(gid);
             if (!force && exist != null)
@@ -58,7 +58,7 @@ namespace KeyViewer.Core.Translation
                 JsonNode keyValue = row["c"];
                 string key = keyValue[0]["v"];
                 string value = keyValue[1]["v"];
-                if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value))
+                if (filterEmptyKeyValue && (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value)))
                     continue;
                 gidDict.Add(key, value);
             }

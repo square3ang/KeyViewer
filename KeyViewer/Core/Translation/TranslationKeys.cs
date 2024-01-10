@@ -7,6 +7,7 @@
         public static readonly string Update = "U_P_D_A_T_E";
         public static readonly string DiscordLink = "DISCORD_LINK";
         public static readonly string DownloadLink = "DOWNLOAD_LINK";
+        public static readonly string UpdateNote = "U_P_D_A_T_E_NOTE";
         public static class Settings
         {
             public const string Prefix = "SETTINGS_";
@@ -86,6 +87,7 @@
             internal static readonly string Copy = Prefix + "COPY";
             internal static readonly string PressedEase = Prefix + "PRESSED_EASE";
             internal static readonly string ReleasedEase = Prefix + "RELEASED_EASE";
+            internal static readonly string ShowUpdateNote = Prefix + "SHOW_UPDATE_NOTE";
         }
         public static class KeyConfig
         {

@@ -3,6 +3,8 @@
     public enum KeyViewerLanguage
     {
         Korean,
-        English
+        English,
+        Chinese,
+        Japanese
     }
 }

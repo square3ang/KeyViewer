@@ -8,6 +8,7 @@ using System.IO;
 using UnityEngine;
 using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
 using TKS = KeyViewer.Core.Translation.TranslationKeys.Settings;
+using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 
 namespace KeyViewer.Views
 {
@@ -21,14 +22,19 @@ namespace KeyViewer.Views
                 Drawer.ButtonLabel(L(TKS.SelectLanguage), KeyViewerUtils.OpenDiscordUrl);
                 if (Drawer.DrawEnum(L(TKS.Language), ref model.Language))
                 {
-                    GUIController.Skip((System.Action)(() =>
+                    GUIController.Skip(() =>
                     {
                         KeyViewerUtils.OpenDiscordUrl();
                         Main.Lang = Language.GetLanguage(model.Language);
                         Main.OnLanguageInitialize();
-                    }));
+                    });
                 }
             }
+            if (GUILayout.Button(L(TKM.ShowUpdateNote)))
+                GUIController.Push(new MethodDrawable(() =>
+                {
+                    GUILayout.Label(L(TranslationKeys.UpdateNote));
+                }, L(TKM.ShowUpdateNote)));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 

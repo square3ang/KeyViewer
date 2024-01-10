@@ -1,14 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 namespace KeyViewer.Core
 {
     public static class Constants
     {
+        public static readonly FieldInfo VersionField = typeof(Constants).GetField("Version");
+
         public static string SettingsPath => Path.Combine(Main.Mod.Path, "Settings.json");
 
-        public const string Version = "4.0.0";
+        public const string Version = "4.0.2";
         public const float Rad2Deg100 = .5729f;
 
         public static readonly Color TooEarlyColor = new Color(1.000f, 0.000f, 0.000f, 1.000f);

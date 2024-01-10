@@ -8,9 +8,11 @@ namespace KeyViewer.Core.Translation
     public class Language
     {
         private const string KEY = "1wG6wB3q0q1E647mhECPSl5Sd_joqlsYOmkoPyDMs-Rw";
-        private static Language Korean;
-        private static Language English;
         private static SpreadSheet sheet = new SpreadSheet(KEY);
+        private static Language Korean;
+        private static Language English = new Language(GID.ENGLISH);
+        private static Language Chinese;
+        private static Language Japanese;
         public static event Action OnInitialize = delegate { };
         public static bool HasUpdate = false;
         public bool Initialized { get; private set; }
@@ -21,7 +23,7 @@ namespace KeyViewer.Core.Translation
             sheet.Download((int)gid, d =>
             {
                 Version newVersion;
-                if ((newVersion = Version.Parse(d[TranslationKeys.Version])) > Main.Mod.Version)
+                if ((newVersion = Version.Parse(d[TranslationKeys.Version])) > Version.Parse((string)Constants.VersionField.GetValue(null)))
                 {
                     HasUpdate = true;
                     var update = d[TranslationKeys.Update];
@@ -48,11 +50,11 @@ namespace KeyViewer.Core.Translation
                 Main.Logger.Log($"Loaded {d.Count} Localizations from Sheet");
                 OnInitialize();
                 Initialized = true;
-            }).Await();
+            }, false).Await();
         }
         public string this[string key]
         {
-            get => sheet[Gid, key];
+            get => string.IsNullOrEmpty(sheet[Gid, key]) ? English[key] : sheet[Gid, key];
             set => sheet[Gid, key] = value;
         }
         public static Language GetLanguage(KeyViewerLanguage lang)
@@ -63,6 +65,10 @@ namespace KeyViewer.Core.Translation
                     return English ??= new Language(GID.ENGLISH);
                 case KeyViewerLanguage.Korean:
                     return Korean ??= new Language(GID.KOREAN);
+                case KeyViewerLanguage.Chinese:
+                    return Chinese ??= new Language(GID.CHINESE);
+                case KeyViewerLanguage.Japanese:
+                    return Japanese ??= new Language(GID.JAPANESE);
                 default: return English;
             }
         }
