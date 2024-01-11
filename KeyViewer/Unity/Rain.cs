@@ -14,10 +14,12 @@ namespace KeyViewer.Unity
         private RectTransform rt;
         private ObjectConfig objConfig;
         private int colorUpdateIgnores;
+        private bool initialized = false;
 
         internal Image image;
         public void Init(Key key)
         {
+            if (initialized) return;
             this.key = key;
             image = gameObject.AddComponent<Image>();
             rt = image.rectTransform;
@@ -26,7 +28,8 @@ namespace KeyViewer.Unity
             image.sprite = key.RainImageManager.Get();
 
             KeyViewerUtils.ApplyColorLayout(image, objConfig.Color.Released);
-            Reset();
+            OnEnable();
+            initialized = true;
         }
         public void Press()
         {
@@ -44,8 +47,9 @@ namespace KeyViewer.Unity
                 KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase);
             else colorUpdateIgnores--;
         }
-        public void Reset()
+        public void OnEnable()
         {
+            if (!initialized) return;   
             colorUpdateIgnores = 0;
             image.sprite = key.RainImageManager.Get();
             rt.sizeDelta = GetInitialSize();
@@ -77,7 +81,7 @@ namespace KeyViewer.Unity
             else
             {
                 stretching = false;
-                Reset();
+                OnEnable();
                 gameObject.SetActive(false);
             }
         }

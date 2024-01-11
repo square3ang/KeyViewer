@@ -1,4 +1,5 @@
 ﻿using JSON;
+using KeyViewer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -56,8 +57,8 @@ namespace KeyViewer.Core.Translation
             foreach (JsonNode row in rows)
             {
                 JsonNode keyValue = row["c"];
-                string key = keyValue[0]["v"];
-                string value = keyValue[1]["v"];
+                string key = keyValue[0]["v"].ToStringN();
+                string value = keyValue[1]["v"].ToStringN();
                 if (filterEmptyKeyValue && (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value)))
                     continue;
                 gidDict.Add(key, value);

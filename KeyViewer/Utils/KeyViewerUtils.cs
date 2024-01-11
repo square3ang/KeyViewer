@@ -5,6 +5,7 @@ using KeyViewer.Unity.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static CameraFilterPack_NightVisionFX;
 
 namespace KeyViewer.Utils
 {
@@ -60,6 +61,12 @@ namespace KeyViewer.Utils
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             rt.anchoredPosition += vConfig.Offset.Released;
             rt.localScale = vConfig.Scale.Released;
+        }
+        public static void ApplyConfigLayout(Transform t, VectorConfig vConfig)
+        {
+            t.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
+            t.localScale = vConfig.Scale.Released;
+            t.localPosition = vConfig.Offset.Released + vConfig.anchorCache;
         }
         public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config)
         {

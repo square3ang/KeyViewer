@@ -136,7 +136,7 @@ namespace KeyViewer.Unity
             float _x = Config.DisableSorting ? 0 : x;
             Vector2 position = new Vector2(keyWidth / 2f + _x, keyHeight / 2f);
             Vector2 anchoredPos = Position = position + vConfig.Offset.Released - manager.centerOffset, releasedOffset;
-            transform.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
+            KeyViewerUtils.ApplyConfigLayout(transform, Config.VectorConfig);
 
             Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
             Background.rectTransform.anchorMin = Vector2.zero;
@@ -199,7 +199,8 @@ namespace KeyViewer.Unity
             RainImageManager.Refresh();
             var rainConfig = Config.Rain;
             rainMask.softness = GetSoftness(rainConfig.Direction);
-            rainPool.ForEach(r => r.Reset());
+            rainPool.Clear();
+            rainPool.Fill(Config.Rain.PoolSize);
             KeyViewerUtils.SetAnchor(RainMaskRt, rainConfig.Direction);
             RainUpdate();
             rainContainer.SetActive(Config.RainEnabled);
@@ -213,7 +214,7 @@ namespace KeyViewer.Unity
             rainPool.ForEach(r =>
             {
                 r.Release();
-                r.Reset();
+                r.OnEnable();
                 r.gameObject.SetActive(false);
             });
         }
@@ -304,10 +305,10 @@ namespace KeyViewer.Unity
             if (!Config.UpdateTextAlways)
                 ReplaceText();
 
+            RainUpdate();
             ApplyColor();
             ApplySprite();
             ApplyVectorConfig();
-            RainUpdate();
         }
         private void ReplaceText()
         {
@@ -386,7 +387,6 @@ namespace KeyViewer.Unity
             if (Pressed)
             {
                 rain = rainPool.Get();
-                rain.Reset();
                 rain.Press();
             }
             else if (rain != null)

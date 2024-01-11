@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JSON;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -25,6 +26,11 @@ namespace KeyViewer.Utils
         {
             if (b) a();
             return b;
+        }
+        public static string ToStringN(this JsonNode node)
+        {
+            if (node == null) return null;
+            return node.Value;
         }
         /// <summary>
         /// For Avoid Warning

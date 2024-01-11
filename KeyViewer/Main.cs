@@ -25,6 +25,7 @@ using static UnityModManagerNet.UnityModManager.ModEntry;
  * 키 별 KPS 기능 추가하기 => Completed
  * 모든 텍스트에 Tag를 이용한 Text Replacing 지원하기 => Completed
  * 이미지 Rounding 지원하기 => Completed
+ * 크기 조절 정렬 버그 고치기 =>
  * 
  * Maybe TODO List
  * Rain이 켜져있을 때 키를 누르면 파티클 효과 추가해보기
@@ -54,6 +55,8 @@ namespace KeyViewer
             modEntry.OnSaveGUI = OnSaveGUI;
             modEntry.OnShowGUI = OnShowGUI;
             modEntry.OnHideGUI = OnHideGUI;
+            modEntry.Info.Version = Constants.Version;
+            typeof(ModEntry).GetField(nameof(ModEntry.Version)).SetValue(modEntry, System.Version.Parse(Constants.Version));
         }
         public static bool OnToggle(ModEntry modEntry, bool toggle)
         {
