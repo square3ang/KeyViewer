@@ -1,11 +1,11 @@
 ﻿using DG.Tweening;
 using KeyViewer.Core.Translation;
 using KeyViewer.Models;
+using KeyViewer.Unity;
 using KeyViewer.Unity.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static CameraFilterPack_NightVisionFX;
 
 namespace KeyViewer.Utils
 {
@@ -62,8 +62,9 @@ namespace KeyViewer.Utils
             rt.anchoredPosition += vConfig.Offset.Released;
             rt.localScale = vConfig.Scale.Released;
         }
-        public static void ApplyConfigLayout(Transform t, VectorConfig vConfig)
+        public static void ApplyConfigLayout(Key k, VectorConfig vConfig)
         {
+            var t = k.transform;
             t.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             t.localScale = vConfig.Scale.Released;
             t.localPosition = vConfig.Offset.Released + vConfig.anchorCache;

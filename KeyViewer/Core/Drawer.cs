@@ -119,11 +119,11 @@ namespace KeyViewer.Core
                 string bts = string.Format(Main.Lang[TKM.Edit], string.Format(Main.Lang[TKM.ObjectConfigFrom], objName));
                 GUIController.Push(new MethodDrawable(() =>
                 {
-                    GUILayoutEx.ExpandableGUI((Action)(() =>
+                    GUILayoutEx.ExpandableGUI((() =>
                     {
                         GUILayout.BeginVertical();
                         {
-                            Drawer.ButtonLabel(Main.Lang[TKM.Pressed], (Action)KeyViewerUtils.OpenDiscordUrl);
+                            ButtonLabel(Main.Lang[TKM.Pressed], KeyViewerUtils.OpenDiscordUrl);
                             DrawGColor(ref objConfig.Color.Pressed).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();
@@ -138,7 +138,7 @@ namespace KeyViewer.Core
 
                         GUILayout.BeginVertical();
                         {
-                            Drawer.ButtonLabel(Main.Lang[TKM.Released], (Action)KeyViewerUtils.OpenDiscordUrl);
+                            ButtonLabel(Main.Lang[TKM.Released], KeyViewerUtils.OpenDiscordUrl);
                             DrawGColor(ref objConfig.Color.Released).IfTrue(onChange);
                         }
                         GUILayout.EndVertical();

@@ -129,14 +129,13 @@ namespace KeyViewer.Unity
             }
 
             VectorConfig vConfig = Config.VectorConfig;
-            float keyWidth = vConfig.Scale.Released.x * 100, keyHeight = vConfig.Scale.Released.y * 100;
+            float keyWidth = vConfig.Scale.Released.x * 100, keyHeight = (Config.EnableCountText ? 50 : 0) + 100;
+            keyHeight *= vConfig.Scale.Released.y;
             Size = new Vector2(keyWidth, keyHeight);
-            if (Config.EnableCountText)
-                keyHeight += 50;
             float _x = Config.DisableSorting ? 0 : x;
             Vector2 position = new Vector2(keyWidth / 2f + _x, keyHeight / 2f);
             Vector2 anchoredPos = Position = position + vConfig.Offset.Released - manager.centerOffset, releasedOffset;
-            KeyViewerUtils.ApplyConfigLayout(transform, Config.VectorConfig);
+            KeyViewerUtils.ApplyConfigLayout(this, Config.VectorConfig);
 
             Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
             Background.rectTransform.anchorMin = Vector2.zero;
