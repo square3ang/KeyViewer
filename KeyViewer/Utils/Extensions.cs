@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace KeyViewer.Utils
 {
@@ -40,6 +41,10 @@ namespace KeyViewer.Utils
         public static async void Await(this Task task)
         {
             await task;
+        }
+        public static Vector2 WithRelativeY(this Vector2 vector, float y)
+        {
+            return new Vector2(vector.x, vector.y + y);
         }
     }
 }

@@ -102,7 +102,7 @@ namespace KeyViewer.Core
             bool result = false;
             GUILayout.BeginHorizontal();
             {
-                Drawer.ButtonLabel(Main.Lang[TKM.Ease], KeyViewerUtils.OpenDiscordUrl);
+                ButtonLabel(Main.Lang[TKM.Ease], KeyViewerUtils.OpenDiscordUrl);
                 result |= DrawEnum(Main.Lang[TKM.Ease], ref config.Ease, config.GetHashCode());
             }
             GUILayout.FlexibleSpace();
@@ -266,6 +266,13 @@ namespace KeyViewer.Core
             else result |= DrawPressReleaseV(Main.Lang[TKM.Scale], vConfig.Scale, CD_V_VEC2_0_10_300);
             result |= DrawPressReleaseV(Main.Lang[TKM.Offset], vConfig.Offset, CD_V_VEC2_WIDTH_HEIGHT_300);
             result |= DrawPressReleaseV(Main.Lang[TKM.Rotation], vConfig.Rotation, CD_V_VEC3_M180_180_300);
+            GUILayout.BeginHorizontal();
+            {
+                ButtonLabel(Main.Lang[TKM.Pivot], KeyViewerUtils.OpenDiscordUrl);
+                result |= DrawEnum(Main.Lang[TKM.Pivot], ref vConfig.Pivot, vConfig.GetHashCode());
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
             return result;
         }
         public static bool DrawVector2WithSlider(string label, ref Vector2 vec2, float lValue, float rValue)

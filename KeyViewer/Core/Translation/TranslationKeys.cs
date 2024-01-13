@@ -88,6 +88,7 @@
             internal static readonly string PressedEase = Prefix + "PRESSED_EASE";
             internal static readonly string ReleasedEase = Prefix + "RELEASED_EASE";
             internal static readonly string ShowUpdateNote = Prefix + "SHOW_UPDATE_NOTE";
+            internal static readonly string Pivot = Prefix + "PIVOT";
         }
         public static class KeyConfig
         {

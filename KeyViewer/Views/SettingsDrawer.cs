@@ -46,7 +46,7 @@ namespace KeyViewer.Views
                     foreach (var profile in profiles)
                     {
                         FileInfo file = new FileInfo(profile);
-                        if (file.Directory.FullName.ToLower() != Main.Mod.Path.ToLower())
+                        if (!file.Directory.FullName.ToLower().Contains(Main.Mod.Path.ToLower()))
                             file.CopyTo(Path.Combine(Main.Mod.Path, file.Name));
                         var activeProfile = new ActiveProfile(Path.GetFileNameWithoutExtension(file.FullName), true);
                         model.ActiveProfiles.Add(activeProfile);

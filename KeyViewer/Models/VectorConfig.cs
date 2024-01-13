@@ -7,13 +7,12 @@ namespace KeyViewer.Models
 {
     public class VectorConfig : IModel, ICopyable<VectorConfig>
     {
-        internal Vector2 anchorCache;
-
         public bool UseSize = false;
         public PressRelease<Vector3> Rotation = Vector3.zero;
         public PressRelease<Vector2> Offset = Vector2.zero;
         public PressRelease<Vector2> Scale = Vector2.one;
         public PressRelease<float> Size = 1;
+        public Pivot Pivot = Pivot.MiddleCenter;
         public VectorConfig Copy()
         {
             VectorConfig newRos = new VectorConfig();
@@ -21,6 +20,7 @@ namespace KeyViewer.Models
             newRos.Rotation = Rotation.Copy();
             newRos.Offset = Offset.Copy();
             newRos.Scale = Scale.Copy();
+            newRos.Pivot = Pivot;
             return newRos;
         }
         public JsonNode Serialize()
@@ -31,6 +31,7 @@ namespace KeyViewer.Models
             node[nameof(Offset)] = Offset.Serialize();
             node[nameof(Scale)] = Scale.Serialize();
             node[nameof(Size)] = Size.Serialize();
+            node[nameof(Pivot)] = Pivot.ToString();
             return node;
         }
         public void Deserialize(JsonNode node)
@@ -40,6 +41,7 @@ namespace KeyViewer.Models
             Offset = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(Offset)]);
             Scale = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(Scale)]);
             Size = ModelUtils.Unbox<PressRelease<float>>(node[nameof(Size)]);
+            Pivot = EnumHelper<Pivot>.Parse(node[nameof(Pivot)]);
         }
     }
 }

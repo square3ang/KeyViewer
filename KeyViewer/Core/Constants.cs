@@ -56,7 +56,7 @@ namespace KeyViewer.Core
                 { KeyCode.KeypadPeriod, "." },
                 { KeyCode.Return, "↵" },
                 { KeyCode.Tab, "⇥" },
-                { KeyCode.Backslash, "\\" },
+                { KeyCode.Backslash, "\\\\" },
                 { KeyCode.Slash, "/" },
                 { KeyCode.Minus, "-" },
                 { KeyCode.Equals, "=" },

@@ -92,7 +92,7 @@ namespace KeyViewer.Unity
             var pressed = keys.Any(k => k.Pressed);
             if (prevPressed == pressed) return;
             prevPressed = pressed;
-            KeyViewerUtils.ApplyVectorConfig(keysRt, profile.VectorConfig, pressed);
+            KeyViewerUtils.ApplyVectorConfig(keysRt, profile.VectorConfig, pressed, 0);
         }
         public void UpdateKeys()
         {
@@ -121,11 +121,10 @@ namespace KeyViewer.Unity
             float width = count * 100 + (count - 1) * spacing;
 
             var vecConfig = profile.VectorConfig;
-            keysRt.anchorMin = Vector2.zero;
-            keysRt.anchorMax = Vector2.zero;
+            keysRt.SetAnchor(AnchorPresets.MiddleCenter);
             keysRt.sizeDelta = new Vector2(width, keyHeight);
-            keysRt.anchoredPosition = vecConfig.Offset.Released;
             keysRt.pivot = new Vector2(0.5f, 0.5f);
+            keysRt.anchoredPosition = vecConfig.Offset.Released;
             keysRt.localRotation = Quaternion.Euler(vecConfig.Rotation.Released);
             keysRt.localScale = vecConfig.Scale.Released;
 
@@ -133,7 +132,8 @@ namespace KeyViewer.Unity
             foreach (Key k in keys)
                 if (!k.Config.DisableSorting)
                     totalX += k.Config.VectorConfig.Scale.Released.x * 100 + 10;
-            centerOffset = new Vector2(totalX / 2 - 5, keyHeight / 2);
+            Vector2 size = new Vector2(totalX - 10, keyHeight);
+            centerOffset = KeyViewerUtils.GetPivot(profile.VectorConfig.Pivot) * size;
 
             float x = 0;
             keys.ForEach(k => k.UpdateLayout(ref x));

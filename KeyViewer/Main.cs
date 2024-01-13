@@ -111,6 +111,7 @@ namespace KeyViewer
         }
         public static void OnUpdate(ModEntry modEntry, float deltaTime)
         {
+            BlockInput = true;
             if (ListeningDrawer != null)
                 foreach (var code in EnumHelper<KeyCode>.GetValues())
                     if (Input.GetKeyDown(code))

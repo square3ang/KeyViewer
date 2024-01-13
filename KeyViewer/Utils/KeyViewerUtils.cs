@@ -15,6 +15,13 @@ namespace KeyViewer.Utils
         {
             return config.DummyName ?? config.Code.ToString();
         }
+        public static void ApplyPivot(Transform t, Vector2 position)
+        {
+            Vector3 offset = t.position - (Vector3)position;
+            foreach (Transform child in t)
+                child.transform.position += offset;
+            t.position = position;
+        }
         public static void ApplyColorLayout(Image image, GColor color)
         {
             UICornersGradient grad = image.GetComponent<UICornersGradient>();
@@ -57,9 +64,8 @@ namespace KeyViewer.Utils
             ApplyColorLayout(image, config.Color.Released);
             var vConfig = config.VectorConfig;
             var rt = image.rectTransform;
-            vConfig.anchorCache = rt.anchoredPosition;
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
-            rt.anchoredPosition += vConfig.Offset.Released;
+            rt.anchoredPosition = vConfig.Offset.Released;
             rt.localScale = vConfig.Scale.Released;
         }
         public static void ApplyConfigLayout(Key k, VectorConfig vConfig)
@@ -67,16 +73,15 @@ namespace KeyViewer.Utils
             var t = k.transform;
             t.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             t.localScale = vConfig.Scale.Released;
-            t.localPosition = vConfig.Offset.Released + vConfig.anchorCache;
+            t.localPosition = vConfig.Offset.Released + k.Position;
         }
-        public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config)
+        public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config, float heightOffset)
         {
             ApplyColorLayout(text, config.Color.Released);
             var vConfig = config.VectorConfig;
             var rt = text.rectTransform;
-            vConfig.anchorCache = rt.anchoredPosition;
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
-            rt.anchoredPosition += vConfig.Offset.Released;
+            rt.anchoredPosition = vConfig.Offset.Released.WithRelativeY(heightOffset);
             rt.localScale = vConfig.Scale.Released;
         }
         public static void ApplyColor(Image image, GColor from, GColor to, EaseConfig easeConfig)
@@ -146,8 +151,10 @@ namespace KeyViewer.Utils
             var a = to.a - from.a;
             return new Color(from.r + r * lifetime, from.g + g * lifetime, from.b + b * lifetime, from.a + a * lifetime);
         }
-        public static void ApplyVectorConfig(Transform t, VectorConfig vConfig, bool pressed)
+        public static void ApplyVectorConfig(Key k, VectorConfig vConfig, bool pressed)
         {
+            Transform t = k.transform;
+
             DOTween.Kill(t, true);
 
             var rEase = vConfig.Rotation.GetEase(pressed);
@@ -159,10 +166,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                t.DOLocalMove(vConfig.Offset.Get(pressed) + vConfig.anchorCache, oEase.Duration)
+                t.DOLocalMove(vConfig.Offset.Get(pressed) + k.Position, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else t.localPosition = vConfig.Offset.Get(pressed) + vConfig.anchorCache;
+            else t.localPosition = vConfig.Offset.Get(pressed) + k.Position;
 
             var sEase = vConfig.Scale.GetEase(pressed);
             if (sEase.IsValid)
@@ -171,7 +178,7 @@ namespace KeyViewer.Utils
                 .SetAutoKill(false);
             else t.localScale = vConfig.Scale.Get(pressed);
         }
-        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed)
+        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, float heightOffset)
         {
             DOTween.Kill(rt, true);
 
@@ -184,10 +191,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                rt.DOAnchorPos(vConfig.Offset.Get(pressed) + vConfig.anchorCache, oEase.Duration)
+                rt.DOAnchorPos(vConfig.Offset.Get(pressed).WithRelativeY(heightOffset), oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else rt.anchoredPosition = vConfig.Offset.Get(pressed) + vConfig.anchorCache;
+            else rt.anchoredPosition = vConfig.Offset.Get(pressed).WithRelativeY(heightOffset);
 
             var sEase = vConfig.Scale.GetEase(pressed);
             if (sEase.IsValid)
@@ -230,6 +237,24 @@ namespace KeyViewer.Utils
         {
             if (Language.HasUpdate)
                 Application.OpenURL(Main.Lang[TranslationKeys.DownloadLink]);
+        }
+        public static Vector2 GetPivot(Pivot pivot)
+        {
+            switch (pivot)
+            {
+                case Pivot.TopLeft: return new Vector2(1, 0);
+                case Pivot.TopCenter: return new Vector2(0.5f, 0);
+                case Pivot.TopRight: return new Vector2(0, 0);
+
+                case Pivot.MiddleLeft: return new Vector2(1, 0.5f);
+                case Pivot.MiddleCenter: return new Vector2(0.5f, 0.5f);
+                case Pivot.MiddleRight: return new Vector2(0, 0.5f);
+
+                case Pivot.BottomLeft: return new Vector2(1, 1);
+                case Pivot.BottomCenter: return new Vector2(0.5f, 1);
+                case Pivot.BottomRight: return new Vector2(0, 1);
+            }
+            return Vector2.zero;
         }
     }
 }

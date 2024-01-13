@@ -22,8 +22,8 @@ namespace KeyViewer.Unity
         private GameObject rainContainer;
         private RectMask2D rainMask;
         private EnsurePool<Rain> rainPool;
-        private Vector3 initialPosition;
         private int[] colorUpdateIgnores = new int[4];
+        private Vector2 defaultSize;
 
         public bool Pressed;
         public Vector2 Size;
@@ -51,8 +51,6 @@ namespace KeyViewer.Unity
             KpsCalc = new KPSCalculator(manager.profile);
             RainImageManager = new RainImageManager(config.Rain);
             transform.SetParent(manager.keysCanvas.transform);
-            initialPosition = transform.localPosition;
-            Config.VectorConfig.anchorCache = initialPosition;
 
             rainContainer = new GameObject("Rain Container");
             var containerTransform = rainContainer.transform;
@@ -62,7 +60,8 @@ namespace KeyViewer.Unity
             image.color = new Color(1, 1, 1, 0);
             rainMask = rainContainer.AddComponent<RectMask2D>();
             RainMaskRt = rainMask.rectTransform;
-            RainMaskRt.anchorMin = RainMaskRt.anchorMax = Vector2.zero;
+            RainMaskRt.SetAnchor(AnchorPresets.MiddleCenter);
+            RainMaskRt.pivot = new Vector2(0.5f, 0.5f);
             rainPool = new EnsurePool<Rain>(() =>
             {
                 GameObject rainObj = new GameObject($"Rain {config.Code}");
@@ -71,7 +70,7 @@ namespace KeyViewer.Unity
                 rain.Init(this);
                 rainObj.SetActive(false);
                 return rain;
-            }, kr => !kr.IsAlive, kr => kr.gameObject.SetActive(true), Destroy);
+            }, kr => !kr.IsAlive, kr => kr.gameObject.SetActive(true), r => Destroy(r.gameObject));
             rainPool.Fill(Config.Rain.PoolSize);
 
             ObjectConfig bgConfig = config.BackgroundConfig;
@@ -128,47 +127,43 @@ namespace KeyViewer.Unity
                 CountText.font = font.fontTMP;
             }
 
+            float defaultX = 100, defaultY = Config.EnableCountText ? 150 : 100;
+            defaultSize = new Vector2(defaultX, defaultY);
+
             VectorConfig vConfig = Config.VectorConfig;
-            float keyWidth = vConfig.Scale.Released.x * 100, keyHeight = (Config.EnableCountText ? 50 : 0) + 100;
+            float keyWidth = vConfig.Scale.Released.x * 100;
+            float keyHeight = Config.EnableCountText ? 150 : 100;
             keyHeight *= vConfig.Scale.Released.y;
             Size = new Vector2(keyWidth, keyHeight);
-            float _x = Config.DisableSorting ? 0 : x;
-            Vector2 position = new Vector2(keyWidth / 2f + _x, keyHeight / 2f);
-            Vector2 anchoredPos = Position = position + vConfig.Offset.Released - manager.centerOffset, releasedOffset;
-            KeyViewerUtils.ApplyConfigLayout(this, Config.VectorConfig);
+            float _x = Config.DisableSorting ? 0 : x + keyWidth / 2;
+            Position = new Vector2(_x, 0) - manager.centerOffset;
+            KeyViewerUtils.ApplyConfigLayout(this, vConfig);
+#error PLEASE FIX TRANSFORM'S PIVOT!!!!
+            KeyViewerUtils.ApplyPivot(transform, Size * KeyViewerUtils.GetPivot(vConfig.Pivot));
 
             Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
-            Background.rectTransform.anchorMin = Vector2.zero;
-            Background.rectTransform.anchorMax = Vector2.zero;
-            Background.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            Background.rectTransform.sizeDelta = new Vector2(keyWidth, keyHeight);
-            Background.rectTransform.anchoredPosition = anchoredPos;
+            Background.rectTransform.SetAnchor(AnchorPresets.MiddleCenter);
+            Background.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.BackgroundConfig.VectorConfig.Pivot);
+            Background.rectTransform.sizeDelta = defaultSize;
             KeyViewerUtils.ApplyConfigLayout(Background, Config.BackgroundConfig);
             KeyViewerUtils.ApplyRoundnessLayout(Background, Config.BackgroundRoundness);
 
             Outline.sprite = AssetManager.Get(Config.Outline.Released, AssetManager.Outline);
-            Outline.rectTransform.anchorMin = Vector2.zero;
-            Outline.rectTransform.anchorMax = Vector2.zero;
-            Outline.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            Outline.rectTransform.sizeDelta = new Vector2(keyWidth, keyHeight);
-            Outline.rectTransform.anchoredPosition = anchoredPos;
+            Outline.rectTransform.SetAnchor(AnchorPresets.MiddleCenter);
+            Outline.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.OutlineConfig.VectorConfig.Pivot);
+            Outline.rectTransform.sizeDelta = defaultSize;
             KeyViewerUtils.ApplyConfigLayout(Outline, Config.OutlineConfig);
             KeyViewerUtils.ApplyRoundnessLayout(Outline, Config.OutlineRoundness);
 
+            float heightOffset = defaultY / 4f;
             ObjectConfig textConfig = Config.TextConfig;
-            float heightOffset = keyHeight / 4f;
-            Text.rectTransform.anchorMin = Vector2.zero;
-            Text.rectTransform.anchorMax = Vector2.zero;
-            Text.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            Text.rectTransform.sizeDelta = new Vector2(keyWidth, keyHeight * 1.03f);
-            releasedOffset = textConfig.VectorConfig.Offset.Released;
-            if (Config.EnableCountText)
-                Text.rectTransform.anchoredPosition = anchoredPos + new Vector2(releasedOffset.x, releasedOffset.y + heightOffset);
-            else Text.rectTransform.anchoredPosition = anchoredPos + releasedOffset;
+            Text.rectTransform.SetAnchor(AnchorPresets.MiddleCenter);
+            Text.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.TextConfig.VectorConfig.Pivot);
+            Text.rectTransform.sizeDelta = defaultSize;
             Text.fontSize = 75;
             Text.fontSizeMax = 75;
             Text.enableAutoSizing = true;
-            KeyViewerUtils.ApplyConfigLayout(Text, textConfig);
+            KeyViewerUtils.ApplyConfigLayout(Text, textConfig, Config.EnableCountText ? heightOffset : 0);
 
             var defaultSource = Constants.KeyString.TryGetValue(Config.Code, out string codeStr) ? codeStr : KeyViewerUtils.KeyName(Config);
             textReplacerP.Source = string.IsNullOrEmpty(Config.Text.Pressed) ? defaultSource : Config.Text.Pressed;
@@ -176,17 +171,14 @@ namespace KeyViewer.Unity
             Text.text = textReplacerR.Source;
 
             ObjectConfig cTextConfig = Config.CountTextConfig;
-            CountText.rectTransform.anchorMin = Vector2.zero;
-            CountText.rectTransform.anchorMax = Vector2.zero;
-            CountText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            CountText.rectTransform.sizeDelta = new Vector2(keyWidth, keyHeight * 0.8f);
-            releasedOffset = cTextConfig.VectorConfig.Offset.Released;
-            CountText.rectTransform.anchoredPosition = anchoredPos + new Vector2(releasedOffset.x, releasedOffset.y - heightOffset);
+            CountText.rectTransform.SetAnchor(AnchorPresets.MiddleCenter);
+            CountText.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.CountTextConfig.VectorConfig.Pivot);
+            CountText.rectTransform.sizeDelta = defaultSize;
             CountText.fontSizeMin = 0;
             CountText.fontSize = 50;
             CountText.fontSizeMax = 50;
             CountText.enableAutoSizing = true;
-            KeyViewerUtils.ApplyConfigLayout(CountText, cTextConfig);
+            KeyViewerUtils.ApplyConfigLayout(CountText, cTextConfig, Config.EnableCountText ? -heightOffset : 0);
 
             countTextReplacerP.Source = string.IsNullOrEmpty(Config.CountText.Pressed) ? $"{{Count:{KeyViewerUtils.KeyName(Config)}}}" : Config.CountText.Pressed;
             countTextReplacerR.Source = string.IsNullOrEmpty(Config.CountText.Released) ? $"{{Count:{KeyViewerUtils.KeyName(Config)}}}" : Config.CountText.Released;
@@ -247,8 +239,8 @@ namespace KeyViewer.Unity
         }
         private Vector2 GetMaskPosition(Direction dir)
         {
-            Vector2 vec = Position + Config.VectorConfig.Offset.Get(Pressed);
-            float x = Size.x, y = Size.y + (Config.EnableCountText ? 50 : 0);
+            Vector2 vec = transform.position + (Vector3)Config.VectorConfig.Offset.Get(Pressed);
+            float x = Size.x, y = Size.y;
             Vector2 offset = Config.Rain.ObjectConfig.VectorConfig.Offset.Get(Pressed);
             int softness = Config.Rain.Softness.Get(Pressed);
             switch (dir)
@@ -370,11 +362,12 @@ namespace KeyViewer.Unity
         }
         private void ApplyVectorConfig()
         {
-            KeyViewerUtils.ApplyVectorConfig(transform, Config.VectorConfig, Pressed);
-            KeyViewerUtils.ApplyVectorConfig(Text.rectTransform, Config.TextConfig.VectorConfig, Pressed);
-            KeyViewerUtils.ApplyVectorConfig(CountText.rectTransform, Config.CountTextConfig.VectorConfig, Pressed);
-            KeyViewerUtils.ApplyVectorConfig(Background.rectTransform, Config.BackgroundConfig.VectorConfig, Pressed);
-            KeyViewerUtils.ApplyVectorConfig(Outline.rectTransform, Config.OutlineConfig.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(this, Config.VectorConfig, Pressed);
+            float heightOffset = defaultSize.y / 4f;
+            KeyViewerUtils.ApplyVectorConfig(Text.rectTransform, Config.TextConfig.VectorConfig, Pressed, heightOffset);
+            KeyViewerUtils.ApplyVectorConfig(CountText.rectTransform, Config.CountTextConfig.VectorConfig, Pressed, -heightOffset);
+            KeyViewerUtils.ApplyVectorConfig(Background.rectTransform, Config.BackgroundConfig.VectorConfig, Pressed, 0);
+            KeyViewerUtils.ApplyVectorConfig(Outline.rectTransform, Config.OutlineConfig.VectorConfig, Pressed, 0);
         }
         private void RainUpdate()
         {
@@ -382,7 +375,7 @@ namespace KeyViewer.Unity
             var rainConfig = Config.Rain;
             rainMask.softness = GetSoftness(rainConfig.Direction);
             RainMaskRt.sizeDelta = GetSizeDelta(rainConfig.Direction);
-            RainMaskRt.anchoredPosition = GetMaskPosition(rainConfig.Direction);
+            RainMaskRt.position = GetMaskPosition(rainConfig.Direction);
             if (Pressed)
             {
                 rain = rainPool.Get();
