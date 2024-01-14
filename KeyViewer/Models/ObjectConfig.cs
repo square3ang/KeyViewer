@@ -8,27 +8,6 @@ namespace KeyViewer.Models
     public class ObjectConfig : IModel, ICopyable<ObjectConfig>
     {
         public ObjectConfig() { }
-        public ObjectConfig(float defaultSize, Color defaultPressed, Color defaultReleased)
-        {
-            VectorConfig = new VectorConfig();
-            VectorConfig.UseSize = true;
-            VectorConfig.Size = defaultSize;
-            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
-        }
-        public ObjectConfig(float pressedSize, float releasedSize, Color defaultPressed, Color defaultReleased)
-        {
-            VectorConfig = new VectorConfig();
-            VectorConfig.UseSize = true;
-            VectorConfig.Size = new PressRelease<float>(pressedSize, releasedSize);
-            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
-        }
-        public ObjectConfig(PressRelease<float> size, Color defaultPressed, Color defaultReleased)
-        {
-            VectorConfig = new VectorConfig();
-            VectorConfig.UseSize = true;
-            VectorConfig.Size = size;
-            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
-        }
         public ObjectConfig(Vector2 defaultScale, Color defaultPressed, Color defaultReleased)
         {
             VectorConfig = new VectorConfig();

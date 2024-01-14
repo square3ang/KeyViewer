@@ -28,7 +28,6 @@ namespace KeyViewer.Unity
         public bool Pressed;
         public Vector2 Size;
         public Vector2 Position;
-        public Vector2 PivotOffset;
         public KeyConfig Config;
         public Image Background;
         public Image Outline;
@@ -61,7 +60,7 @@ namespace KeyViewer.Unity
             image.color = new Color(1, 1, 1, 0);
             rainMask = rainContainer.AddComponent<RectMask2D>();
             RainMaskRt = rainMask.rectTransform;
-            RainMaskRt.SetAnchor(AnchorPresets.MiddleCenter);
+            RainMaskRt.SetAnchor(Config.VectorConfig.Anchor);
             RainMaskRt.pivot = new Vector2(0.5f, 0.5f);
             rainPool = new EnsurePool<Rain>(() =>
             {
@@ -138,19 +137,18 @@ namespace KeyViewer.Unity
             Size = new Vector2(keyWidth, keyHeight);
             float _x = Config.DisableSorting ? 0 : x + keyWidth / 2;
             Position = new Vector2(_x, 0) - manager.centerOffset;
-#warning FIX PIVOT
-            PivotOffset = KeyViewerUtils.ApplyPivot(transform, (Vector2)transform.position + Size * KeyViewerUtils.GetPivot(vConfig.Pivot).InversePivot());
+            Position += KeyViewerUtils.InjectPivot(this, KeyViewerUtils.GetPivot(vConfig.Pivot).InversePivot());
             KeyViewerUtils.ApplyConfigLayout(this, vConfig);
 
             Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
-            Background.rectTransform.SetAnchor(AnchorPresets.MiddleCenter);
+            Background.rectTransform.SetAnchor(Config.BackgroundConfig.VectorConfig.Anchor);
             Background.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.BackgroundConfig.VectorConfig.Pivot);
             Background.rectTransform.sizeDelta = defaultSize;
             KeyViewerUtils.ApplyConfigLayout(Background, Config.BackgroundConfig);
             KeyViewerUtils.ApplyRoundnessLayout(Background, Config.BackgroundRoundness);
 
             Outline.sprite = AssetManager.Get(Config.Outline.Released, AssetManager.Outline);
-            Outline.rectTransform.SetAnchor(AnchorPresets.MiddleCenter);
+            Outline.rectTransform.SetAnchor(Config.OutlineConfig.VectorConfig.Anchor);
             Outline.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.OutlineConfig.VectorConfig.Pivot);
             Outline.rectTransform.sizeDelta = defaultSize;
             KeyViewerUtils.ApplyConfigLayout(Outline, Config.OutlineConfig);
@@ -158,7 +156,7 @@ namespace KeyViewer.Unity
 
             float heightOffset = defaultY / 4f;
             ObjectConfig textConfig = Config.TextConfig;
-            Text.rectTransform.SetAnchor(AnchorPresets.MiddleCenter);
+            Text.rectTransform.SetAnchor(Config.TextConfig.VectorConfig.Anchor);
             Text.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.TextConfig.VectorConfig.Pivot);
             Text.rectTransform.sizeDelta = defaultSize;
             Text.fontSize = 75;
@@ -172,7 +170,7 @@ namespace KeyViewer.Unity
             Text.text = textReplacerR.Source;
 
             ObjectConfig cTextConfig = Config.CountTextConfig;
-            CountText.rectTransform.SetAnchor(AnchorPresets.MiddleCenter);
+            CountText.rectTransform.SetAnchor(Config.CountTextConfig.VectorConfig.Anchor);
             CountText.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.CountTextConfig.VectorConfig.Pivot);
             CountText.rectTransform.sizeDelta = defaultSize;
             CountText.fontSizeMin = 0;
@@ -364,7 +362,7 @@ namespace KeyViewer.Unity
         private void ApplyVectorConfig()
         {
             KeyViewerUtils.ApplyVectorConfig(this, Config.VectorConfig, Pressed);
-            float heightOffset = defaultSize.y / 4f;
+            float heightOffset = Config.EnableCountText ? defaultSize.y / 4f : 0;
             KeyViewerUtils.ApplyVectorConfig(Text.rectTransform, Config.TextConfig.VectorConfig, Pressed, heightOffset);
             KeyViewerUtils.ApplyVectorConfig(CountText.rectTransform, Config.CountTextConfig.VectorConfig, Pressed, -heightOffset);
             KeyViewerUtils.ApplyVectorConfig(Background.rectTransform, Config.BackgroundConfig.VectorConfig, Pressed, 0);

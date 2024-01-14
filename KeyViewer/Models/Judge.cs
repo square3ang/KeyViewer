@@ -122,15 +122,15 @@ namespace KeyViewer.Models
         {
             JsonNode node = JsonNode.Empty;
             node[nameof(TooEarly)] = TooEarly.Serialize();
-            node[nameof(VeryEarly)] = TooEarly.Serialize();
-            node[nameof(EarlyPerfect)] = TooEarly.Serialize();
-            node[nameof(Perfect)] = TooEarly.Serialize();
-            node[nameof(LatePerfect)] = TooEarly.Serialize();
-            node[nameof(VeryLate)] = TooEarly.Serialize();
-            node[nameof(TooLate)] = TooEarly.Serialize();
-            node[nameof(Multipress)] = TooEarly.Serialize();
-            node[nameof(FailMiss)] = TooEarly.Serialize();
-            node[nameof(FailOverload)] = TooEarly.Serialize();
+            node[nameof(VeryEarly)] = VeryEarly.Serialize();
+            node[nameof(EarlyPerfect)] = EarlyPerfect.Serialize();
+            node[nameof(Perfect)] = Perfect.Serialize();
+            node[nameof(LatePerfect)] = LatePerfect.Serialize();
+            node[nameof(VeryLate)] = VeryLate.Serialize();
+            node[nameof(TooLate)] = TooLate.Serialize();
+            node[nameof(Multipress)] = Multipress.Serialize();
+            node[nameof(FailMiss)] = FailMiss.Serialize();
+            node[nameof(FailOverload)] = FailOverload.Serialize();
             return node;
         }
         public new void Deserialize(JsonNode node)

@@ -367,6 +367,7 @@
     <Compile Include="Unity\UI\UITextCornersGradient.cs" />
     <Compile Include="Unity\UI\UITextGradient.cs" />
     <Compile Include="Utils\ADOUtils.cs" />
+    <Compile Include="Models\Anchor.cs" />
     <Compile Include="Utils\CanEase.cs" />
     <Compile Include="Utils\EnumHelper.cs" />
     <Compile Include="Utils\Extensions.cs" />
@@ -376,7 +377,6 @@
     <Compile Include="Utils\MiscUtils.cs" />
     <Compile Include="Utils\ModelUtils.cs" />
     <Compile Include="Models\Pivot.cs" />
-    <Compile Include="Utils\RectTransformExtensions.cs" />
     <Compile Include="Utils\StringConverter.cs" />
     <Compile Include="Views\RainConfigDrawer.cs" />
     <Compile Include="Views\KeyConfigDrawer.cs" />

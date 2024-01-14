@@ -1,14 +1,13 @@
-﻿using KeyViewer.Controllers;
-using KeyViewer.Core;
+﻿using KeyViewer.Core;
 using KeyViewer.Core.Translation;
 using KeyViewer.Models;
 using KeyViewer.Utils;
 using SFB;
 using System.IO;
 using UnityEngine;
+using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
 using TKS = KeyViewer.Core.Translation.TranslationKeys.Settings;
-using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 
 namespace KeyViewer.Views
 {
@@ -22,7 +21,7 @@ namespace KeyViewer.Views
                 Drawer.ButtonLabel(L(TKS.SelectLanguage), KeyViewerUtils.OpenDiscordUrl);
                 if (Drawer.DrawEnum(L(TKS.Language), ref model.Language))
                 {
-                    GUIController.Skip(() =>
+                    Main.GUI.Skip(() =>
                     {
                         KeyViewerUtils.OpenDiscordUrl();
                         Main.Lang = Language.GetLanguage(model.Language);
@@ -31,7 +30,7 @@ namespace KeyViewer.Views
                 }
             }
             if (GUILayout.Button(L(TKM.ShowUpdateNote)))
-                GUIController.Push(new MethodDrawable(() =>
+                Main.GUI.Push(new MethodDrawable(() =>
                 {
                     GUILayout.Label(L(TranslationKeys.UpdateNote));
                 }, L(TKM.ShowUpdateNote)));
@@ -46,7 +45,7 @@ namespace KeyViewer.Views
                     foreach (var profile in profiles)
                     {
                         FileInfo file = new FileInfo(profile);
-                        if (!file.Directory.FullName.ToLower().Contains(Main.Mod.Path.ToLower()))
+                        if (!File.Exists(Path.Combine(Main.Mod.Path, file.Name)))
                             file.CopyTo(Path.Combine(Main.Mod.Path, file.Name));
                         var activeProfile = new ActiveProfile(Path.GetFileNameWithoutExtension(file.FullName), true);
                         model.ActiveProfiles.Add(activeProfile);
@@ -86,7 +85,7 @@ namespace KeyViewer.Views
                         if (GUILayout.Button(L(TKP.ConfigurateProfile, profile.Name)))
                         {
                             var manager = Main.Managers[profile.Name];
-                            GUIController.Push(new ProfileDrawer(manager, manager.profile, profile.Name));
+                            Main.GUI.Push(new ProfileDrawer(manager, manager.profile, profile.Name));
                         }
                     }
                 }

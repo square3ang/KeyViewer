@@ -1,5 +1,4 @@
 ﻿using KeyViewer.API;
-using KeyViewer.Models;
 using System;
 using System.Diagnostics;
 using System.Linq;

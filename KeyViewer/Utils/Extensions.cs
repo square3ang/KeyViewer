@@ -1,4 +1,5 @@
 ﻿using JSON;
+using KeyViewer.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -49,6 +50,113 @@ namespace KeyViewer.Utils
         public static Vector2 InversePivot(this Vector2 pivot)
         {
             return new Vector2(1 - pivot.x, 1 - pivot.y);
+        }
+        public static void SetAnchor(this RectTransform source, Anchor allign)
+        {
+            switch (allign)
+            {
+                case Anchor.TopLeft:
+                    {
+                        source.anchorMin = new Vector2(0, 1);
+                        source.anchorMax = new Vector2(0, 1);
+                        break;
+                    }
+                case Anchor.TopCenter:
+                    {
+                        source.anchorMin = new Vector2(0.5f, 1);
+                        source.anchorMax = new Vector2(0.5f, 1);
+                        break;
+                    }
+                case Anchor.TopRight:
+                    {
+                        source.anchorMin = new Vector2(1, 1);
+                        source.anchorMax = new Vector2(1, 1);
+                        break;
+                    }
+
+                case Anchor.MiddleLeft:
+                    {
+                        source.anchorMin = new Vector2(0, 0.5f);
+                        source.anchorMax = new Vector2(0, 0.5f);
+                        break;
+                    }
+                case Anchor.MiddleCenter:
+                    {
+                        source.anchorMin = new Vector2(0.5f, 0.5f);
+                        source.anchorMax = new Vector2(0.5f, 0.5f);
+                        break;
+                    }
+                case Anchor.MiddleRight:
+                    {
+                        source.anchorMin = new Vector2(1, 0.5f);
+                        source.anchorMax = new Vector2(1, 0.5f);
+                        break;
+                    }
+
+                case Anchor.BottomLeft:
+                    {
+                        source.anchorMin = new Vector2(0, 0);
+                        source.anchorMax = new Vector2(0, 0);
+                        break;
+                    }
+                case Anchor.BottomCenter:
+                    {
+                        source.anchorMin = new Vector2(0.5f, 0);
+                        source.anchorMax = new Vector2(0.5f, 0);
+                        break;
+                    }
+                case Anchor.BottomRight:
+                    {
+                        source.anchorMin = new Vector2(1, 0);
+                        source.anchorMax = new Vector2(1, 0);
+                        break;
+                    }
+
+                case Anchor.HorizontalStretchTop:
+                    {
+                        source.anchorMin = new Vector2(0, 1);
+                        source.anchorMax = new Vector2(1, 1);
+                        break;
+                    }
+                case Anchor.HorizontalStretchMiddle:
+                    {
+                        source.anchorMin = new Vector2(0, 0.5f);
+                        source.anchorMax = new Vector2(1, 0.5f);
+                        break;
+                    }
+                case Anchor.HorizontalStretchBottom:
+                    {
+                        source.anchorMin = new Vector2(0, 0);
+                        source.anchorMax = new Vector2(1, 0);
+                        break;
+                    }
+
+                case Anchor.VerticalStretchLeft:
+                    {
+                        source.anchorMin = new Vector2(0, 0);
+                        source.anchorMax = new Vector2(0, 1);
+                        break;
+                    }
+                case Anchor.VerticalStretchCenter:
+                    {
+                        source.anchorMin = new Vector2(0.5f, 0);
+                        source.anchorMax = new Vector2(0.5f, 1);
+                        break;
+                    }
+                case Anchor.VerticalStretchRight:
+                    {
+                        source.anchorMin = new Vector2(1, 0);
+                        source.anchorMax = new Vector2(1, 1);
+                        break;
+                    }
+
+                case Anchor.StretchAll:
+                    {
+                        source.anchorMin = new Vector2(0, 0);
+                        source.anchorMax = new Vector2(1, 1);
+                        break;
+                    }
+            }
         }
     }
 }

@@ -49,7 +49,7 @@ namespace KeyViewer.Unity
         }
         public void OnEnable()
         {
-            if (!initialized) return;   
+            if (!initialized) return;
             colorUpdateIgnores = 0;
             image.sprite = key.RainImageManager.Get();
             rt.sizeDelta = GetInitialSize();

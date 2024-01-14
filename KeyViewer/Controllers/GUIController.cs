@@ -5,21 +5,21 @@ using UnityEngine;
 
 namespace KeyViewer.Controllers
 {
-    public static class GUIController
+    public class GUIController : IDisposable
     {
-        private static List<IDrawable> drawables = new List<IDrawable>();
-        private static int depth;
-        private static bool isUndoAvailable => depth > 0;
-        private static bool isRedoAvailable => depth < drawables.Count;
-        private static IDrawable current;
-        private static IDrawable first;
-        private static int skipFrames = 0;
-        private static Stack<Action> onSkipCallbacks = new Stack<Action>();
-        public static void Init(IDrawable drawable)
+        private List<IDrawable> drawables = new List<IDrawable>();
+        private int depth;
+        private bool isUndoAvailable => depth > 0;
+        private bool isRedoAvailable => depth < drawables.Count;
+        private IDrawable current;
+        private IDrawable first;
+        private int skipFrames = 0;
+        private Stack<Action> onSkipCallbacks = new Stack<Action>();
+        public void Init(IDrawable drawable)
         {
             first = current = drawable;
         }
-        public static void Push(IDrawable drawable)
+        public void Push(IDrawable drawable)
         {
             if (drawables.Count == depth)
             {
@@ -38,14 +38,14 @@ namespace KeyViewer.Controllers
             }
             current = drawable;
         }
-        public static void Pop()
+        public void Pop()
         {
             if (!isUndoAvailable) return;
             var cache = current;
             current = drawables[--depth];
             drawables[depth] = cache;
         }
-        public static void Draw()
+        public void Draw()
         {
             if (skipFrames > 0)
             {
@@ -72,19 +72,26 @@ namespace KeyViewer.Controllers
             GUILayout.EndHorizontal();
             current.Draw();
         }
-        public static void Skip(Action onSkip = null, int frames = 1)
+        public void Skip(Action onSkip = null, int frames = 1)
         {
             skipFrames += frames;
             onSkipCallbacks.Push(onSkip);
         }
-
-        public static void Flush()
+        public void Flush()
         {
             current = first;
             drawables = new List<IDrawable>();
             depth = 0;
-            Main.ListeningDrawer = null;
+            onSkipCallbacks = new Stack<Action>();
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized, false);
+        }
+        public void Dispose()
+        {
+            first = null;
+            current = null;
+            drawables = null;
+            onSkipCallbacks = null;
+            GC.SuppressFinalize(this);
         }
     }
 }

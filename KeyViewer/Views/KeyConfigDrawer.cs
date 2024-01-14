@@ -1,5 +1,4 @@
-﻿using KeyViewer.Controllers;
-using KeyViewer.Core;
+﻿using KeyViewer.Core;
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
@@ -63,7 +62,7 @@ namespace KeyViewer.Views
 
             changed |= Drawer.DrawBool(L(TKKC.EnableRain), ref model.RainEnabled);
             if (model.RainEnabled)
-                Drawer.TitleButton(L(TKKC.EditRainConfig), L(TKM.EditThis), () => GUIController.Push(new RainConfigDrawer(manager, model)));
+                Drawer.TitleButton(L(TKKC.EditRainConfig), L(TKM.EditThis), () => Main.GUI.Push(new RainConfigDrawer(manager, model)));
 
             if (changed)
                 manager.UpdateLayout();

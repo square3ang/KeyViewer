@@ -1,5 +1,4 @@
-﻿using KeyViewer.Controllers;
-using KeyViewer.Core;
+﻿using KeyViewer.Core;
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
@@ -56,7 +55,7 @@ namespace KeyViewer.Views
                             if (GUILayout.Button(str))
                             {
                                 if (configMode)
-                                    GUIController.Push(new KeyConfigDrawer(manager, key));
+                                    Main.GUI.Push(new KeyConfigDrawer(manager, key));
                                 else
                                 {
                                     model.Keys.RemoveAt(i);

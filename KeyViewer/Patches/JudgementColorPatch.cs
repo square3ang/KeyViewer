@@ -36,7 +36,6 @@ namespace KeyViewer.Patches
                     if (Input.GetKeyDown(key.Config.Code))
                         keys.Add(key);
         }
-        static bool stackFlushed = false;
         static States prevState = States.None;
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrController), "Update")]
@@ -44,13 +43,12 @@ namespace KeyViewer.Patches
         {
             if (!initialized) return;
             var state = __instance.state;
-            if (!stackFlushed && state == States.PlayerControl)
+            if (state != prevState)
             {
                 keys.Clear();
                 AsyncInputManager.ClearKeys();
-                stackFlushed = true;
+                prevState = state;
             }
-            prevState = state;
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrController), "Awake_Rewind")]
@@ -62,7 +60,6 @@ namespace KeyViewer.Patches
                 if (manager.profile.ResetOnStart)
                     foreach (var key in manager.keys)
                         key.Config.Count = 0;
-            stackFlushed = false;
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrMistakesManager), "AddHit")]

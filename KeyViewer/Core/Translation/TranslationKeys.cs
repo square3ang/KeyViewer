@@ -8,6 +8,7 @@
         public static readonly string DiscordLink = "DISCORD_LINK";
         public static readonly string DownloadLink = "DOWNLOAD_LINK";
         public static readonly string UpdateNote = "U_P_D_A_T_E_NOTE";
+        public static readonly string Raw = "R_A_W";
         public static class Settings
         {
             public const string Prefix = "SETTINGS_";

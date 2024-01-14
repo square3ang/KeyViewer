@@ -25,7 +25,7 @@ using static UnityModManagerNet.UnityModManager.ModEntry;
  * 키 별 KPS 기능 추가하기 => Completed
  * 모든 텍스트에 Tag를 이용한 Text Replacing 지원하기 => Completed
  * 이미지 Rounding 지원하기 => Completed
- * 크기 조절 정렬 버그 고치기 =>
+ * 크기 조절 정렬 버그 고치기 => Completed
  * 
  * Maybe TODO List
  * Rain이 켜져있을 때 키를 누르면 파티클 효과 추가해보기
@@ -45,6 +45,7 @@ namespace KeyViewer
         public static bool BlockInput { get; internal set; }
         public static ModelDrawable<Profile> ListeningDrawer { get; internal set; }
         public static Harmony Harmony { get; private set; }
+        public static GUIController GUI { get; private set; }
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
@@ -66,6 +67,7 @@ namespace KeyViewer
                 FontManager.Initialize();
                 AssetManager.Initialize();
                 JudgementColorPatch.Initialize();
+                GUI = new GUIController();
                 Settings = new Settings();
                 if (File.Exists(Constants.SettingsPath))
                     Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
@@ -111,7 +113,6 @@ namespace KeyViewer
         }
         public static void OnUpdate(ModEntry modEntry, float deltaTime)
         {
-            BlockInput = true;
             if (ListeningDrawer != null)
                 foreach (var code in EnumHelper<KeyCode>.GetValues())
                     if (Input.GetKeyDown(code))
@@ -131,7 +132,7 @@ namespace KeyViewer
         {
             if (!Lang.Initialized)
                 Drawer.ButtonLabel("Preparing...", KeyViewerUtils.OpenDiscordUrl);
-            else GUIController.Draw();
+            else GUI.Draw();
         }
         public static void OnSaveGUI(ModEntry modEntry)
         {
@@ -146,18 +147,21 @@ namespace KeyViewer
         public static void OnShowGUI(ModEntry modEntry)
         {
             BlockInput = true;
-            GUIController.Flush();
+            GUI.Flush();
+            ListeningDrawer = null;
         }
         public static void OnHideGUI(ModEntry modEntry)
         {
-            GUIController.Flush();
+            GUI.Flush();
+            ListeningDrawer = null;
             BlockInput = false;
         }
 
         public static void OnLanguageInitialize()
         {
-            GUIController.Flush();
-            GUIController.Init(new SettingsDrawer(Settings));
+            GUI.Flush();
+            ListeningDrawer = null;
+            GUI.Init(new SettingsDrawer(Settings));
         }
 
         public static bool AddManager(ActiveProfile profile, bool forceInit = false)

@@ -12,7 +12,7 @@ namespace KeyViewer.Models
         public bool ViewOnlyGamePlay = false;
         public bool LimitNotRegisteredKeys = false;
         public bool ResetOnStart = false;
-        public VectorConfig VectorConfig = new VectorConfig() { Pivot = Pivot.TopCenter };
+        public VectorConfig VectorConfig = new VectorConfig();
         public int KPSUpdateRate = 1000;
         public Profile Copy()
         {

@@ -15,12 +15,14 @@ namespace KeyViewer.Utils
         {
             return config.DummyName ?? config.Code.ToString();
         }
-        public static Vector3 ApplyPivot(Transform t, Vector2 position)
+        public static Vector2 InjectPivot(Key key, Vector2 pivot)
         {
-            Vector3 offset = t.position - (Vector3)position;
-            foreach (Transform child in t)
-                child.transform.position += offset;
-            t.position = position;
+            var k = key.transform;
+            var origin = k.position;
+            Vector3 offset = key.Size * pivot;
+            foreach (Transform child in k)
+                child.position += offset;
+            k.position = origin;
             return offset;
         }
         public static void ApplyColorLayout(Image image, GColor color)
@@ -74,7 +76,7 @@ namespace KeyViewer.Utils
             var t = k.transform;
             t.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             t.localScale = vConfig.Scale.Released;
-            t.localPosition = vConfig.Offset.Released + k.Position - k.PivotOffset;
+            t.localPosition = vConfig.Offset.Released + k.Position;
         }
         public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config, float heightOffset)
         {
@@ -167,10 +169,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                t.DOLocalMove(vConfig.Offset.Get(pressed) + k.Position - k.PivotOffset, oEase.Duration)
+                t.DOLocalMove(vConfig.Offset.Get(pressed) + k.Position, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else t.localPosition = vConfig.Offset.Get(pressed) + k.Position - k.PivotOffset;
+            else t.localPosition = vConfig.Offset.Get(pressed) + k.Position;
 
             var sEase = vConfig.Scale.GetEase(pressed);
             if (sEase.IsValid)

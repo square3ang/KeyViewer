@@ -121,7 +121,7 @@ namespace KeyViewer.Unity
             float width = count * 100 + (count - 1) * spacing;
 
             var vecConfig = profile.VectorConfig;
-            keysRt.SetAnchor(AnchorPresets.MiddleCenter);
+            keysRt.SetAnchor(profile.VectorConfig.Anchor);
             keysRt.sizeDelta = new Vector2(width, keyHeight);
             keysRt.pivot = new Vector2(0.5f, 0.5f);
             keysRt.anchoredPosition = vecConfig.Offset.Released;
