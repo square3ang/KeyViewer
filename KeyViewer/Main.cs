@@ -229,5 +229,16 @@ namespace KeyViewer
             }
             Managers = null;
         }
+        public static void ResetKeys()
+        {
+            foreach (var manager in Managers.Values)
+            {
+                foreach (var key in manager.keys)
+                {
+                    key.Pressed = false;
+                    key.ResetRains();
+                }
+            }
+        }
     }
 }

@@ -47,6 +47,7 @@ namespace KeyViewer.Patches
             {
                 keys.Clear();
                 AsyncInputManager.ClearKeys();
+                Main.ResetKeys();
                 prevState = state;
             }
         }
@@ -56,6 +57,7 @@ namespace KeyViewer.Patches
         {
             if (!initialized) return;
             AsyncInputManager.ClearKeys();
+            Main.ResetKeys();
             foreach (var manager in Main.Managers.Values)
                 if (manager.profile.ResetOnStart)
                     foreach (var key in manager.keys)

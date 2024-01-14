@@ -60,18 +60,18 @@ namespace KeyViewer.Unity
             image.color = new Color(1, 1, 1, 0);
             rainMask = rainContainer.AddComponent<RectMask2D>();
             RainMaskRt = rainMask.rectTransform;
-            RainMaskRt.SetAnchor(Config.VectorConfig.Anchor);
-            RainMaskRt.pivot = new Vector2(0.5f, 0.5f);
+            KeyViewerUtils.SetMaskAnchor(RainMaskRt, Config.Rain.Direction);
+
             rainPool = new EnsurePool<Rain>(() =>
             {
-                GameObject rainObj = new GameObject($"Rain {config.Code}");
+                GameObject rainObj = new GameObject($"Rain {Config.Code}");
                 rainObj.transform.SetParent(rainMask.transform);
                 var rain = rainObj.AddComponent<Rain>();
                 rain.Init(this);
                 rainObj.SetActive(false);
                 return rain;
             }, kr => !kr.IsAlive, kr => kr.gameObject.SetActive(true), r => Destroy(r.gameObject));
-            rainPool.Fill(Config.Rain.PoolSize);
+            if (Config.RainEnabled) rainPool.Fill(Config.Rain.PoolSize);
 
             ObjectConfig bgConfig = config.BackgroundConfig;
             GameObject bgObj = new GameObject("Background");
@@ -189,9 +189,12 @@ namespace KeyViewer.Unity
             RainImageManager.Refresh();
             var rainConfig = Config.Rain;
             rainMask.softness = GetSoftness(rainConfig.Direction);
-            rainPool.Clear();
-            rainPool.Fill(Config.Rain.PoolSize);
-            KeyViewerUtils.SetAnchor(RainMaskRt, rainConfig.Direction);
+            if (Config.RainEnabled)
+            {
+                rainPool.Clear();
+                rainPool.Fill(Config.Rain.PoolSize);
+            }
+            KeyViewerUtils.SetMaskAnchor(RainMaskRt, rainConfig.Direction);
             RainUpdate();
             rainContainer.SetActive(Config.RainEnabled);
 
@@ -201,6 +204,7 @@ namespace KeyViewer.Unity
         }
         public void ResetRains()
         {
+            if (!Config.RainEnabled) return;
             rainPool.ForEach(r =>
             {
                 r.Release();
@@ -229,18 +233,18 @@ namespace KeyViewer.Unity
                         new Vector2(Size.x, rConfig.Softness.Get(Pressed) + rConfig.Length.Get(Pressed));
                 case Direction.Left:
                 case Direction.Right:
-                    var yOffset = (Config.EnableCountText ? 50 : 0) + 5;
                     return scale.y > 0 ?
-                        new Vector2(rConfig.Softness.Get(Pressed) + rConfig.Length.Get(Pressed), Size.y * scale.y + yOffset) :
-                        new Vector2(rConfig.Softness.Get(Pressed) + rConfig.Length.Get(Pressed), Size.y + yOffset);
+                        new Vector2(rConfig.Softness.Get(Pressed) + rConfig.Length.Get(Pressed), Size.y * scale.y) :
+                        new Vector2(rConfig.Softness.Get(Pressed) + rConfig.Length.Get(Pressed), Size.y);
                 default: return Vector2.zero;
             }
         }
         private Vector2 GetMaskPosition(Direction dir)
         {
-            Vector2 vec = transform.position + (Vector3)Config.VectorConfig.Offset.Get(Pressed);
+            var rainVConfig = Config.Rain.ObjectConfig.VectorConfig;
+            Vector2 vec = transform.position + (Vector3)rainVConfig.Offset.Get(Pressed);
             float x = Size.x, y = Size.y;
-            Vector2 offset = Config.Rain.ObjectConfig.VectorConfig.Offset.Get(Pressed);
+            Vector2 offset = rainVConfig.Offset.Get(Pressed);
             int softness = Config.Rain.Softness.Get(Pressed);
             switch (dir)
             {
@@ -278,19 +282,19 @@ namespace KeyViewer.Unity
             if (!string.IsNullOrEmpty(Config.DummyName)) return;
             if (InputAPI.Active)
                 Pressed = InputAPI.APIFlags.TryGetValue(Config.Code, out var p) ? p : false;
-            else Pressed = KeyInput.GetKey(Config.Code);
+            else Pressed = Input.GetKey(Config.Code);
             if (prevPressed == Pressed) return;
             prevPressed = Pressed;
             if (Pressed)
             {
-                if (InputAPI.Active)
+                if (InputAPI.EventActive)
                     InputAPI.KeyPress(Config.Code);
                 Config.Count++;
                 if (Config.EnableKPSMeter)
                     KpsCalc.Press();
                 manager.kpsCalc.Press();
             }
-            else if (InputAPI.Active)
+            else if (InputAPI.EventActive)
                 InputAPI.KeyRelease(Config.Code);
             if (!Config.UpdateTextAlways)
                 ReplaceText();

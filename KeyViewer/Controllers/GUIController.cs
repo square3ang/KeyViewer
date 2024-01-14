@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace KeyViewer.Controllers
 {
-    public class GUIController : IDisposable
+    public class GUIController
     {
         private List<IDrawable> drawables = new List<IDrawable>();
         private int depth;
@@ -84,14 +84,6 @@ namespace KeyViewer.Controllers
             depth = 0;
             onSkipCallbacks = new Stack<Action>();
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized, false);
-        }
-        public void Dispose()
-        {
-            first = null;
-            current = null;
-            drawables = null;
-            onSkipCallbacks = null;
-            GC.SuppressFinalize(this);
         }
     }
 }

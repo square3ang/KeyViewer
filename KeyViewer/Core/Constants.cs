@@ -7,8 +7,6 @@ namespace KeyViewer.Core
 {
     public static class Constants
     {
-        public static readonly FieldInfo VersionField = typeof(Constants).GetField("Version");
-
         public static string SettingsPath => Path.Combine(Main.Mod.Path, "Settings.json");
 
         public const string Version = "4.0.3";

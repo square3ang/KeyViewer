@@ -1,4 +1,5 @@
-﻿using KeyViewer.Core;
+﻿using KeyViewer.API;
+using KeyViewer.Core;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -34,3 +35,6 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion(Constants.Version)]
 [assembly: AssemblyFileVersion(Constants.Version)]
+[assembly: Comment("SEXSEXSEXSEXSEXSEXSEXSEXSEXSEXSEXSEXSEXSEXSEXSEXSEX")]
+[assembly: Comment("IF YOU SEE THIS, SEND MESSAGE TO Discord@suckyoubus")]
+[assembly: Comment("https://discord.gg/SaUFEwbM")]

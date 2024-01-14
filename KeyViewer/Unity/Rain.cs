@@ -2,6 +2,7 @@
 using KeyViewer.Utils;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 namespace KeyViewer.Unity
 {
@@ -66,14 +67,9 @@ namespace KeyViewer.Unity
             {
                 var toMove = Time.deltaTime * config.Speed.Get(key.Pressed);
                 var delta = GetDelta(config.Direction, toMove);
-                var sizeDelta = rt.sizeDelta;
                 if (stretching)
                 {
-                    var vec = Vector2.zero;
-                    if (delta.x != 0) vec.x += Mathf.Abs(delta.x);
-                    else if (delta.y != 0) vec.y += Mathf.Abs(delta.y);
-                    sizeDelta += vec;
-                    rt.sizeDelta = sizeDelta;
+                    rt.sizeDelta += delta.Abs();
                     rt.anchoredPosition += delta * 0.5f;
                 }
                 else rt.anchoredPosition += delta;
@@ -112,10 +108,9 @@ namespace KeyViewer.Unity
                         new Vector2(key.Size.x, 0);
                 case Direction.Left:
                 case Direction.Right:
-                    var yOffset = (key.Config.EnableCountText ? 50 : 0) + 5;
                     return scale.y > 0 ?
-                        new Vector2(0, key.Size.y * scale.y + yOffset) :
-                        new Vector2(0, key.Size.y + yOffset);
+                        new Vector2(0, key.Size.y * scale.y) :
+                        new Vector2(0, key.Size.y);
                 default: return Vector2.zero;
             }
         }

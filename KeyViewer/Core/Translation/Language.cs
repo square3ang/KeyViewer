@@ -23,7 +23,7 @@ namespace KeyViewer.Core.Translation
             sheet.Download((int)gid, d =>
             {
                 Version newVersion;
-                if ((newVersion = Version.Parse(d[TranslationKeys.Version])) > Version.Parse((string)Constants.VersionField.GetValue(null)))
+                if ((newVersion = Version.Parse(d[TranslationKeys.Version])) > Main.Mod.Version)
                 {
                     HasUpdate = true;
                     var update = d[TranslationKeys.Update];

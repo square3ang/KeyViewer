@@ -43,9 +43,6 @@ namespace KeyViewer.Patches
                                // Always account for certain keys
                                + AlwaysBoundKeys.Count(Input.GetKeyDown);
             }
-
-            // Limit keys pressed
-            __result = Mathf.Min(4, keysPressed);
             return false;
         }
     }

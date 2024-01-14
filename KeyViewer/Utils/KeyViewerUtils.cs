@@ -206,7 +206,7 @@ namespace KeyViewer.Utils
                 .SetAutoKill(false);
             else rt.localScale = vConfig.Scale.Get(pressed);
         }
-        public static void SetAnchor(RectTransform rt, Direction dir)
+        public static void SetMaskAnchor(RectTransform rt, Direction dir)
         {
             switch (dir)
             {
