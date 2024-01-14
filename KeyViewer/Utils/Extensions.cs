@@ -46,5 +46,9 @@ namespace KeyViewer.Utils
         {
             return new Vector2(vector.x, vector.y + y);
         }
+        public static Vector2 InversePivot(this Vector2 pivot)
+        {
+            return new Vector2(1 - pivot.x, 1 - pivot.y);
+        }
     }
 }

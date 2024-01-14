@@ -128,10 +128,19 @@ namespace KeyViewer.Unity
             keysRt.localRotation = Quaternion.Euler(vecConfig.Rotation.Released);
             keysRt.localScale = vecConfig.Scale.Released;
 
+            bool first = true;
             float totalX = 0;
             foreach (Key k in keys)
                 if (!k.Config.DisableSorting)
-                    totalX += k.Config.VectorConfig.Scale.Released.x * 100 + 10;
+                {
+                    var releasedScale = k.Config.VectorConfig.Scale.Released;
+                    if (first)
+                    {
+                        totalX += releasedScale.x * 100;
+                        first = false;
+                    }
+                    totalX += releasedScale.x * 100 + 10;
+                }
             Vector2 size = new Vector2(totalX - 10, keyHeight);
             centerOffset = KeyViewerUtils.GetPivot(profile.VectorConfig.Pivot) * size;
 

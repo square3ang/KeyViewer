@@ -28,6 +28,7 @@ namespace KeyViewer.Unity
         public bool Pressed;
         public Vector2 Size;
         public Vector2 Position;
+        public Vector2 PivotOffset;
         public KeyConfig Config;
         public Image Background;
         public Image Outline;
@@ -137,9 +138,9 @@ namespace KeyViewer.Unity
             Size = new Vector2(keyWidth, keyHeight);
             float _x = Config.DisableSorting ? 0 : x + keyWidth / 2;
             Position = new Vector2(_x, 0) - manager.centerOffset;
+#warning FIX PIVOT
+            PivotOffset = KeyViewerUtils.ApplyPivot(transform, (Vector2)transform.position + Size * KeyViewerUtils.GetPivot(vConfig.Pivot).InversePivot());
             KeyViewerUtils.ApplyConfigLayout(this, vConfig);
-#error PLEASE FIX TRANSFORM'S PIVOT!!!!
-            KeyViewerUtils.ApplyPivot(transform, Size * KeyViewerUtils.GetPivot(vConfig.Pivot));
 
             Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
             Background.rectTransform.SetAnchor(AnchorPresets.MiddleCenter);
