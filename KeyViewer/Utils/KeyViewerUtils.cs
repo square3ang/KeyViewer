@@ -78,6 +78,13 @@ namespace KeyViewer.Utils
             t.localScale = vConfig.Scale.Released;
             t.localPosition = vConfig.Offset.Released + k.Position;
         }
+        public static void ApplyConfigLayout(Rain r, VectorConfig vConfig)
+        {
+            var t = r.transform;
+            t.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
+            t.localScale = vConfig.Scale.Released;
+            t.localPosition = vConfig.Offset.Released + r.Position;
+        }
         public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config, float heightOffset)
         {
             ApplyColorLayout(text, config.Color.Released);
@@ -183,6 +190,10 @@ namespace KeyViewer.Utils
         }
         public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, float heightOffset)
         {
+            ApplyVectorConfig(rt, vConfig, pressed, new Vector2(0, heightOffset));
+        }
+        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, Vector2 offset)
+        {
             DOTween.Kill(rt, true);
 
             var rEase = vConfig.Rotation.GetEase(pressed);
@@ -194,10 +205,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                rt.DOAnchorPos(vConfig.Offset.Get(pressed).WithRelativeY(heightOffset), oEase.Duration)
+                rt.DOAnchorPos(vConfig.Offset.Get(pressed) + offset, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else rt.anchoredPosition = vConfig.Offset.Get(pressed).WithRelativeY(heightOffset);
+            else rt.anchoredPosition = vConfig.Offset.Get(pressed) + offset;
 
             var sEase = vConfig.Scale.GetEase(pressed);
             if (sEase.IsValid)
@@ -206,7 +217,7 @@ namespace KeyViewer.Utils
                 .SetAutoKill(false);
             else rt.localScale = vConfig.Scale.Get(pressed);
         }
-        public static void SetMaskAnchor(RectTransform rt, Direction dir)
+        public static void SetMaskAnchor(RectTransform rt, Direction dir, Pivot pivot = Pivot.MiddleCenter, Anchor anchor = Anchor.MiddleCenter)
         {
             switch (dir)
             {
@@ -231,6 +242,10 @@ namespace KeyViewer.Utils
                     rt.anchorMax = new Vector2(1, 0.5f);
                     break;
             }
+            if (pivot != Pivot.MiddleCenter)
+                rt.pivot = GetPivot(pivot).InversePivot();
+            if (anchor != Anchor.MiddleCenter)
+                rt.SetAnchor(anchor);
         }
         public static void OpenDiscordUrl()
         {
@@ -245,17 +260,17 @@ namespace KeyViewer.Utils
         {
             switch (pivot)
             {
-                case Pivot.TopLeft: return new Vector2(1, 0);
-                case Pivot.TopCenter: return new Vector2(0.5f, 0);
-                case Pivot.TopRight: return new Vector2(0, 0);
+                case Pivot.TopLeft: return new Vector2(0, 1);
+                case Pivot.TopCenter: return new Vector2(0.5f, 1);
+                case Pivot.TopRight: return new Vector2(1, 1);
 
-                case Pivot.MiddleLeft: return new Vector2(1, 0.5f);
+                case Pivot.MiddleLeft: return new Vector2(0, 0.5f);
                 case Pivot.MiddleCenter: return new Vector2(0.5f, 0.5f);
-                case Pivot.MiddleRight: return new Vector2(0, 0.5f);
+                case Pivot.MiddleRight: return new Vector2(1, 0.5f);
 
-                case Pivot.BottomLeft: return new Vector2(1, 1);
-                case Pivot.BottomCenter: return new Vector2(0.5f, 1);
-                case Pivot.BottomRight: return new Vector2(0, 1);
+                case Pivot.BottomLeft: return new Vector2(0, 0);
+                case Pivot.BottomCenter: return new Vector2(0.5f, 0);
+                case Pivot.BottomRight: return new Vector2(1, 0);
             }
             return Vector2.zero;
         }

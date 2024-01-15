@@ -1,6 +1,5 @@
 ﻿using KeyViewer.API;
 using KeyViewer.Core;
-using KeyViewer.Core.Input;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Models;
 using KeyViewer.Utils;
@@ -60,7 +59,8 @@ namespace KeyViewer.Unity
             image.color = new Color(1, 1, 1, 0);
             rainMask = rainContainer.AddComponent<RectMask2D>();
             RainMaskRt = rainMask.rectTransform;
-            KeyViewerUtils.SetMaskAnchor(RainMaskRt, Config.Rain.Direction);
+            var rainVecConfig = Config.Rain.ObjectConfig.VectorConfig;
+            KeyViewerUtils.SetMaskAnchor(RainMaskRt, Config.Rain.Direction, rainVecConfig.Pivot, rainVecConfig.Anchor);
 
             rainPool = new EnsurePool<Rain>(() =>
             {
@@ -137,19 +137,19 @@ namespace KeyViewer.Unity
             Size = new Vector2(keyWidth, keyHeight);
             float _x = Config.DisableSorting ? 0 : x + keyWidth / 2;
             Position = new Vector2(_x, 0) - manager.centerOffset;
-            Position += KeyViewerUtils.InjectPivot(this, KeyViewerUtils.GetPivot(vConfig.Pivot).InversePivot());
+            Position += KeyViewerUtils.InjectPivot(this, KeyViewerUtils.GetPivot(vConfig.Pivot));
             KeyViewerUtils.ApplyConfigLayout(this, vConfig);
 
             Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
             Background.rectTransform.SetAnchor(Config.BackgroundConfig.VectorConfig.Anchor);
-            Background.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.BackgroundConfig.VectorConfig.Pivot);
+            Background.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.BackgroundConfig.VectorConfig.Pivot).InversePivot();
             Background.rectTransform.sizeDelta = defaultSize;
             KeyViewerUtils.ApplyConfigLayout(Background, Config.BackgroundConfig);
             KeyViewerUtils.ApplyRoundnessLayout(Background, Config.BackgroundRoundness);
 
             Outline.sprite = AssetManager.Get(Config.Outline.Released, AssetManager.Outline);
             Outline.rectTransform.SetAnchor(Config.OutlineConfig.VectorConfig.Anchor);
-            Outline.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.OutlineConfig.VectorConfig.Pivot);
+            Outline.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.OutlineConfig.VectorConfig.Pivot).InversePivot();
             Outline.rectTransform.sizeDelta = defaultSize;
             KeyViewerUtils.ApplyConfigLayout(Outline, Config.OutlineConfig);
             KeyViewerUtils.ApplyRoundnessLayout(Outline, Config.OutlineRoundness);
@@ -157,7 +157,7 @@ namespace KeyViewer.Unity
             float heightOffset = defaultY / 4f;
             ObjectConfig textConfig = Config.TextConfig;
             Text.rectTransform.SetAnchor(Config.TextConfig.VectorConfig.Anchor);
-            Text.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.TextConfig.VectorConfig.Pivot);
+            Text.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.TextConfig.VectorConfig.Pivot).InversePivot();
             Text.rectTransform.sizeDelta = defaultSize;
             Text.fontSize = 75;
             Text.fontSizeMax = 75;
@@ -171,7 +171,7 @@ namespace KeyViewer.Unity
 
             ObjectConfig cTextConfig = Config.CountTextConfig;
             CountText.rectTransform.SetAnchor(Config.CountTextConfig.VectorConfig.Anchor);
-            CountText.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.CountTextConfig.VectorConfig.Pivot);
+            CountText.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.CountTextConfig.VectorConfig.Pivot).InversePivot();
             CountText.rectTransform.sizeDelta = defaultSize;
             CountText.fontSizeMin = 0;
             CountText.fontSize = 50;
@@ -194,7 +194,8 @@ namespace KeyViewer.Unity
                 rainPool.Clear();
                 rainPool.Fill(Config.Rain.PoolSize);
             }
-            KeyViewerUtils.SetMaskAnchor(RainMaskRt, rainConfig.Direction);
+            var rainVecConfig = rainConfig.ObjectConfig.VectorConfig;
+            KeyViewerUtils.SetMaskAnchor(RainMaskRt, rainConfig.Direction, rainVecConfig.Pivot, rainVecConfig.Anchor);
             RainUpdate();
             rainContainer.SetActive(Config.RainEnabled);
 

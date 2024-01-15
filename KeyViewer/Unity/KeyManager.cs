@@ -142,7 +142,7 @@ namespace KeyViewer.Unity
                     totalX += releasedScale.x * 100 + 10;
                 }
             Vector2 size = new Vector2(totalX - 10, keyHeight);
-            centerOffset = KeyViewerUtils.GetPivot(profile.VectorConfig.Pivot) * size;
+            centerOffset = KeyViewerUtils.GetPivot(profile.VectorConfig.Pivot).InversePivot() * size;
 
             float x = 0;
             keys.ForEach(k => k.UpdateLayout(ref x));

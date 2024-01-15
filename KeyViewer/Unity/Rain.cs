@@ -2,13 +2,14 @@
 using KeyViewer.Utils;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 namespace KeyViewer.Unity
 {
     public class Rain : MonoBehaviour
     {
         public bool IsAlive { get; private set; }
+        public Vector2 Position;
+
         private bool stretching = false;
         private RainConfig config;
         private Key key;
@@ -29,6 +30,7 @@ namespace KeyViewer.Unity
             image.sprite = key.RainImageManager.Get();
 
             KeyViewerUtils.ApplyColorLayout(image, objConfig.Color.Released);
+            KeyViewerUtils.ApplyConfigLayout(this, objConfig.VectorConfig);
             OnEnable();
             initialized = true;
         }
@@ -39,6 +41,7 @@ namespace KeyViewer.Unity
             if (colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase);
             else colorUpdateIgnores--;
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position);
         }
         public void Release()
         {
@@ -47,6 +50,7 @@ namespace KeyViewer.Unity
             if (colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase);
             else colorUpdateIgnores--;
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, Position);
         }
         public void OnEnable()
         {
@@ -54,7 +58,7 @@ namespace KeyViewer.Unity
             colorUpdateIgnores = 0;
             image.sprite = key.RainImageManager.Get();
             rt.sizeDelta = GetInitialSize();
-            rt.anchoredPosition = GetPosition(config.Direction);
+            rt.anchoredPosition = Position = GetPosition(config.Direction);
         }
         public void IgnoreColorUpdate()
         {
@@ -70,9 +74,9 @@ namespace KeyViewer.Unity
                 if (stretching)
                 {
                     rt.sizeDelta += delta.Abs();
-                    rt.anchoredPosition += delta * 0.5f;
+                    Position = rt.anchoredPosition += delta * 0.5f;
                 }
-                else rt.anchoredPosition += delta;
+                else Position = rt.anchoredPosition += delta;
             }
             else
             {
