@@ -46,6 +46,7 @@ namespace KeyViewer
         public static ModelDrawable<Profile> ListeningDrawer { get; internal set; }
         public static Harmony Harmony { get; private set; }
         public static GUIController GUI { get; private set; }
+        public static bool HasUpdate { get; private set; }
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
@@ -162,6 +163,7 @@ namespace KeyViewer
             GUI.Flush();
             ListeningDrawer = null;
             GUI.Init(new SettingsDrawer(Settings));
+            StaticCoroutine.Queue(StaticCoroutine.SyncRunner(() => EnsureKeyViewerVersion(System.Version.Parse(Lang[TranslationKeys.Version]))));
         }
 
         public static bool AddManager(ActiveProfile profile, bool forceInit = false)
@@ -238,6 +240,35 @@ namespace KeyViewer
                     key.Pressed = false;
                     key.ResetRains();
                 }
+            }
+        }
+        public static void EnsureKeyViewerVersion(System.Version newVersion)
+        {
+            if (newVersion > Mod.Version)
+            {
+                HasUpdate = true;
+                var update = Lang[TranslationKeys.Update];
+                foreach (var key in Language.sheet.Get(Lang.Gid).Keys.Where(key =>
+                key != TranslationKeys.Lorem_Ipsum &&
+                key != TranslationKeys.Version &&
+                key != TranslationKeys.Update &&
+                key != TranslationKeys.DiscordLink &&
+                key != TranslationKeys.DownloadLink &&
+                key != TranslationKeys.UpdateNote &&
+                key != TranslationKeys.Raw).ToList())
+                    Lang[key] = update;
+                ErrorCanvasContext ecc = new ErrorCanvasContext();
+                ecc.titleText = "WOW YOUR KEYVIEWER VERSION IS BEAUTIFUL!";
+                ecc.errorMessage =
+                    $"Current KeyViewer Version v{Mod.Version}.\n" +
+                    $"But Latest KeyViewer Is v{newVersion}.\n" +
+                    $"PlEaSe UpDaTe YoUr KeYvIeWeR!";
+                ecc.ignoreBtnCallback = () =>
+                {
+                    ADOUtils.HideError(ecc);
+                    KeyViewerUtils.OpenDownloadUrl();
+                };
+                ADOUtils.ShowError(ecc);
             }
         }
     }

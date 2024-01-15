@@ -253,7 +253,7 @@ namespace KeyViewer.Utils
         }
         public static void OpenDownloadUrl()
         {
-            if (Language.HasUpdate)
+            if (Main.HasUpdate)
                 Application.OpenURL(Main.Lang[TranslationKeys.DownloadLink]);
         }
         public static Vector2 GetPivot(Pivot pivot)

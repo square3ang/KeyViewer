@@ -1,4 +1,5 @@
 ﻿using KeyViewer.Models;
+using KeyViewer.Unity;
 using KeyViewer.Utils;
 using System;
 using System.Linq;
@@ -7,14 +8,13 @@ namespace KeyViewer.Core.Translation
 {
     public class Language
     {
-        private const string KEY = "1wG6wB3q0q1E647mhECPSl5Sd_joqlsYOmkoPyDMs-Rw";
-        private static SpreadSheet sheet = new SpreadSheet(KEY);
+        private const string KEY = "1EiWVds23-gZeRCrXL-UYr-o-sc0m-jfqWa-G7qmUYdI";
+        internal static SpreadSheet sheet = new SpreadSheet(KEY);
         private static Language Korean;
         private static Language English = new Language(GID.ENGLISH);
         private static Language Chinese;
         private static Language Japanese;
         public static event Action OnInitialize = delegate { };
-        public static bool HasUpdate = false;
         public bool Initialized { get; private set; }
         public int Gid { get; }
         public Language(GID gid)
@@ -22,35 +22,10 @@ namespace KeyViewer.Core.Translation
             Gid = (int)gid;
             sheet.Download((int)gid, d =>
             {
-                Version newVersion;
-                if ((newVersion = Version.Parse(d[TranslationKeys.Version])) > Main.Mod.Version)
-                {
-                    HasUpdate = true;
-                    var update = d[TranslationKeys.Update];
-                    foreach (var key in d.Keys.Where(key =>
-                    key != TranslationKeys.Lorem_Ipsum &&
-                    key != TranslationKeys.Version &&
-                    key != TranslationKeys.Update &&
-                    key != TranslationKeys.DiscordLink &&
-                    key != TranslationKeys.DownloadLink).ToList())
-                        d[key] = update;
-                    ErrorCanvasContext ecc = new ErrorCanvasContext();
-                    ecc.titleText = "WOW YOUR KEYVIEWER VERSION IS BEAUTIFUL!";
-                    ecc.errorMessage =
-                        $"Current KeyViewer Version v{Main.Mod.Version}.\n" +
-                        $"But Latest KeyViewer Is v{newVersion}.\n" +
-                        $"PlEaSe UpDaTe YoUr KeYvIeWeR!";
-                    ecc.ignoreBtnCallback = () =>
-                    {
-                        ADOUtils.HideError(ecc);
-                        KeyViewerUtils.OpenDownloadUrl();
-                    };
-                    ADOUtils.ShowError(ecc);
-                }
-                Main.Logger.Log($"Loaded {d.Count} Localizations from Sheet");
+                Main.Logger.Log($"Loaded {d.Count} Localizations from Sheet (GID:{(GID)Gid})");
                 OnInitialize();
                 Initialized = true;
-            }, false).Await();
+            }).Await();
         }
         public string this[string key]
         {
