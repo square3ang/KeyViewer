@@ -142,14 +142,14 @@ namespace KeyViewer.Unity
 
             Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
             Background.rectTransform.SetAnchor(Config.BackgroundConfig.VectorConfig.Anchor);
-            Background.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.BackgroundConfig.VectorConfig.Pivot).InversePivot();
+            Background.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.BackgroundConfig.VectorConfig.Pivot);
             Background.rectTransform.sizeDelta = defaultSize;
             KeyViewerUtils.ApplyConfigLayout(Background, Config.BackgroundConfig);
             KeyViewerUtils.ApplyRoundnessLayout(Background, Config.BackgroundRoundness);
 
             Outline.sprite = AssetManager.Get(Config.Outline.Released, AssetManager.Outline);
             Outline.rectTransform.SetAnchor(Config.OutlineConfig.VectorConfig.Anchor);
-            Outline.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.OutlineConfig.VectorConfig.Pivot).InversePivot();
+            Outline.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.OutlineConfig.VectorConfig.Pivot);
             Outline.rectTransform.sizeDelta = defaultSize;
             KeyViewerUtils.ApplyConfigLayout(Outline, Config.OutlineConfig);
             KeyViewerUtils.ApplyRoundnessLayout(Outline, Config.OutlineRoundness);
@@ -157,7 +157,7 @@ namespace KeyViewer.Unity
             float heightOffset = defaultY / 4f;
             ObjectConfig textConfig = Config.TextConfig;
             Text.rectTransform.SetAnchor(Config.TextConfig.VectorConfig.Anchor);
-            Text.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.TextConfig.VectorConfig.Pivot).InversePivot();
+            Text.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.TextConfig.VectorConfig.Pivot);
             Text.rectTransform.sizeDelta = defaultSize;
             Text.fontSize = 75;
             Text.fontSizeMax = 75;
@@ -171,7 +171,7 @@ namespace KeyViewer.Unity
 
             ObjectConfig cTextConfig = Config.CountTextConfig;
             CountText.rectTransform.SetAnchor(Config.CountTextConfig.VectorConfig.Anchor);
-            CountText.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.CountTextConfig.VectorConfig.Pivot).InversePivot();
+            CountText.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.CountTextConfig.VectorConfig.Pivot);
             CountText.rectTransform.sizeDelta = defaultSize;
             CountText.fontSizeMin = 0;
             CountText.fontSize = 50;
@@ -200,7 +200,7 @@ namespace KeyViewer.Unity
             rainContainer.SetActive(Config.RainEnabled);
 
             if (!Config.DisableSorting)
-                x += keyWidth + 10;
+                x += keyWidth + manager.profile.KeySpacing;
             ReplaceText();
         }
         public void ResetRains()
@@ -247,16 +247,17 @@ namespace KeyViewer.Unity
             float x = Size.x, y = Size.y;
             Vector2 offset = rainVConfig.Offset.Get(Pressed);
             int softness = Config.Rain.Softness.Get(Pressed);
+            float spacing = manager.profile.KeySpacing;
             switch (dir)
             {
                 case Direction.Up:
-                    return new Vector2(vec.x + offset.x, vec.y + (y / 2 - softness) + 10 + offset.y);
+                    return new Vector2(vec.x + offset.x, vec.y + (y / 2 - softness) + spacing + offset.y);
                 case Direction.Down:
-                    return new Vector2(vec.x + offset.x, vec.y - (y / 2 - softness) - 10 + offset.y);
+                    return new Vector2(vec.x + offset.x, vec.y - (y / 2 - softness) - spacing + offset.y);
                 case Direction.Left:
-                    return new Vector2(vec.x + offset.x - (x / 2 - softness) - 10, vec.y + offset.y);
+                    return new Vector2(vec.x + offset.x - (x / 2 - softness) - spacing, vec.y + offset.y);
                 case Direction.Right:
-                    return new Vector2(vec.x + offset.x + (x / 2 - softness) + 10, vec.y + offset.y);
+                    return new Vector2(vec.x + offset.x + (x / 2 - softness) + spacing, vec.y + offset.y);
                 default: return Vector2.zero;
             }
         }

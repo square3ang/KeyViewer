@@ -47,6 +47,7 @@ namespace KeyViewer
         public static Harmony Harmony { get; private set; }
         public static GUIController GUI { get; private set; }
         public static bool HasUpdate { get; private set; }
+        public static event System.Action OnManagersInitialized = delegate { };
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
@@ -209,6 +210,8 @@ namespace KeyViewer
                     Logger.Log($"Initialized Key Manager {name}.");
                     yield return null;
                 }
+                OnManagersInitialized();
+                yield break;
             }
             else
             {
@@ -220,6 +223,8 @@ namespace KeyViewer
                     Logger.Log($"Initialized Key Manager {name}.");
                     yield return null;
                 }
+                OnManagersInitialized();
+                yield break;
             }
         }
         public static void ReleaseManagers()

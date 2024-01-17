@@ -37,6 +37,7 @@
             internal static readonly string ConfigurateProfile = Prefix + "CONFIGURATE_PROFILE";
             internal static readonly string CreateDummyKey = Prefix + "CREATE_DUMMY_KEY";
             internal static readonly string DummyName = Prefix + "DUMMY_NAME";
+            internal static readonly string KeySpacing = Prefix + "KEY_SPACING";
         }
         public static class Misc
         {

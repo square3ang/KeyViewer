@@ -5,6 +5,10 @@ VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyViewer", "KeyViewer\KeyViewer.csproj", "{C6FD7749-0E74-4798-AA33-69BB08DC1402}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyViewer.Scripting", "KeyViewer.Scripting\KeyViewer.Scripting.csproj", "{1A30DBA2-29AD-4DCD-A2BD-EAA746A1BB0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyViewer.Scripting.Bootstrapper", "KeyViewer.Scripting.Bootstrapper\KeyViewer.Scripting.Bootstrapper.csproj", "{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A30DBA2-29AD-4DCD-A2BD-EAA746A1BB0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A30DBA2-29AD-4DCD-A2BD-EAA746A1BB0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A30DBA2-29AD-4DCD-A2BD-EAA746A1BB0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A30DBA2-29AD-4DCD-A2BD-EAA746A1BB0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

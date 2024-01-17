@@ -16,7 +16,7 @@ namespace KeyViewer.Unity
         public Tag MaxKPSTag { get; private set; }
         public Tag AvgKPSTag { get; private set; }
         public Tag CountTag { get; private set; }
-        public Tag[] AllTags => new Tag[] { CurKPSTag, MaxKPSTag, AvgKPSTag, CountTag };
+        public List<Tag> AllTags { get; private set; }
 
         public Profile profile;
         public Canvas keysCanvas;
@@ -24,7 +24,7 @@ namespace KeyViewer.Unity
         internal KPSCalculator kpsCalc;
         internal List<Key> keys;
         internal Vector2 centerOffset;
-        private RectTransform keysRt;
+        internal RectTransform keysRt;
         private bool initialized;
         private bool prevPressed;
         public void Init()
@@ -74,6 +74,7 @@ namespace KeyViewer.Unity
                 if (key == null) return -1;
                 return key.Config.Count;
             }));
+            AllTags = new List<Tag> { CurKPSTag, MaxKPSTag, AvgKPSTag, CountTag };
             initialized = true;
         }
         public Key this[string keyName]
@@ -117,8 +118,7 @@ namespace KeyViewer.Unity
         {
             int count = keys.Count;
             float keyHeight = profile.Keys.Any(k => k.EnableCountText) ? 150 : 100;
-            float spacing = 10;
-            float width = count * 100 + (count - 1) * spacing;
+            float width = count * 100 + (count - 1) * profile.KeySpacing;
 
             var vecConfig = profile.VectorConfig;
             keysRt.SetAnchor(profile.VectorConfig.Anchor);
@@ -139,10 +139,10 @@ namespace KeyViewer.Unity
                         totalX += releasedScale.x * 100;
                         first = false;
                     }
-                    totalX += releasedScale.x * 100 + 10;
+                    totalX += releasedScale.x * 100 + profile.KeySpacing;
                 }
-            Vector2 size = new Vector2(totalX - 10, keyHeight);
-            centerOffset = KeyViewerUtils.GetPivot(profile.VectorConfig.Pivot).InversePivot() * size;
+            Vector2 size = new Vector2(totalX - profile.KeySpacing, keyHeight);
+            centerOffset = KeyViewerUtils.GetPivot(profile.VectorConfig.Pivot) * size;
 
             float x = 0;
             keys.ForEach(k => k.UpdateLayout(ref x));

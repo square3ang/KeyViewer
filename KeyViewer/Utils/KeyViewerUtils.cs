@@ -243,7 +243,7 @@ namespace KeyViewer.Utils
                     break;
             }
             if (pivot != Pivot.MiddleCenter)
-                rt.pivot = GetPivot(pivot).InversePivot();
+                rt.pivot = GetPivot(pivot);
             if (anchor != Anchor.MiddleCenter)
                 rt.SetAnchor(anchor);
         }

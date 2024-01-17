@@ -32,9 +32,9 @@ namespace KeyViewer.Patches
             if (AsyncInputManager.isActive)
             {
                 // Check registered keys
-                keysPressed += profile.Keys.Count(k => AsyncInputCompat.GetKeyDown(k.Code))
+                keysPressed += profile.Keys.Count(k => KeyInput.GetKeyDown(k.Code))
                                // Always account for certain keys
-                               + AlwaysBoundKeys.Count(AsyncInputCompat.GetKeyDown);
+                               + AlwaysBoundKeys.Count(KeyInput.GetKeyDown);
             }
             else
             {
@@ -43,6 +43,7 @@ namespace KeyViewer.Patches
                                // Always account for certain keys
                                + AlwaysBoundKeys.Count(Input.GetKeyDown);
             }
+            __result = keysPressed;
             return false;
         }
     }

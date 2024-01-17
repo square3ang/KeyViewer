@@ -26,6 +26,7 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawBool(L(TKP.LimitNotRegisteredKeys), ref model.LimitNotRegisteredKeys);
             changed |= Drawer.DrawBool(L(TKP.ResetOnStart), ref model.ResetOnStart);
             changed |= Drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
+            changed |= Drawer.DrawSingleWithSlider(L(TKP.KeySpacing), ref model.KeySpacing, 0, 100, 300f);
             changed |= Drawer.DrawVectorConfig(model.VectorConfig);
             GUILayoutEx.HorizontalLine(1);
             Drawer.ButtonLabel(L(TKP.RegisteredKeys), KeyViewerUtils.OpenDiscordUrl);
