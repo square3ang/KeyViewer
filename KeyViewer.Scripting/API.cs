@@ -6,6 +6,9 @@ using Jint.Runtime.Interop;
 using JSNet.API;
 using KeyViewer.API;
 using KeyViewer.Core.TextReplacing;
+using KeyViewer.Migration;
+using KeyViewer.Migration.V2;
+using KeyViewer.Migration.V3;
 using KeyViewer.Models;
 using KeyViewer.Scripting.Proxies;
 using KeyViewer.Utils;
@@ -44,7 +47,7 @@ namespace KeyViewer.Scripting
                 typeof(RainImageDisplayMode),
                 typeof(Pivot),
                 typeof(Anchor),
-                typeof(Direction),
+                typeof(Models.Direction),
                 typeof(Color),
                 typeof(VertexGradient),
                 typeof(GColor),
@@ -65,7 +68,7 @@ namespace KeyViewer.Scripting
                 typeof(ObjectConfig),
                 typeof(KeyConfig),
                 typeof(RainConfig),
-                typeof(Profile),
+                typeof(Models.Profile),
                 typeof(KeyManagerProxy),
                 typeof(KeyProxy),
                 typeof(ListProxy),

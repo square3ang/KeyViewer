@@ -17,16 +17,19 @@ namespace KeyViewer.Models
         public bool EnableCountText = true;
         public bool EnableOutlineImage = true;
         public bool DisableSorting = false;
+        public bool DoNotScaleText = true;
+        public float TextFontSize = 75;
+        public float CountTextFontSize = 50;
 
         public PressRelease<string> Text = new PressRelease<string>(null);
         public PressRelease<string> CountText = new PressRelease<string>(null);
         public PressRelease<string> Background = new PressRelease<string>(null);
         public PressRelease<string> Outline = new PressRelease<string>(null);
 
-        public ObjectConfig TextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
-        public ObjectConfig CountTextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
-        public ObjectConfig BackgroundConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.black.WithAlpha(0.4f));
-        public ObjectConfig OutlineConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.white);
+        public ObjectConfig TextConfig = new ObjectConfig(new PressRelease<Vector3>(new Vector3(0.9f, 0.9f), Vector3.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
+        public ObjectConfig CountTextConfig = new ObjectConfig(new PressRelease<Vector3>(new Vector3(0.9f, 0.9f), Vector3.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
+        public ObjectConfig BackgroundConfig = new ObjectConfig(new PressRelease<Vector3>(new Vector3(0.9f, 0.9f), Vector3.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.black.WithAlpha(0.4f));
+        public ObjectConfig OutlineConfig = new ObjectConfig(new PressRelease<Vector3>(new Vector3(0.9f, 0.9f), Vector3.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.white);
         public float BackgroundRoundness = 0f;
         public float OutlineRoundness = 0f;
 
@@ -48,6 +51,9 @@ namespace KeyViewer.Models
             newConfig.EnableCountText = EnableCountText;
             newConfig.EnableOutlineImage = EnableOutlineImage;
             newConfig.DisableSorting = DisableSorting;
+            newConfig.DoNotScaleText = DoNotScaleText;
+            newConfig.TextFontSize = TextFontSize;
+            newConfig.CountTextFontSize = CountTextFontSize;
 
             newConfig.Text = Text.Copy();
             newConfig.CountText = CountText.Copy();
@@ -81,6 +87,9 @@ namespace KeyViewer.Models
             node[nameof(EnableCountText)] = EnableCountText;
             node[nameof(EnableOutlineImage)] = EnableOutlineImage;
             node[nameof(DisableSorting)] = DisableSorting;
+            node[nameof(DoNotScaleText)] = DoNotScaleText;
+            node[nameof(TextFontSize)] = TextFontSize;
+            node[nameof(CountTextFontSize)] = CountTextFontSize;
 
             node[nameof(Text)] = Text.Serialize();
             node[nameof(CountText)] = CountText.Serialize();
@@ -113,6 +122,9 @@ namespace KeyViewer.Models
             EnableCountText = node[nameof(EnableCountText)];
             EnableOutlineImage = node[nameof(EnableOutlineImage)];
             DisableSorting = node[nameof(DisableSorting)];
+            DoNotScaleText = node[nameof(DoNotScaleText)];
+            TextFontSize = node[nameof(TextFontSize)].IfNotExist(75);
+            CountTextFontSize = node[nameof(CountTextFontSize)].IfNotExist(50);
 
             Text = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Text)]);
             CountText = ModelUtils.Unbox<PressRelease<string>>(node[nameof(CountText)]);

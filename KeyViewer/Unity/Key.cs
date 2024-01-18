@@ -27,6 +27,7 @@ namespace KeyViewer.Unity
         public bool Pressed;
         public Vector2 Size;
         public Vector2 Position;
+        public Vector3 FixedScale;
         public KeyConfig Config;
         public Image Background;
         public Image Outline;
@@ -159,10 +160,10 @@ namespace KeyViewer.Unity
             Text.rectTransform.SetAnchor(Config.TextConfig.VectorConfig.Anchor);
             Text.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.TextConfig.VectorConfig.Pivot);
             Text.rectTransform.sizeDelta = defaultSize;
-            Text.fontSize = 75;
-            Text.fontSizeMax = 75;
+            Text.fontSize = Config.TextFontSize;
+            Text.fontSizeMax = Config.TextFontSize;
             Text.enableAutoSizing = true;
-            KeyViewerUtils.ApplyConfigLayout(Text, textConfig, Config.EnableCountText ? heightOffset : 0);
+            KeyViewerUtils.ApplyConfigLayout(Text, textConfig, Config.EnableCountText ? heightOffset : 0, Config.DoNotScaleText);
 
             var defaultSource = Constants.KeyString.TryGetValue(Config.Code, out string codeStr) ? codeStr : KeyViewerUtils.KeyName(Config);
             textReplacerP.Source = string.IsNullOrEmpty(Config.Text.Pressed) ? defaultSource : Config.Text.Pressed;
@@ -174,10 +175,10 @@ namespace KeyViewer.Unity
             CountText.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.CountTextConfig.VectorConfig.Pivot);
             CountText.rectTransform.sizeDelta = defaultSize;
             CountText.fontSizeMin = 0;
-            CountText.fontSize = 50;
-            CountText.fontSizeMax = 50;
+            CountText.fontSize = Config.CountTextFontSize;
+            CountText.fontSizeMax = Config.CountTextFontSize;
             CountText.enableAutoSizing = true;
-            KeyViewerUtils.ApplyConfigLayout(CountText, cTextConfig, Config.EnableCountText ? -heightOffset : 0);
+            KeyViewerUtils.ApplyConfigLayout(CountText, cTextConfig, Config.EnableCountText ? -heightOffset : 0, Config.DoNotScaleText);
 
             countTextReplacerP.Source = string.IsNullOrEmpty(Config.CountText.Pressed) ? $"{{Count:{KeyViewerUtils.KeyName(Config)}}}" : Config.CountText.Pressed;
             countTextReplacerR.Source = string.IsNullOrEmpty(Config.CountText.Released) ? $"{{Count:{KeyViewerUtils.KeyName(Config)}}}" : Config.CountText.Released;
@@ -243,7 +244,7 @@ namespace KeyViewer.Unity
         private Vector2 GetMaskPosition(Direction dir)
         {
             var rainVConfig = Config.Rain.ObjectConfig.VectorConfig;
-            Vector2 vec = transform.position + (Vector3)rainVConfig.Offset.Get(Pressed);
+            Vector2 vec = transform.position + rainVConfig.Offset.Get(Pressed);
             float x = Size.x, y = Size.y;
             Vector2 offset = rainVConfig.Offset.Get(Pressed);
             int softness = Config.Rain.Softness.Get(Pressed);
@@ -367,12 +368,12 @@ namespace KeyViewer.Unity
         }
         private void ApplyVectorConfig()
         {
-            KeyViewerUtils.ApplyVectorConfig(this, Config.VectorConfig, Pressed);
             float heightOffset = Config.EnableCountText ? defaultSize.y / 4f : 0;
-            KeyViewerUtils.ApplyVectorConfig(Text.rectTransform, Config.TextConfig.VectorConfig, Pressed, heightOffset);
-            KeyViewerUtils.ApplyVectorConfig(CountText.rectTransform, Config.CountTextConfig.VectorConfig, Pressed, -heightOffset);
-            KeyViewerUtils.ApplyVectorConfig(Background.rectTransform, Config.BackgroundConfig.VectorConfig, Pressed, 0);
-            KeyViewerUtils.ApplyVectorConfig(Outline.rectTransform, Config.OutlineConfig.VectorConfig, Pressed, 0);
+            KeyViewerUtils.ApplyVectorConfig(this, Config.VectorConfig, Pressed);
+            KeyViewerUtils.ApplyVectorConfig(Text.rectTransform, Config.TextConfig.VectorConfig, Pressed, heightOffset, Config.DoNotScaleText);
+            KeyViewerUtils.ApplyVectorConfig(CountText.rectTransform, Config.CountTextConfig.VectorConfig, Pressed, -heightOffset, Config.DoNotScaleText);
+            KeyViewerUtils.ApplyVectorConfig(Background.rectTransform, Config.BackgroundConfig.VectorConfig, Pressed, 0, false);
+            KeyViewerUtils.ApplyVectorConfig(Outline.rectTransform, Config.OutlineConfig.VectorConfig, Pressed, 0, false);
         }
         private void RainUpdate()
         {

@@ -43,9 +43,25 @@ namespace KeyViewer.Utils
         {
             await task;
         }
+        public static Vector2 WithRelativeX(this Vector2 vector, float x)
+        {
+            return new Vector2(vector.x + x, vector.y);
+        }
         public static Vector2 WithRelativeY(this Vector2 vector, float y)
         {
             return new Vector2(vector.x, vector.y + y);
+        }
+        public static Vector3 WithRelativeX(this Vector3 vector, float x)
+        {
+            return new Vector3(vector.x + x, vector.y, vector.z);
+        }
+        public static Vector3 WithRelativeY(this Vector3 vector, float y)
+        {
+            return new Vector3(vector.x, vector.y + y, vector.z);
+        }
+        public static Vector3 WithRelativeZ(this Vector3 vector, float z)
+        {
+            return new Vector3(vector.x, vector.y, vector.z + z);
         }
         public static void SetAnchor(this RectTransform source, Anchor allign)
         {
@@ -154,5 +170,6 @@ namespace KeyViewer.Utils
                     }
             }
         }
+        public static JsonNode IfNotExist(this JsonNode node, JsonNode other) => node == null ? other : node;
     }
 }

@@ -68,7 +68,7 @@ namespace KeyViewer.Utils
             var vConfig = config.VectorConfig;
             var rt = image.rectTransform;
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
-            rt.anchoredPosition = vConfig.Offset.Released;
+            rt.localPosition = vConfig.Offset.Released;
             rt.localScale = vConfig.Scale.Released;
         }
         public static void ApplyConfigLayout(Key k, VectorConfig vConfig)
@@ -76,23 +76,26 @@ namespace KeyViewer.Utils
             var t = k.transform;
             t.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             t.localScale = vConfig.Scale.Released;
-            t.localPosition = vConfig.Offset.Released + k.Position;
+            t.localPosition = vConfig.Offset.Released + (Vector3)k.Position;
         }
         public static void ApplyConfigLayout(Rain r, VectorConfig vConfig)
         {
             var t = r.transform;
             t.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             t.localScale = vConfig.Scale.Released;
-            t.localPosition = vConfig.Offset.Released + r.Position;
+            t.localPosition = vConfig.Offset.Released + (Vector3)r.Position;
         }
-        public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config, float heightOffset)
+        public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config, float heightOffset, bool fixScale)
         {
             ApplyColorLayout(text, config.Color.Released);
             var vConfig = config.VectorConfig;
             var rt = text.rectTransform;
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
-            rt.anchoredPosition = vConfig.Offset.Released.WithRelativeY(heightOffset);
-            rt.localScale = vConfig.Scale.Released;
+            rt.localPosition = vConfig.Offset.Released.WithRelativeY(heightOffset);
+            Vector3 scale = vConfig.Scale.Released;
+            if (fixScale)
+                scale = FixedScale(rt.parent.localScale, scale);
+            rt.localScale = scale;
         }
         public static void ApplyColor(Image image, GColor from, GColor to, EaseConfig easeConfig)
         {
@@ -176,10 +179,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                t.DOLocalMove(vConfig.Offset.Get(pressed) + k.Position, oEase.Duration)
+                t.DOLocalMove(vConfig.Offset.Get(pressed) + (Vector3)k.Position, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else t.localPosition = vConfig.Offset.Get(pressed) + k.Position;
+            else t.localPosition = vConfig.Offset.Get(pressed) + (Vector3)k.Position;
 
             var sEase = vConfig.Scale.GetEase(pressed);
             if (sEase.IsValid)
@@ -188,11 +191,11 @@ namespace KeyViewer.Utils
                 .SetAutoKill(false);
             else t.localScale = vConfig.Scale.Get(pressed);
         }
-        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, float heightOffset)
+        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, float heightOffset, bool fixScale)
         {
-            ApplyVectorConfig(rt, vConfig, pressed, new Vector2(0, heightOffset));
+            ApplyVectorConfig(rt, vConfig, pressed, new Vector2(0, heightOffset), fixScale);
         }
-        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, Vector2 offset)
+        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, Vector2 offset, bool fixScale)
         {
             DOTween.Kill(rt, true);
 
@@ -205,17 +208,20 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                rt.DOAnchorPos(vConfig.Offset.Get(pressed) + offset, oEase.Duration)
+                rt.DOLocalMove(vConfig.Offset.Get(pressed) + (Vector3)offset, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else rt.anchoredPosition = vConfig.Offset.Get(pressed) + offset;
+            else rt.localPosition = vConfig.Offset.Get(pressed) + (Vector3)offset;
 
+            Vector3 scale = vConfig.Scale.Get(pressed);
+            if (fixScale)
+                scale = FixedScale(rt.parent.localScale, scale);
             var sEase = vConfig.Scale.GetEase(pressed);
             if (sEase.IsValid)
-                rt.DOScale(vConfig.Scale.Get(pressed), sEase.Duration)
+                rt.DOScale(scale, sEase.Duration)
                 .SetEase(sEase.Ease)
                 .SetAutoKill(false);
-            else rt.localScale = vConfig.Scale.Get(pressed);
+            else rt.localScale = scale;
         }
         public static void SetMaskAnchor(RectTransform rt, Direction dir, Pivot pivot = Pivot.MiddleCenter, Anchor anchor = Anchor.MiddleCenter)
         {
@@ -247,6 +253,10 @@ namespace KeyViewer.Utils
             if (anchor != Anchor.MiddleCenter)
                 rt.SetAnchor(anchor);
         }
+        public static Vector3 FixedScale(Vector3 parentScale, Vector3 fixedScale)
+        {
+            return new Vector3(fixedScale.x / parentScale.x, fixedScale.y / parentScale.y, fixedScale.z == 0 ? 0 : fixedScale.z / parentScale.z);
+        }
         public static void OpenDiscordUrl()
         {
             Application.OpenURL(Main.Lang[TranslationKeys.DiscordLink]);
@@ -273,6 +283,21 @@ namespace KeyViewer.Utils
                 case Pivot.BottomRight: return new Vector2(1, 0);
             }
             return Vector2.zero;
+        }
+        public static Vector2 AdjustRainPosition(Direction dir, Vector2 position, Vector2 offset)
+        {
+            switch (dir)
+            {
+                case Direction.Up:
+                    return position.WithRelativeX(offset.x).WithRelativeY(-offset.y);
+                case Direction.Down:
+                    return position.WithRelativeX(-offset.x).WithRelativeY(-offset.y);
+                case Direction.Left:
+                    return position.WithRelativeX(offset.x).WithRelativeY(-offset.y);
+                case Direction.Right:
+                    return position.WithRelativeX(-offset.x).WithRelativeY(-offset.y);
+                default: return position;
+            }
         }
     }
 }

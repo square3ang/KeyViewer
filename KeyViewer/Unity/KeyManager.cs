@@ -93,7 +93,7 @@ namespace KeyViewer.Unity
             var pressed = keys.Any(k => k.Pressed);
             if (prevPressed == pressed) return;
             prevPressed = pressed;
-            KeyViewerUtils.ApplyVectorConfig(keysRt, profile.VectorConfig, pressed, 0);
+            KeyViewerUtils.ApplyVectorConfig(keysRt, profile.VectorConfig, pressed, 0, false);
         }
         public void UpdateKeys()
         {

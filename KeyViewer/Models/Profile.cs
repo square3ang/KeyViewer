@@ -22,6 +22,7 @@ namespace KeyViewer.Models
             newProfile.ViewOnlyGamePlay = ViewOnlyGamePlay;
             newProfile.LimitNotRegisteredKeys = LimitNotRegisteredKeys;
             newProfile.ResetOnStart = ResetOnStart;
+            newProfile.KeySpacing = KeySpacing;
             newProfile.VectorConfig = VectorConfig.Copy();
             newProfile.KPSUpdateRate = KPSUpdateRate;
             return newProfile;
@@ -33,6 +34,7 @@ namespace KeyViewer.Models
             node[nameof(ViewOnlyGamePlay)] = ViewOnlyGamePlay;
             node[nameof(LimitNotRegisteredKeys)] = LimitNotRegisteredKeys;
             node[nameof(ResetOnStart)] = ResetOnStart;
+            node[nameof(KeySpacing)] = KeySpacing;
             node[nameof(VectorConfig)] = VectorConfig.Serialize();
             node[nameof(KPSUpdateRate)] = KPSUpdateRate;
             return node;
@@ -43,6 +45,7 @@ namespace KeyViewer.Models
             ViewOnlyGamePlay = node[nameof(ViewOnlyGamePlay)];
             LimitNotRegisteredKeys = node[nameof(LimitNotRegisteredKeys)];
             ResetOnStart = node[nameof(ResetOnStart)];
+            KeySpacing = node[nameof(KeySpacing)];
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
             KPSUpdateRate = node[nameof(KPSUpdateRate)];
         }

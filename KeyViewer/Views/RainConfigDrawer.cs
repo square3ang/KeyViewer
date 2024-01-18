@@ -4,6 +4,7 @@ using KeyViewer.Unity;
 using KeyViewer.Utils;
 using UnityEngine;
 using TKRC = KeyViewer.Core.Translation.TranslationKeys.RainConfig;
+using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 
 namespace KeyViewer.Views
 {
@@ -22,6 +23,7 @@ namespace KeyViewer.Views
             bool changed = false;
             string name = config.DummyName ?? config.Code.ToString();
             changed |= Drawer.DrawInt32(L(TKRC.RainPoolSize), ref model.PoolSize);
+            changed |= Drawer.DrawSingleWithSlider(L(TKM.Roundness), ref model.Roundness, 0, Constants.Rad2Deg100, 300);
             changed |= Drawer.DrawPressReleaseH(L(TKRC.RainSpeed), model.Speed, Drawer.CD_H_FLT_SPEEDONLY);
             changed |= Drawer.DrawPressReleaseH(L(TKRC.RainLength), model.Length, Drawer.CD_H_FLT_LENGTHONLY);
             changed |= Drawer.DrawPressReleaseH(L(TKRC.RainSoftness), model.Softness, Drawer.CD_H_INT32_SOFTNESSONLY);
@@ -33,6 +35,7 @@ namespace KeyViewer.Views
                     bool result = false;
                     result |= Drawer.DrawString(L(TKRC.RainImagePath), ref i.Image);
                     result |= Drawer.DrawInt32(L(TKRC.RainImageCount), ref i.Count);
+                    result |= Drawer.DrawSingleWithSlider(L(TKM.Roundness), ref i.Roundness, 0, Constants.Rad2Deg100, 300);
                     return result;
                 });
             }, L(TKRC.RainImages), ref imageListExpanded);

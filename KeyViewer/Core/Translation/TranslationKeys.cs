@@ -91,6 +91,7 @@
             internal static readonly string ReleasedEase = Prefix + "RELEASED_EASE";
             internal static readonly string ShowUpdateNote = Prefix + "SHOW_UPDATE_NOTE";
             internal static readonly string Pivot = Prefix + "PIVOT";
+            internal static readonly string Roundness = Prefix + "ROUNDNESS";
         }
         public static class KeyConfig
         {
@@ -121,6 +122,9 @@
             internal static readonly string UpdateTextAlways = Prefix + "UPDATE_TEXT_ALWAYS";
             internal static readonly string DisableSorting = Prefix + "DISABLE_SORTING";
             internal static readonly string EnableOutlineImage = Prefix + "ENABLE_OUTLINE_IMAGE";
+            internal static readonly string DoNotScaleText = Prefix + "DO_NOT_SCALE_TEXT";
+            internal static readonly string TextFontSize = Prefix + "TEXT_FONT_SIZE";
+            internal static readonly string CountTextFontSize = Prefix + "COUNT_TEXT_FONT_SIZE";
         }
         public static class RainConfig
         {

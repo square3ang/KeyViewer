@@ -27,11 +27,10 @@ namespace KeyViewer.Unity
             rt = image.rectTransform;
             config = key.Config.Rain;
             objConfig = config.ObjectConfig;
-            image.sprite = key.RainImageManager.Get();
 
+            OnEnable();
             KeyViewerUtils.ApplyColorLayout(image, objConfig.Color.Released);
             KeyViewerUtils.ApplyConfigLayout(this, objConfig.VectorConfig);
-            OnEnable();
             initialized = true;
         }
         public void Press()
@@ -41,7 +40,7 @@ namespace KeyViewer.Unity
             if (colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase);
             else colorUpdateIgnores--;
-            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position);
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false);
         }
         public void Release()
         {
@@ -50,7 +49,8 @@ namespace KeyViewer.Unity
             if (colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase);
             else colorUpdateIgnores--;
-            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, Position);
+            Vector2 adjustedPosition = KeyViewerUtils.AdjustRainPosition(config.Direction, Position, objConfig.VectorConfig.Offset.Pressed);
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false);
         }
         public void OnEnable()
         {
@@ -58,7 +58,10 @@ namespace KeyViewer.Unity
             colorUpdateIgnores = 0;
             image.sprite = key.RainImageManager.Get();
             rt.sizeDelta = GetInitialSize();
-            rt.anchoredPosition = Position = GetPosition(config.Direction);
+            rt.anchoredPosition = GetPosition(config.Direction);
+            Position = rt.localPosition;
+            var lastRound = key.RainImageManager.GetLastRoundness();
+            KeyViewerUtils.ApplyRoundnessLayout(image, lastRound == 0 ? config.Roundness : lastRound);
         }
         public void IgnoreColorUpdate()
         {
@@ -74,9 +77,10 @@ namespace KeyViewer.Unity
                 if (stretching)
                 {
                     rt.sizeDelta += delta.Abs();
-                    Position = rt.anchoredPosition += delta * 0.5f;
+                    rt.anchoredPosition += delta * 0.5f;
                 }
-                else Position = rt.anchoredPosition += delta;
+                else rt.anchoredPosition += delta;
+                Position = rt.localPosition;
             }
             else
             {

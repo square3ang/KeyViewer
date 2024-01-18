@@ -1,4 +1,5 @@
 ﻿using KeyViewer.Core;
+using KeyViewer.Core.Translation;
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
@@ -40,6 +41,9 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawBool(L(TKKC.EnableCountText), ref model.EnableCountText);
             changed |= Drawer.DrawBool(L(TKKC.EnableOutlineImage), ref model.EnableOutlineImage);
             changed |= Drawer.DrawBool(L(TKKC.DisableSorting), ref model.DisableSorting);
+            changed |= Drawer.DrawBool(L(TKKC.DoNotScaleText), ref model.DoNotScaleText);
+            changed |= Drawer.DrawSingleWithSlider(L(TKKC.TextFontSize), ref model.TextFontSize, 0, 300, 300);
+            changed |= Drawer.DrawSingleWithSlider(L(TKKC.CountTextFontSize), ref model.CountTextFontSize, 0, 300, 300);
 
             changed |= Drawer.DrawPressReleaseH(L(TKKC.Text), model.Text, Drawer.CD_H_STR);
             if (model.EnableCountText)

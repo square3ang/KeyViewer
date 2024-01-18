@@ -1,5 +1,6 @@
 ﻿using JSON;
 using KeyViewer.Core.Interfaces;
+using KeyViewer.Utils;
 
 namespace KeyViewer.Models
 {
@@ -7,11 +8,13 @@ namespace KeyViewer.Models
     {
         public int Count;
         public string Image;
+        public float Roundness;
         public RainImage Copy()
         {
             var image = new RainImage();
             image.Count = Count;
             image.Image = Image;
+            image.Roundness = Roundness;
             return image;
         }
         public JsonNode Serialize()
@@ -19,15 +22,14 @@ namespace KeyViewer.Models
             var node = JsonNode.Empty;
             node[nameof(Count)] = Count;
             node[nameof(Image)] = Image;
+            node[nameof(Roundness)] = Roundness;
             return node;
         }
         public void Deserialize(JsonNode node)
         {
             Count = node[nameof(Count)];
-            var img = node[nameof(Image)];
-            if (img == null)
-                Image = null;
-            else Image = img.Value;
+            Image = node[nameof(Image)].IfNotExist(null);
+            Roundness = node[nameof(Roundness)];
         }
     }
 }

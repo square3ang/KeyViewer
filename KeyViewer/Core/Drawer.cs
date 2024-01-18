@@ -27,18 +27,20 @@ namespace KeyViewer.Core
          * *ONLY => * Only Drawer
          */
 
-        public static bool CD_V_VEC2_0_10_300(ref Vector2 vec2)
+        public static bool CD_V_VEC3_0_10_300(ref Vector3 vec3)
         {
             bool result = false;
-            result |= DrawSingleWithSlider("X:", ref vec2.x, 0, 10, 300f);
-            result |= DrawSingleWithSlider("Y:", ref vec2.y, 0, 10, 300f);
+            result |= DrawSingleWithSlider("X:", ref vec3.x, 0, 10, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec3.y, 0, 10, 300f);
+            result |= DrawSingleWithSlider("Z:", ref vec3.z, 0, 10, 300f);
             return result;
         }
-        public static bool CD_V_VEC2_WIDTH_HEIGHT_300(ref Vector2 vec2)
+        public static bool CD_V_VEC3_WIDTH_HEIGHT_Z_300(ref Vector3 vec3)
         {
             bool result = false;
-            result |= DrawSingleWithSlider("X:", ref vec2.x, -Screen.width, Screen.width, 300f);
-            result |= DrawSingleWithSlider("Y:", ref vec2.y, -Screen.height, Screen.height, 300f);
+            result |= DrawSingleWithSlider("X:", ref vec3.x, -Screen.width, Screen.width, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec3.y, -Screen.height, Screen.height, 300f);
+            result |= DrawSingleWithSlider("Z:", ref vec3.z, -10, 10, 300f);
             return result;
         }
         public static bool CD_V_VEC3_M180_180_300(ref Vector3 vec3)
@@ -257,8 +259,8 @@ namespace KeyViewer.Core
         public static bool DrawVectorConfig(VectorConfig vConfig)
         {
             bool result = false;
-            result |= DrawPressReleaseV(Main.Lang[TKM.Scale], vConfig.Scale, CD_V_VEC2_0_10_300);
-            result |= DrawPressReleaseV(Main.Lang[TKM.Offset], vConfig.Offset, CD_V_VEC2_WIDTH_HEIGHT_300);
+            result |= DrawPressReleaseV(Main.Lang[TKM.Scale], vConfig.Scale, CD_V_VEC3_0_10_300);
+            result |= DrawPressReleaseV(Main.Lang[TKM.Offset], vConfig.Offset, CD_V_VEC3_WIDTH_HEIGHT_Z_300);
             result |= DrawPressReleaseV(Main.Lang[TKM.Rotation], vConfig.Rotation, CD_V_VEC3_M180_180_300);
 
             GUILayout.BeginHorizontal();

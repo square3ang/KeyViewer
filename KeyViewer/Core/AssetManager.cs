@@ -19,8 +19,8 @@ namespace KeyViewer.Core
             request.completed += o =>
             {
                 var assets = request.assetBundle;
-                Background = assets.LoadAsset<Texture2D>("Assets/Images/KeyBackground.png").ToSprite();
-                Outline = assets.LoadAsset<Texture2D>("Assets/Images/KeyOutline.png").ToSprite();
+                Background = assets.LoadAsset<Sprite>("Assets/Images/KeyBackground.png");
+                Outline = assets.LoadAsset<Sprite>("Assets/Images/KeyOutline.png");
                 RoundedCorners = assets.LoadAsset<Shader>("Assets/Shaders/RoundedCorners.shader");
                 IndependentRoundedCorners = assets.LoadAsset<Shader>("Assets/Shaders/IndependentRoundedCorners.shader");
                 others = new Dictionary<string, Sprite>();
@@ -44,6 +44,7 @@ namespace KeyViewer.Core
         }
         public static Sprite Get(string path, Sprite defaultValue = null)
         {
+            path = path?.Replace("{ModDir}", Main.Mod.Path);
             if (string.IsNullOrEmpty(path)) return defaultValue;
             if (others.TryGetValue(path, out var spr)) return spr;
             if (!File.Exists(path)) return defaultValue;
