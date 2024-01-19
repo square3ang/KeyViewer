@@ -9,6 +9,7 @@ namespace KeyViewer.Unity
     {
         public bool IsAlive { get; private set; }
         public Vector2 Position;
+        public Vector2 DefaultSize;
 
         private bool stretching = false;
         private RainConfig config;
@@ -40,7 +41,7 @@ namespace KeyViewer.Unity
             if (colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase);
             else colorUpdateIgnores--;
-            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false);
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false, DefaultSize);
         }
         public void Release()
         {
@@ -50,14 +51,14 @@ namespace KeyViewer.Unity
                 KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase);
             else colorUpdateIgnores--;
             Vector2 adjustedPosition = KeyViewerUtils.AdjustRainPosition(config.Direction, Position, objConfig.VectorConfig.Offset.Pressed);
-            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false);
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false, DefaultSize);
         }
         public void OnEnable()
         {
             if (!initialized) return;
             colorUpdateIgnores = 0;
             image.sprite = key.RainImageManager.Get();
-            rt.sizeDelta = GetInitialSize();
+            rt.sizeDelta = DefaultSize = GetInitialSize();
             rt.anchoredPosition = GetPosition(config.Direction);
             Position = rt.localPosition;
             var lastRound = key.RainImageManager.GetLastRoundness();
@@ -78,6 +79,7 @@ namespace KeyViewer.Unity
                 {
                     rt.sizeDelta += delta.Abs();
                     rt.anchoredPosition += delta * 0.5f;
+                    DefaultSize = rt.sizeDelta;
                 }
                 else rt.anchoredPosition += delta;
                 Position = rt.localPosition;

@@ -19,7 +19,7 @@ namespace KeyViewer.Scripting.Proxies
         public int LastIndexOf(object obj, int index, int count) { return 0; }
         public void Insert(int index, object obj) { }
         public void RemoveAt(int index) { }
-        public void Reverse() { }   
+        public void Reverse() { }
         public void Reverse(int index, int count) { }
         public void Sort() { }
         public void TrimExcess() { }

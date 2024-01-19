@@ -32,8 +32,8 @@ namespace KeyViewer.Scripting.Proxies
         public string CountText { get => key.CountText.text; set => key.CountText.text = value; }
         public GColor TextColor { get => key.Text.colorGradient; set => key.Text.colorGradient = value; }
         public GColor CountTextColor { get => key.CountText.colorGradient; set => key.CountText.colorGradient = value; }
-        public GColor BackgroundColor 
-        { 
+        public GColor BackgroundColor
+        {
             get
             {
                 var grad = key.Background.GetComponent<UICornersGradient>();
@@ -57,15 +57,15 @@ namespace KeyViewer.Scripting.Proxies
         public Vector3 CountTextRotation { get => key.CountText.rectTransform.localRotation.eulerAngles; set => key.CountText.rectTransform.localRotation = Quaternion.Euler(value); }
         public Vector3 BackgroundRotation { get => key.Background.rectTransform.localRotation.eulerAngles; set => key.Background.rectTransform.localRotation = Quaternion.Euler(value); }
         public Vector3 OutlineRotation { get => key.Outline.rectTransform.localRotation.eulerAngles; set => key.Outline.rectTransform.localRotation = Quaternion.Euler(value); }
-        public Vector2 Offset { get => key.transform.localPosition - (Vector3)key.Position; set => key.transform.localPosition = key.Position + value; }
-        public Vector2 TextOffset { get => key.Text.rectTransform.anchoredPosition; set => key.Text.rectTransform.anchoredPosition = value; }
-        public Vector2 CountTextOffset { get => key.CountText.rectTransform.anchoredPosition; set => key.CountText.rectTransform.anchoredPosition = value; }
-        public Vector2 BackgroundOffset { get => key.Background.rectTransform.anchoredPosition; set => key.Background.rectTransform.anchoredPosition = value; }
-        public Vector2 OutlineOffset { get => key.Outline.rectTransform.anchoredPosition; set => key.Outline.rectTransform.anchoredPosition = value; }
+        public Vector3 Offset { get => key.transform.localPosition - (Vector3)key.Position; set => key.transform.localPosition = (Vector3)key.Position + value; }
+        public Vector3 TextOffset { get => key.Text.rectTransform.localPosition; set => key.Text.rectTransform.localPosition = value; }
+        public Vector3 CountTextOffset { get => key.CountText.rectTransform.localPosition; set => key.CountText.rectTransform.localPosition = value; }
+        public Vector3 BackgroundOffset { get => key.Background.rectTransform.localPosition; set => key.Background.rectTransform.localPosition = value; }
+        public Vector3 OutlineOffset { get => key.Outline.rectTransform.localPosition; set => key.Outline.rectTransform.localPosition = value; }
         public Vector2 Scale { get => key.transform.localScale; set => key.transform.localScale = value; }
         public Vector2 TextScale { get => key.Text.rectTransform.localScale; set => key.Text.rectTransform.localScale = value; }
         public Vector2 CountTextScale { get => key.CountText.rectTransform.localScale; set => key.CountText.rectTransform.localScale = value; }
-        public Vector2 BackgroundScale { get => key.Background.rectTransform.localScale; set => key.Background.rectTransform.localScale = value; }
-        public Vector2 OutlineScale { get => key.Outline.rectTransform.localScale; set => key.Outline.rectTransform.localScale = value; }
+        public Vector2 BackgroundScale { get => key.Background.rectTransform.sizeDelta / key.DefaultSize; set => key.Background.rectTransform.sizeDelta = key.DefaultSize * value; }
+        public Vector2 OutlineScale { get => key.Outline.rectTransform.sizeDelta / key.DefaultSize; set => key.Outline.rectTransform.sizeDelta = key.DefaultSize * value; }
     }
 }

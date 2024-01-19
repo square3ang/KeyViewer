@@ -62,14 +62,14 @@ namespace KeyViewer.Utils
             if (color.gradientEnabled) text.colorGradient = color;
             else text.colorGradient = new VertexGradient(color);
         }
-        public static void ApplyConfigLayout(Image image, ObjectConfig config)
+        public static void ApplyConfigLayout(Image image, ObjectConfig config, Vector2 sizeDelta)
         {
             ApplyColorLayout(image, config.Color.Released);
             var vConfig = config.VectorConfig;
             var rt = image.rectTransform;
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             rt.localPosition = vConfig.Offset.Released;
-            rt.localScale = vConfig.Scale.Released;
+            rt.sizeDelta = sizeDelta * vConfig.Scale.Released;
         }
         public static void ApplyConfigLayout(Key k, VectorConfig vConfig)
         {
@@ -191,11 +191,11 @@ namespace KeyViewer.Utils
                 .SetAutoKill(false);
             else t.localScale = vConfig.Scale.Get(pressed);
         }
-        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, float heightOffset, bool fixScale)
+        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, float heightOffset, bool fixScale, Vector2 sizeDelta, bool scaleSizeDelta = true)
         {
-            ApplyVectorConfig(rt, vConfig, pressed, new Vector2(0, heightOffset), fixScale);
+            ApplyVectorConfig(rt, vConfig, pressed, new Vector2(0, heightOffset), fixScale, sizeDelta, scaleSizeDelta);
         }
-        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, Vector2 offset, bool fixScale)
+        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, Vector2 offset, bool fixScale, Vector2 sizeDelta, bool scaleSizeDelta = true)
         {
             DOTween.Kill(rt, true);
 
@@ -217,11 +217,22 @@ namespace KeyViewer.Utils
             if (fixScale)
                 scale = FixedScale(rt.parent.localScale, scale);
             var sEase = vConfig.Scale.GetEase(pressed);
-            if (sEase.IsValid)
-                rt.DOScale(scale, sEase.Duration)
-                .SetEase(sEase.Ease)
-                .SetAutoKill(false);
-            else rt.localScale = scale;
+            if (scaleSizeDelta)
+            {
+                if (sEase.IsValid)
+                    rt.DOSizeDelta(sizeDelta * scale, sEase.Duration)
+                    .SetEase(sEase.Ease)
+                    .SetAutoKill(false);
+                else rt.sizeDelta = sizeDelta * scale;
+            }
+            else
+            {
+                if (sEase.IsValid)
+                    rt.DOScale(scale, sEase.Duration)
+                    .SetEase(sEase.Ease)
+                    .SetAutoKill(false);
+                else rt.localScale = scale;
+            }
         }
         public static void SetMaskAnchor(RectTransform rt, Direction dir, Pivot pivot = Pivot.MiddleCenter, Anchor anchor = Anchor.MiddleCenter)
         {
@@ -289,11 +300,9 @@ namespace KeyViewer.Utils
             switch (dir)
             {
                 case Direction.Up:
-                    return position.WithRelativeX(offset.x).WithRelativeY(-offset.y);
-                case Direction.Down:
-                    return position.WithRelativeX(-offset.x).WithRelativeY(-offset.y);
                 case Direction.Left:
                     return position.WithRelativeX(offset.x).WithRelativeY(-offset.y);
+                case Direction.Down:
                 case Direction.Right:
                     return position.WithRelativeX(-offset.x).WithRelativeY(-offset.y);
                 default: return position;

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace KeyViewer.Migration.V3
 {
+    [XmlRoot("RainConfig")]
     public class KeyRain_Config
     {
         public float OffsetX = 0f;
@@ -11,10 +12,10 @@ namespace KeyViewer.Migration.V3
         public float RainWidth = -1f;
         public float RainHeight = -1f;
         public float RainLength = 400f;
-        public int RainPoolSize = 25;
         public int Softness = 100;
         public Color RainColor = Color.white;
         public string[] RainImages = new string[0];
+        public int RainPoolSize = 25;
         public int[] RainImageCounts = new int[0];
         public bool SequentialImages = true;
         public bool ShuffleImages;

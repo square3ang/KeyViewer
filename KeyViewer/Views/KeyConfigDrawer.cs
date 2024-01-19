@@ -1,5 +1,4 @@
 ﻿using KeyViewer.Core;
-using KeyViewer.Core.Translation;
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;

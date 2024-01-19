@@ -549,7 +549,7 @@ namespace JSON
                 case TypeCode.DateTime: return (DateTime)obj;
                 case TypeCode.String: return (string)obj;
                 case TypeCode.Object:
-                    if (t.IsClass && refs.TryGetValue(obj, out var node)) return node;
+                    if (refs.TryGetValue(obj, out var node)) return node;
                     if (obj is IEnumerable e)
                     {
                         JsonArray arr = new JsonArray();

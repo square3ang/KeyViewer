@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
+﻿using KeyViewer.Migration.V3;
 using Newtonsoft.Json;
-using UnityEngine;
-using System.Linq;
-using TMPro;
 using System;
-using KeyViewer.Migration.V3;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml.Serialization;
+using TMPro;
+using UnityEngine;
 
 namespace KeyViewer.Migration.V2
 {
@@ -33,10 +33,10 @@ namespace KeyViewer.Migration.V2
         }
         public V3Settings Migrate()
         {
-            List<Profile> profiles = new List<Profile>();
+            List<V3Profile> profiles = new List<V3Profile>();
             foreach (KeyViewerProfile pf in Settings.Profiles)
             {
-                Profile newProfile = new Profile();
+                V3Profile newProfile = new V3Profile();
                 newProfile.Name = pf.Name;
                 newProfile.MakeBarSpecialKeys = false;
                 newProfile.ViewerOnlyGameplay = pf.ViewerOnlyGameplay;

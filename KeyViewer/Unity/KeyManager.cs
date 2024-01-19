@@ -20,13 +20,14 @@ namespace KeyViewer.Unity
 
         public Profile profile;
         public Canvas keysCanvas;
+        public Vector2 defaultSize;
 
         internal KPSCalculator kpsCalc;
         internal List<Key> keys;
         internal Vector2 centerOffset;
         internal RectTransform keysRt;
+        internal bool prevPressed;
         private bool initialized;
-        private bool prevPressed;
         public void Init()
         {
             if (initialized) return;
@@ -93,7 +94,7 @@ namespace KeyViewer.Unity
             var pressed = keys.Any(k => k.Pressed);
             if (prevPressed == pressed) return;
             prevPressed = pressed;
-            KeyViewerUtils.ApplyVectorConfig(keysRt, profile.VectorConfig, pressed, 0, false);
+            KeyViewerUtils.ApplyVectorConfig(keysRt, profile.VectorConfig, pressed, 0, false, defaultSize);
         }
         public void UpdateKeys()
         {
@@ -122,7 +123,7 @@ namespace KeyViewer.Unity
 
             var vecConfig = profile.VectorConfig;
             keysRt.SetAnchor(profile.VectorConfig.Anchor);
-            keysRt.sizeDelta = new Vector2(width, keyHeight);
+            keysRt.sizeDelta = defaultSize = new Vector2(width, keyHeight);
             keysRt.pivot = new Vector2(0.5f, 0.5f);
             keysRt.anchoredPosition = vecConfig.Offset.Released;
             keysRt.localRotation = Quaternion.Euler(vecConfig.Rotation.Released);

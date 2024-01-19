@@ -4,6 +4,7 @@ using KeyViewer.Controllers;
 using KeyViewer.Core;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Core.Translation;
+using KeyViewer.Migration.V3;
 using KeyViewer.Models;
 using KeyViewer.Patches;
 using KeyViewer.Unity;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Serialization;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
@@ -275,6 +277,75 @@ namespace KeyViewer
                 };
                 ADOUtils.ShowError(ecc);
             }
+        }
+        public static void MigrateFromV3Xml(string path)
+        {
+            XmlSerializer serializer;
+            try
+            {
+                serializer = new XmlSerializer(typeof(V3Settings), GetXAO(true));
+                var v3s = serializer.Deserialize(File.OpenRead(path)) as V3Settings;
+                var newSettings = V3Migrator.Migrate(v3s, out var profilesNode);
+                foreach (var (name, manager) in Managers)
+                {
+                    Object.Destroy(manager.gameObject);
+                    Logger.Log($"Released Key Manager {name}.");
+                }
+                Managers.Clear();
+                for (int i = 0; i < newSettings.ActiveProfiles.Count; i++)
+                {
+                    var profile = newSettings.ActiveProfiles[i];
+                    File.WriteAllText(Path.Combine(Mod.Path, $"{profile.Name}.json"), profilesNode[i].ToString(4));
+                    AddManager(profile, true);
+                }
+                GUI.Flush();
+                GUI.Init(new SettingsDrawer(Settings = newSettings));
+                Logger.Log($"Successfully Migrated Settings Xml '{path}'");
+            }
+            catch (System.Exception e)
+            {
+                try
+                {
+                    serializer = new XmlSerializer(typeof(V3Profile), GetXAO(false));
+                    var v3p = serializer.Deserialize(File.OpenRead(path)) as V3Profile;
+                    var profile = V3Migrator.MigrateProfile(v3p);
+                    File.WriteAllText(Path.Combine(Mod.Path, $"{v3p.Name}.json"), profile.Serialize().ToString(4));
+                    var activeProfile = new ActiveProfile(v3p.Name, true);
+                    Settings.ActiveProfiles.Add(activeProfile);
+                    AddManager(activeProfile, true);
+                    Logger.Log($"Successfully Migrated Profile Xml '{path}'");
+                }
+                catch (System.Exception ee) { Logger.Log($"Failed To Migrate Xml..\n{e}\n\n{ee}"); }
+            }
+        }
+        public static V3Settings ReadV3Settings(string path)
+        {
+            var serializer = new XmlSerializer(typeof(V3Settings), GetXAO(true));
+            return serializer.Deserialize(File.OpenRead(path)) as V3Settings;
+        }
+        public static V3Profile ReadV3Profile(string path)
+        {
+            var serializer = new XmlSerializer(typeof(V3Profile), GetXAO(true));
+            return serializer.Deserialize(File.OpenRead(path)) as V3Profile;
+        }
+        private static XmlAttributeOverrides GetXAO(bool settings)
+        {
+            XmlAttributeOverrides xao = new XmlAttributeOverrides();
+
+            if (settings)
+            {
+                XmlAttributes settingsAttr = new XmlAttributes();
+                settingsAttr.XmlRoot = new XmlRootAttribute("Settings");
+                xao.Add(typeof(V3Settings), settingsAttr);
+            }
+            else
+            {
+                XmlAttributes profileAttr = new XmlAttributes();
+                profileAttr.XmlRoot = new XmlRootAttribute("Profile");
+                xao.Add(typeof(V3Profile), profileAttr);
+            }
+
+            return xao;
         }
     }
 }

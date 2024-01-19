@@ -17,7 +17,7 @@ namespace KeyViewer.Scripting.Proxies
             Profile = manager.profile;
         }
         public Vector3 Rotation { get => manager.keysRt.localRotation.eulerAngles; set => manager.keysRt.localRotation = Quaternion.Euler(value); }
-        public Vector2 Offset { get => manager.keysRt.anchoredPosition; set => manager.keysRt.anchoredPosition = value; }
-        public Vector2 Scale { get => manager.keysRt.localScale; set => manager.keysRt.localScale = value; }
+        public Vector3 Offset { get => manager.keysRt.localPosition; set => manager.keysRt.localPosition = value; }
+        public Vector2 Scale { get => manager.keysRt.sizeDelta / manager.defaultSize; set => manager.keysRt.sizeDelta = manager.defaultSize * value; }
     }
 }

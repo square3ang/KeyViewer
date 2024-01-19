@@ -26,10 +26,10 @@ namespace KeyViewer.Models
         public PressRelease<string> Background = new PressRelease<string>(null);
         public PressRelease<string> Outline = new PressRelease<string>(null);
 
-        public ObjectConfig TextConfig = new ObjectConfig(new PressRelease<Vector3>(new Vector3(0.9f, 0.9f), Vector3.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
-        public ObjectConfig CountTextConfig = new ObjectConfig(new PressRelease<Vector3>(new Vector3(0.9f, 0.9f), Vector3.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
-        public ObjectConfig BackgroundConfig = new ObjectConfig(new PressRelease<Vector3>(new Vector3(0.9f, 0.9f), Vector3.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.black.WithAlpha(0.4f));
-        public ObjectConfig OutlineConfig = new ObjectConfig(new PressRelease<Vector3>(new Vector3(0.9f, 0.9f), Vector3.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.white);
+        public ObjectConfig TextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
+        public ObjectConfig CountTextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
+        public ObjectConfig BackgroundConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.black.WithAlpha(0.4f));
+        public ObjectConfig OutlineConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.white);
         public float BackgroundRoundness = 0f;
         public float OutlineRoundness = 0f;
 
@@ -114,8 +114,7 @@ namespace KeyViewer.Models
         {
             Count = node[nameof(Count)];
             Code = EnumHelper<KeyCode>.Parse(node[nameof(Code)]);
-            var dum = node[nameof(DummyName)];
-            DummyName = dum == null ? null : dum.Value;
+            DummyName = node[nameof(DummyName)].IfNotExist(null);
             Font = node[nameof(Font)];
             EnableKPSMeter = node[nameof(EnableKPSMeter)];
             UpdateTextAlways = node[nameof(UpdateTextAlways)];

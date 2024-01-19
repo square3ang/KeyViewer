@@ -2,7 +2,6 @@
 using System.IO;
 using System.Reflection;
 using static UnityModManagerNet.UnityModManager;
-using static UnityModManagerNet.UnityModManager.ModEntry;
 
 namespace KeyViewer.Scripting.Bootstrapper
 {

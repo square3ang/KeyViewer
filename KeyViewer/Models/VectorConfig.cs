@@ -9,7 +9,7 @@ namespace KeyViewer.Models
     {
         public PressRelease<Vector3> Rotation = Vector3.zero;
         public PressRelease<Vector3> Offset = Vector3.zero;
-        public PressRelease<Vector3> Scale = Vector3.one;
+        public PressRelease<Vector2> Scale = Vector2.one;
         public Pivot Pivot = Pivot.MiddleCenter;
         public Anchor Anchor = Anchor.MiddleCenter;
         public VectorConfig Copy()
@@ -36,7 +36,7 @@ namespace KeyViewer.Models
         {
             Rotation = ModelUtils.Unbox<PressRelease<Vector3>>(node[nameof(Rotation)]);
             Offset = ModelUtils.Unbox<PressRelease<Vector3>>(node[nameof(Offset)]);
-            Scale = ModelUtils.Unbox<PressRelease<Vector3>>(node[nameof(Scale)]);
+            Scale = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(Scale)]);
             Pivot = EnumHelper<Pivot>.Parse(node[nameof(Pivot)].IfNotExist(nameof(Pivot.MiddleCenter)));
             Anchor = EnumHelper<Anchor>.Parse(node[nameof(Anchor)].IfNotExist(nameof(Anchor.MiddleCenter)));
         }

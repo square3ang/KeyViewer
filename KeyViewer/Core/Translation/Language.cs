@@ -1,8 +1,6 @@
 ﻿using KeyViewer.Models;
-using KeyViewer.Unity;
 using KeyViewer.Utils;
 using System;
-using System.Linq;
 
 namespace KeyViewer.Core.Translation
 {

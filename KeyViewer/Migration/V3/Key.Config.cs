@@ -1,10 +1,11 @@
-﻿using TMPro;
-using UnityEngine;
-using DG.Tweening;
+﻿using DG.Tweening;
 using System.Xml.Serialization;
+using TMPro;
+using UnityEngine;
 
 namespace KeyViewer.Migration.V3
 {
+    [XmlRoot("Config")]
     public class Key_Config
     {
         public KeyRain_Config RainConfig = new KeyRain_Config();
@@ -14,6 +15,7 @@ namespace KeyViewer.Migration.V3
         public KeyCode SpareCode = KeyCode.None;
         public SpecialKeyType SpecialType = SpecialKeyType.None;
         public uint Count = 0;
+        public bool Gradient = false;
         public bool Editing = false;
         public string KeyTitle = null;
         public bool ChangeBgColorJudge = false;

@@ -1,5 +1,4 @@
 ﻿using KeyViewer.Migration.V2;
-using KeyViewer.Migration.V3;
 
 namespace KeyViewer.Migration
 {

@@ -3,8 +3,8 @@ using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using UnityEngine;
-using TKRC = KeyViewer.Core.Translation.TranslationKeys.RainConfig;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
+using TKRC = KeyViewer.Core.Translation.TranslationKeys.RainConfig;
 
 namespace KeyViewer.Views
 {

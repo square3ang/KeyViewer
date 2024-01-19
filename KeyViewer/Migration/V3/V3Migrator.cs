@@ -1,5 +1,4 @@
 ﻿using JSON;
-using KeyViewer.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,21 +17,27 @@ namespace KeyViewer.Migration.V3
                 profiles.Add(MigrateProfile(profile).Serialize());
             return v4Settings;
         }
-        public static Models.Profile MigrateProfile(Profile profile)
+        public static Models.Profile MigrateProfile(V3Profile profile)
         {
             var v4Profile = new Models.Profile();
             v4Profile.ViewOnlyGamePlay = profile.ViewerOnlyGameplay;
             v4Profile.LimitNotRegisteredKeys = profile.LimitNotRegisteredKeys;
-            var scale = profile.KeyViewerSize / 100f;
-            v4Profile.VectorConfig.Scale = new Vector3(scale, scale);
             v4Profile.KPSUpdateRate = profile.KPSUpdateRateMs;
             v4Profile.ResetOnStart = profile.ResetWhenStart;
+            List<Models.KeyConfig> specialBars = new List<Models.KeyConfig>();
             foreach (var key in profile.ActiveKeys)
             {
                 var k = MigrateKey(key);
                 v4Profile.Keys.Add(k);
+                if (profile.MakeBarSpecialKeys && k.DummyName != null)
+                {
+                    specialBars.Add(k);
+                    k.DisableSorting = true;
+                }
+                var scale = new Vector2(key.Width / 100f, key.Height / 100f);
+                k.BackgroundConfig.VectorConfig.Scale.Set(scale);
+                k.OutlineConfig.VectorConfig.Scale.Set(scale);
             }
-            AdjustProfile(v4Profile);
             return v4Profile;
         }
         private static Models.KeyConfig MigrateKey(Key_Config keyConfig)
@@ -82,7 +87,7 @@ namespace KeyViewer.Migration.V3
                 jc.FailMiss = keyConfig.FailMissColor;
                 jc.FailOverload = keyConfig.FailOverloadColor;
             }
-            v4Config.VectorConfig.Scale = new Vector3(keyConfig.Width / 100f, keyConfig.Height / 100f);
+            v4Config.VectorConfig.Scale = new Vector2(keyConfig.Width / 100f, keyConfig.Height / 100f);
             v4Config.VectorConfig.Offset = new Vector3(keyConfig.OffsetX, keyConfig.OffsetY);
             v4Config.TextConfig.VectorConfig.Offset = new Vector3(keyConfig.TextOffsetX, keyConfig.TextOffsetY);
             v4Config.CountTextConfig.VectorConfig.Offset = new Vector3(keyConfig.CountTextOffsetX, keyConfig.CountTextOffsetY);
@@ -129,8 +134,8 @@ namespace KeyViewer.Migration.V3
             v4Config.ObjectConfig.Color.Set(rainConfig.RainColor);
             v4Config.Direction = (Models.Direction)rainConfig.Direction;
             v4Config.Length = rainConfig.RainLength;
-            Vector3 newScale = new Vector3(rainConfig.RainWidth < 0 ? 1 : rainConfig.RainWidth,
-                                            rainConfig.RainHeight < 0 ? 1 : rainConfig.RainHeight);
+            Vector2 newScale = new Vector2(rainConfig.RainWidth < 0 ? 1 : rainConfig.RainWidth / 100f,
+                                            rainConfig.RainHeight < 0 ? 1 : rainConfig.RainHeight / 100f);
             v4Config.ObjectConfig.VectorConfig.Scale = newScale;
             v4Config.ImageDisplayMode = rainConfig.SequentialImages ? Models.RainImageDisplayMode.Sequential : Models.RainImageDisplayMode.Random;
             for (int i = 0; i < rainConfig.RainImages.Length; i++)
@@ -143,9 +148,23 @@ namespace KeyViewer.Migration.V3
             }
             return v4Config;
         }
-        private static void AdjustProfile(Models.Profile profile)
+        private static Vector2 GetSize(Models.Profile profile)
         {
-            profile.VectorConfig.Offset.Set(profile.VectorConfig.Offset.Released.WithRelativeX(-.5f).WithRelativeY(-.5f));
+            float keyHeight = profile.Keys.Any(k => k.EnableCountText) ? 150 : 100;
+            bool first = true;
+            float totalX = 0;
+            foreach (var k in profile.Keys)
+                if (!k.DisableSorting)
+                {
+                    var releasedScale = k.VectorConfig.Scale.Released;
+                    if (first)
+                    {
+                        totalX += releasedScale.x * 100;
+                        first = false;
+                    }
+                    totalX += releasedScale.x * 100 + profile.KeySpacing;
+                }
+            return new Vector2(totalX - profile.KeySpacing, keyHeight);
         }
     }
 }

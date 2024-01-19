@@ -1,11 +1,9 @@
 ﻿using KeyViewer.Core;
 using KeyViewer.Core.Translation;
-using KeyViewer.Migration.V3;
 using KeyViewer.Models;
 using KeyViewer.Utils;
 using SFB;
 using System.IO;
-using System.Xml.Serialization;
 using UnityEngine;
 using TK = KeyViewer.Core.Translation.TranslationKeys;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
@@ -36,25 +34,16 @@ namespace KeyViewer.Views
                     {
                         GUILayout.Label(L(TK.UpdateNote));
                     }, L(TKM.ShowUpdateNote)));
-                if (GUILayout.Button(L(TK.Raw, "Migrate From V3")))
-                {
-                    string[] paths = StandaloneFileBrowser.OpenFilePanel("Select Profile Xml File", Main.Mod.Path, "xml", true);
-                    if (paths.Length == 0)
-                    {
-                        Main.GUI.Skip();
-                        return;
-                    }
-                    for (int i = 0; i < paths.Length; i++)
-                    {
-                        var serializer = new XmlSerializer(typeof(Migration.V3.Profile));
-                        Migration.V3.Profile v3p = serializer.Deserialize(File.OpenRead(paths[0])) as Migration.V3.Profile;
-                        Models.Profile profile = V3Migrator.MigrateProfile(v3p);
-                        File.WriteAllText(Path.Combine(Main.Mod.Path, $"{v3p.Name}.json"), profile.Serialize().ToString(4));
-                        var activeProfile = new ActiveProfile(v3p.Name, true);
-                        Main.Settings.ActiveProfiles.Add(activeProfile);
-                        Main.AddManager(activeProfile);
-                    }
-                }
+                //if (GUILayout.Button(L(TK.Raw, "Migrate From V3")))
+                //{
+                //    string[] paths = StandaloneFileBrowser.OpenFilePanel("Select Profile Or Settings Xml File", Main.Mod.Path, "xml", true);
+                //    if (paths.Length == 0)
+                //    {
+                //        Main.GUI.Skip();
+                //        return;
+                //    }
+                //    Main.MigrateFromV3Xml(paths[0]);
+                //}
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -78,7 +67,7 @@ namespace KeyViewer.Views
                 {
                     var profile = new ActiveProfile(GetNewProfileName(), true);
                     model.ActiveProfiles.Add(profile);
-                    Models.Profile newProfile = new Models.Profile();
+                    Profile newProfile = new Profile();
                     File.WriteAllText(Path.Combine(Main.Mod.Path, $"{profile.Name}.json"), newProfile.Serialize().ToString(4));
                     Main.AddManager(profile, true);
                 }

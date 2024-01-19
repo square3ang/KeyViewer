@@ -26,7 +26,13 @@ namespace KeyViewer.Core
          * A_B_C => A to B & Width Is C
          * *ONLY => * Only Drawer
          */
-
+        public static bool CD_V_VEC2_0_10_300(ref Vector2 vec2)
+        {
+            bool result = false;
+            result |= DrawSingleWithSlider("X:", ref vec2.x, 0, 10, 300f);
+            result |= DrawSingleWithSlider("Y:", ref vec2.y, 0, 10, 300f);
+            return result;
+        }
         public static bool CD_V_VEC3_0_10_300(ref Vector3 vec3)
         {
             bool result = false;
@@ -259,7 +265,7 @@ namespace KeyViewer.Core
         public static bool DrawVectorConfig(VectorConfig vConfig)
         {
             bool result = false;
-            result |= DrawPressReleaseV(Main.Lang[TKM.Scale], vConfig.Scale, CD_V_VEC3_0_10_300);
+            result |= DrawPressReleaseV(Main.Lang[TKM.Scale], vConfig.Scale, CD_V_VEC2_0_10_300);
             result |= DrawPressReleaseV(Main.Lang[TKM.Offset], vConfig.Offset, CD_V_VEC3_WIDTH_HEIGHT_Z_300);
             result |= DrawPressReleaseV(Main.Lang[TKM.Rotation], vConfig.Rotation, CD_V_VEC3_M180_180_300);
 

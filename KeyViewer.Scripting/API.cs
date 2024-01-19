@@ -6,8 +6,6 @@ using Jint.Runtime.Interop;
 using JSNet.API;
 using KeyViewer.API;
 using KeyViewer.Core.TextReplacing;
-using KeyViewer.Migration;
-using KeyViewer.Migration.V2;
 using KeyViewer.Migration.V3;
 using KeyViewer.Models;
 using KeyViewer.Scripting.Proxies;
@@ -25,7 +23,7 @@ namespace KeyViewer.Scripting
 {
     public static class API
     {
-        [Api("GetAllProfileNames", 
+        [Api("GetAllProfileNames",
             Comment = new string[]
             {
                 "Get All Profile Names"
@@ -72,7 +70,7 @@ namespace KeyViewer.Scripting
                 typeof(KeyManagerProxy),
                 typeof(KeyProxy),
                 typeof(ListProxy),
-            }, 
+            },
             RequireTypesAliases = new string[]
             {
                 null,
@@ -107,7 +105,7 @@ namespace KeyViewer.Scripting
                 "List",
             })]
         public static KeyManagerProxy GetManager(string profileName) => KeyViewer.Main.Managers.TryGetValue(profileName, out var manager) ? new KeyManagerProxy(manager) : null;
-        [Api("GetKey", 
+        [Api("GetKey",
             Comment = new string[]
             {
                 "Get Key From Key Manager Object"
@@ -127,7 +125,7 @@ namespace KeyViewer.Scripting
             if (result != null) return new KeyProxy(result);
             return null;
         }
-        [Api("Apply", 
+        [Api("Apply",
             Comment = new string[]
             {
                 "Apply Config Changes"
@@ -137,7 +135,7 @@ namespace KeyViewer.Scripting
                 "Key Manager Object"
             })]
         public static void UpdateLayout(KeyManagerProxy manager) => manager.manager.UpdateLayout();
-        [Api("RegisterTag", 
+        [Api("RegisterTag",
             Comment = new string[]
             {
                 "Register Tag (Like Overlayer)"
@@ -197,7 +195,7 @@ namespace KeyViewer.Scripting
                     wrapper.CallRaw();
             };
         }
-        [Api("EasedValue", 
+        [Api("EasedValue",
             Comment = new string[]
             {
                 "Eased Value"
@@ -206,7 +204,8 @@ namespace KeyViewer.Scripting
             {
                 "Ease Type",
                 "Lifetime (0.0 ~ 1.0)"
-            }, ReturnComment = "Eased Value")]
+            },
+            ReturnComment = "Eased Value")]
         public static float EasedValue(Ease ease, float lifetime)
         {
             return DOVirtual.EasedValue(0, 1, lifetime, ease);
@@ -220,7 +219,7 @@ namespace KeyViewer.Scripting
             {
                 "Delay Seconds",
                 "Callback"
-            }, 
+            },
             ReturnComment = "Delayed Caller Handle")]
         public static object DelayedCall(float seconds, JsValue func)
         {
@@ -267,6 +266,58 @@ namespace KeyViewer.Scripting
                 else return dict[clrType] = TypeReference.CreateTypeReference(engine, MiscUtils.TypeByName(clrType));
             dict = jsTypes[engine] = new Dictionary<string, TypeReference>();
             return dict[clrType] = TypeReference.CreateTypeReference(engine, MiscUtils.TypeByName(clrType));
+        }
+        [Api("ReadV3Settings",
+            Comment = new string[]
+            {
+                "Read V3 Settings.xml"
+            },
+            ParamComment = new string[]
+            {
+                "Settings.xml Path"
+            },
+            ReturnComment = "V3 Settings Object",
+            RequireTypes = new Type[]
+            {
+                typeof(Migration.V3.Direction),
+                typeof(SpecialKeyType),
+                typeof(LanguageType),
+                typeof(KeyRain_Config),
+                typeof(Key_Config),
+                typeof(Group),
+                typeof(V3Profile),
+                typeof(V3Settings),
+            },
+            RequireTypesAliases = new string[]
+            {
+                "V3Direction",
+                "V3SpecialKeyType",
+                "V3LanguageType",
+                "V3RainConfig",
+                "V3KeyConfig",
+                "V3Group",
+                null,
+                null
+            })]
+        public static V3Settings ReadV3Settings(string xmlPath)
+        {
+            if (!File.Exists(xmlPath)) return null;
+            return KeyViewer.Main.ReadV3Settings(xmlPath);
+        }
+        [Api("ReadV3Profile",
+            Comment = new string[]
+            {
+                "Read V3 Profile Xml File"
+            },
+            ParamComment = new string[]
+            {
+                "Profile Xml File Path"
+            },
+            ReturnComment = "V3 Profile Object")]
+        public static V3Profile ReadV3Profile(string xmlPath)
+        {
+            if (!File.Exists(xmlPath)) return null;
+            return KeyViewer.Main.ReadV3Profile(xmlPath);
         }
         static MethodInfo GenerateTagWrapper(FIWrapper wrapper)
         {

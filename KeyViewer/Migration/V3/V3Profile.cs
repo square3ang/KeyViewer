@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace KeyViewer.Migration.V3
 {
-    public class Profile
+    [XmlRoot("Profile")]
+    public class V3Profile
     {
         public string Name = "Default Profile";
+        [XmlElement("Config")]
         public Key_Config GlobalConfig = new Key_Config();
+        [XmlArrayItem("Group")]
         public List<Group> KeyGroups = new List<Group>();
+        [XmlArrayItem("Config")]
         public List<Key_Config> ActiveKeys = new List<Key_Config>();
         public bool MakeBarSpecialKeys = true;
         public bool IgnoreSkippedKeys;

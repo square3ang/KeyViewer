@@ -8,20 +8,20 @@ namespace KeyViewer.Models
     public class ObjectConfig : IModel, ICopyable<ObjectConfig>
     {
         public ObjectConfig() { }
-        public ObjectConfig(Vector3 defaultScale, Color defaultPressed, Color defaultReleased)
+        public ObjectConfig(Vector2 defaultScale, Color defaultPressed, Color defaultReleased)
         {
             VectorConfig = new VectorConfig();
             VectorConfig.Scale = defaultScale;
             Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
         }
-        public ObjectConfig(Vector3 pressedScale, Vector3 releasedScale, Color defaultPressed, Color defaultReleased)
+        public ObjectConfig(Vector2 pressedScale, Vector2 releasedScale, Color defaultPressed, Color defaultReleased)
         {
             VectorConfig = new VectorConfig();
             VectorConfig.Scale.Pressed = pressedScale;
             VectorConfig.Scale.Released = releasedScale;
             Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
         }
-        public ObjectConfig(PressRelease<Vector3> scale, Color defaultPressed, Color defaultReleased)
+        public ObjectConfig(PressRelease<Vector2> scale, Color defaultPressed, Color defaultReleased)
         {
             VectorConfig = new VectorConfig();
             VectorConfig.Scale = scale;
