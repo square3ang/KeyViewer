@@ -148,23 +148,5 @@ namespace KeyViewer.Migration.V3
             }
             return v4Config;
         }
-        private static Vector2 GetSize(Models.Profile profile)
-        {
-            float keyHeight = profile.Keys.Any(k => k.EnableCountText) ? 150 : 100;
-            bool first = true;
-            float totalX = 0;
-            foreach (var k in profile.Keys)
-                if (!k.DisableSorting)
-                {
-                    var releasedScale = k.VectorConfig.Scale.Released;
-                    if (first)
-                    {
-                        totalX += releasedScale.x * 100;
-                        first = false;
-                    }
-                    totalX += releasedScale.x * 100 + profile.KeySpacing;
-                }
-            return new Vector2(totalX - profile.KeySpacing, keyHeight);
-        }
     }
 }

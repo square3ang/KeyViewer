@@ -35,6 +35,7 @@ namespace KeyViewer.Core
                 font = defaultFont;
                 return true;
             }
+            name = name.Replace("{ModDir}", Main.Mod.Path);
             if (Fonts.TryGetValue(name, out FontData data))
             {
                 font = data;
@@ -42,7 +43,6 @@ namespace KeyViewer.Core
             }
             else
             {
-                name = name.Replace("{ModDir}", Main.Mod.Path);
                 if (File.Exists(name))
                 {
                     FontData newData = defaultFont;

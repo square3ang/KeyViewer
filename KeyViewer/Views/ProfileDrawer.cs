@@ -2,8 +2,10 @@
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TK = KeyViewer.Core.Translation.TranslationKeys;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
 
@@ -15,6 +17,7 @@ namespace KeyViewer.Views
         private bool listening = false;
         private bool configMode = true;
         private int dummyNumber = 1;
+        private HashSet<KeyConfig> selectedKeys = new HashSet<KeyConfig>();
         public ProfileDrawer(KeyManager manager, Profile profile, string name) : base(profile, L(TKP.ConfigurateProfile, name))
         {
             this.manager = manager;
@@ -53,9 +56,16 @@ namespace KeyViewer.Views
                         {
                             var key = model.Keys[i];
                             var str = key.DummyName != null ? key.DummyName : key.Code.ToString();
+                            var selected = selectedKeys.Contains(key);
+                            if (selected) str = $"<color=green>{str}</color>";
                             if (GUILayout.Button(str))
                             {
-                                if (configMode)
+                                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                                {
+                                    if (!selectedKeys.Add(key))
+                                        selectedKeys.Remove(key);
+                                }
+                                else if (configMode)
                                     Main.GUI.Push(new KeyConfigDrawer(manager, key));
                                 else
                                 {
@@ -91,11 +101,23 @@ namespace KeyViewer.Views
                         model.Keys.Add(dummy);
                         manager.UpdateKeys();
                     }
-                    GUILayout.Space(10);
-                    if (!model.Keys.Any(k => k.Code == KeyCode.Mouse0) && GUILayout.Button(L(TKP.RegisterMouse0Key)))
+                    if (!model.Keys.Any(k => k.Code == KeyCode.Mouse0))
                     {
-                        model.Keys.Add(new KeyConfig() { Code = KeyCode.Mouse0 });
-                        manager.UpdateKeys();
+                        GUILayout.Space(10);
+                        if (GUILayout.Button(L(TKP.RegisterMouse0Key)))
+                        {
+                            model.Keys.Add(new KeyConfig() { Code = KeyCode.Mouse0 });
+                            manager.UpdateKeys();
+                        }
+                    }
+                    if (selectedKeys.Count > 0)
+                    {
+                        GUILayout.Space(10);
+                        if (GUILayout.Button(L(TK.Raw, "Make Bar This Keys")))
+                        {
+                            KeyViewerUtils.MakeBar(manager.keys.FindAll(k => selectedKeys.Contains(k.Config)));
+                            selectedKeys.Clear();
+                        }
                     }
                 }
                 GUILayout.FlexibleSpace();

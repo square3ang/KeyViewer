@@ -26,6 +26,12 @@ namespace KeyViewer.Models
             Released = value;
             return this;
         }
+        public PressRelease<T> Set(T pressed, T released)
+        {
+            Pressed = pressed;
+            Released = released;
+            return this;
+        }
         public PressRelease<T> SetEase(EaseConfig value)
         {
             PressedEase = value;
@@ -76,6 +82,12 @@ namespace KeyViewer.Models
         {
             Pressed = value;
             Released = value;
+            return this;
+        }
+        public new PressReleaseM<T> Set(T pressed, T released)
+        {
+            Pressed = pressed;
+            Released = released;
             return this;
         }
         public new PressReleaseM<T> SetEase(EaseConfig value)

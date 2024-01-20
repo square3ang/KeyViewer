@@ -13,7 +13,6 @@ namespace KeyViewer.Unity
     {
         private bool initialized;
         private bool prevPressed;
-        private KeyManager manager;
         private Replacer textReplacerP;
         private Replacer textReplacerR;
         private Replacer countTextReplacerP;
@@ -23,6 +22,7 @@ namespace KeyViewer.Unity
         private EnsurePool<Rain> rainPool;
         private int[] colorUpdateIgnores = new int[4];
 
+        public KeyManager Manager;
         public bool Pressed;
         public Vector2 Size;
         public Vector2 Position;
@@ -41,7 +41,7 @@ namespace KeyViewer.Unity
         public void Init(KeyManager manager, KeyConfig config)
         {
             if (initialized) return;
-            this.manager = manager;
+            Manager = manager;
             Config = config;
             textReplacerP = new Replacer(manager.AllTags);
             textReplacerR = new Replacer(manager.AllTags);
@@ -136,7 +136,7 @@ namespace KeyViewer.Unity
             keyHeight *= vConfig.Scale.Released.y;
             Size = new Vector2(keyWidth, keyHeight);
             float _x = Config.DisableSorting ? 0 : x + keyWidth / 2;
-            Position = new Vector2(_x, 0) - manager.centerOffset;
+            Position = new Vector2(_x, 0) - Manager.centerOffset;
             Position += KeyViewerUtils.InjectPivot(this, KeyViewerUtils.GetPivot(vConfig.Pivot));
             KeyViewerUtils.ApplyConfigLayout(this, vConfig);
 
@@ -200,7 +200,7 @@ namespace KeyViewer.Unity
             rainContainer.SetActive(Config.RainEnabled);
 
             if (!Config.DisableSorting)
-                x += keyWidth + manager.profile.KeySpacing;
+                x += keyWidth + Manager.profile.KeySpacing;
             ReplaceText();
         }
         public void ResetRains()
@@ -247,7 +247,7 @@ namespace KeyViewer.Unity
             float x = Size.x, y = Size.y;
             Vector2 offset = rainVConfig.Offset.Get(Pressed);
             int softness = Config.Rain.Softness.Get(Pressed);
-            float spacing = manager.profile.KeySpacing;
+            float spacing = Manager.profile.KeySpacing;
             switch (dir)
             {
                 case Direction.Up:
@@ -294,7 +294,7 @@ namespace KeyViewer.Unity
                 Config.Count++;
                 if (Config.EnableKPSMeter)
                     KpsCalc.Press();
-                manager.kpsCalc.Press();
+                Manager.kpsCalc.Press();
             }
             else if (InputAPI.EventActive)
                 InputAPI.KeyRelease(Config.Code);

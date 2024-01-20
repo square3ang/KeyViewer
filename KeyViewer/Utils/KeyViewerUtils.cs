@@ -3,6 +3,8 @@ using KeyViewer.Core.Translation;
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Unity.UI;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -307,6 +309,44 @@ namespace KeyViewer.Utils
                     return position.WithRelativeX(-offset.x).WithRelativeY(-offset.y);
                 default: return position;
             }
+        }
+        public static Vector2 GetSize(Profile profile)
+        {
+            float keyHeight = profile.Keys.Any(k => k.EnableCountText) ? 150 : 100;
+            float totalX = 0;
+            foreach (var k in profile.Keys)
+                if (!k.DisableSorting)
+                {
+                    var releasedScale = k.VectorConfig.Scale.Released;
+                    totalX += releasedScale.x * 100 + profile.KeySpacing;
+                }
+            return new Vector2(totalX - profile.KeySpacing - 5, keyHeight);
+        }
+        public static void MakeBar(List<Key> keys)
+        {
+            KeyManager manager = keys.First().Manager;
+            keys.ForEach(k => k.Config.DisableSorting = true);
+            Vector2 size = GetSize(manager.profile);
+            int keysCount = keys.Count;
+            int totalCount = manager.keys.Count - keysCount;
+            float spacing = manager.profile.KeySpacing;
+            for (int i = 0; i < keys.Count; i++)
+            {
+                Key k = keys[i];
+                var config = k.Config;
+                config.EnableCountText = true;
+                config.TextFontSize -= 15;
+                config.CountTextFontSize -= 5;
+                k.Text.fontSize = k.Text.fontSizeMax = config.TextFontSize;
+                k.CountText.fontSize = k.CountText.fontSizeMax = config.CountTextFontSize;
+                var newScale = new Vector2(totalCount / (float)keysCount, .5f);
+                config.BackgroundConfig.VectorConfig.Scale.Set(newScale * 0.9f, newScale);
+                config.OutlineConfig.VectorConfig.Scale.Set(newScale * 0.9f, newScale);
+                float x = 100 * newScale.x;
+                var newOffset = new Vector3(x / 2 + i * x + (i * spacing), -size.y / 2 - spacing);
+                config.VectorConfig.Offset.Set(newOffset);
+            }
+            manager.UpdateLayout();
         }
     }
 }
