@@ -80,12 +80,12 @@ namespace KeyViewer.Utils
             t.localScale = vConfig.Scale.Released;
             t.localPosition = vConfig.Offset.Released + (Vector3)k.Position;
         }
-        public static void ApplyConfigLayout(Rain r, VectorConfig vConfig)
+        public static void ApplyConfigLayout(Rain r, VectorConfig vConfig, Vector2 sizeDelta)
         {
-            var t = r.transform;
-            t.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
-            t.localScale = vConfig.Scale.Released;
-            t.localPosition = vConfig.Offset.Released + (Vector3)r.Position;
+            var rt = r.rt;
+            rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
+            rt.localPosition = vConfig.Offset.Released + (Vector3)r.Position;
+            rt.sizeDelta = sizeDelta * vConfig.Scale.Released;
         }
         public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config, float heightOffset, bool fixScale)
         {
@@ -322,31 +322,36 @@ namespace KeyViewer.Utils
                 }
             return new Vector2(totalX - profile.KeySpacing - 5, keyHeight);
         }
-        public static void MakeBar(List<Key> keys)
+        public static void MakeBar(Profile profile, List<KeyConfig> keys)
         {
-            KeyManager manager = keys.First().Manager;
-            keys.ForEach(k => k.Config.DisableSorting = true);
-            Vector2 size = GetSize(manager.profile);
+            keys.ForEach(k => k.DisableSorting = k.EnableCountText = true);
+            Vector2 size = GetSize(profile);
             int keysCount = keys.Count;
-            int totalCount = manager.keys.Count - keysCount;
-            float spacing = manager.profile.KeySpacing;
+            int totalCount = profile.Keys.Count - keysCount;
+            float spaceCount = (totalCount / (float)keysCount) - 1;
+            float spaceScale = spaceCount * 0.1f;
+            float spacing = profile.KeySpacing;
             for (int i = 0; i < keys.Count; i++)
             {
-                Key k = keys[i];
-                var config = k.Config;
-                config.EnableCountText = true;
-                config.TextFontSize -= 15;
-                config.CountTextFontSize -= 5;
-                k.Text.fontSize = k.Text.fontSizeMax = config.TextFontSize;
-                k.CountText.fontSize = k.CountText.fontSizeMax = config.CountTextFontSize;
-                var newScale = new Vector2(totalCount / (float)keysCount, .5f);
+                var config = keys[i];
+                config.TextFontSize -= 20;
+                config.CountTextFontSize -= 10;
+                var newScale = new Vector2(totalCount / (float)keysCount + spaceScale, .5f);
                 config.BackgroundConfig.VectorConfig.Scale.Set(newScale * 0.9f, newScale);
                 config.OutlineConfig.VectorConfig.Scale.Set(newScale * 0.9f, newScale);
                 float x = 100 * newScale.x;
-                var newOffset = new Vector3(x / 2 + i * x + (i * spacing), -size.y / 2 - spacing);
+                var newOffset = new Vector3(x / 2 + i * x + (i * spacing), -size.y - spacing);
                 config.VectorConfig.Offset.Set(newOffset);
+                var newBgOlOffset = new Vector3(0, size.y / 4);
+                config.BackgroundConfig.VectorConfig.Offset.Set(newBgOlOffset);
+                config.OutlineConfig.VectorConfig.Offset.Set(newBgOlOffset);
+                float heightOffset = size.y / 8f;
+                config.TextConfig.VectorConfig.Offset.Set(newBgOlOffset.WithRelativeY(-heightOffset));
+                config.CountTextConfig.VectorConfig.Offset.Set(newBgOlOffset.WithRelativeY(heightOffset));
+                if (config.Rain.Direction == Direction.Up || config.Rain.Direction == Direction.Down)
+                    config.Rain.ObjectConfig.VectorConfig.Scale.Set(new Vector2(newScale.x, 1));
+                else config.Rain.ObjectConfig.VectorConfig.Scale.Set(new Vector2(1, newScale.y));
             }
-            manager.UpdateLayout();
         }
     }
 }

@@ -21,7 +21,7 @@
         public static class Profile
         {
             public const string Prefix = "PROFILE_";
-            internal static readonly string MakeBarSpecialKeys = Prefix + "MAKE_BAR_SPECIAL_KEYS";
+            internal static readonly string MakeBar = Prefix + "MAKE_BAR";
             internal static readonly string ViewOnlyGamePlay = Prefix + "VIEW_ONLY_GAME_PLAY";
             internal static readonly string ShowKeyPressTotal = Prefix + "SHOW_KEY_PRESS_TOTAL";
             internal static readonly string LimitNotRegisteredKeys = Prefix + "LIMIT_NOT_REGISTERED_KEYS";

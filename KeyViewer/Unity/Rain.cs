@@ -11,10 +11,11 @@ namespace KeyViewer.Unity
         public Vector2 Position;
         public Vector2 DefaultSize;
 
+        internal RectTransform rt;
+
         private bool stretching = false;
         private RainConfig config;
         private Key key;
-        private RectTransform rt;
         private ObjectConfig objConfig;
         private int colorUpdateIgnores;
         private bool initialized = false;
@@ -31,7 +32,7 @@ namespace KeyViewer.Unity
 
             OnEnable();
             KeyViewerUtils.ApplyColorLayout(image, objConfig.Color.Released);
-            KeyViewerUtils.ApplyConfigLayout(this, objConfig.VectorConfig);
+            KeyViewerUtils.ApplyConfigLayout(this, objConfig.VectorConfig, DefaultSize);
             initialized = true;
         }
         public void Press()

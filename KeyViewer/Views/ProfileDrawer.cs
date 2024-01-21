@@ -57,7 +57,7 @@ namespace KeyViewer.Views
                             var key = model.Keys[i];
                             var str = key.DummyName != null ? key.DummyName : key.Code.ToString();
                             var selected = selectedKeys.Contains(key);
-                            if (selected) str = $"<color=green>{str}</color>";
+                            if (selected) str = $"<color=cyan>{str}</color>";
                             if (GUILayout.Button(str))
                             {
                                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
@@ -113,9 +113,10 @@ namespace KeyViewer.Views
                     if (selectedKeys.Count > 0)
                     {
                         GUILayout.Space(10);
-                        if (GUILayout.Button(L(TK.Raw, "Make Bar This Keys")))
+                        if (GUILayout.Button(L(TKP.MakeBar)))
                         {
-                            KeyViewerUtils.MakeBar(manager.keys.FindAll(k => selectedKeys.Contains(k.Config)));
+                            KeyViewerUtils.MakeBar(manager.profile, manager.keys.FindAll(k => selectedKeys.Contains(k.Config)).Select(k => k.Config).ToList());
+                            manager.UpdateLayout();
                             selectedKeys.Clear();
                         }
                     }
