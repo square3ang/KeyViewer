@@ -141,7 +141,7 @@ namespace KeyViewer.Migration.V3
             for (int i = 0; i < rainConfig.RainImages.Length; i++)
             {
                 string img = rainConfig.RainImages[i];
-                Models.RainImage ri = default;
+                Models.RainImage ri = new Models.RainImage();
                 ri.Image = img;
                 ri.Count = rainConfig.RainImageCounts[i];
                 v4Config.RainImages.Add(ri);

@@ -116,6 +116,18 @@ namespace KeyViewer.Core
         }
         #endregion
 
+        public static bool DrawBlurConfig(string objName, BlurConfig blurConfig)
+        {
+            bool result = false;
+            GUILayoutEx.ExpandableGUI(() =>
+            {
+                GUILayout.BeginHorizontal();
+                result |= DrawSingleWithSlider("Size", ref blurConfig.Size, 0, 10, 300f);
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+            }, string.Format(Main.Lang[TKM.BlurConfig], objName), ref blurConfig.Status.Expanded);
+            return result;
+        }
         public static void DrawObjectConfig(string label, string objName, ObjectConfig objConfig, Action onChange)
         {
             TitleButton(label, Main.Lang[TKM.EditThis], () =>
@@ -186,7 +198,7 @@ namespace KeyViewer.Core
         public static void TitleButton(string label, string btnLabel, Action pressed)
         {
             GUILayout.BeginHorizontal();
-            Drawer.ButtonLabel(label, KeyViewerUtils.OpenDiscordUrl);
+            ButtonLabel(label, KeyViewerUtils.OpenDiscordUrl);
             if (GUILayout.Button(btnLabel))
                 pressed?.Invoke();
             GUILayout.FlexibleSpace();

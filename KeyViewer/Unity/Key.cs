@@ -79,7 +79,7 @@ namespace KeyViewer.Unity
             Background = bgObj.AddComponent<Image>();
             Background.type = Image.Type.Sliced;
             KeyViewerUtils.ApplyColorLayout(Background, bgConfig.Color.Released);
-            KeyViewerUtils.ApplyRoundnessLayout(Background, config.BackgroundRoundness);
+            KeyViewerUtils.ApplyRoundnessBlurLayout(Background, config.BackgroundRoundness, config.BackgroundBlurConfig, config.BackgroundBlurEnabled);
 
             ObjectConfig olConfig = config.OutlineConfig;
             GameObject olObj = new GameObject("Outline");
@@ -87,7 +87,7 @@ namespace KeyViewer.Unity
             Outline = olObj.AddComponent<Image>();
             Outline.type = Image.Type.Sliced;
             KeyViewerUtils.ApplyColorLayout(Outline, olConfig.Color.Released);
-            KeyViewerUtils.ApplyRoundnessLayout(Outline, config.OutlineRoundness);
+            KeyViewerUtils.ApplyRoundnessBlurLayout(Outline, config.OutlineRoundness, config.OutlineBlurConfig, config.OutlineBlurEnabled);
 
             ObjectConfig textConfig = config.TextConfig;
             GameObject textObj = new GameObject("Text");
@@ -140,19 +140,19 @@ namespace KeyViewer.Unity
             Position += KeyViewerUtils.InjectPivot(this, KeyViewerUtils.GetPivot(vConfig.Pivot));
             KeyViewerUtils.ApplyConfigLayout(this, vConfig);
 
-            Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
+            //Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
             Background.rectTransform.SetAnchor(Config.BackgroundConfig.VectorConfig.Anchor);
             Background.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.BackgroundConfig.VectorConfig.Pivot);
             Background.rectTransform.sizeDelta = DefaultSize;
             KeyViewerUtils.ApplyConfigLayout(Background, Config.BackgroundConfig, DefaultSize);
-            KeyViewerUtils.ApplyRoundnessLayout(Background, Config.BackgroundRoundness);
+            KeyViewerUtils.ApplyRoundnessBlurLayout(Background, Config.BackgroundRoundness, Config.BackgroundBlurConfig, Config.BackgroundBlurEnabled, AssetManager.Get(Config.Background.Released, AssetManager.Background).texture);
 
             Outline.sprite = AssetManager.Get(Config.Outline.Released, AssetManager.Outline);
             Outline.rectTransform.SetAnchor(Config.OutlineConfig.VectorConfig.Anchor);
             Outline.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.OutlineConfig.VectorConfig.Pivot);
             Outline.rectTransform.sizeDelta = DefaultSize;
             KeyViewerUtils.ApplyConfigLayout(Outline, Config.OutlineConfig, DefaultSize);
-            KeyViewerUtils.ApplyRoundnessLayout(Outline, Config.OutlineRoundness);
+            KeyViewerUtils.ApplyRoundnessBlurLayout(Outline, Config.OutlineRoundness, Config.OutlineBlurConfig, Config.OutlineBlurEnabled);
 
             float heightOffset = defaultY / 4f;
             ObjectConfig textConfig = Config.TextConfig;

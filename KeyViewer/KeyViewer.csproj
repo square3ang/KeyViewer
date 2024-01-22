@@ -349,6 +349,7 @@
     <Compile Include="Migration\V3\V3Migrator.cs" />
     <Compile Include="Migration\V3\V3Settings.cs" />
     <Compile Include="Models\ActiveProfile.cs" />
+    <Compile Include="Models\BlurConfig.cs" />
     <Compile Include="Models\Direction.cs" />
     <Compile Include="Models\EaseConfig.cs" />
     <Compile Include="Models\GColor.cs" />
@@ -378,8 +379,7 @@
     <Compile Include="Unity\KeyManager.cs" />
     <Compile Include="Unity\Rain.cs" />
     <Compile Include="Unity\StaticCoroutine.cs" />
-    <Compile Include="Unity\UI\ImageWithIndependentRoundedCorners.cs" />
-    <Compile Include="Unity\UI\ImageWithRoundedCorners.cs" />
+    <Compile Include="Unity\UI\RoundedCornersBlur.cs" />
     <Compile Include="Unity\UI\UICornersGradient.cs" />
     <Compile Include="Unity\UI\UIGradient.cs" />
     <Compile Include="Unity\UI\UITextCornersGradient.cs" />

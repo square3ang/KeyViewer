@@ -18,6 +18,8 @@ namespace KeyViewer.Models
         public bool EnableOutlineImage = true;
         public bool DisableSorting = false;
         public bool DoNotScaleText = true;
+        public bool BackgroundBlurEnabled = false;
+        public bool OutlineBlurEnabled = false;
         public float TextFontSize = 75;
         public float CountTextFontSize = 50;
 
@@ -32,6 +34,8 @@ namespace KeyViewer.Models
         public ObjectConfig OutlineConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.white);
         public float BackgroundRoundness = 0f;
         public float OutlineRoundness = 0f;
+        public BlurConfig BackgroundBlurConfig = new BlurConfig();
+        public BlurConfig OutlineBlurConfig = new BlurConfig();
 
         public VectorConfig VectorConfig = new VectorConfig();
 
@@ -52,6 +56,8 @@ namespace KeyViewer.Models
             newConfig.EnableOutlineImage = EnableOutlineImage;
             newConfig.DisableSorting = DisableSorting;
             newConfig.DoNotScaleText = DoNotScaleText;
+            newConfig.BackgroundBlurEnabled = BackgroundBlurEnabled;
+            newConfig.OutlineBlurEnabled = OutlineBlurEnabled;
             newConfig.TextFontSize = TextFontSize;
             newConfig.CountTextFontSize = CountTextFontSize;
 
@@ -66,6 +72,8 @@ namespace KeyViewer.Models
             newConfig.OutlineConfig = OutlineConfig.Copy();
             newConfig.BackgroundRoundness = BackgroundRoundness;
             newConfig.OutlineRoundness = OutlineRoundness;
+            newConfig.BackgroundBlurConfig = BackgroundBlurConfig.Copy();
+            newConfig.OutlineBlurConfig = OutlineBlurConfig.Copy();
 
             newConfig.VectorConfig = VectorConfig.Copy();
 
@@ -88,6 +96,8 @@ namespace KeyViewer.Models
             node[nameof(EnableOutlineImage)] = EnableOutlineImage;
             node[nameof(DisableSorting)] = DisableSorting;
             node[nameof(DoNotScaleText)] = DoNotScaleText;
+            node[nameof(BackgroundBlurEnabled)] = BackgroundBlurEnabled;
+            node[nameof(OutlineBlurEnabled)] = OutlineBlurEnabled;
             node[nameof(TextFontSize)] = TextFontSize;
             node[nameof(CountTextFontSize)] = CountTextFontSize;
 
@@ -102,6 +112,8 @@ namespace KeyViewer.Models
             node[nameof(OutlineConfig)] = OutlineConfig.Serialize();
             node[nameof(BackgroundRoundness)] = BackgroundRoundness;
             node[nameof(OutlineRoundness)] = OutlineRoundness;
+            node[nameof(BackgroundBlurConfig)] = BackgroundBlurConfig.Serialize();
+            node[nameof(OutlineBlurConfig)] = OutlineBlurConfig.Serialize();
 
             node[nameof(VectorConfig)] = VectorConfig.Serialize();
 
@@ -122,6 +134,8 @@ namespace KeyViewer.Models
             EnableOutlineImage = node[nameof(EnableOutlineImage)];
             DisableSorting = node[nameof(DisableSorting)];
             DoNotScaleText = node[nameof(DoNotScaleText)];
+            BackgroundBlurEnabled = node[nameof(BackgroundBlurEnabled)];
+            OutlineBlurEnabled = node[nameof(OutlineBlurEnabled)];
             TextFontSize = node[nameof(TextFontSize)].IfNotExist(75);
             CountTextFontSize = node[nameof(CountTextFontSize)].IfNotExist(50);
 
@@ -136,6 +150,8 @@ namespace KeyViewer.Models
             OutlineConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(OutlineConfig)]);
             BackgroundRoundness = node[nameof(BackgroundRoundness)];
             OutlineRoundness = node[nameof(OutlineRoundness)];
+            BackgroundBlurConfig = ModelUtils.Unbox<BlurConfig>(node[nameof(BackgroundBlurConfig)]) ?? new BlurConfig();
+            OutlineBlurConfig = ModelUtils.Unbox<BlurConfig>(node[nameof(OutlineBlurConfig)]) ?? new BlurConfig();
 
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
 

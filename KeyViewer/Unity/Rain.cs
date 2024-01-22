@@ -32,7 +32,7 @@ namespace KeyViewer.Unity
 
             OnEnable();
             KeyViewerUtils.ApplyColorLayout(image, objConfig.Color.Released);
-            KeyViewerUtils.ApplyConfigLayout(this, objConfig.VectorConfig, DefaultSize);
+            KeyViewerUtils.ApplyConfigLayout(this, objConfig.VectorConfig, DefaultSize, false);
             initialized = true;
         }
         public void Press()
@@ -42,7 +42,7 @@ namespace KeyViewer.Unity
             if (colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase);
             else colorUpdateIgnores--;
-            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false, DefaultSize);
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false, DefaultSize, false);
         }
         public void Release()
         {
@@ -52,7 +52,7 @@ namespace KeyViewer.Unity
                 KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase);
             else colorUpdateIgnores--;
             Vector2 adjustedPosition = KeyViewerUtils.AdjustRainPosition(config.Direction, Position, objConfig.VectorConfig.Offset.Pressed);
-            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false, DefaultSize);
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false, DefaultSize, false);
         }
         public void OnEnable()
         {
@@ -63,7 +63,9 @@ namespace KeyViewer.Unity
             rt.anchoredPosition = GetPosition(config.Direction);
             Position = rt.localPosition;
             var lastRound = key.RainImageManager.GetLastRoundness();
-            KeyViewerUtils.ApplyRoundnessLayout(image, lastRound == 0 ? config.Roundness : lastRound);
+            var lastBlur = key.RainImageManager.GetLastBlurConfig() ?? config.BlurConfig;
+            var enabled = config.BlurEnabled || lastBlur != null;
+            KeyViewerUtils.ApplyRoundnessBlurLayout(image, lastRound == 0 ? config.Roundness : lastRound, lastBlur, enabled);
         }
         public void IgnoreColorUpdate()
         {

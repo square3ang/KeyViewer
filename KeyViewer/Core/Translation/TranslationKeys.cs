@@ -92,6 +92,7 @@
             internal static readonly string ShowUpdateNote = Prefix + "SHOW_UPDATE_NOTE";
             internal static readonly string Pivot = Prefix + "PIVOT";
             internal static readonly string Roundness = Prefix + "ROUNDNESS";
+            internal static readonly string BlurConfig = Prefix + "BLUR_CONFIG";
         }
         public static class KeyConfig
         {
@@ -125,6 +126,8 @@
             internal static readonly string DoNotScaleText = Prefix + "DO_NOT_SCALE_TEXT";
             internal static readonly string TextFontSize = Prefix + "TEXT_FONT_SIZE";
             internal static readonly string CountTextFontSize = Prefix + "COUNT_TEXT_FONT_SIZE";
+            internal static readonly string EnableBackgroundBlur = Prefix + "ENABLE_BACKGROUND_BLUR";
+            internal static readonly string EnableOutlineBlur = Prefix + "ENABLE_OUTLINE_BLUR";
         }
         public static class RainConfig
         {
@@ -141,6 +144,7 @@
             internal static readonly string RainImages = Prefix + "RAIN_IMAGES";
             internal static readonly string RainImagePath = Prefix + "RAIN_IMAGE_PATH";
             internal static readonly string RainImageCount = Prefix + "RAIN_IMAGE_COUNT";
+            internal static readonly string BlurEnabled = Prefix + "ENABLE_BLUR";
         }
     }
 }

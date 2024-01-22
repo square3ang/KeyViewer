@@ -12,15 +12,18 @@ namespace KeyViewer.Core
         private int count;
         private List<Sprite> sprites;
         private List<float> roundness;
+        private List<(bool, BlurConfig)> blurs;
         public RainImageManager(RainConfig config)
         {
             this.config = config;
             sprites = new List<Sprite>();
             roundness = new List<float>();
+            blurs = new List<(bool, BlurConfig)>();
             Refresh();
         }
         public Sprite Get() => count <= 0 ? null : sprites[Index];
         public float GetLastRoundness() => count <= 0 ? 0 : roundness[index];
+        public BlurConfig GetLastBlurConfig() => count <= 0 ? null : blurs[index].Item1 ? blurs[index].Item2 : null;
         public void Refresh()
         {
             index = count = 0;
@@ -32,6 +35,7 @@ namespace KeyViewer.Core
                     {
                         sprites.Add(AssetManager.Get(image.Image));
                         roundness.Add(image.Roundness);
+                        blurs.Add((image.BlurEnabled, image.BlurConfig));
                     }
                 count = sprites.Count;
                 if (config.ImageDisplayMode == RainImageDisplayMode.Random)

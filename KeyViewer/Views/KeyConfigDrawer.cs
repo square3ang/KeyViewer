@@ -41,6 +41,8 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawBool(L(TKKC.EnableOutlineImage), ref model.EnableOutlineImage);
             changed |= Drawer.DrawBool(L(TKKC.DisableSorting), ref model.DisableSorting);
             changed |= Drawer.DrawBool(L(TKKC.DoNotScaleText), ref model.DoNotScaleText);
+            changed |= Drawer.DrawBool(L(TKKC.EnableBackgroundBlur), ref model.BackgroundBlurEnabled);
+            changed |= Drawer.DrawBool(L(TKKC.EnableOutlineBlur), ref model.OutlineBlurEnabled);
             changed |= Drawer.DrawSingleWithSlider(L(TKKC.TextFontSize), ref model.TextFontSize, 0, 300, 300);
             changed |= Drawer.DrawSingleWithSlider(L(TKKC.CountTextFontSize), ref model.CountTextFontSize, 0, 300, 300);
 
@@ -50,6 +52,10 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawPressReleaseH(L(TKKC.BackgroundImage), model.Background, Drawer.CD_H_STR);
             if (model.EnableOutlineImage)
                 changed |= Drawer.DrawPressReleaseH(L(TKKC.OutlineImage), model.Outline, Drawer.CD_H_STR);
+            if (model.BackgroundBlurEnabled)
+                changed |= Drawer.DrawBlurConfig(L(TKKC.KeyBackground, KeyViewerUtils.KeyName(model)), model.BackgroundBlurConfig);
+            if (model.OutlineBlurEnabled)
+                changed |= Drawer.DrawBlurConfig(L(TKKC.KeyOutline, KeyViewerUtils.KeyName(model)), model.OutlineBlurConfig);
 
             changed |= Drawer.DrawVectorConfig(model.VectorConfig);
 

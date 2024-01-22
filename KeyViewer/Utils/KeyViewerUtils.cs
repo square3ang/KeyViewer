@@ -8,11 +8,28 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityStandardAssets.ImageEffects;
 
 namespace KeyViewer.Utils
 {
     public static class KeyViewerUtils
     {
+        /// <summary>
+        /// Color (1, 1, 1, 0.2)
+        /// </summary>
+        public static readonly int Blur_TintColor = Shader.PropertyToID("_TintColor");
+        /// <summary>
+        /// float 5.0 (0.0 ~ 40.0)
+        /// </summary>
+        public static readonly int Blur_Size = Shader.PropertyToID("_Size");
+        /// <summary>
+        /// float 0.2 (0.0 ~ 2.0)
+        /// </summary>
+        public static readonly int Blur_Vibrancy = Shader.PropertyToID("_Vibrancy");
+        /// <summary>
+        /// Texture2D "white"
+        /// </summary>
+        public static readonly int Blur_MainTex = Shader.PropertyToID("_MainTex");
         public static string KeyName(KeyConfig config)
         {
             return config.DummyName ?? config.Code.ToString();
@@ -46,19 +63,6 @@ namespace KeyViewer.Utils
                 image.color = color;
             }
         }
-        public static void ApplyRoundnessLayout(Image image, float roundness)
-        {
-            ImageWithRoundedCorners rounder = image.GetComponent<ImageWithRoundedCorners>();
-            if (roundness <= 0)
-            {
-                if (rounder) Object.Destroy(rounder);
-                return;
-            }
-            if (!rounder) rounder = image.gameObject.AddComponent<ImageWithRoundedCorners>();
-            rounder.radius = roundness * 90;
-            rounder.Validate();
-            rounder.Refresh();
-        }
         public static void ApplyColorLayout(TextMeshProUGUI text, GColor color)
         {
             if (color.gradientEnabled) text.colorGradient = color;
@@ -80,12 +84,14 @@ namespace KeyViewer.Utils
             t.localScale = vConfig.Scale.Released;
             t.localPosition = vConfig.Offset.Released + (Vector3)k.Position;
         }
-        public static void ApplyConfigLayout(Rain r, VectorConfig vConfig, Vector2 sizeDelta)
+        public static void ApplyConfigLayout(Rain r, VectorConfig vConfig, Vector2 sizeDelta, bool scaleSizeDelta)
         {
             var rt = r.rt;
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             rt.localPosition = vConfig.Offset.Released + (Vector3)r.Position;
-            rt.sizeDelta = sizeDelta * vConfig.Scale.Released;
+            if (scaleSizeDelta)
+                rt.sizeDelta = sizeDelta * vConfig.Scale.Released;
+            else rt.localScale = vConfig.Scale.Released;
         }
         public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config, float heightOffset, bool fixScale)
         {
@@ -353,5 +359,25 @@ namespace KeyViewer.Utils
                 else config.Rain.ObjectConfig.VectorConfig.Scale.Set(new Vector2(1, newScale.y));
             }
         }
+        public static void ApplyRoundnessBlurLayout(Image image, float roundness, BlurConfig config, bool blurEnabled, Texture tex)
+        {
+            RoundedCornersBlur rounder = image.GetComponent<RoundedCornersBlur>();
+            if (roundness <= 0 && !blurEnabled)
+            {
+                if (rounder) Object.Destroy(rounder);
+                return;
+            }
+            if (!rounder) rounder = image.gameObject.AddComponent<RoundedCornersBlur>();
+            if (roundness > 0) rounder.radius = roundness * 90;
+            if (blurEnabled)
+            {
+                Material mat = rounder.material;
+                mat.SetFloat(Blur_Size, config.Size);
+                mat.SetTexture(Blur_MainTex, tex);
+            }
+            rounder.Validate();
+            rounder.Refresh();
+        }
+        public static void ApplyRoundnessBlurLayout(Image image, float roundness, BlurConfig config, bool blurEnabled) { }
     }
 }
