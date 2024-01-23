@@ -78,16 +78,16 @@ namespace KeyViewer.Unity
             bgObj.transform.SetParent(transform);
             Background = bgObj.AddComponent<Image>();
             Background.type = Image.Type.Sliced;
-            KeyViewerUtils.ApplyColorLayout(Background, bgConfig.Color.Released);
-            KeyViewerUtils.ApplyRoundnessBlurLayout(Background, config.BackgroundRoundness, config.BackgroundBlurConfig, config.BackgroundBlurEnabled);
+            KeyViewerUtils.ApplyRoundnessBlurLayout(Background, ref config.BackgroundRoundness, config.BackgroundBlurConfig, config.BackgroundBlurEnabled);
+            KeyViewerUtils.ApplyColorLayout(Background, bgConfig.Color.Released, config.BackgroundBlurEnabled);
 
             ObjectConfig olConfig = config.OutlineConfig;
             GameObject olObj = new GameObject("Outline");
             olObj.transform.SetParent(transform);
             Outline = olObj.AddComponent<Image>();
             Outline.type = Image.Type.Sliced;
-            KeyViewerUtils.ApplyColorLayout(Outline, olConfig.Color.Released);
-            KeyViewerUtils.ApplyRoundnessBlurLayout(Outline, config.OutlineRoundness, config.OutlineBlurConfig, config.OutlineBlurEnabled);
+            KeyViewerUtils.ApplyRoundnessBlurLayout(Outline, ref config.OutlineRoundness, null, false);
+            KeyViewerUtils.ApplyColorLayout(Outline, olConfig.Color.Released, false);
 
             ObjectConfig textConfig = config.TextConfig;
             GameObject textObj = new GameObject("Text");
@@ -140,19 +140,19 @@ namespace KeyViewer.Unity
             Position += KeyViewerUtils.InjectPivot(this, KeyViewerUtils.GetPivot(vConfig.Pivot));
             KeyViewerUtils.ApplyConfigLayout(this, vConfig);
 
-            //Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
+            Background.sprite = AssetManager.Get(Config.Background.Released, AssetManager.Background);
             Background.rectTransform.SetAnchor(Config.BackgroundConfig.VectorConfig.Anchor);
             Background.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.BackgroundConfig.VectorConfig.Pivot);
             Background.rectTransform.sizeDelta = DefaultSize;
-            KeyViewerUtils.ApplyConfigLayout(Background, Config.BackgroundConfig, DefaultSize);
-            KeyViewerUtils.ApplyRoundnessBlurLayout(Background, Config.BackgroundRoundness, Config.BackgroundBlurConfig, Config.BackgroundBlurEnabled, AssetManager.Get(Config.Background.Released, AssetManager.Background).texture);
+            KeyViewerUtils.ApplyRoundnessBlurLayout(Background, ref Config.BackgroundRoundness, Config.BackgroundBlurConfig, Config.BackgroundBlurEnabled);
+            KeyViewerUtils.ApplyConfigLayout(Background, Config.BackgroundConfig, DefaultSize, Config.BackgroundBlurEnabled);
 
             Outline.sprite = AssetManager.Get(Config.Outline.Released, AssetManager.Outline);
             Outline.rectTransform.SetAnchor(Config.OutlineConfig.VectorConfig.Anchor);
             Outline.rectTransform.pivot = KeyViewerUtils.GetPivot(Config.OutlineConfig.VectorConfig.Pivot);
             Outline.rectTransform.sizeDelta = DefaultSize;
-            KeyViewerUtils.ApplyConfigLayout(Outline, Config.OutlineConfig, DefaultSize);
-            KeyViewerUtils.ApplyRoundnessBlurLayout(Outline, Config.OutlineRoundness, Config.OutlineBlurConfig, Config.OutlineBlurEnabled);
+            KeyViewerUtils.ApplyRoundnessBlurLayout(Outline, ref Config.OutlineRoundness, null, false);
+            KeyViewerUtils.ApplyConfigLayout(Outline, Config.OutlineConfig, DefaultSize, false);
 
             float heightOffset = defaultY / 4f;
             ObjectConfig textConfig = Config.TextConfig;
@@ -349,14 +349,14 @@ namespace KeyViewer.Unity
             if (colorUpdateIgnores[(int)Element.Background] == 0)
             {
                 var bgColor = Config.BackgroundConfig.Color;
-                KeyViewerUtils.ApplyColor(Background, bgColor.Get(!Pressed), bgColor.Get(Pressed), bgColor.GetEase(Pressed));
+                KeyViewerUtils.ApplyColor(Background, bgColor.Get(!Pressed), bgColor.Get(Pressed), bgColor.GetEase(Pressed), Config.BackgroundBlurEnabled);
             }
             else colorUpdateIgnores[(int)Element.Background]--;
 
             if (colorUpdateIgnores[(int)Element.Outline] == 0)
             {
                 var olColor = Config.OutlineConfig.Color;
-                KeyViewerUtils.ApplyColor(Outline, olColor.Get(!Pressed), olColor.Get(Pressed), olColor.GetEase(Pressed));
+                KeyViewerUtils.ApplyColor(Outline, olColor.Get(!Pressed), olColor.Get(Pressed), olColor.GetEase(Pressed), false);
             }
             else colorUpdateIgnores[(int)Element.Outline]--;
         }

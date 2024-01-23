@@ -3,6 +3,7 @@ using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using System.Linq;
+using UnityEngine;
 using TKKC = KeyViewer.Core.Translation.TranslationKeys.KeyConfig;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 
@@ -24,6 +25,7 @@ namespace KeyViewer.Views
             }
             else Drawer.ButtonLabel(L(TKKC.KeyCode) + ":" + model.Code, KeyViewerUtils.OpenDiscordUrl);
 
+            bool prevBgBlurEnabled = model.BackgroundBlurEnabled;
             bool changed = false;
             changed |= Drawer.DrawString(L(TKKC.TextFont), ref model.Font);
             if (model.DummyName == null)
@@ -42,7 +44,6 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawBool(L(TKKC.DisableSorting), ref model.DisableSorting);
             changed |= Drawer.DrawBool(L(TKKC.DoNotScaleText), ref model.DoNotScaleText);
             changed |= Drawer.DrawBool(L(TKKC.EnableBackgroundBlur), ref model.BackgroundBlurEnabled);
-            changed |= Drawer.DrawBool(L(TKKC.EnableOutlineBlur), ref model.OutlineBlurEnabled);
             changed |= Drawer.DrawSingleWithSlider(L(TKKC.TextFontSize), ref model.TextFontSize, 0, 300, 300);
             changed |= Drawer.DrawSingleWithSlider(L(TKKC.CountTextFontSize), ref model.CountTextFontSize, 0, 300, 300);
 
@@ -54,8 +55,6 @@ namespace KeyViewer.Views
                 changed |= Drawer.DrawPressReleaseH(L(TKKC.OutlineImage), model.Outline, Drawer.CD_H_STR);
             if (model.BackgroundBlurEnabled)
                 changed |= Drawer.DrawBlurConfig(L(TKKC.KeyBackground, KeyViewerUtils.KeyName(model)), model.BackgroundBlurConfig);
-            if (model.OutlineBlurEnabled)
-                changed |= Drawer.DrawBlurConfig(L(TKKC.KeyOutline, KeyViewerUtils.KeyName(model)), model.OutlineBlurConfig);
 
             changed |= Drawer.DrawVectorConfig(model.VectorConfig);
 
@@ -74,7 +73,11 @@ namespace KeyViewer.Views
                 Drawer.TitleButton(L(TKKC.EditRainConfig), L(TKM.EditThis), () => Main.GUI.Push(new RainConfigDrawer(manager, model)));
 
             if (changed)
+            {
+                if (!prevBgBlurEnabled && model.BackgroundBlurEnabled)
+                    KeyViewerUtils.ApplyBlurColorConfig(model);
                 manager.UpdateLayout();
+            }
         }
     }
 }

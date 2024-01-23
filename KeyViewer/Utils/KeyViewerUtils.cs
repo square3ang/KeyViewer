@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using KeyViewer.Core;
 using KeyViewer.Core.Translation;
 using KeyViewer.Models;
 using KeyViewer.Unity;
@@ -44,9 +45,15 @@ namespace KeyViewer.Utils
             k.position = origin;
             return offset;
         }
-        public static void ApplyColorLayout(Image image, GColor color)
+        public static void ApplyColorLayout(Image image, GColor color, bool blurEnabled)
         {
             UICornersGradient grad = image.GetComponent<UICornersGradient>();
+            if (blurEnabled)
+            {
+                if (grad) Object.Destroy(grad);
+                image.material.SetColor(Blur_TintColor, color);
+                return;
+            }
             if (color.gradientEnabled)
             {
                 image.color = Color.white;
@@ -60,7 +67,7 @@ namespace KeyViewer.Utils
             else
             {
                 if (grad) Object.Destroy(grad);
-                image.color = color;
+                else image.color = color;
             }
         }
         public static void ApplyColorLayout(TextMeshProUGUI text, GColor color)
@@ -68,9 +75,9 @@ namespace KeyViewer.Utils
             if (color.gradientEnabled) text.colorGradient = color;
             else text.colorGradient = new VertexGradient(color);
         }
-        public static void ApplyConfigLayout(Image image, ObjectConfig config, Vector2 sizeDelta)
+        public static void ApplyConfigLayout(Image image, ObjectConfig config, Vector2 sizeDelta, bool blurEnabled)
         {
-            ApplyColorLayout(image, config.Color.Released);
+            ApplyColorLayout(image, config.Color.Released, blurEnabled);
             var vConfig = config.VectorConfig;
             var rt = image.rectTransform;
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
@@ -105,15 +112,24 @@ namespace KeyViewer.Utils
                 scale = FixedScale(rt.parent.localScale, scale);
             rt.localScale = scale;
         }
-        public static void ApplyColor(Image image, GColor from, GColor to, EaseConfig easeConfig)
+        public static void ApplyColor(Image image, GColor from, GColor to, EaseConfig easeConfig, bool blurEnabled)
         {
             DOTween.Kill(image, true);
             if (!easeConfig.IsValid)
             {
-                ApplyColorLayout(image, to);
+                ApplyColorLayout(image, to, blurEnabled);
                 return;
             }
             UICornersGradient grad = image.GetComponent<UICornersGradient>();
+            if (blurEnabled)
+            {
+                if (grad) Object.Destroy(grad);
+                Material mat = image.material;
+                DOVirtual.Float(0, 1, easeConfig.Duration, f =>
+                {
+                    mat.SetColor(Blur_TintColor, EasedColor(from, to, f));
+                }).SetEase(easeConfig.Ease).SetAutoKill(false).SetTarget(image);
+            }
             var gradEnabled = from.gradientEnabled || to.gradientEnabled;
             if (gradEnabled)
             {
@@ -133,7 +149,7 @@ namespace KeyViewer.Utils
             else
             {
                 if (grad) Object.Destroy(grad);
-                image.DOColor(to, easeConfig.Duration).SetEase(easeConfig.Ease).SetAutoKill(false);
+                else image.DOColor(to, easeConfig.Duration).SetEase(easeConfig.Ease).SetAutoKill(false);
             }
         }
         public static void ApplyColor(TextMeshProUGUI text, GColor from, GColor to, EaseConfig easeConfig)
@@ -359,25 +375,38 @@ namespace KeyViewer.Utils
                 else config.Rain.ObjectConfig.VectorConfig.Scale.Set(new Vector2(1, newScale.y));
             }
         }
-        public static void ApplyRoundnessBlurLayout(Image image, float roundness, BlurConfig config, bool blurEnabled, Texture tex)
+        public static void ApplyRoundnessBlurLayout(Image image, ref float roundness, BlurConfig config, bool blurEnabled)
         {
-            RoundedCornersBlur rounder = image.GetComponent<RoundedCornersBlur>();
-            if (roundness <= 0 && !blurEnabled)
-            {
-                if (rounder) Object.Destroy(rounder);
-                return;
-            }
-            if (!rounder) rounder = image.gameObject.AddComponent<RoundedCornersBlur>();
-            if (roundness > 0) rounder.radius = roundness * 90;
+            image.material = null;
+            RoundedCorners rounder = image.GetComponent<RoundedCorners>();
             if (blurEnabled)
             {
-                Material mat = rounder.material;
-                mat.SetFloat(Blur_Size, config.Size);
-                mat.SetTexture(Blur_MainTex, tex);
+                roundness = 0;
+                if (rounder) Object.Destroy(rounder);
+                Material mat = image.material = new Material(AssetManager.Blur);
+                mat.SetFloat(Blur_Size, config.Spacing);
+                mat.SetFloat(Blur_Vibrancy, config.Vibrancy);
+                mat.SetColor(Blur_TintColor, image.color);
             }
-            rounder.Validate();
-            rounder.Refresh();
+            else
+            {
+                if (roundness > 0)
+                {
+                    if (!rounder) 
+                        rounder = image.gameObject.AddComponent<RoundedCorners>();
+                    rounder.radius = roundness * 90;
+                    rounder.Validate();
+                    rounder.Refresh();
+                }
+                else Object.Destroy(rounder);
+            }
         }
-        public static void ApplyRoundnessBlurLayout(Image image, float roundness, BlurConfig config, bool blurEnabled) { }
+        public static void ApplyBlurColorConfig(KeyConfig config)
+        {
+            if (!config.BackgroundBlurEnabled) return;
+            Color pressed = config.BackgroundConfig.Color.Pressed;
+            Color released = config.BackgroundConfig.Color.Released;
+            config.BackgroundConfig.Color.Set(pressed.WithAlpha(0f), released.WithAlpha(0.2f));
+        }
     }
 }

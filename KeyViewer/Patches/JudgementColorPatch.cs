@@ -94,7 +94,7 @@ namespace KeyViewer.Patches
                 {
                     key.IgnoreColorUpdate(Key.Element.Background);
                     var judge = bgConfig.JudgeColors;
-                    KeyViewerUtils.ApplyColor(key.Background, bgConfig.Color.Released, judge.Get(hit), bgConfig.JudgeColorEase);
+                    KeyViewerUtils.ApplyColor(key.Background, bgConfig.Color.Released, judge.Get(hit), bgConfig.JudgeColorEase, key.Config.BackgroundBlurEnabled);
                 }
 
                 if (key.Config.EnableOutlineImage)
@@ -104,7 +104,7 @@ namespace KeyViewer.Patches
                     {
                         key.IgnoreColorUpdate(Key.Element.Outline);
                         var judge = olConfig.JudgeColors;
-                        KeyViewerUtils.ApplyColor(key.Outline, olConfig.Color.Released, judge.Get(hit), olConfig.JudgeColorEase);
+                        KeyViewerUtils.ApplyColor(key.Outline, olConfig.Color.Released, judge.Get(hit), olConfig.JudgeColorEase, false);
                     }
                 }
 
@@ -115,7 +115,7 @@ namespace KeyViewer.Patches
                     {
                         key.rain.IgnoreColorUpdate();
                         var judge = rainConfig.JudgeColors;
-                        KeyViewerUtils.ApplyColor(key.rain.image, rainConfig.Color.Released, judge.Get(hit), rainConfig.JudgeColorEase);
+                        KeyViewerUtils.ApplyColor(key.rain.image, rainConfig.Color.Released, judge.Get(hit), rainConfig.JudgeColorEase, key.rain.blurEnabled);
                     }
                 }
             }

@@ -7,7 +7,7 @@ namespace KeyViewer.Unity.UI
     [ExecuteInEditMode]								//Required to check the OnEnable function
     [DisallowMultipleComponent]                     //You can only have one of these in every object.
     [RequireComponent(typeof(RectTransform))]
-    public class RoundedCornersBlur : MonoBehaviour
+    public class RoundedCorners : MonoBehaviour
     {
         private static readonly int Props = Shader.PropertyToID("_WidthHeightRadius");
 
@@ -49,7 +49,7 @@ namespace KeyViewer.Unity.UI
         {
             if (material == null)
             {
-                material = new Material(AssetManager.RoundedCornersBlur);
+                material = new Material(AssetManager.RoundedCorners);
             }
 
             if (image == null)

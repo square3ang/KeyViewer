@@ -12,11 +12,13 @@ namespace KeyViewer.Unity
         public Vector2 DefaultSize;
 
         internal RectTransform rt;
+        internal bool blurEnabled => config.BlurEnabled || (rImage?.BlurEnabled ?? false);
 
         private bool stretching = false;
         private RainConfig config;
         private Key key;
         private ObjectConfig objConfig;
+        private RainImage rImage;
         private int colorUpdateIgnores;
         private bool initialized = false;
 
@@ -31,7 +33,7 @@ namespace KeyViewer.Unity
             objConfig = config.ObjectConfig;
 
             OnEnable();
-            KeyViewerUtils.ApplyColorLayout(image, objConfig.Color.Released);
+            KeyViewerUtils.ApplyColorLayout(image, objConfig.Color.Released, blurEnabled);
             KeyViewerUtils.ApplyConfigLayout(this, objConfig.VectorConfig, DefaultSize, false);
             initialized = true;
         }
@@ -40,7 +42,7 @@ namespace KeyViewer.Unity
             stretching = true;
             var color = config.ObjectConfig.Color;
             if (colorUpdateIgnores == 0)
-                KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase);
+                KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase, blurEnabled);
             else colorUpdateIgnores--;
             KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false, DefaultSize, false);
         }
@@ -49,7 +51,7 @@ namespace KeyViewer.Unity
             stretching = false;
             var color = config.ObjectConfig.Color;
             if (colorUpdateIgnores == 0)
-                KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase);
+                KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase, blurEnabled);
             else colorUpdateIgnores--;
             Vector2 adjustedPosition = KeyViewerUtils.AdjustRainPosition(config.Direction, Position, objConfig.VectorConfig.Offset.Pressed);
             KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false, DefaultSize, false);
@@ -58,14 +60,16 @@ namespace KeyViewer.Unity
         {
             if (!initialized) return;
             colorUpdateIgnores = 0;
-            image.sprite = key.RainImageManager.Get();
+            image.sprite = key.RainImageManager.Get(out rImage);
             rt.sizeDelta = DefaultSize = GetInitialSize();
             rt.anchoredPosition = GetPosition(config.Direction);
             Position = rt.localPosition;
-            var lastRound = key.RainImageManager.GetLastRoundness();
-            var lastBlur = key.RainImageManager.GetLastBlurConfig() ?? config.BlurConfig;
-            var enabled = config.BlurEnabled || lastBlur != null;
-            KeyViewerUtils.ApplyRoundnessBlurLayout(image, lastRound == 0 ? config.Roundness : lastRound, lastBlur, enabled);
+            if (rImage != null)
+            {
+                var lastBlur = rImage?.BlurConfig ?? config.BlurConfig;
+                KeyViewerUtils.ApplyRoundnessBlurLayout(image, ref rImage.Roundness == 0 ? ref config.Roundness : ref rImage.Roundness, lastBlur, blurEnabled);
+            }
+            else KeyViewerUtils.ApplyRoundnessBlurLayout(image, ref config.Roundness, config.BlurConfig, config.BlurEnabled);
         }
         public void IgnoreColorUpdate()
         {

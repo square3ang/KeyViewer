@@ -122,7 +122,12 @@ namespace KeyViewer.Core
             GUILayoutEx.ExpandableGUI(() =>
             {
                 GUILayout.BeginHorizontal();
-                result |= DrawSingleWithSlider("Size", ref blurConfig.Size, 0, 10, 300f);
+                result |= DrawSingleWithSlider("Size", ref blurConfig.Spacing, 0, 40, 300f);
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                result |= DrawSingleWithSlider("Vibrancy", ref blurConfig.Vibrancy, 0, 2, 300f);
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
             }, string.Format(Main.Lang[TKM.BlurConfig], objName), ref blurConfig.Status.Expanded);

@@ -379,7 +379,7 @@
     <Compile Include="Unity\KeyManager.cs" />
     <Compile Include="Unity\Rain.cs" />
     <Compile Include="Unity\StaticCoroutine.cs" />
-    <Compile Include="Unity\UI\RoundedCornersBlur.cs" />
+    <Compile Include="Unity\UI\RoundedCorners.cs" />
     <Compile Include="Unity\UI\UICornersGradient.cs" />
     <Compile Include="Unity\UI\UIGradient.cs" />
     <Compile Include="Unity\UI\UITextCornersGradient.cs" />

@@ -44,7 +44,6 @@
      <Compile Include="Assets\UiRoundedCorners\ImageWithRoundedCorners.cs" />
      <Compile Include="Assets\UiRoundedCorners\ImageWithIndependentRoundedCorners.cs" />
      <None Include="Assets\Shaders\SDFUtils.cginc" />
-     <None Include="Assets\Shaders\RoundedCornersBlur.shader" />
      <None Include="Assets\Shaders\ShaderSetup.cginc" />
      <None Include="Assets\Shaders\Blur.shader" />
      <None Include="Assets\Shaders\RoundedCorners.shader" />

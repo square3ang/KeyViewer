@@ -10,7 +10,7 @@ namespace KeyViewer.Core
         public static Sprite Background { get; private set; }
         public static Sprite Outline { get; private set; }
         public static Shader RoundedCorners { get; private set; }
-        public static Shader RoundedCornersBlur { get; private set; }
+        public static Shader Blur { get; private set; }
         private static Dictionary<string, Sprite> others;
         public static void Initialize()
         {
@@ -22,7 +22,7 @@ namespace KeyViewer.Core
                 Background = assets.LoadAsset<Sprite>("Assets/Images/KeyBackground.png");
                 Outline = assets.LoadAsset<Sprite>("Assets/Images/KeyOutline.png");
                 RoundedCorners = assets.LoadAsset<Shader>("Assets/Shaders/RoundedCorners.shader");
-                RoundedCornersBlur = assets.LoadAsset<Shader>("Assets/Shaders/RoundedCornersBlur.shader");
+                Blur = assets.LoadAsset<Shader>("Assets/Shaders/Blur.shader");
                 others = new Dictionary<string, Sprite>();
                 Main.Logger.Log($"Loaded Key Viewer's Assets");
                 Initialized = true;
@@ -34,7 +34,7 @@ namespace KeyViewer.Core
             Object.Destroy(Background);
             Object.Destroy(Outline);
             Object.Destroy(RoundedCorners);
-            Object.Destroy(RoundedCornersBlur);
+            Object.Destroy(Blur);
             foreach (var spr in others.Values)
                 Object.Destroy(spr);
             Background = null;

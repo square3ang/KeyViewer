@@ -40,7 +40,7 @@ namespace KeyViewer.Scripting.Proxies
                 if (grad != null) return new VertexGradient(grad.topLeft, grad.topRight, grad.bottomLeft, grad.bottomRight);
                 return key.Background.color;
             }
-            set => KeyViewerUtils.ApplyColorLayout(key.Background, value);
+            set => KeyViewerUtils.ApplyColorLayout(key.Background, value, key.Config.BackgroundBlurEnabled);
         }
         public GColor OutlineColor
         {
@@ -50,7 +50,7 @@ namespace KeyViewer.Scripting.Proxies
                 if (grad != null) return new VertexGradient(grad.topLeft, grad.topRight, grad.bottomLeft, grad.bottomRight);
                 return key.Outline.color;
             }
-            set => KeyViewerUtils.ApplyColorLayout(key.Outline, value);
+            set => KeyViewerUtils.ApplyColorLayout(key.Outline, value, false);
         }
         public Vector3 Rotation { get => key.transform.localRotation.eulerAngles; set => key.transform.localRotation = Quaternion.Euler(value); }
         public Vector3 TextRotation { get => key.Text.rectTransform.localRotation.eulerAngles; set => key.Text.rectTransform.localRotation = Quaternion.Euler(value); }
