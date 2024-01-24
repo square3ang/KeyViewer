@@ -396,6 +396,7 @@
     <Compile Include="Utils\ModelUtils.cs" />
     <Compile Include="Models\Pivot.cs" />
     <Compile Include="Utils\StringConverter.cs" />
+    <Compile Include="Views\MultipleKeyConfigDrawer.cs" />
     <Compile Include="Views\RainConfigDrawer.cs" />
     <Compile Include="Views\KeyConfigDrawer.cs" />
     <Compile Include="Views\ProfileDrawer.cs" />

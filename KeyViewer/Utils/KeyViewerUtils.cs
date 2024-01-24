@@ -35,6 +35,7 @@ namespace KeyViewer.Utils
         {
             return config.DummyName ?? config.Code.ToString();
         }
+        public static bool IsDummyKey(string keyName) => !EnumHelper<KeyCode>.GetNames().Contains(keyName);
         public static Vector2 InjectPivot(Key key, Vector2 pivot)
         {
             var k = key.transform;

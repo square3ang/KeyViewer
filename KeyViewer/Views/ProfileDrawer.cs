@@ -120,6 +120,15 @@ namespace KeyViewer.Views
                             selectedKeys.Clear();
                         }
                     }
+                    if (selectedKeys.Count > 1)
+                    {
+                        GUILayout.Space(10);
+                        if (GUILayout.Button(L(TK.Raw, "Edit Multiple Configs")))
+                        {
+                            Main.GUI.Push(new MultipleKeyConfigDrawer(manager, selectedKeys.First().Copy(), selectedKeys.Select(k => KeyViewerUtils.KeyName(k)).ToList()));
+                            selectedKeys.Clear();
+                        }
+                    }
                 }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
