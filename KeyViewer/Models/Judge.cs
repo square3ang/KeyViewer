@@ -116,7 +116,7 @@ namespace KeyViewer.Models
             return newJudge;
         }
     }
-    public class JudgeM<T> : Judge<T>, IModel where T : IModel, ICopyable<T>, new()
+    public class JudgeM<T> : Judge<T>, IModel, ICopyable<JudgeM<T>> where T : IModel, ICopyable<T>, new()
     {
         public new JsonNode Serialize()
         {

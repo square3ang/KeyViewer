@@ -123,9 +123,9 @@ namespace KeyViewer.Views
                     if (selectedKeys.Count > 1)
                     {
                         GUILayout.Space(10);
-                        if (GUILayout.Button(L(TK.Raw, "Edit Multiple Configs")))
+                        if (GUILayout.Button(L(TKP.EditMultipleKey)))
                         {
-                            Main.GUI.Push(new MultipleKeyConfigDrawer(manager, selectedKeys.First().Copy(), selectedKeys.Select(k => KeyViewerUtils.KeyName(k)).ToList()));
+                            Main.GUI.Push(new MultipleKeyConfigDrawer(manager, selectedKeys.Select(k => KeyViewerUtils.KeyName(k)).ToList()));
                             selectedKeys.Clear();
                         }
                     }

@@ -4,7 +4,7 @@ using KeyViewer.Utils;
 
 namespace KeyViewer.Models
 {
-    public class PressRelease<T> : IModel
+    public class PressRelease<T> : IModel, ICopyable<PressRelease<T>>
     {
         public T Pressed;
         public T Released;
@@ -69,7 +69,7 @@ namespace KeyViewer.Models
         public bool IsSame => Equals(Pressed, Released);
         public static implicit operator PressRelease<T>(T value) => new PressRelease<T>(value);
     }
-    public class PressReleaseM<T> : PressRelease<T> where T : IModel, ICopyable<T>, new()
+    public class PressReleaseM<T> : PressRelease<T>, ICopyable<PressReleaseM<T>> where T : IModel, ICopyable<T>, new()
     {
         public PressReleaseM() { }
         public PressReleaseM(T value) => Set(value);

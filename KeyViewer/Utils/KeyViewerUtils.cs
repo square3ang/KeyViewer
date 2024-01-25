@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using KeyViewer.Core;
+using KeyViewer.Core.Interfaces;
 using KeyViewer.Core.Translation;
 using KeyViewer.Models;
 using KeyViewer.Unity;
@@ -9,7 +10,8 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityStandardAssets.ImageEffects;
+using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.UI.Image;
 
 namespace KeyViewer.Utils
 {
@@ -378,7 +380,7 @@ namespace KeyViewer.Utils
         }
         public static void ApplyRoundnessBlurLayout(Image image, ref float roundness, BlurConfig config, bool blurEnabled)
         {
-            image.material = null;
+            if (blurEnabled || roundness > 0) image.material = null;
             RoundedCorners rounder = image.GetComponent<RoundedCorners>();
             if (blurEnabled)
             {
@@ -399,7 +401,7 @@ namespace KeyViewer.Utils
                     rounder.Validate();
                     rounder.Refresh();
                 }
-                else Object.Destroy(rounder);
+                else if (rounder != null) Object.Destroy(rounder);
             }
         }
         public static void ApplyBlurColorConfig(KeyConfig config)
@@ -408,6 +410,137 @@ namespace KeyViewer.Utils
             Color pressed = config.BackgroundConfig.Color.Pressed;
             Color released = config.BackgroundConfig.Color.Released;
             config.BackgroundConfig.Color.Set(pressed.WithAlpha(0f), released.WithAlpha(0.2f));
+        }
+        public static string AggregateComma(IEnumerable<string> input)
+        {
+            var result = input.Aggregate("", (c, n) => $"{c}{n},");
+            return result.Remove(result.Length - 1, 1);
+        }
+        public static void SetMultiple<T>(T original, T originalCopy, IEnumerable<T> instances, IEnumerable<T> instanceCopys, string fieldName, System.Func<object, System.Type, bool> relative) where T : IModel, ICopyable<T>
+        {
+            SetMultiple(original, originalCopy, instances, instanceCopys, fieldName, (instance, rRef, t) => relative(instance, t), null);
+        }
+        public static void SetMultiple<T>(T original, T originalCopy, IEnumerable<T> instances, IEnumerable<T> instanceCopys, string fieldName, System.Func<object, object, System.Type, bool> relative, List<object> relativeIterationRef) where T : IModel, ICopyable<T>
+        {
+            var field = typeof(T).GetField(fieldName);
+            var originalVal = field.GetValue(original);
+            var insts = instances is List<T> list ? list : instances.ToList();
+            var instCopys = instanceCopys is List<T> list2 ? list2 : instanceCopys.ToList();
+            if (originalVal == null)
+            {
+                for (int i = 0; i < insts.Count; i++)
+                    field.SetValue(insts[i], originalVal);
+                return;
+            }
+            var fromCriterion = field.GetValue(originalCopy);
+            var valType = originalVal.GetType();
+            var setRelative = CanRelativeOperation(valType);
+            for (int i = 0; i < insts.Count; i++)
+            {
+                var toCriterion = field.GetValue(instCopys[i]);
+                if (setRelative && relative(insts[i], relativeIterationRef != null ? relativeIterationRef[i] : null, valType))
+                    field.SetValue(insts[i], RelativeOperation(fromCriterion, originalVal, toCriterion));
+                else field.SetValue(insts[i], originalVal);
+            }
+        }
+        public static bool IsEquals<T>(IEnumerable<T> instances, string fieldName)
+        {
+            var field = typeof(T).GetField(fieldName);
+            return IsEquals(instances.Select(k => field.GetValue(k)));
+        }
+        public static bool IsFieldsEquals<T>(System.Type t, IEnumerable<T> instances)
+        {
+            bool equals = true;
+            var fields = t.GetFields();
+            foreach (var field in fields)
+            {
+                var ft = field.FieldType;
+                if (!ft.IsClass || ft.IsPrimitive || ft == typeof(string))
+                {
+                    equals &= IsEquals(instances.Select(t => t == null ? null : field.GetValue(t)));
+                    continue;
+                }
+                equals &= IsFieldsEquals(ft, instances.Select(t => t == null ? null : field.GetValue(t)));
+            }
+            return equals;
+        }
+        public static bool IsEquals(IEnumerable<object> objects)
+        {
+            if (!objects?.Any() ?? true) return false;
+            object first = objects.First();
+            return objects.All(o => Equals(o, first));
+        }
+        public static bool CanRelativeOperation(System.Type t)
+        {
+            return
+                t == typeof(float) ||
+                t == typeof(Vector2) ||
+                t == typeof(Vector3) ||
+                t == typeof(Vector4) ||
+                t == typeof(sbyte) ||
+                t == typeof(byte) ||
+                t == typeof(short) ||
+                t == typeof(ushort) ||
+                t == typeof(int) ||
+                t == typeof(uint) ||
+                t == typeof(long) ||
+                t == typeof(ulong) ||
+                t == typeof(double) ||
+                t == typeof(decimal);
+        }
+        public static object RelativeOperation(object fromCriterion, object obj, object toCriterion)
+        {
+            if (obj is float)
+                return (float)toCriterion + ((float)obj - (float)fromCriterion);
+            if (obj is int)
+                return (int)toCriterion + ((int)obj - (int)fromCriterion);
+            if (obj is Vector2)
+                return (Vector2)toCriterion + ((Vector2)obj - (Vector2)fromCriterion);
+            if (obj is Vector3)
+                return (Vector3)toCriterion + ((Vector3)obj - (Vector3)fromCriterion);
+            if (obj is Vector4)
+                return (Vector4)toCriterion + ((Vector4)obj - (Vector4)fromCriterion);
+            if (obj is sbyte)
+                return (sbyte)toCriterion + ((sbyte)obj - (sbyte)fromCriterion);
+            if (obj is byte)
+                return (byte)toCriterion + ((byte)obj - (byte)fromCriterion);
+            if (obj is short)
+                return (short)toCriterion + ((short)obj - (short)fromCriterion);
+            if (obj is ushort)
+                return (ushort)toCriterion + ((ushort)obj - (ushort)fromCriterion);
+            if (obj is uint)
+                return (uint)toCriterion + ((uint)obj - (uint)fromCriterion);
+            if (obj is long)
+                return (long)toCriterion + ((long)obj - (long)fromCriterion);
+            if (obj is ulong)
+                return (ulong)toCriterion + ((ulong)obj - (ulong)fromCriterion);
+            if (obj is double)
+                return (double)toCriterion + ((double)obj - (double)fromCriterion);
+            if (obj is decimal)
+                return (decimal)toCriterion + ((decimal)obj - (decimal)fromCriterion);
+            return obj;
+        }
+        public static bool IsVectorType(System.Type t) => t.Name.StartsWith("Vector");
+        public static void SetMultiplePR<T>(PressRelease<T> original, PressRelease<T> originalCopy, IEnumerable<PressRelease<T>> targets, IEnumerable<PressRelease<T>> targetsCopy, System.Func<object, object, System.Type, bool> relative = null, List<object> relativeIteraionRef = null)
+        {
+            if (relative != null && relativeIteraionRef != null)
+            {
+                SetMultiple(original, originalCopy, targets, targetsCopy, "Pressed", relative, relativeIteraionRef);
+                SetMultiple(original.PressedEase, originalCopy.PressedEase, targets.Select(t => t.PressedEase), targetsCopy.Select(t => t.PressedEase), "Ease", (instance, t) => false);
+                SetMultiple(original.PressedEase, originalCopy.PressedEase, targets.Select(t => t.PressedEase), targetsCopy.Select(t => t.PressedEase), "Duration", (instance, t) => false);
+                SetMultiple(original, originalCopy, targets, targetsCopy, "Released", relative, relativeIteraionRef);
+                SetMultiple(original.ReleasedEase, originalCopy.ReleasedEase, targets.Select(t => t.ReleasedEase), targetsCopy.Select(t => t.ReleasedEase), "Ease", (instance, t) => false);
+                SetMultiple(original.ReleasedEase, originalCopy.ReleasedEase, targets.Select(t => t.ReleasedEase), targetsCopy.Select(t => t.ReleasedEase), "Duration", (instance, t) => false);
+            }
+            else
+            {
+                SetMultiple(original, originalCopy, targets, targetsCopy, "Pressed", (instance, t) => false);
+                SetMultiple(original.PressedEase, originalCopy.PressedEase, targets.Select(t => t.PressedEase), targetsCopy.Select(t => t.PressedEase), "Ease", (instance, t) => false);
+                SetMultiple(original.PressedEase, originalCopy.PressedEase, targets.Select(t => t.PressedEase), targetsCopy.Select(t => t.PressedEase), "Duration", (instance, t) => false);
+                SetMultiple(original, originalCopy, targets, targetsCopy, "Released", (instance, t) => false);
+                SetMultiple(original.ReleasedEase, originalCopy.ReleasedEase, targets.Select(t => t.ReleasedEase), targetsCopy.Select(t => t.ReleasedEase), "Ease", (instance, t) => false);
+                SetMultiple(original.ReleasedEase, originalCopy.ReleasedEase, targets.Select(t => t.ReleasedEase), targetsCopy.Select(t => t.ReleasedEase), "Duration", (instance, t) => false);
+            }
         }
     }
 }

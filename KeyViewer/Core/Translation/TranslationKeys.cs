@@ -38,6 +38,7 @@
             internal static readonly string CreateDummyKey = Prefix + "CREATE_DUMMY_KEY";
             internal static readonly string DummyName = Prefix + "DUMMY_NAME";
             internal static readonly string KeySpacing = Prefix + "KEY_SPACING";
+            internal static readonly string EditMultipleKey = Prefix + "EDIT_MULTIPLE_KEY";
         }
         public static class Misc
         {
@@ -128,6 +129,7 @@
             internal static readonly string CountTextFontSize = Prefix + "COUNT_TEXT_FONT_SIZE";
             internal static readonly string EnableBackgroundBlur = Prefix + "ENABLE_BACKGROUND_BLUR";
             internal static readonly string EnableOutlineBlur = Prefix + "ENABLE_OUTLINE_BLUR";
+            internal static readonly string RelativeCoordinateMode = Prefix + "RELATIVE_COORDINATE_MODE";
         }
         public static class RainConfig
         {

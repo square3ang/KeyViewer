@@ -22,6 +22,7 @@ namespace KeyViewer.Views
         {
             bool changed = false;
             string name = config.DummyName ?? config.Code.ToString();
+            Drawer.ButtonLabel(Name, KeyViewerUtils.OpenDiscordUrl);
             changed |= Drawer.DrawInt32(L(TKRC.RainPoolSize), ref model.PoolSize);
             changed |= Drawer.DrawSingleWithSlider(L(TKM.Roundness), ref model.Roundness, 0, Constants.Rad2Deg100, 300);
             changed |= Drawer.DrawBool(L(TKRC.BlurEnabled), ref model.BlurEnabled);
