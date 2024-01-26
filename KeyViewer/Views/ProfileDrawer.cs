@@ -5,7 +5,6 @@ using KeyViewer.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using TK = KeyViewer.Core.Translation.TranslationKeys;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
 
@@ -18,6 +17,7 @@ namespace KeyViewer.Views
         private bool configMode = true;
         private int dummyNumber = 1;
         private HashSet<KeyConfig> selectedKeys = new HashSet<KeyConfig>();
+        private KeyConfig criterion;
         public ProfileDrawer(KeyManager manager, Profile profile, string name) : base(profile, L(TKP.ConfigurateProfile, name))
         {
             this.manager = manager;
@@ -32,7 +32,6 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawSingleWithSlider(L(TKP.KeySpacing), ref model.KeySpacing, 0, 100, 300f);
             changed |= Drawer.DrawVectorConfig(model.VectorConfig);
             GUILayoutEx.HorizontalLine(1);
-            Drawer.ButtonLabel(L(TKP.RegisteredKeys), KeyViewerUtils.OpenDiscordUrl);
             DrawKeyConfigGUI();
             if (changed) manager.UpdateLayout();
         }
@@ -46,6 +45,26 @@ namespace KeyViewer.Views
         }
         private void DrawKeyConfigGUI()
         {
+            GUILayout.BeginHorizontal();
+            {
+                Drawer.ButtonLabel(L(TKP.RegisteredKeys), KeyViewerUtils.OpenDiscordUrl);
+                if (model.Keys.Any(k => !selectedKeys.Contains(k)))
+                {
+                    if (GUILayout.Button(L(TKP.SelectAllKeys)))
+                        model.Keys.ForEach(k => selectedKeys.Add(k));
+                }
+                else
+                {
+                    if (GUILayout.Button(L(TKP.DeselectAllKeys)))
+                    {
+                        selectedKeys.Clear();
+                        criterion = null;
+                    }
+                }
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
             GUILayout.BeginVertical();
             {
                 GUILayout.BeginHorizontal();
@@ -57,13 +76,22 @@ namespace KeyViewer.Views
                             var key = model.Keys[i];
                             var str = key.DummyName != null ? key.DummyName : key.Code.ToString();
                             var selected = selectedKeys.Contains(key);
-                            if (selected) str = $"<color=cyan>{str}</color>";
+                            if (criterion == key) str = $"<color=yellow>{str}</color>";
+                            else if (selected) str = $"<color=cyan>{str}</color>";
                             if (GUILayout.Button(str))
                             {
                                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                                 {
                                     if (!selectedKeys.Add(key))
-                                        selectedKeys.Remove(key);
+                                    {
+                                        if (criterion != key)
+                                            criterion = key;
+                                        else
+                                        {
+                                            selectedKeys.Remove(key);
+                                            criterion = null;
+                                        }
+                                    }
                                 }
                                 else if (configMode)
                                     Main.GUI.Push(new KeyConfigDrawer(manager, key));
@@ -118,6 +146,7 @@ namespace KeyViewer.Views
                             KeyViewerUtils.MakeBar(manager.profile, manager.keys.FindAll(k => selectedKeys.Contains(k.Config)).Select(k => k.Config).ToList());
                             manager.UpdateLayout();
                             selectedKeys.Clear();
+                            criterion = null;
                         }
                     }
                     if (selectedKeys.Count > 1)
@@ -125,8 +154,9 @@ namespace KeyViewer.Views
                         GUILayout.Space(10);
                         if (GUILayout.Button(L(TKP.EditMultipleKey)))
                         {
-                            Main.GUI.Push(new MultipleKeyConfigDrawer(manager, selectedKeys.Select(k => KeyViewerUtils.KeyName(k)).ToList()));
+                            Main.GUI.Push(new MultipleKeyConfigDrawer(manager, selectedKeys.Select(k => KeyViewerUtils.KeyName(k)).ToList(), criterion.Copy()));
                             selectedKeys.Clear();
+                            criterion = null;
                         }
                     }
                 }

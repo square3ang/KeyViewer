@@ -262,6 +262,7 @@ namespace KeyViewer
                 key != TranslationKeys.DiscordLink &&
                 key != TranslationKeys.DownloadLink &&
                 key != TranslationKeys.UpdateNote &&
+                key != TranslationKeys.AllowedPatchTargets &&
                 key != TranslationKeys.Raw).ToList())
                     Lang[key] = update;
                 ErrorCanvasContext ecc = new ErrorCanvasContext();

@@ -9,6 +9,7 @@
         public static readonly string DownloadLink = "DOWNLOAD_LINK";
         public static readonly string UpdateNote = "U_P_D_A_T_E_NOTE";
         public static readonly string Raw = "R_A_W";
+        public static readonly string AllowedPatchTargets = "ALLOWED_PATCH_TARGETS";
         public static class Settings
         {
             public const string Prefix = "SETTINGS_";
@@ -39,6 +40,8 @@
             internal static readonly string DummyName = Prefix + "DUMMY_NAME";
             internal static readonly string KeySpacing = Prefix + "KEY_SPACING";
             internal static readonly string EditMultipleKey = Prefix + "EDIT_MULTIPLE_KEY";
+            internal static readonly string SelectAllKeys = Prefix + "SELECT_ALL_KEYS";
+            internal static readonly string DeselectAllKeys = Prefix + "DESELECT_ALL_KEYS";
         }
         public static class Misc
         {

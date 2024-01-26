@@ -10,8 +10,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
-using static UnityEngine.UI.Image;
 
 namespace KeyViewer.Utils
 {
@@ -395,7 +393,7 @@ namespace KeyViewer.Utils
             {
                 if (roundness > 0)
                 {
-                    if (!rounder) 
+                    if (!rounder)
                         rounder = image.gameObject.AddComponent<RoundedCorners>();
                     rounder.radius = roundness * 90;
                     rounder.Validate();

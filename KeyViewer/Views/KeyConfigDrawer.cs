@@ -3,7 +3,6 @@ using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using System.Linq;
-using UnityEngine;
 using TKKC = KeyViewer.Core.Translation.TranslationKeys.KeyConfig;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 

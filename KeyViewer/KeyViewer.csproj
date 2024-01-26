@@ -369,6 +369,7 @@
     <Compile Include="Patches\BlockInputPatch.cs" />
     <Compile Include="Patches\JudgementColorPatch.cs" />
     <Compile Include="Patches\KeyLimiterPatch.cs" />
+    <Compile Include="Patches\KeyViewerProtectPatch.cs" />
     <Compile Include="Patches\OnResetScenePatch.cs" />
     <Compile Include="Patches\RemoveFuckingUMMDummyLogPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

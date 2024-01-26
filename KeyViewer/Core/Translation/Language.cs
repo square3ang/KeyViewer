@@ -9,7 +9,7 @@ namespace KeyViewer.Core.Translation
         private const string KEY = "1EiWVds23-gZeRCrXL-UYr-o-sc0m-jfqWa-G7qmUYdI";
         internal static SpreadSheet sheet = new SpreadSheet(KEY);
         private static Language Korean;
-        private static Language English = new Language(GID.ENGLISH);
+        internal static Language English = new Language(GID.ENGLISH);
         private static Language Chinese;
         private static Language Japanese;
         public static event Action OnInitialize = delegate { };
@@ -20,9 +20,9 @@ namespace KeyViewer.Core.Translation
             Gid = (int)gid;
             sheet.Download((int)gid, d =>
             {
-                Main.Logger.Log($"Loaded {d.Count} Localizations from Sheet (GID:{(GID)Gid})");
-                OnInitialize();
                 Initialized = true;
+                OnInitialize();
+                Main.Logger.Log($"Loaded {d.Count} Localizations from Sheet (GID:{(GID)Gid})");
             }).Await();
         }
         public string this[string key]
@@ -49,6 +49,8 @@ namespace KeyViewer.Core.Translation
         {
             Korean = null;
             English = null;
+            Chinese = null;
+            Japanese = null;
         }
     }
 }

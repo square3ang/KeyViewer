@@ -2,10 +2,10 @@
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
+using System.Collections.Generic;
 using System.Linq;
 using TKKC = KeyViewer.Core.Translation.TranslationKeys.KeyConfig;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
-using System.Collections.Generic;
 
 namespace KeyViewer.Views
 {
@@ -16,7 +16,7 @@ namespace KeyViewer.Views
         public List<KeyConfig> targets;
         public List<KeyConfig> targetsCopy;
         public List<string> relativeKeyNames;
-        public MultipleKeyConfigDrawer(KeyManager manager, List<string> targets) : base(new KeyConfig(), L(TKKC.KeyConfiguration, KeyViewerUtils.AggregateComma(targets)))
+        public MultipleKeyConfigDrawer(KeyManager manager, List<string> targets, KeyConfig criterion) : base(criterion ?? new KeyConfig(), L(TKKC.KeyConfiguration, KeyViewerUtils.AggregateComma(targets)))
         {
             this.manager = manager;
             modelCopy = model.Copy();
