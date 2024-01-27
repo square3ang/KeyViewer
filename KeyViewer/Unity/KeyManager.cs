@@ -127,7 +127,7 @@ namespace KeyViewer.Unity
             keysRt.pivot = new Vector2(0.5f, 0.5f);
             keysRt.anchoredPosition = vecConfig.Offset.Released;
             keysRt.localRotation = Quaternion.Euler(vecConfig.Rotation.Released);
-            keysRt.sizeDelta = defaultSize * vecConfig.Scale.Released;
+            keysRt.localScale = vecConfig.Scale.Released;
 
             bool first = true;
             float totalX = 0;
