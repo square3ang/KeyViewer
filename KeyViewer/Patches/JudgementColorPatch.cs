@@ -113,9 +113,12 @@ namespace KeyViewer.Patches
                     var rainConfig = key.Config.Rain.ObjectConfig;
                     if (rainConfig.ChangeColorWithJudge)
                     {
+                        key.rain.Release();
+                        key.rain = key.rainPool.Get();
+                        key.rain.IgnoreColorUpdate();
                         key.rain.IgnoreColorUpdate();
                         var judge = rainConfig.JudgeColors;
-                        KeyViewerUtils.ApplyColor(key.rain.image, rainConfig.Color.Released, judge.Get(hit), rainConfig.JudgeColorEase, key.rain.blurEnabled);
+                        KeyViewerUtils.ApplyColor(key.rain.image, rainConfig.Color.Released, judge.Get(hit), rainConfig.JudgeColorEase, false);
                     }
                 }
             }

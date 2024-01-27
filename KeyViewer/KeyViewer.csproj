@@ -321,6 +321,7 @@
     <Compile Include="Core\KPSCalculator.cs" />
     <Compile Include="Core\MethodDrawable.cs" />
     <Compile Include="Core\ModelDrawable.cs" />
+    <Compile Include="Core\ProfileImporter.cs" />
     <Compile Include="Core\RainImageManager.cs" />
     <Compile Include="Core\TextReplacing\Replacer.cs" />
     <Compile Include="Core\TextReplacing\Tag.cs" />
@@ -369,7 +370,6 @@
     <Compile Include="Patches\BlockInputPatch.cs" />
     <Compile Include="Patches\JudgementColorPatch.cs" />
     <Compile Include="Patches\KeyLimiterPatch.cs" />
-    <Compile Include="Patches\KeyViewerProtectPatch.cs" />
     <Compile Include="Patches\OnResetScenePatch.cs" />
     <Compile Include="Patches\RemoveFuckingUMMDummyLogPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

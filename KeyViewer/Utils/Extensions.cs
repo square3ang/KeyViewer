@@ -2,8 +2,11 @@
 using KeyViewer.Models;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
+using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
+using CompressionLevel = System.IO.Compression.CompressionLevel;
 
 namespace KeyViewer.Utils
 {
@@ -171,5 +174,26 @@ namespace KeyViewer.Utils
             }
         }
         public static JsonNode IfNotExist(this JsonNode node, JsonNode other) => node == null ? other : node;
+        public static byte[] Compress(this byte[] data)
+        {
+            using (MemoryStream output = new MemoryStream())
+            {
+                using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
+                    dstream.Write(data, 0, data.Length);
+                return output.ToArray();
+            }
+        }
+        public static byte[] Decompress(this byte[] data)
+        {
+            using (MemoryStream input = new MemoryStream(data))
+            {
+                using (MemoryStream output = new MemoryStream())
+                {
+                    using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+                        dstream.CopyTo(output);
+                    return output.ToArray();
+                }
+            }
+        }
     }
 }

@@ -154,7 +154,7 @@ namespace KeyViewer.Views
                         GUILayout.Space(10);
                         if (GUILayout.Button(L(TKP.EditMultipleKey)))
                         {
-                            Main.GUI.Push(new MultipleKeyConfigDrawer(manager, selectedKeys.Select(k => KeyViewerUtils.KeyName(k)).ToList(), criterion.Copy()));
+                            Main.GUI.Push(new MultipleKeyConfigDrawer(manager, selectedKeys.Select(k => KeyViewerUtils.KeyName(k)).ToList(), criterion?.Copy()));
                             selectedKeys.Clear();
                             criterion = null;
                         }

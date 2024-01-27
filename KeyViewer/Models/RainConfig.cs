@@ -13,8 +13,8 @@ namespace KeyViewer.Models
         public PressRelease<int> Softness = 100;
         public int PoolSize = 25;
         public float Roundness = 0;
-        public bool BlurEnabled = false;
-        public BlurConfig BlurConfig = new BlurConfig();
+        //public bool BlurEnabled = false;
+        //public BlurConfig BlurConfig = new BlurConfig();
         public ObjectConfig ObjectConfig = new ObjectConfig(Vector2.one, Color.white, Color.white);
         public List<RainImage> RainImages = new List<RainImage>();
         public RainImageDisplayMode ImageDisplayMode = RainImageDisplayMode.Sequential;
@@ -27,8 +27,8 @@ namespace KeyViewer.Models
             newConfig.Softness = Softness.Copy();
             newConfig.PoolSize = PoolSize;
             newConfig.Roundness = Roundness;
-            newConfig.BlurEnabled = BlurEnabled;
-            newConfig.BlurConfig = BlurConfig.Copy();
+            //newConfig.BlurEnabled = BlurEnabled;
+            //newConfig.BlurConfig = BlurConfig.Copy();
             newConfig.ObjectConfig = ObjectConfig.Copy();
             newConfig.RainImages = new List<RainImage>(RainImages);
             newConfig.ImageDisplayMode = ImageDisplayMode;
@@ -43,8 +43,8 @@ namespace KeyViewer.Models
             node[nameof(Softness)] = Softness.Serialize();
             node[nameof(PoolSize)] = PoolSize;
             node[nameof(Roundness)] = Roundness;
-            node[nameof(BlurEnabled)] = BlurEnabled;
-            node[nameof(BlurConfig)] = BlurConfig.Serialize();
+            //node[nameof(BlurEnabled)] = BlurEnabled;
+            //node[nameof(BlurConfig)] = BlurConfig.Serialize();
             node[nameof(ObjectConfig)] = ObjectConfig.Serialize();
             node[nameof(RainImages)] = ModelUtils.WrapList(RainImages);
             node[nameof(ImageDisplayMode)] = ImageDisplayMode.ToString();
@@ -58,10 +58,10 @@ namespace KeyViewer.Models
             Softness = ModelUtils.Unbox<PressRelease<int>>(node[nameof(Softness)]);
             PoolSize = node[nameof(PoolSize)];
             Roundness = node[nameof(Roundness)];
-            BlurEnabled = node[nameof(BlurEnabled)];
-            BlurConfig = ModelUtils.Unbox<BlurConfig>(node[nameof(BlurConfig)]) ?? new BlurConfig();
+            //BlurEnabled = node[nameof(BlurEnabled)];
+            //BlurConfig = ModelUtils.Unbox<BlurConfig>(node[nameof(BlurConfig)]) ?? new BlurConfig();
             ObjectConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(ObjectConfig)]);
-            RainImages = ModelUtils.UnwrapList<RainImage>(node[nameof(RainImages)].AsArray);
+            RainImages = ModelUtils.UnwrapList<RainImage>(node[nameof(RainImages)].AsArray) ?? new List<RainImage>();
             ImageDisplayMode = EnumHelper<RainImageDisplayMode>.Parse(node[nameof(ImageDisplayMode)]);
             Direction = EnumHelper<Direction>.Parse(node[nameof(Direction)]);
         }

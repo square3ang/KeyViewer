@@ -16,19 +16,24 @@ namespace KeyViewer.Patches
         [HarmonyPatch(typeof(RDInputType_Keyboard), "Main")]
         public static void Sync(RDInputType_Keyboard __instance, ref int __result, ButtonState state)
         {
-            var profile = Main.Managers.FirstOrDefault().Value?.profile;
-            if (profile == null) return;
-            if (!profile.LimitNotRegisteredKeys) return;
-            __result = GetPressedCount(profile, (MainStateCount)GetStateCountMethodSync(__instance, state), false);
+            var result = GetPressedCounts((MainStateCount)GetStateCountMethodSync(__instance, state), false);
+            if (result < 0) return;
+            __result = result;
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(RDInputType_AsyncKeyboard), "Main")]
         public static void Async(RDInputType_AsyncKeyboard __instance, ref int __result, ButtonState state)
         {
-            var profile = Main.Managers.FirstOrDefault().Value?.profile;
-            if (profile == null) return;
-            if (!profile.LimitNotRegisteredKeys) return;
-            __result = GetPressedCount(profile, (MainStateCount)GetStateCountMethodAsync(__instance, state), true);
+            var result = GetPressedCounts((MainStateCount)GetStateCountMethodAsync(__instance, state), true);
+            if (result < 0) return;
+            __result = result;
+        }
+        private static int GetPressedCounts(MainStateCount stateCount, bool async)
+        {
+            var profiles = Main.Managers.Select(m => m.Value.profile);
+            profiles = profiles.Where(p => p.LimitNotRegisteredKeys);
+            if (!profiles.Any()) return -1;
+            return profiles.Sum(p => GetPressedCount(p, stateCount, async));
         }
         private static int GetPressedCount(Profile profile, MainStateCount stateCount, bool async)
         {

@@ -177,7 +177,7 @@ namespace KeyViewer
                 if (profile.Active)
                 {
                     var profileNode = JsonNode.Parse(File.ReadAllText(profilePath));
-                    var p = ModelUtils.Unbox<Profile>(profileNode);
+                    var p = ProfileImporter.Import(profileNode);
                     if (Managers.TryGetValue(profile.Name, out var manager))
                         Object.Destroy(manager);
                     Managers[profile.Name] = KeyManager.CreateManager(profile.Name, p);

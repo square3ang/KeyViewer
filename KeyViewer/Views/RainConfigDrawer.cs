@@ -25,7 +25,7 @@ namespace KeyViewer.Views
             Drawer.ButtonLabel(Name, KeyViewerUtils.OpenDiscordUrl);
             changed |= Drawer.DrawInt32(L(TKRC.RainPoolSize), ref model.PoolSize);
             changed |= Drawer.DrawSingleWithSlider(L(TKM.Roundness), ref model.Roundness, 0, Constants.Rad2Deg100, 300);
-            changed |= Drawer.DrawBool(L(TKRC.BlurEnabled), ref model.BlurEnabled);
+            //changed |= Drawer.DrawBool(L(TKRC.BlurEnabled), ref model.BlurEnabled);
             changed |= Drawer.DrawPressReleaseH(L(TKRC.RainSpeed), model.Speed, Drawer.CD_H_FLT_SPEEDONLY);
             changed |= Drawer.DrawPressReleaseH(L(TKRC.RainLength), model.Length, Drawer.CD_H_FLT_LENGTHONLY);
             changed |= Drawer.DrawPressReleaseH(L(TKRC.RainSoftness), model.Softness, Drawer.CD_H_INT32_SOFTNESSONLY);
@@ -38,14 +38,14 @@ namespace KeyViewer.Views
                     result |= Drawer.DrawString(L(TKRC.RainImagePath), ref i.Image);
                     result |= Drawer.DrawInt32(L(TKRC.RainImageCount), ref i.Count);
                     result |= Drawer.DrawSingleWithSlider(L(TKM.Roundness), ref i.Roundness, 0, Constants.Rad2Deg100, 300);
-                    result |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, i), i.BlurConfig);
+                    //result |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, i), i.BlurConfig);
                     return result;
                 });
             }, L(TKRC.RainImages), ref imageListExpanded);
 
             Drawer.DrawObjectConfig(L(TKRC.EditRainConfig), L(TKRC.KeyRain, name), model.ObjectConfig, () => manager.UpdateLayout());
 
-            if (model.BlurEnabled) changed |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, Name), model.BlurConfig);
+            //if (model.BlurEnabled) changed |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, Name), model.BlurConfig);
 
             GUILayout.BeginHorizontal();
             {

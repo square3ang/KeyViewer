@@ -33,7 +33,7 @@ namespace KeyViewer.Views
             Drawer.ButtonLabel(Name, KeyViewerUtils.OpenDiscordUrl);
             changed |= Drawer.DrawInt32(LD(TKRC.RainPoolSize, "PoolSize"), ref model.PoolSize).IfTrue(() => Set("PoolSize"));
             changed |= Drawer.DrawSingleWithSlider(LD(TKM.Roundness, "Roundness"), ref model.Roundness, 0, Constants.Rad2Deg100, 300).IfTrue(() => Set("Roundness"));
-            changed |= Drawer.DrawBool(LD(TKRC.BlurEnabled, "BlurEnabled"), ref model.BlurEnabled).IfTrue(() => Set("BlurEnabled"));
+            //changed |= Drawer.DrawBool(LD(TKRC.BlurEnabled, "BlurEnabled"), ref model.BlurEnabled).IfTrue(() => Set("BlurEnabled"));
             changed |= Drawer.DrawPressReleaseH(L(TKRC.RainSpeed), model.Speed, Drawer.CD_H_FLT_SPEEDONLY).IfTrue(() => SetPR<float>("Speed"));
             changed |= Drawer.DrawPressReleaseH(L(TKRC.RainLength), model.Length, Drawer.CD_H_FLT_LENGTHONLY).IfTrue(() => SetPR<float>("Length"));
             changed |= Drawer.DrawPressReleaseH(L(TKRC.RainSoftness), model.Softness, Drawer.CD_H_INT32_SOFTNESSONLY).IfTrue(() => SetPR<int>("Softness"));
@@ -46,14 +46,14 @@ namespace KeyViewer.Views
                     result |= Drawer.DrawString(L(TKRC.RainImagePath), ref i.Image);
                     result |= Drawer.DrawInt32(L(TKRC.RainImageCount), ref i.Count);
                     result |= Drawer.DrawSingleWithSlider(L(TKM.Roundness), ref i.Roundness, 0, Constants.Rad2Deg100, 300);
-                    result |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, i), i.BlurConfig);
+                    //result |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, i), i.BlurConfig);
                     return result;
                 }).IfTrue(() => SetList<RainImage>("RainImages"));
             }, L(TKRC.RainImages), ref imageListExpanded);
 
             Drawer.DrawObjectConfig(L(TKRC.EditRainConfig), L(TKRC.KeyRain, name), model.ObjectConfig, () => OnChangeOC("ObjectConfig"));
 
-            if (model.BlurEnabled) changed |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, Name), model.BlurConfig).IfTrue(() => SetBlurConfig("PoolSize"));
+            //if (model.BlurEnabled) changed |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, Name), model.BlurConfig).IfTrue(() => SetBlurConfig("PoolSize"));
 
             GUILayout.BeginHorizontal();
             {

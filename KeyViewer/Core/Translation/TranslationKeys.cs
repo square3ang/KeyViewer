@@ -18,6 +18,8 @@
             internal static readonly string CreateProfile = Prefix + "CREATE_PROFILE";
             internal static readonly string ImportProfile = Prefix + "IMPORT_PROFILE";
             internal static readonly string SelectProfile = Prefix + "SELECT_PROFILE";
+            internal static readonly string OpenModDir = Prefix + "OPEN_MOD_DIR";
+            internal static readonly string ExportProfile = Prefix + "EXPORT_PROFILE";
         }
         public static class Profile
         {
@@ -42,6 +44,7 @@
             internal static readonly string EditMultipleKey = Prefix + "EDIT_MULTIPLE_KEY";
             internal static readonly string SelectAllKeys = Prefix + "SELECT_ALL_KEYS";
             internal static readonly string DeselectAllKeys = Prefix + "DESELECT_ALL_KEYS";
+            internal static readonly string DeleteProfile = Prefix + "DELETE_PROFILE";
         }
         public static class Misc
         {

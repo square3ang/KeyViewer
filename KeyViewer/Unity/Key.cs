@@ -19,7 +19,6 @@ namespace KeyViewer.Unity
         private Replacer countTextReplacerR;
         private GameObject rainContainer;
         private RectMask2D rainMask;
-        private EnsurePool<Rain> rainPool;
         private int[] colorUpdateIgnores = new int[4];
 
         public KeyManager Manager;
@@ -37,6 +36,7 @@ namespace KeyViewer.Unity
         public RainImageManager RainImageManager;
 
         internal Rain rain;
+        internal EnsurePool<Rain> rainPool;
 
         public void Init(KeyManager manager, KeyConfig config)
         {

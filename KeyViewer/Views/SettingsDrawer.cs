@@ -34,16 +34,6 @@ namespace KeyViewer.Views
                     {
                         GUILayout.Label(L(TK.UpdateNote));
                     }, L(TKM.ShowUpdateNote)));
-                //if (GUILayout.Button(L(TK.Raw, "Migrate From V3")))
-                //{
-                //    string[] paths = StandaloneFileBrowser.OpenFilePanel("Select Profile Or Settings Xml File", Main.Mod.Path, "xml", true);
-                //    if (paths.Length == 0)
-                //    {
-                //        Main.GUI.Skip();
-                //        return;
-                //    }
-                //    Main.MigrateFromV3Xml(paths[0]);
-                //}
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -71,6 +61,8 @@ namespace KeyViewer.Views
                     File.WriteAllText(Path.Combine(Main.Mod.Path, $"{profile.Name}.json"), newProfile.Serialize().ToString(4));
                     Main.AddManager(profile, true);
                 }
+                if (GUILayout.Button(L(TKS.OpenModDir)))
+                    Application.OpenURL(Path.GetFullPath(Main.Mod.Path));
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -98,6 +90,24 @@ namespace KeyViewer.Views
                             var manager = Main.Managers[profile.Name];
                             Main.GUI.Push(new ProfileDrawer(manager, manager.profile, profile.Name));
                         }
+                    }
+                    if (GUILayout.Button(L(TKS.ExportProfile)))
+                    {
+                        string target = StandaloneFileBrowser.SaveFilePanel(L(TKS.SelectProfile), Persistence.GetLastUsedFolder(), $"{profile.Name}.json", "json");
+                        if (target != null)
+                        {
+                            Profile p = Main.Managers[profile.Name].profile;
+                            var node = p.Serialize();
+                            node["References"] = ProfileImporter.GetReferences(p);
+                            File.WriteAllText(target, node.ToString(4));
+                        }
+                    }
+                    if (GUILayout.Button(L(TKP.DeleteProfile)))
+                    {
+                        Main.RemoveManager(profile);
+                        File.Delete(Path.Combine(Main.Mod.Path, $"{profile.Name}.json"));
+                        model.ActiveProfiles.RemoveAll(p => p.Name == profile.Name);
+                        break;
                     }
                 }
                 GUILayout.FlexibleSpace();
