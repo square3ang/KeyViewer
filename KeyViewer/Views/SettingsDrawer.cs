@@ -1,5 +1,6 @@
 ﻿using KeyViewer.Core;
 using KeyViewer.Core.Translation;
+using KeyViewer.Migration.V3;
 using KeyViewer.Models;
 using KeyViewer.Utils;
 using SFB;
@@ -42,15 +43,19 @@ namespace KeyViewer.Views
             {
                 if (GUILayout.Button(L(TKS.ImportProfile)))
                 {
-                    var profiles = StandaloneFileBrowser.OpenFilePanel(L(TKS.SelectProfile), Persistence.GetLastUsedFolder(), "json", true);
+                    var profiles = StandaloneFileBrowser.OpenFilePanel(L(TKS.SelectProfile), Main.Mod.Path, new[] { new ExtensionFilter("V3", "xml"), new ExtensionFilter("V4", "json") }, true);
                     foreach (var profile in profiles)
                     {
                         FileInfo file = new FileInfo(profile);
-                        if (!File.Exists(Path.Combine(Main.Mod.Path, file.Name)))
-                            file.CopyTo(Path.Combine(Main.Mod.Path, file.Name));
-                        var activeProfile = new ActiveProfile(Path.GetFileNameWithoutExtension(file.FullName), true);
-                        model.ActiveProfiles.Add(activeProfile);
-                        Main.AddManager(activeProfile, true);
+                        if (file.Extension == ".json")
+                        {
+                            if (!File.Exists(Path.Combine(Main.Mod.Path, file.Name)))
+                                file.CopyTo(Path.Combine(Main.Mod.Path, file.Name));
+                            var activeProfile = new ActiveProfile(Path.GetFileNameWithoutExtension(file.FullName), true);
+                            model.ActiveProfiles.Add(activeProfile);
+                            Main.AddManager(activeProfile, true);
+                        }
+                        else Main.MigrateFromV3Xml(file.FullName);
                     }
                 }
                 if (GUILayout.Button(L(TKS.CreateProfile)))
@@ -94,7 +99,7 @@ namespace KeyViewer.Views
                     if (GUILayout.Button(L(TKS.ExportProfile)))
                     {
                         string target = StandaloneFileBrowser.SaveFilePanel(L(TKS.SelectProfile), Persistence.GetLastUsedFolder(), $"{profile.Name}.json", "json");
-                        if (target != null)
+                        if (!string.IsNullOrWhiteSpace(target))
                         {
                             Profile p = Main.Managers[profile.Name].profile;
                             var node = p.Serialize();
