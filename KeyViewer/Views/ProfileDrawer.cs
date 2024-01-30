@@ -138,6 +138,22 @@ namespace KeyViewer.Views
                             manager.UpdateKeys();
                         }
                     }
+                    if (selectedKeys.Count == 2)
+                    {
+                        GUILayout.Space(10);
+                        if (GUILayout.Button(L(TKP.SwapKeys)))
+                        {
+                            var list = selectedKeys.ToList();
+                            int a = model.Keys.IndexOf(list[0]);
+                            int b = model.Keys.IndexOf(list[1]);
+                            var temp = model.Keys[a];
+                            model.Keys[a] = model.Keys[b];
+                            model.Keys[b] = temp;
+                            manager.UpdateKeys();
+                            selectedKeys.Clear();
+                            criterion = null;
+                        }
+                    }
                     if (selectedKeys.Count > 0)
                     {
                         GUILayout.Space(10);

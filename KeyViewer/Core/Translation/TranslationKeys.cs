@@ -9,7 +9,7 @@
         public static readonly string DownloadLink = "DOWNLOAD_LINK";
         public static readonly string UpdateNote = "U_P_D_A_T_E_NOTE";
         public static readonly string Raw = "R_A_W";
-        public static readonly string AllowedPatchTargets = "ALLOWED_PATCH_TARGETS";
+        public static readonly string BOATK = "BASED_ON_ADOFAI_TWEAKS_KEYVIEWER";
         public static class Settings
         {
             public const string Prefix = "SETTINGS_";
@@ -45,6 +45,7 @@
             internal static readonly string SelectAllKeys = Prefix + "SELECT_ALL_KEYS";
             internal static readonly string DeselectAllKeys = Prefix + "DESELECT_ALL_KEYS";
             internal static readonly string DeleteProfile = Prefix + "DELETE_PROFILE";
+            internal static readonly string SwapKeys = Prefix + "SWAP_KEYS";
         }
         public static class Misc
         {

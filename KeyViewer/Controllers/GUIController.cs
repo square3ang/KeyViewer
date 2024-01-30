@@ -1,4 +1,6 @@
-﻿using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core;
+using KeyViewer.Core.Translation;
+using KeyViewer.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -71,6 +73,7 @@ namespace KeyViewer.Controllers
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             current.Draw();
+            Drawer.ButtonLabel(Main.Lang[TranslationKeys.BOATK], () => Application.OpenURL("https://github.com/PizzaLovers007/AdofaiTweaks/tree/master/AdofaiTweaks/Tweaks/KeyViewer"));
         }
         public void Skip(Action onSkip = null, int frames = 1)
         {

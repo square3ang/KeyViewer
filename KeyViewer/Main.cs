@@ -23,7 +23,7 @@ using static UnityModManagerNet.UnityModManager.ModEntry;
 /* TODO List
  * 지원 가능한 모든 곳에 Gradient 기능 추가하기 => Completed
  * Rain이 위 아래로 늘어나는 버그 고치기 => Completed
- * 비동기 입력 Issue 고치기 => FUCK
+ * 비동기 입력 Issue 고치기 => 99% Completed
  * 키 별 KPS 기능 추가하기 => Completed
  * 모든 텍스트에 Tag를 이용한 Text Replacing 지원하기 => Completed
  * 이미지 Rounding 지원하기 => Completed
@@ -262,7 +262,7 @@ namespace KeyViewer
                 key != TranslationKeys.DiscordLink &&
                 key != TranslationKeys.DownloadLink &&
                 key != TranslationKeys.UpdateNote &&
-                key != TranslationKeys.AllowedPatchTargets &&
+                key != TranslationKeys.BOATK &&
                 key != TranslationKeys.Raw).ToList())
                     Lang[key] = update;
                 ErrorCanvasContext ecc = new ErrorCanvasContext();

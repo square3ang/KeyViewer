@@ -243,7 +243,7 @@ namespace KeyViewer.Unity
         private Vector2 GetMaskPosition(Direction dir)
         {
             var rainVConfig = Config.Rain.ObjectConfig.VectorConfig;
-            Vector2 vec = transform.position + rainVConfig.Offset.Get(Pressed);
+            Vector2 vec = transform.position;
             float x = Size.x, y = Size.y;
             Vector2 offset = rainVConfig.Offset.Get(Pressed);
             int softness = Config.Rain.Softness.Get(Pressed);

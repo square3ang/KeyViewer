@@ -378,7 +378,7 @@ namespace KeyViewer.Utils
         }
         public static void ApplyRoundnessBlurLayout(Image image, ref float roundness, BlurConfig config, bool blurEnabled)
         {
-            if (blurEnabled || roundness > 0) image.material = null;
+            image.material = null;
             RoundedCorners rounder = image.GetComponent<RoundedCorners>();
             if (blurEnabled)
             {
