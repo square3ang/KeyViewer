@@ -113,7 +113,7 @@ namespace KeyViewer.Patches
                     var rainConfig = key.Config.Rain.ObjectConfig;
                     if (rainConfig.ChangeColorWithJudge)
                     {
-                        key.rain.Release();
+                        key.rain?.Release();
                         key.rain = key.rainPool.Get();
                         key.rain.IgnoreColorUpdate();
                         key.rain.IgnoreColorUpdate();

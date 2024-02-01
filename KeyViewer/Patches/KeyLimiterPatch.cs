@@ -37,6 +37,7 @@ namespace KeyViewer.Patches
         }
         private static int GetPressedCount(Profile profile, MainStateCount stateCount, bool async)
         {
+            if (Main.BlockInput) return 0;
             var activeKeys = profile.Keys
                 .Select(kc => kc.Code)
                 .Where(k => k != KeyCode.None)
