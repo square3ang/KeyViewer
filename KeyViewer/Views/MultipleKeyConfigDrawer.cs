@@ -1,4 +1,5 @@
 ﻿using KeyViewer.Core;
+using KeyViewer.Core.Input;
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
@@ -86,7 +87,7 @@ namespace KeyViewer.Views
         }
         void Set(string fieldName)
         {
-            KeyViewerUtils.SetMultiple(model, modelCopy, targets, targetsCopy, fieldName, (o, t) => ((KeyConfig)o).DisableSorting && KeyViewerUtils.IsVectorType(t));
+            KeyViewerUtils.SetMultiple(model, modelCopy, targets, targetsCopy, fieldName, (o, t) => KeyInput.Shift || (((KeyConfig)o).DisableSorting && KeyViewerUtils.IsVectorType(t)));
         }
         void OnChangeOC(string objectConfigFieldName)
         {
@@ -101,30 +102,30 @@ namespace KeyViewer.Views
             var targets = this.targets.Select(k => field.GetValue(k) as ObjectConfig);
             var targetsCopy = this.targetsCopy.Select(k => field.GetValue(k) as ObjectConfig);
 
-            KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "ChangeColorWithJudge", (o, t) => false);
-            KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "Color", (o, t) => false);
+            KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "ChangeColorWithJudge", (o, t) => KeyInput.Shift);
+            KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "Color", (o, t) => KeyInput.Shift);
             if (original.JudgeColors != null)
             {
-                KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "JudgeColors", (o, t) => false);
-                KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "JudgeColorEase", (o, t) => false);
+                KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "JudgeColors", (o, t) => KeyInput.Shift);
+                KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "JudgeColorEase", (o, t) => KeyInput.Shift);
             }
 
-            bool IsRelative(object instance, object o, System.Type t) => ((KeyConfig)o).DisableSorting && KeyViewerUtils.IsVectorType(t);
+            bool IsRelative(object instance, object o, System.Type t) => KeyInput.Shift || (((KeyConfig)o).DisableSorting && KeyViewerUtils.IsVectorType(t));
             var vOriginal = original.VectorConfig;
             var vOriginalCopy = originalCopy.VectorConfig;
             var vTargets = targets.Select(t => t.VectorConfig);
             var vTargetsCopy = targetsCopy.Select(t => t.VectorConfig);
             var relativeRefs = this.targets.Cast<object>().ToList();
 
-            KeyViewerUtils.SetMultiple(vOriginal, vOriginalCopy, vTargets, vTargetsCopy, "Pivot", (o, t) => false);
-            KeyViewerUtils.SetMultiple(vOriginal, vOriginalCopy, vTargets, vTargetsCopy, "Anchor", (o, t) => false);
+            KeyViewerUtils.SetMultiple(vOriginal, vOriginalCopy, vTargets, vTargetsCopy, "Pivot", (o, t) => KeyInput.Shift);
+            KeyViewerUtils.SetMultiple(vOriginal, vOriginalCopy, vTargets, vTargetsCopy, "Anchor", (o, t) => KeyInput.Shift);
             KeyViewerUtils.SetMultiplePR(vOriginal.Rotation, vOriginalCopy.Rotation, vTargets.Select(t => t.Rotation), vTargetsCopy.Select(t => t.Rotation), IsRelative, relativeRefs);
             KeyViewerUtils.SetMultiplePR(vOriginal.Offset, vOriginalCopy.Offset, vTargets.Select(t => t.Offset), vTargetsCopy.Select(t => t.Offset), IsRelative, relativeRefs);
             KeyViewerUtils.SetMultiplePR(vOriginal.Scale, vOriginalCopy.Scale, vTargets.Select(t => t.Scale), vTargetsCopy.Select(t => t.Scale), IsRelative, relativeRefs);
         }
         void SetVectorConfig(string targetVectorConfigFieldName)
         {
-            bool IsRelative(object instance, object o, System.Type t) => ((KeyConfig)o).DisableSorting && KeyViewerUtils.IsVectorType(t);
+            bool IsRelative(object instance, object o, System.Type t) => KeyInput.Shift || (((KeyConfig)o).DisableSorting && KeyViewerUtils.IsVectorType(t));
             var field = typeof(KeyConfig).GetField(targetVectorConfigFieldName);
             var vOriginal = field.GetValue(model) as VectorConfig;
             var vOriginalCopy = field.GetValue(modelCopy) as VectorConfig;
@@ -132,8 +133,8 @@ namespace KeyViewer.Views
             var vTargetsCopy = targetsCopy.Select(k => field.GetValue(k) as VectorConfig);
             var relativeRefs = targets.Cast<object>().ToList();
 
-            KeyViewerUtils.SetMultiple(vOriginal, vOriginalCopy, vTargets, vTargetsCopy, "Pivot", (o, t) => false);
-            KeyViewerUtils.SetMultiple(vOriginal, vOriginalCopy, vTargets, vTargetsCopy, "Anchor", (o, t) => false);
+            KeyViewerUtils.SetMultiple(vOriginal, vOriginalCopy, vTargets, vTargetsCopy, "Pivot", (o, t) => KeyInput.Shift);
+            KeyViewerUtils.SetMultiple(vOriginal, vOriginalCopy, vTargets, vTargetsCopy, "Anchor", (o, t) => KeyInput.Shift);
             KeyViewerUtils.SetMultiplePR(vOriginal.Rotation, vOriginalCopy.Rotation, vTargets.Select(t => t.Rotation), vTargetsCopy.Select(t => t.Rotation), IsRelative, relativeRefs);
             KeyViewerUtils.SetMultiplePR(vOriginal.Offset, vOriginalCopy.Offset, vTargets.Select(t => t.Offset), vTargetsCopy.Select(t => t.Offset), IsRelative, relativeRefs);
             KeyViewerUtils.SetMultiplePR(vOriginal.Scale, vOriginalCopy.Scale, vTargets.Select(t => t.Scale), vTargetsCopy.Select(t => t.Scale), IsRelative, relativeRefs);
@@ -145,8 +146,8 @@ namespace KeyViewer.Views
             var originalCopy = field.GetValue(modelCopy) as BlurConfig;
             var targets = this.targets.Select(k => field.GetValue(k) as BlurConfig);
             var targetsCopy = this.targetsCopy.Select(k => field.GetValue(k) as BlurConfig);
-            KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "Spacing", (i, t) => false);
-            KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "Vibrancy", (i, t) => false);
+            KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "Spacing", (i, t) => KeyInput.Shift);
+            KeyViewerUtils.SetMultiple(original, originalCopy, targets, targetsCopy, "Vibrancy", (i, t) => KeyInput.Shift);
         }
         void SetPR<T>(string fieldName)
         {
@@ -155,7 +156,7 @@ namespace KeyViewer.Views
             var originalCopy = field.GetValue(modelCopy) as PressRelease<T>;
             var targets = this.targets.Select(k => field.GetValue(k) as PressRelease<T>);
             var targetsCopy = this.targetsCopy.Select(k => field.GetValue(k) as PressRelease<T>);
-            KeyViewerUtils.SetMultiplePR(original, originalCopy, targets, targetsCopy);
+            KeyViewerUtils.SetMultiplePR(original, originalCopy, targets, targetsCopy, (i, o, t) => KeyInput.Shift);
         }
         string LD(string tk, string fieldName, params object[] args)
         {

@@ -244,6 +244,7 @@ namespace KeyViewer
             {
                 foreach (var key in manager.keys)
                 {
+                    if (!key) continue;
                     key.Pressed = false;
                     key.ResetRains();
                 }

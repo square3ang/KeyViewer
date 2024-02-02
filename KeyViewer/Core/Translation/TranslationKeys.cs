@@ -46,6 +46,7 @@
             internal static readonly string DeselectAllKeys = Prefix + "DESELECT_ALL_KEYS";
             internal static readonly string DeleteProfile = Prefix + "DELETE_PROFILE";
             internal static readonly string SwapKeys = Prefix + "SWAP_KEYS";
+            internal static readonly string DoNotAssAss = Prefix + "DO_NOT_ASS_ASS";
         }
         public static class Misc
         {

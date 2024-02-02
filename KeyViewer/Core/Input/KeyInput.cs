@@ -5,23 +5,27 @@ namespace KeyViewer.Core.Input
 {
     public static class KeyInput
     {
-        public static bool AnyKey => AsyncInputManager.isActive && scrController.instance.currentState == States.PlayerControl ? AsyncInputCompat.AnyKey : SyncInput.anyKey;
-        public static bool AnyKeyDown => AsyncInputManager.isActive && scrController.instance.currentState == States.PlayerControl ? AsyncInputCompat.AnyKeyDown : SyncInput.anyKeyDown;
+        public static bool AsyncAvailable => AsyncInputManager.isActive && (scrController.instance?.gameworld ?? false) && scrController.instance?.currentState == States.PlayerControl;
+        public static bool AnyKey => AsyncAvailable ? AsyncInputCompat.AnyKey : SyncInput.anyKey;
+        public static bool AnyKeyDown => AsyncAvailable ? AsyncInputCompat.AnyKeyDown : SyncInput.anyKeyDown;
+        public static bool Shift => GetKey(KeyCode.LeftShift) || GetKey(KeyCode.RightShift);
+        public static bool Control => GetKey(KeyCode.LeftControl) || GetKey(KeyCode.RightControl);
+        public static bool Alt => GetKey(KeyCode.LeftAlt) || GetKey(KeyCode.RightAlt);
         public static bool GetKey(KeyCode code)
         {
-            if (AsyncInputManager.isActive && scrController.instance.gameworld && scrController.instance.currentState == States.PlayerControl)
+            if (AsyncAvailable)
                 return AsyncInputCompat.GetKey(code);
             return SyncInput.GetKey(code);
         }
         public static bool GetKeyUp(KeyCode code)
         {
-            if (AsyncInputManager.isActive && scrController.instance.gameworld && scrController.instance.currentState == States.PlayerControl)
+            if (AsyncAvailable)
                 return AsyncInputCompat.GetKeyUp(code);
             return SyncInput.GetKeyUp(code);
         }
         public static bool GetKeyDown(KeyCode code)
         {
-            if (AsyncInputManager.isActive && scrController.instance.gameworld && scrController.instance.currentState == States.PlayerControl)
+            if (AsyncAvailable)
                 return AsyncInputCompat.GetKeyDown(code);
             return SyncInput.GetKeyDown(code);
         }

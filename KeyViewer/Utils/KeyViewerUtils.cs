@@ -472,14 +472,16 @@ namespace KeyViewer.Utils
         {
             return
                 t == typeof(float) ||
+                t == typeof(int) ||
                 t == typeof(Vector2) ||
                 t == typeof(Vector3) ||
                 t == typeof(Vector4) ||
+                t == typeof(Color) ||
+                t == typeof(GColor) ||
                 t == typeof(sbyte) ||
                 t == typeof(byte) ||
                 t == typeof(short) ||
                 t == typeof(ushort) ||
-                t == typeof(int) ||
                 t == typeof(uint) ||
                 t == typeof(long) ||
                 t == typeof(ulong) ||
@@ -498,6 +500,10 @@ namespace KeyViewer.Utils
                 return (Vector3)toCriterion + ((Vector3)obj - (Vector3)fromCriterion);
             if (obj is Vector4)
                 return (Vector4)toCriterion + ((Vector4)obj - (Vector4)fromCriterion);
+            if (obj is Color)
+                return (Color)toCriterion + ((Color)obj - (Color)fromCriterion);
+            if (obj is GColor)
+                return (GColor)toCriterion + ((GColor)obj - (GColor)fromCriterion);
             if (obj is sbyte)
                 return (sbyte)toCriterion + ((sbyte)obj - (sbyte)fromCriterion);
             if (obj is byte)
