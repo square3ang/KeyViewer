@@ -28,7 +28,7 @@ namespace KeyViewer.Views
             Drawer.DrawBool(L(TKP.ViewOnlyGamePlay), ref model.ViewOnlyGamePlay);
             changed |= Drawer.DrawBool(L(TKP.LimitNotRegisteredKeys), ref model.LimitNotRegisteredKeys);
             changed |= Drawer.DrawBool(L(TKP.ResetOnStart), ref model.ResetOnStart);
-            if (model.DoNotAssAss) Drawer.DrawBool(L(TKP.DoNotAssAss), ref model.DoNotAssAss);
+            //if (model.DoNotAssAss) Drawer.DrawBool(L(TKP.DoNotAssAss), ref model.DoNotAssAss);
             changed |= Drawer.DrawInt32(L(TKP.KPSUpdateRate), ref model.KPSUpdateRate);
             changed |= Drawer.DrawSingleWithSlider(L(TKP.KeySpacing), ref model.KeySpacing, 0, 100, 300f);
             changed |= Drawer.DrawVectorConfig(model.VectorConfig);

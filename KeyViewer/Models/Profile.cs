@@ -48,7 +48,7 @@ namespace KeyViewer.Models
             ViewOnlyGamePlay = node[nameof(ViewOnlyGamePlay)];
             LimitNotRegisteredKeys = node[nameof(LimitNotRegisteredKeys)];
             ResetOnStart = node[nameof(ResetOnStart)];
-            DoNotAssAss = node[nameof(DoNotAssAss)].IfNotExist(true);
+            DoNotAssAss = true;// node[nameof(DoNotAssAss)].IfNotExist(true);
             KeySpacing = node[nameof(KeySpacing)];
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
             KPSUpdateRate = node[nameof(KPSUpdateRate)];
