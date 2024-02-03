@@ -1,6 +1,6 @@
 ﻿using KeyViewer.Core;
-using KeyViewer.Core.Translation;
 using KeyViewer.Core.Interfaces;
+using KeyViewer.Core.Translation;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

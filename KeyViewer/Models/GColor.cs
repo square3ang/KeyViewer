@@ -173,7 +173,7 @@ namespace KeyViewer.Models
         public static implicit operator VertexGradient(GColor color) => color.gradientEnabled ? new VertexGradient(color.topLeft, color.topRight, color.bottomLeft, color.bottomRight) : new VertexGradient(color);
         public static implicit operator GColor(VertexGradient color) => new GColor(color);
 
-        public static GColor operator+(GColor a, GColor b)
+        public static GColor operator +(GColor a, GColor b)
         {
             return new VertexGradient(
                 a.topLeft + b.topLeft,

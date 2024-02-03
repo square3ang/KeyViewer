@@ -365,6 +365,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TagManagerSetRemovePatch.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="KeyManagerInitPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

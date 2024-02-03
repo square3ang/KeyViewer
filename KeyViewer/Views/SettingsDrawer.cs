@@ -1,6 +1,5 @@
 ﻿using KeyViewer.Core;
 using KeyViewer.Core.Translation;
-using KeyViewer.Migration.V3;
 using KeyViewer.Models;
 using KeyViewer.Utils;
 using SFB;
