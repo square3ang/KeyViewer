@@ -1,12 +1,8 @@
 ﻿using JSON;
-using KeyViewer.Utils;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
+using KeyViewer.WebAPI.Core.Utils;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace KeyViewer.Core.Translation
+namespace KeyViewer.WebAPI.Core
 {
     public class SpreadSheet
     {
@@ -20,7 +16,7 @@ namespace KeyViewer.Core.Translation
             UriBase = URL_START + key + URL_END;
             dict = new Dictionary<int, Dictionary<string, string>>();
         }
-        public string this[int gid, string key]
+        public string? this[int gid, string key]
         {
             get
             {
@@ -32,14 +28,14 @@ namespace KeyViewer.Core.Translation
             set
             {
                 if (dict.TryGetValue(gid, out var kv))
-                    kv[key] = value;
+                    kv[key] = value ?? string.Empty;
             }
         }
-        public Dictionary<string, string> Get(int gid)
+        public Dictionary<string, string>? Get(int gid)
         {
             return dict.TryGetValue(gid, out var kv) ? kv : null;
         }
-        public async Task<Dictionary<string, string>> Download(int gid, Action<Dictionary<string, string>> onDownloaded = null, bool force = false)
+        public async Task<Dictionary<string, string>> Download(int gid, Action<Dictionary<string, string>>? onDownloaded = null, bool force = false)
         {
             var exist = Get(gid);
             if (!force && exist != null)
@@ -59,9 +55,9 @@ namespace KeyViewer.Core.Translation
                 JsonNode keyValue = row["c"];
                 for (int i = 0; i < keyValue.Count; i += 2)
                 {
-                    string key = keyValue[0 + i]["v"].ToStringN();
-                    string value = keyValue[1 + i]["v"].ToStringN();
-                    if (string.IsNullOrEmpty(key)) continue;
+                    string? key = keyValue[0 + i]["v"].ToStringN();
+                    string? value = keyValue[1 + i]["v"].ToStringN();
+                    if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(value)) continue;
                     gidDict.Add(key, value);
                 }
             }

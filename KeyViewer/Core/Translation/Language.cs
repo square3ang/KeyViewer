@@ -1,56 +1,66 @@
-﻿using KeyViewer.Models;
-using KeyViewer.Utils;
+﻿using JSON;
+using KeyViewer.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KeyViewer.Core.Translation
 {
     public class Language
     {
-        private const string KEY = "1EiWVds23-gZeRCrXL-UYr-o-sc0m-jfqWa-G7qmUYdI";
-        internal static SpreadSheet sheet = new SpreadSheet(KEY);
         private static Language Korean;
-        internal static Language English = new Language(GID.ENGLISH);
+        private static Language English;
         private static Language Chinese;
         private static Language Japanese;
+        public bool Initialized = false;
+        public KeyViewerLanguage Lang;
+        private bool updateMode = false;
+        private Dictionary<string, string> pairs = new Dictionary<string, string>();
         public static event Action OnInitialize = delegate { };
-        public bool Initialized { get; private set; }
-        public int Gid { get; }
-        public Language(GID gid)
+        Language(KeyViewerLanguage lang)
         {
-            Gid = (int)gid;
-            sheet.Download((int)gid, d =>
-            {
-                Initialized = true;
-                OnInitialize();
-                Main.Logger.Log($"Loaded {d.Count} Localizations from Sheet (GID:{(GID)Gid})");
-            }).Await();
+            Lang = lang;
+            Download();
+        }
+        async void Download()
+        {
+            if (Initialized) return;
+            var json = await KeyViewerWebAPI.GetLanguageJson(Lang);
+            JsonNode node = JsonNode.Parse(json);
+            foreach (var pair in node.KeyValues)
+                pairs.Add(pair.Key, pair.Value);
+            OnInitialize();
+            Initialized = true;
+            if (updateMode) ActivateUpdateMode();
         }
         public string this[string key]
         {
-            get => string.IsNullOrEmpty(sheet[Gid, key]) ? English[key] : sheet[Gid, key];
-            set => sheet[Gid, key] = value;
+            get => pairs.TryGetValue(key, out var value) ? value : key;
+            set => pairs[key] = value;
+        }
+        public void ActivateUpdateMode()
+        {
+            updateMode = true;
+            if (Initialized)
+            {
+                foreach (var key in pairs.Keys.ToList())
+                    pairs[key] = "Update!Update!Update!";
+            }
         }
         public static Language GetLanguage(KeyViewerLanguage lang)
         {
             switch (lang)
             {
-                case KeyViewerLanguage.English:
-                    return English ??= new Language(GID.ENGLISH);
                 case KeyViewerLanguage.Korean:
-                    return Korean ??= new Language(GID.KOREAN);
+                    return Korean ??= new Language(KeyViewerLanguage.Korean);
+                case KeyViewerLanguage.English:
+                    return English ??= new Language(KeyViewerLanguage.English);
                 case KeyViewerLanguage.Chinese:
-                    return Chinese ??= new Language(GID.CHINESE);
+                    return Chinese ??= new Language(KeyViewerLanguage.Chinese);
                 case KeyViewerLanguage.Japanese:
-                    return Japanese ??= new Language(GID.JAPANESE);
-                default: return English;
+                    return Japanese ??= new Language(KeyViewerLanguage.Japanese);
+                default: return null;
             }
-        }
-        public static void Release()
-        {
-            Korean = null;
-            English = null;
-            Chinese = null;
-            Japanese = null;
         }
     }
 }

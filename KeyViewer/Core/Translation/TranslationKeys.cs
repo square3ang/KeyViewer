@@ -5,8 +5,6 @@
         public static readonly string Lorem_Ipsum = "LOREM_IPSUM";
         public static readonly string Version = "V_E_R_S_I_O_N";
         public static readonly string Update = "U_P_D_A_T_E";
-        public static readonly string DiscordLink = "DISCORD_LINK";
-        public static readonly string DownloadLink = "DOWNLOAD_LINK";
         public static readonly string UpdateNote = "U_P_D_A_T_E_NOTE";
         public static readonly string Raw = "R_A_W";
         public static readonly string BOATK = "BASED_ON_ADOFAI_TWEAKS_KEYVIEWER";

@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Xml.Serialization;
 using UnityEngine;
@@ -48,7 +49,13 @@ namespace KeyViewer
         public static ModelDrawable<Profile> ListeningDrawer { get; internal set; }
         public static Harmony Harmony { get; private set; }
         public static GUIController GUI { get; private set; }
+        public static HttpClient HttpClient { get; private set; }
+        public static System.Version LastestVersion { get; private set; }
+        public static System.Version ModVersion { get; private set; }
+        public static string DiscordLink { get; private set; }
+        public static string DownloadLink { get; private set; }
         public static bool HasUpdate { get; private set; }
+        public static bool WebAPIInitialized { get; private set; } = false;
         public static event System.Action OnManagersInitialized = delegate { };
         public static void Load(ModEntry modEntry)
         {
@@ -60,13 +67,15 @@ namespace KeyViewer
             modEntry.OnSaveGUI = OnSaveGUI;
             modEntry.OnShowGUI = OnShowGUI;
             modEntry.OnHideGUI = OnHideGUI;
+            HttpClient = new HttpClient();
             modEntry.Info.Version = Constants.Version;
-            typeof(ModEntry).GetField(nameof(ModEntry.Version)).SetValue(modEntry, System.Version.Parse(Constants.Version));
+            typeof(ModEntry).GetField(nameof(ModEntry.Version)).SetValue(modEntry, ModVersion = System.Version.Parse(Constants.Version));
         }
         public static bool OnToggle(ModEntry modEntry, bool toggle)
         {
             if (toggle)
             {
+                InitializeWebAPI();
                 Tag.InitializeWrapperAssembly();
                 FontManager.Initialize();
                 AssetManager.Initialize();
@@ -105,7 +114,6 @@ namespace KeyViewer
                 Harmony.UnpatchAll(Harmony.Id);
                 Harmony = null;
                 Language.OnInitialize -= OnLanguageInitialize;
-                Language.Release();
                 JudgementColorPatch.Release();
                 //AssetManager.Release();
                 FontManager.Release();
@@ -166,7 +174,6 @@ namespace KeyViewer
             GUI.Flush();
             ListeningDrawer = null;
             GUI.Init(new SettingsDrawer(Settings));
-            StaticCoroutine.Queue(StaticCoroutine.SyncRunner(() => EnsureKeyViewerVersion(System.Version.Parse(Lang[TranslationKeys.Version]))));
         }
 
         public static bool AddManager(ActiveProfile profile, bool forceInit = false)
@@ -250,27 +257,26 @@ namespace KeyViewer
                 }
             }
         }
-        public static void EnsureKeyViewerVersion(System.Version newVersion)
+        public static async void InitializeWebAPI()
         {
-            if (newVersion > Mod.Version)
+            if (WebAPIInitialized) return;
+            Logger.Log($"Handshake Response:{await KeyViewerWebAPI.Handshake()}");
+            LastestVersion = await KeyViewerWebAPI.GetVersion();
+            DiscordLink = await KeyViewerWebAPI.GetDiscordLink();
+            DownloadLink = await KeyViewerWebAPI.GetDownloadLink();
+            StaticCoroutine.Queue(StaticCoroutine.SyncRunner(EnsureKeyViewerVersion));
+            WebAPIInitialized = true;
+        }
+        public static void EnsureKeyViewerVersion()
+        {
+            if (LastestVersion > ModVersion)
             {
-                HasUpdate = true;
-                var update = Lang[TranslationKeys.Update];
-                foreach (var key in Language.sheet.Get(Lang.Gid).Keys.Where(key =>
-                key != TranslationKeys.Lorem_Ipsum &&
-                key != TranslationKeys.Version &&
-                key != TranslationKeys.Update &&
-                key != TranslationKeys.DiscordLink &&
-                key != TranslationKeys.DownloadLink &&
-                key != TranslationKeys.UpdateNote &&
-                key != TranslationKeys.BOATK &&
-                key != TranslationKeys.Raw).ToList())
-                    Lang[key] = update;
+                Lang.ActivateUpdateMode();
                 ErrorCanvasContext ecc = new ErrorCanvasContext();
                 ecc.titleText = "WOW YOUR KEYVIEWER VERSION IS BEAUTIFUL!";
                 ecc.errorMessage =
-                    $"Current KeyViewer Version v{Mod.Version}.\n" +
-                    $"But Latest KeyViewer Is v{newVersion}.\n" +
+                    $"Current KeyViewer Version v{ModVersion}.\n" +
+                    $"But Latest KeyViewer Is v{LastestVersion}.\n" +
                     $"PlEaSe UpDaTe YoUr KeYvIeWeR!";
                 ecc.ignoreBtnCallback = () =>
                 {

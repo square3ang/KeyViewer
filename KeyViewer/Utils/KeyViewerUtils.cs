@@ -295,12 +295,12 @@ namespace KeyViewer.Utils
         }
         public static void OpenDiscordUrl()
         {
-            Application.OpenURL(Main.Lang[TranslationKeys.DiscordLink]);
+            Application.OpenURL(Main.DiscordLink);
         }
         public static void OpenDownloadUrl()
         {
             if (Main.HasUpdate)
-                Application.OpenURL(Main.Lang[TranslationKeys.DownloadLink]);
+                Application.OpenURL(Main.DownloadLink);
         }
         public static Vector2 GetPivot(Pivot pivot)
         {

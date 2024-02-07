@@ -14,14 +14,12 @@ namespace KeyViewer.WebAPI
 
             // Configure the HTTP request pipeline.
 
-            app.UseHttpsRedirection();
-
             app.UseAuthorization();
 
 
             app.MapControllers();
 
-            app.Run("127.0.0.1:");
+            app.Run("http://127.0.0.1:1111");
         }
     }
 }
