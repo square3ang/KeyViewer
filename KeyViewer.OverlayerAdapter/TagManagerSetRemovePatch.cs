@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
-using Overlayer.Core;
 using System;
 using System.Linq;
+using Overlayer.Tags;
 
 namespace KeyViewer.OverlayerAdapter
 {
@@ -10,11 +10,11 @@ namespace KeyViewer.OverlayerAdapter
     {
         [HarmonyPostfix]
         [HarmonyPatch("SetTag")]
-        public static void Set(Overlayer.Core.Tags.Tag tag, bool notPlaying)
+        public static void Set(OverlayerTag tag)
         {
             foreach (var manager in KeyViewer.Main.Managers.Values)
             {
-                manager.AllTags.Add(Main.InteropTag(tag, notPlaying));
+                manager.AllTags.Add(Main.InteropTag(tag));
                 manager.UpdateLayout();
             }
         }

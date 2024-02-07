@@ -2,6 +2,7 @@
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Utils;
 using System.Collections.Generic;
+using Overlayer.Tags;
 using System.Reflection;
 using static UnityModManagerNet.UnityModManager;
 
@@ -16,15 +17,14 @@ namespace KeyViewer.OverlayerAdapter
             Harmony = new Harmony(modEntry.Info.Id);
             Harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
-        public static Tag InteropTag(Overlayer.Core.Tags.Tag t) => InteropTag(t, true);
-        public static Tag InteropTag(Overlayer.Core.Tags.Tag t, bool np)
+        public static Tag InteropTag(OverlayerTag t)
         {
             var newTag = new Tag(t.Name);
-            var go = t.GetterOriginal;
+            var go = t.Tag.GetterOriginal;
             if (go.Name == "Invoke")
-                newTag.SetGetter(t.GetterOriginalDelegate);
+                newTag.SetGetter(t.Tag.GetterOriginalDelegate);
             else newTag.SetGetter(go);
-            if (!np) PatchGetter(newTag.Getter);
+            if (!t.NotPlaying) PatchGetter(newTag.Getter);
             return newTag;
         }
         public static void PatchGetter(MethodInfo getter)
@@ -33,6 +33,6 @@ namespace KeyViewer.OverlayerAdapter
                 patchedGetters[getter] = Harmony.Patch(getter, new HarmonyMethod(TP));
         }
         public static readonly MethodInfo TP = typeof(Main).GetMethod(nameof(TagPatcher));
-        public static bool TagPatcher() => Overlayer.OverlayerText.IsPlaying;
+        public static bool TagPatcher() => Overlayer.Main.IsPlaying;
     }
 }
