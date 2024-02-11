@@ -40,3 +40,4 @@ using System.Runtime.InteropServices;
 [assembly: Comment("IF YOU SEE THIS, SEND MESSAGE TO Discord@suckyoubus")]
 [assembly: Comment("https://discord.gg/SaUFEwbM")]
 [assembly: InternalsVisibleTo("KeyViewer.Scripting")]
+[assembly: InternalsVisibleTo("KeyViewer.OverlayerAdapter")]

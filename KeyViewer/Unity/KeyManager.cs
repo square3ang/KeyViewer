@@ -27,7 +27,7 @@ namespace KeyViewer.Unity
         internal Vector2 centerOffset;
         internal RectTransform keysRt;
         internal bool prevPressed;
-        private bool initialized;
+        internal bool initialized;
         public void Init()
         {
             if (initialized) return;

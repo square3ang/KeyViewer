@@ -14,6 +14,7 @@ namespace KeyViewer.OverlayerAdapter
         {
             foreach (var manager in KeyViewer.Main.Managers.Values)
             {
+                if (!manager.initialized) continue;
                 manager.AllTags.Add(Main.InteropTag(tag));
                 manager.UpdateLayout();
             }
@@ -24,6 +25,7 @@ namespace KeyViewer.OverlayerAdapter
         {
             foreach (var manager in KeyViewer.Main.Managers.Values)
             {
+                if (!manager.initialized) continue;
                 manager.AllTags.RemoveAll(t => t.Name == name);
                 manager.UpdateLayout();
             }
@@ -35,6 +37,7 @@ namespace KeyViewer.OverlayerAdapter
             if (type.FullName != "Overlayer.Scripting.Tags.Expression") return;
             foreach (var manager in KeyViewer.Main.Managers.Values)
             {
+                if (!manager.initialized) continue;
                 var notAddedTags = TagManager.All.Where(t => manager.AllTags.Count(kt => kt.Name == t.Name) == 0);
                 manager.AllTags.AddRange(notAddedTags.Select(Main.InteropTag));
                 manager.UpdateLayout();
