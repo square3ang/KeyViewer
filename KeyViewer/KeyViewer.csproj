@@ -352,11 +352,13 @@
     <Compile Include="Models\BlurConfig.cs" />
     <Compile Include="Models\Direction.cs" />
     <Compile Include="Models\EaseConfig.cs" />
+    <Compile Include="Models\EncryptedProfile.cs" />
     <Compile Include="Models\GColor.cs" />
     <Compile Include="Models\GUIStatus.cs" />
     <Compile Include="Models\Judge.cs" />
     <Compile Include="Models\KeyConfig.cs" />
     <Compile Include="Models\KeyViewerLanguage.cs" />
+    <Compile Include="Models\Metadata.cs" />
     <Compile Include="Models\PressRelease.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\RainConfig.cs" />
@@ -388,6 +390,7 @@
     <Compile Include="Utils\ADOUtils.cs" />
     <Compile Include="Models\Anchor.cs" />
     <Compile Include="Utils\CanEase.cs" />
+    <Compile Include="Utils\CryptoUtils.cs" />
     <Compile Include="Utils\EnumHelper.cs" />
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\GradientUtils.cs" />
@@ -397,6 +400,8 @@
     <Compile Include="Utils\ModelUtils.cs" />
     <Compile Include="Models\Pivot.cs" />
     <Compile Include="Utils\StringConverter.cs" />
+    <Compile Include="Views\EncryptedProfileSaveDrawer.cs" />
+    <Compile Include="Views\EncryptedProfileDrawer.cs" />
     <Compile Include="Views\MultipleKeyConfigDrawer.cs" />
     <Compile Include="Views\MultipleRainConfigDrawer.cs" />
     <Compile Include="Views\RainConfigDrawer.cs" />

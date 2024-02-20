@@ -1,12 +1,14 @@
 ﻿using DG.Tweening;
+using JSON;
 using KeyViewer.Core;
 using KeyViewer.Core.Interfaces;
-using KeyViewer.Core.Translation;
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Unity.UI;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,6 +33,17 @@ namespace KeyViewer.Utils
         /// Texture2D "white"
         /// </summary>
         public static readonly int Blur_MainTex = Shader.PropertyToID("_MainTex");
+        public static async void LoadEncryptedProfile(byte[] encryptedProfile, string key)
+        {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            var ep = await KeyViewerWebAPI.OpenEncryptedProfile(encryptedProfile);
+            var p = await KeyViewerWebAPI.DecryptProfile(ep.RawProfile, key);
+            var m = ep.Metadata;
+            StaticCoroutine.Queue(StaticCoroutine.SyncRunner(() => Main.AddManagerImmediate(m.Name, p, key)));
+            watch.Stop();
+            Main.Logger.Log($"Loaded Encrypted Profile '{m.Name}' ({watch.Elapsed.TotalMilliseconds}ms)");
+        }
         public static string KeyName(KeyConfig config)
         {
             return config.DummyName ?? config.Code.ToString();

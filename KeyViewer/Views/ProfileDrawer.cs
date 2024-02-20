@@ -25,6 +25,11 @@ namespace KeyViewer.Views
         public override void Draw()
         {
             bool changed = false;
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button(L(TKP.SaveCryptedProfile)))
+                Main.GUI.Push(new EncryptedProfileSaveDrawer(model));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
             Drawer.DrawBool(L(TKP.ViewOnlyGamePlay), ref model.ViewOnlyGamePlay);
             changed |= Drawer.DrawBool(L(TKP.LimitNotRegisteredKeys), ref model.LimitNotRegisteredKeys);
             changed |= Drawer.DrawBool(L(TKP.ResetOnStart), ref model.ResetOnStart);

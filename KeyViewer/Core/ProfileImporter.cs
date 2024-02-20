@@ -51,7 +51,11 @@ namespace KeyViewer.Core
             }
             return profile;
         }
-        public static JsonArray GetReferences(Profile profile)
+        public static JsonArray GetReferencesAsJson(Profile profile)
+        {
+            return ModelUtils.WrapList(GetReferences(profile));
+        }
+        public static List<Reference> GetReferences(Profile profile)
         {
             List<Reference> references = new List<Reference>();
             foreach (var text in profile.Keys)
@@ -64,7 +68,7 @@ namespace KeyViewer.Core
                 if (!string.IsNullOrWhiteSpace(text.Released))
                     references.Add(Reference.GetReference(text.Released, Reference.Type.Image));
             }
-            return ModelUtils.WrapList(references.Where(r => r != null).Distinct().ToList());
+            return references.Where(r => r != null).Distinct().ToList();
         }
         public class Reference : IModel, ICopyable<Reference>
         {

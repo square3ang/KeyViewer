@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace KeyViewer.Patches
 {
-    //[HarmonyPatch]
+    [HarmonyPatch]
     public static class AssassinationPatch
     {
         [HarmonyPostfix]

@@ -45,6 +45,7 @@
             internal static readonly string DeleteProfile = Prefix + "DELETE_PROFILE";
             internal static readonly string SwapKeys = Prefix + "SWAP_KEYS";
             internal static readonly string DoNotAssAss = Prefix + "DO_NOT_ASS_ASS";
+            internal static readonly string SaveCryptedProfile = Prefix + "SAVE_CRYPTED_PROFILE";
         }
         public static class Misc
         {
@@ -153,6 +154,26 @@
             internal static readonly string RainImagePath = Prefix + "RAIN_IMAGE_PATH";
             internal static readonly string RainImageCount = Prefix + "RAIN_IMAGE_COUNT";
             internal static readonly string BlurEnabled = Prefix + "ENABLE_BLUR";
+        }
+        public static class EncryptedProfile
+        {
+            public const string Prefix = "ENCRYPTED_PROFILE_";
+            internal static readonly string Name = Prefix + "NAME";
+            internal static readonly string Author = Prefix + "AUTHOR";
+            internal static readonly string Description = Prefix + "DESCRIPTION";
+            internal static readonly string CreationTime = Prefix + "CREATION_TIME";
+            internal static readonly string Key = Prefix + "KEY";
+            internal static readonly string Encrypt = Prefix + "ENCRYPT";
+            internal static readonly string Decrypt = Prefix + "DECRYPT";
+            internal static readonly string Encrypting = Prefix + "ENCRYPTING";
+            internal static readonly string Decrypting = Prefix + "DECRYPTING";
+            internal static readonly string Damaged = Prefix + "DAMAGED";
+            internal static readonly string Opening = Prefix + "OPENING";
+            internal static readonly string Import = Prefix + "IMPORT";
+            internal static readonly string KeyMismatch = Prefix + "KEY_MISMATCH";
+            internal static readonly string Success = Prefix + "SUCCESS";
+            internal static readonly string InternalError = Prefix + "INTERNAL_ERROR";
+            internal static readonly string Save = Prefix + "SAVE";
         }
     }
 }

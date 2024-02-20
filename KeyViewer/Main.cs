@@ -178,11 +178,18 @@ namespace KeyViewer
 
         public static bool AddManager(ActiveProfile profile, bool forceInit = false)
         {
-            var profilePath = Path.Combine(Mod.Path, $"{profile.Name}.json");
+            var profilePath = profile.Key == null ? 
+                Path.Combine(Mod.Path, $"{profile.Name}.json") :
+                Path.Combine(Mod.Path, $"{profile.Name}.encryptedProfile");
             if (File.Exists(profilePath))
             {
                 if (profile.Active)
                 {
+                    if (profile.Key != null)
+                    {
+                        KeyViewerUtils.LoadEncryptedProfile(File.ReadAllBytes(profilePath), profile.Key);
+                        return true;
+                    }
                     var profileNode = JsonNode.Parse(File.ReadAllText(profilePath));
                     var p = ProfileImporter.Import(profileNode);
                     if (Managers.TryGetValue(profile.Name, out var manager))
@@ -207,6 +214,15 @@ namespace KeyViewer
                 Managers.Remove(profile.Name);
                 Logger.Log($"Released Key Manager {profile.Name}.");
             }
+        }
+        public static void AddManagerImmediate(string name, Profile p, string key = null)
+        {
+            var profile = new ActiveProfile(name, true, key);
+            var manager = KeyManager.CreateManager(profile.Name, p);
+            manager.Init();
+            manager.UpdateKeys();
+            Logger.Log($"Initialized Key Manager {profile.Name}.");
+            Settings.ActiveProfiles.Add(profile);
         }
         public static IEnumerator InitializeManagersCo()
         {

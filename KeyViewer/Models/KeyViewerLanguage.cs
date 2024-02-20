@@ -5,6 +5,7 @@
         Korean,
         English,
         Chinese,
-        Japanese
+        Japanese,
+        Vietnamese
     }
 }

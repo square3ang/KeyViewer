@@ -13,7 +13,8 @@ namespace KeyViewer.WebAPI.Controllers
             Korean = 0,
             English = 792770263,
             Chinese = 1604051230,
-            Japanese = 234788714
+            Japanese = 234788714,
+            Vietnamese = 1191957691
         }
         public static SpreadSheet KTS = new SpreadSheet("1EiWVds23-gZeRCrXL-UYr-o-sc0m-jfqWa-G7qmUYdI");
         public static Dictionary<Lang, string> sheetsJson = new Dictionary<Lang, string>();
@@ -26,7 +27,7 @@ namespace KeyViewer.WebAPI.Controllers
                 JsonNode node = JsonNode.Empty;
                 foreach (var item in dict)
                     node[item.Key] = item.Value;
-                json = node.ToString();
+                sheetsJson[lang] = json = node.ToString();
             }
             return json;
         }

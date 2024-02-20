@@ -42,7 +42,7 @@ namespace KeyViewer.Views
             {
                 if (GUILayout.Button(L(TKS.ImportProfile)))
                 {
-                    var profiles = StandaloneFileBrowser.OpenFilePanel(L(TKS.SelectProfile), Main.Mod.Path, new[] { new ExtensionFilter("V3", "xml"), new ExtensionFilter("V4", "json") }, true);
+                    var profiles = StandaloneFileBrowser.OpenFilePanel(L(TKS.SelectProfile), Main.Mod.Path, new[] { new ExtensionFilter("V4", "json"), new ExtensionFilter("V4", "encryptedProfile"), new ExtensionFilter("V3", "xml"), }, true);
                     foreach (var profile in profiles)
                     {
                         FileInfo file = new FileInfo(profile);
@@ -54,7 +54,10 @@ namespace KeyViewer.Views
                             model.ActiveProfiles.Add(activeProfile);
                             Main.AddManager(activeProfile, true);
                         }
-                        else Main.MigrateFromV3Xml(file.FullName);
+                        else if (file.Extension == ".xml")
+                            Main.MigrateFromV3Xml(file.FullName);
+                        else if (file.Extension == ".encryptedProfile") 
+                            Main.GUI.Push(new EncryptedProfileDrawer(File.ReadAllBytes(file.FullName)));
                     }
                 }
                 if (GUILayout.Button(L(TKS.CreateProfile)))
@@ -102,7 +105,7 @@ namespace KeyViewer.Views
                         {
                             Profile p = Main.Managers[profile.Name].profile;
                             var node = p.Serialize();
-                            node["References"] = ProfileImporter.GetReferences(p);
+                            node["References"] = ProfileImporter.GetReferencesAsJson(p);
                             File.WriteAllText(target, node.ToString(4));
                         }
                     }
