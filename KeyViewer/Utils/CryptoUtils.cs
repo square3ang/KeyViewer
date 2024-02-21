@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -55,6 +56,15 @@ namespace KeyViewer.Utils
             for (int i = 0; i < rawDataLen; i++)
                 sb.Append((char)(rawData[i] ^ charKey[i % charKeyLen]));
             return sb.ToString();
+        }
+        public static byte[] Xor(byte[] data, byte[] key)
+        {
+            int keyLen = key.Length;
+            int dataLen = data.Length;
+            byte[] result = new byte[dataLen];
+            for (int i = 0; i < dataLen; i++)
+                result[i] = (byte)(data[i] ^ key[i % keyLen]);
+            return result;
         }
     }
 }

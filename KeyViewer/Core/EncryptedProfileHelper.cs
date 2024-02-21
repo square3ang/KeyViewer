@@ -3,14 +3,14 @@ using KeyViewer.Models;
 using KeyViewer.Utils;
 using System.Text;
 
-namespace KeyViewer.WebAPI.Core
+namespace KeyViewer.Core
 {
-    public class EP
+    public static class EncryptedProfileHelper
     {
-        public static byte[]? EncryptProfile(Profile profile, string key, Metadata metadata)
+        public static byte[] Encrypt(Profile profile, string key, Metadata metadata)
         {
-            //try
-            //{
+            try
+            {
                 var profileJsonNode = profile.Serialize();
                 profileJsonNode.Inline = true;
                 var profileJson = profileJsonNode.ToString().Trim();
@@ -21,57 +21,57 @@ namespace KeyViewer.WebAPI.Core
                 encProfileJsonNode.Inline = true;
                 var encProfileJson = encProfileJsonNode.ToString().Trim();
                 return CryptoUtils.EncryptAes(encProfileJson, CryptoUtils.DefaultKey);
-            //}
-            //catch { return null; }
+            }
+            catch { return null; }
         }
-        public static JsonNode? OpenEncryptedProfileAsJson(byte[] encryptedProfile)
+        public static JsonNode OpenAsJson(byte[] encryptedProfile)
         {
-            //try
-            //{
+            try
+            {
                 var encProfileJson = CryptoUtils.DecryptAes(encryptedProfile, CryptoUtils.DefaultKey);
                 return JsonNode.Parse(encProfileJson);
-            //}
-            //catch { return null; }
+            }
+            catch { return null; }
         }
-        public static EncryptedProfile? OpenEncryptedProfile(byte[] encryptedProfile)
+        public static EncryptedProfile Open(byte[] encryptedProfile)
         {
-            //try
-            //{
-                var encProfileJsonNode = OpenEncryptedProfileAsJson(encryptedProfile);
+            try
+            {
+                var encProfileJsonNode = OpenAsJson(encryptedProfile);
                 return ModelUtils.Unbox<EncryptedProfile>(encProfileJsonNode);
-            //}
-            //catch { return null; }
+            }
+            catch { return null; }
         }
-        public static JsonNode? DecryptProfileAsJson(byte[] encryptedProfile, string key)
+        public static JsonNode DecryptAsJson(byte[] encryptedProfile, string key)
         {
-            //try
-            //{
-                var eProfile = OpenEncryptedProfile(encryptedProfile);
+            try
+            {
+                var eProfile = Open(encryptedProfile);
                 var profileJsonEncrypted = Encoding.UTF8.GetString(eProfile!.RawProfile);
                 var profileJson = CryptoUtils.Xor(profileJsonEncrypted, key);
                 return JsonNode.Parse(profileJson);
-            //}
-            //catch { return null; }
+            }
+            catch { return null; }
         }
-        public static Profile? DecryptRawProfile(byte[] rawProfile, string key)
+        public static JsonNode Decrypt(byte[] encryptedProfile, string key)
         {
-            //try
-            //{
+            try
+            {
+                var profileJson = DecryptAsJson(encryptedProfile, key);
+                return JsonNode.Parse(profileJson);
+            }
+            catch { return null; }
+        }
+        public static Profile DecryptRaw(byte[] rawProfile, string key)
+        {
+            try
+            {
                 var profileJsonEncrypted = Encoding.UTF8.GetString(rawProfile);
                 var profileJson = CryptoUtils.Xor(profileJsonEncrypted, key);
                 var profileJsonNode = JsonNode.Parse(profileJson);
                 return ModelUtils.Unbox<Profile>(profileJsonNode);
-            //}
-            //catch { return null; }
-        }
-        public static Profile? DecryptProfile(byte[] encryptedProfile, string key)
-        {
-            //try
-            //{
-                var profileJsonNode = DecryptProfileAsJson(encryptedProfile, key);
-                return ModelUtils.Unbox<Profile>(profileJsonNode);
-            //}
-            //catch { return null; }
+            }
+            catch { return null; }
         }
     }
 }

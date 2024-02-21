@@ -85,7 +85,7 @@ namespace KeyViewer.Views
             if (profile == null) resultMessage = L(TEP.KeyMismatch);
             else
             {
-                StaticCoroutine.Queue(StaticCoroutine.SyncRunner(() => Main.AddManagerImmediate(meta.Name, profile, key)));
+                StaticCoroutine.Queue(StaticCoroutine.SyncRunner(() => Main.Settings.ActiveProfiles.Add(Main.CreateManagerImmediate(meta.Name, profile, key).activeProfile)));
                 resultMessage = L(TEP.Success);
             }
             tryDecrypting = false;

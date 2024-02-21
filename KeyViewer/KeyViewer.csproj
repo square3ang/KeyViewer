@@ -311,6 +311,7 @@
     <Compile Include="Core\AssetManager.cs" />
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\EnsurePool.cs" />
+    <Compile Include="Core\EncryptedProfileHelper.cs" />
     <Compile Include="Core\FontManager.cs" />
     <Compile Include="Controllers\GUIController.cs" />
     <Compile Include="Core\GUILayoutEx.cs" />

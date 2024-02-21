@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
@@ -185,15 +187,14 @@ namespace KeyViewer.Utils
         }
         public static byte[] Decompress(this byte[] data)
         {
-            using (MemoryStream input = new MemoryStream(data))
+            using (MemoryStream output = new MemoryStream())
             {
-                using (MemoryStream output = new MemoryStream())
-                {
-                    using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
-                        dstream.CopyTo(output);
-                    return output.ToArray();
-                }
+                using (MemoryStream input = new MemoryStream(data))
+                using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+                    dstream.CopyTo(output);
+                return output.ToArray();
             }
         }
+        public static string GetHashSHA1(this byte[] data) => string.Concat(SHA1.Create().ComputeHash(data).Select(x => x.ToString("X2")));
     }
 }

@@ -215,14 +215,14 @@ namespace KeyViewer
                 Logger.Log($"Released Key Manager {profile.Name}.");
             }
         }
-        public static void AddManagerImmediate(string name, Profile p, string key = null)
+        public static (KeyManager manager, ActiveProfile activeProfile) CreateManagerImmediate(string name, Profile p, string key = null)
         {
             var profile = new ActiveProfile(name, true, key);
             var manager = KeyManager.CreateManager(profile.Name, p);
             manager.Init();
             manager.UpdateKeys();
             Logger.Log($"Initialized Key Manager {profile.Name}.");
-            Settings.ActiveProfiles.Add(profile);
+            return (manager, profile);
         }
         public static IEnumerator InitializeManagersCo()
         {

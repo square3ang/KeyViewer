@@ -21,6 +21,7 @@ namespace KeyViewer.Core
         public static async Task<string> GetLanguageJson(KeyViewerLanguage lang) => await Main.HttpClient.GetStringAsync(API + "/language/" + lang);
         public static async Task<byte[]> EncryptProfile(Profile profile, Metadata metadata, string key)
         {
+            return EncryptedProfileHelper.Encrypt(profile, key, metadata);
             //try
             //{
                 var profileJson = profile.Serialize();
@@ -41,9 +42,10 @@ namespace KeyViewer.Core
         }
         public static async Task<EncryptedProfile> OpenEncryptedProfile(byte[] encryptedProfile)
         {
+            return EncryptedProfileHelper.Open(encryptedProfile);
             //try
             //{
-                var array = new ByteArrayContent(encryptedProfile);
+            var array = new ByteArrayContent(encryptedProfile);
                 array.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
                 var response = await Main.HttpClient.PostAsync(API + "/encryptedprofile/open", array);
                 response.EnsureSuccessStatusCode();
@@ -56,9 +58,10 @@ namespace KeyViewer.Core
         }
         public static async Task<Profile> DecryptProfile(byte[] rawProfile, string key)
         {
+            return EncryptedProfileHelper.DecryptRaw(rawProfile, key);
             //try
             //{
-                var array = new ByteArrayContent(rawProfile);
+            var array = new ByteArrayContent(rawProfile);
                 array.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
                 var response = await Main.HttpClient.PostAsync(API + $"/encryptedprofile/decrypt/{key}", array);
                 response.EnsureSuccessStatusCode();
