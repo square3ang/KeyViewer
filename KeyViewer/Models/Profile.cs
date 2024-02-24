@@ -32,7 +32,7 @@ namespace KeyViewer.Models
         public JsonNode Serialize()
         {
             var node = JsonNode.Empty;
-            node[nameof(Keys)] = ModelUtils.WrapList(Keys);
+            node[nameof(Keys)] = ModelUtils.WrapCollection(Keys);
             node[nameof(ViewOnlyGamePlay)] = ViewOnlyGamePlay;
             node[nameof(LimitNotRegisteredKeys)] = LimitNotRegisteredKeys;
             node[nameof(ResetOnStart)] = ResetOnStart;

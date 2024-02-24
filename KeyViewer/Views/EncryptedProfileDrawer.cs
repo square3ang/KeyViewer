@@ -2,6 +2,7 @@
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using TEP = KeyViewer.Core.Translation.TranslationKeys.EncryptedProfile;
@@ -15,6 +16,7 @@ namespace KeyViewer.Views
         private string key;
         private bool tryDecrypting;
         private string resultMessage;
+        private bool success;
         public EncryptedProfileDrawer(byte[] encProfile) : base(null, L(TEP.Prefix))
         {
             this.encProfile = encProfile;
@@ -33,24 +35,20 @@ namespace KeyViewer.Views
                 return;
             }
             GUILayout.BeginHorizontal();
-            Drawer.ButtonLabel(L(TEP.Name) + ": ", KeyViewerUtils.OpenDiscordUrl);
-            Drawer.ButtonLabel(meta.Name, KeyViewerUtils.OpenDiscordUrl);
+            Drawer.ButtonLabel(L(TEP.NameFormat, meta.Name), KeyViewerUtils.OpenDiscordUrl);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            Drawer.ButtonLabel(L(TEP.Author) + ": ", KeyViewerUtils.OpenDiscordUrl);
-            Drawer.ButtonLabel(meta.Author, KeyViewerUtils.OpenDiscordUrl);
+            Drawer.ButtonLabel(L(TEP.AuthorFormat, meta.Author), KeyViewerUtils.OpenDiscordUrl);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            Drawer.ButtonLabel(L(TEP.Description) + ": ", KeyViewerUtils.OpenDiscordUrl);
-            Drawer.ButtonLabel(meta.Description, KeyViewerUtils.OpenDiscordUrl);
+            Drawer.ButtonLabel(L(TEP.DescriptionFormat, meta.Description), KeyViewerUtils.OpenDiscordUrl);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            Drawer.ButtonLabel(L(TEP.CreationTime) + ": ", KeyViewerUtils.OpenDiscordUrl);
-            var d = meta.CreationTime;
-            Drawer.ButtonLabel($"{d.Year}/{d.Month}/{d.Day} {d.Hour}:{d.Minute}:{d.Second}", KeyViewerUtils.OpenDiscordUrl);
+            var d = DateTime.FromBinary(meta.CreationTick);
+            Drawer.ButtonLabel(L(TEP.CreationTimeFormat, $"{d.Year}/{d.Month}/{d.Day} {d.Hour}:{d.Minute}:{d.Second}"), KeyViewerUtils.OpenDiscordUrl);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
@@ -64,7 +62,10 @@ namespace KeyViewer.Views
                     if (GUILayout.Button(L(TEP.Import)))
                     {
                         tryDecrypting = true;
-                        Decrypt().Await();
+                        Decrypt().ContinueWith(t =>
+                        {
+                            if (success) Main.GUI.Pop();
+                        }).Await();
                     }
                 }
             }
@@ -81,14 +82,20 @@ namespace KeyViewer.Views
         }
         private async Task Decrypt()
         {
-            var profile = await KeyViewerWebAPI.DecryptProfile(model.RawProfile, key);
-            if (profile == null) resultMessage = L(TEP.KeyMismatch);
-            else
+            success = false;
+            try
             {
-                StaticCoroutine.Queue(StaticCoroutine.SyncRunner(() => Main.Settings.ActiveProfiles.Add(Main.CreateManagerImmediate(meta.Name, profile, key).activeProfile)));
-                resultMessage = L(TEP.Success);
+                var profile = await KeyViewerWebAPI.DecryptProfile(model.RawProfile, key);
+                if (profile != null)
+                {
+                    StaticCoroutine.Queue(StaticCoroutine.SyncRunner(() => Main.Settings.ActiveProfiles.Add(Main.CreateManagerImmediate(meta.Name, profile, key).activeProfile)));
+                    resultMessage = L(TEP.Success);
+                    success = true;
+                }
+                else resultMessage = L(TEP.KeyMismatch);
             }
-            tryDecrypting = false;
+            catch { resultMessage = L(TEP.KeyMismatch); }
+            finally { tryDecrypting = false; }
         }
     }
 }

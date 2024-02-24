@@ -46,7 +46,7 @@ namespace KeyViewer.Views
                     {
                         Drawer.ButtonLabel(L(TKEP.Key), KeyViewerUtils.OpenDiscordUrl);
                         key = GUILayout.TextField(key);
-                        if (GUILayout.Button(L(TKEP.Encrypt)) && 
+                        if (GUILayout.Button(L(TKEP.Encrypt)) &&
                             !string.IsNullOrWhiteSpace(model.Metadata.Name) &&
                             !string.IsNullOrWhiteSpace(model.Metadata.Author) &&
                             !string.IsNullOrWhiteSpace(key))

@@ -162,6 +162,10 @@
             internal static readonly string Author = Prefix + "AUTHOR";
             internal static readonly string Description = Prefix + "DESCRIPTION";
             internal static readonly string CreationTime = Prefix + "CREATION_TIME";
+            internal static readonly string NameFormat = Prefix + "NAME_FORMAT";
+            internal static readonly string AuthorFormat = Prefix + "AUTHOR_FORMAT";
+            internal static readonly string DescriptionFormat = Prefix + "DESCRIPTION_FORMAT";
+            internal static readonly string CreationTimeFormat = Prefix + "CREATION_TIME_FORMAT";
             internal static readonly string Key = Prefix + "KEY";
             internal static readonly string Encrypt = Prefix + "ENCRYPT";
             internal static readonly string Decrypt = Prefix + "DECRYPT";

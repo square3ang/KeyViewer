@@ -14,7 +14,7 @@ namespace KeyViewer.Models
         {
             var node = JsonNode.Empty;
             node[nameof(Language)] = Language.ToString();
-            node[nameof(ActiveProfiles)] = ModelUtils.WrapList(ActiveProfiles);
+            node[nameof(ActiveProfiles)] = ModelUtils.WrapCollection(ActiveProfiles);
             return node;
         }
         public void Deserialize(JsonNode node)

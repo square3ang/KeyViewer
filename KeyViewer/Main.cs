@@ -21,19 +21,6 @@ using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
 
-/* TODO List
- * 지원 가능한 모든 곳에 Gradient 기능 추가하기 => Completed
- * Rain이 위 아래로 늘어나는 버그 고치기 => Completed
- * 비동기 입력 Issue 고치기 => 99% Completed
- * 키 별 KPS 기능 추가하기 => Completed
- * 모든 텍스트에 Tag를 이용한 Text Replacing 지원하기 => Completed
- * 이미지 Rounding 지원하기 => Completed
- * 크기 조절 정렬 버그 고치기 => Completed
- * 
- * Maybe TODO List
- * Rain이 켜져있을 때 키를 누르면 파티클 효과 추가해보기
- */
-
 namespace KeyViewer
 {
     public static class Main
@@ -125,6 +112,8 @@ namespace KeyViewer
         }
         public static void OnUpdate(ModEntry modEntry, float deltaTime)
         {
+            if (scrController.instance && scrConductor.instance)
+                IsPlaying = !scrController.instance.paused && scrConductor.instance.isGameWorld;
             if (ListeningDrawer != null)
                 foreach (var code in EnumHelper<KeyCode>.GetValues())
                     if (Input.GetKeyDown(code))
@@ -132,8 +121,6 @@ namespace KeyViewer
             bool showViewer = true;
             foreach (var manager in Managers.Values)
             {
-                if (scrController.instance && scrConductor.instance)
-                    IsPlaying = !scrController.instance.paused && scrConductor.instance.isGameWorld;
                 if (manager.profile.ViewOnlyGamePlay)
                     showViewer = IsPlaying;
                 if (showViewer != manager.gameObject.activeSelf)
@@ -152,6 +139,7 @@ namespace KeyViewer
             File.WriteAllText(Constants.SettingsPath, settingsNode.ToString(4));
             foreach (var (name, manager) in Managers)
             {
+                if (manager.encrypted) continue;
                 Profile p = manager.profile;
                 File.WriteAllText(Path.Combine(Mod.Path, $"{name}.json"), p.Serialize().ToString(4));
             }
@@ -178,7 +166,7 @@ namespace KeyViewer
 
         public static bool AddManager(ActiveProfile profile, bool forceInit = false)
         {
-            var profilePath = profile.Key == null ? 
+            var profilePath = profile.Key == null ?
                 Path.Combine(Mod.Path, $"{profile.Name}.json") :
                 Path.Combine(Mod.Path, $"{profile.Name}.encryptedProfile");
             if (File.Exists(profilePath))
@@ -221,6 +209,8 @@ namespace KeyViewer
             var manager = KeyManager.CreateManager(profile.Name, p);
             manager.Init();
             manager.UpdateKeys();
+            manager.encrypted = true;
+            Managers[name] = manager;
             Logger.Log($"Initialized Key Manager {profile.Name}.");
             return (manager, profile);
         }

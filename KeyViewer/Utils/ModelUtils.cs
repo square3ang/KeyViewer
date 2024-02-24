@@ -122,15 +122,27 @@ namespace KeyViewer.Utils
             return t;
         }
 
-        public static JsonArray WrapList<T>(List<T> list) where T : IModel, new()
+        public static JsonArray WrapCollection<T>(IEnumerable<T> list) where T : IModel, new()
         {
             var array = new JsonArray();
-            list.ForEach(i => array.Add(i.Serialize()));
+            foreach (var item in list)
+                array.Add(item.Serialize());
             return array;
         }
         public static List<T> UnwrapList<T>(JsonArray array) where T : IModel, new()
         {
             List<T> list = new List<T>();
+            foreach (var v in array.Values)
+            {
+                var t = new T();
+                t.Deserialize(v);
+                list.Add(t);
+            }
+            return list;
+        }
+        public static HashSet<T> UnwrapSet<T>(JsonArray array) where T : IModel, new()
+        {
+            HashSet<T> list = new HashSet<T>();
             foreach (var v in array.Values)
             {
                 var t = new T();

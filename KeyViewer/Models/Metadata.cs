@@ -9,14 +9,14 @@ namespace KeyViewer.Models
         public string Name;
         public string Author;
         public string Description;
-        public DateTime CreationTime = DateTime.Now;
+        public long CreationTick = DateTime.Now.Ticks;
         public Metadata Copy()
         {
             var data = new Metadata();
             data.Name = Name;
             data.Author = Author;
             data.Description = Description;
-            data.CreationTime = CreationTime;
+            data.CreationTick = CreationTick;
             return data;
         }
         public JsonNode Serialize()
@@ -25,7 +25,7 @@ namespace KeyViewer.Models
             node[nameof(Name)] = Name;
             node[nameof(Author)] = Author;
             node[nameof(Description)] = Description;
-            node[nameof(CreationTime)] = CreationTime;
+            node[nameof(CreationTick)] = CreationTick;
             return node;
         }
         public void Deserialize(JsonNode node)
@@ -33,7 +33,7 @@ namespace KeyViewer.Models
             Name = node[nameof(Name)];
             Author = node[nameof(Author)];
             Description = node[nameof(Description)];
-            CreationTime = node[nameof(CreationTime)];
+            CreationTick = node[nameof(CreationTick)];
         }
     }
 }

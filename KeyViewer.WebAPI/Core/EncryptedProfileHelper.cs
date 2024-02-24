@@ -1,17 +1,19 @@
 ﻿using JSON;
+using KeyViewer.Core;
 using KeyViewer.Models;
 using KeyViewer.Utils;
 using System.Text;
 
-namespace KeyViewer.Core
+namespace KeyViewer.WebAPI.Core
 {
     public static class EncryptedProfileHelper
     {
-        public static byte[] Encrypt(Profile profile, string key, Metadata metadata)
+        public static byte[]? Encrypt(Profile profile, string key, Metadata metadata, List<ProfileImporter.Reference> refs)
         {
             try
             {
                 var profileJsonNode = profile.Serialize();
+                profileJsonNode["References"] = ModelUtils.WrapCollection(refs);
                 profileJsonNode.Inline = true;
                 var profileJson = profileJsonNode.ToString().Trim();
                 var profileJsonEncrypted = CryptoUtils.Xor(profileJson, key);
@@ -20,20 +22,20 @@ namespace KeyViewer.Core
                 var encProfileJsonNode = eProfile.Serialize();
                 encProfileJsonNode.Inline = true;
                 var encProfileJson = encProfileJsonNode.ToString().Trim();
-                return CryptoUtils.EncryptAes(encProfileJson, CryptoUtils.DefaultKey);
+                return CryptoUtils.EncryptAes(encProfileJson, CryptoUtils.DefaultKey).Compress();
             }
             catch { return null; }
         }
-        public static JsonNode OpenAsJson(byte[] encryptedProfile)
+        public static JsonNode? OpenAsJson(byte[] encryptedProfile)
         {
             try
             {
-                var encProfileJson = CryptoUtils.DecryptAes(encryptedProfile, CryptoUtils.DefaultKey);
+                var encProfileJson = CryptoUtils.DecryptAes(encryptedProfile.Decompress(), CryptoUtils.DefaultKey);
                 return JsonNode.Parse(encProfileJson);
             }
             catch { return null; }
         }
-        public static EncryptedProfile Open(byte[] encryptedProfile)
+        public static EncryptedProfile? Open(byte[] encryptedProfile)
         {
             try
             {
@@ -42,7 +44,7 @@ namespace KeyViewer.Core
             }
             catch { return null; }
         }
-        public static JsonNode DecryptAsJson(byte[] encryptedProfile, string key)
+        public static JsonNode? DecryptAsJson(byte[] encryptedProfile, string key)
         {
             try
             {
@@ -53,7 +55,7 @@ namespace KeyViewer.Core
             }
             catch { return null; }
         }
-        public static JsonNode Decrypt(byte[] encryptedProfile, string key)
+        public static JsonNode? Decrypt(byte[] encryptedProfile, string key)
         {
             try
             {
@@ -62,14 +64,14 @@ namespace KeyViewer.Core
             }
             catch { return null; }
         }
-        public static Profile DecryptRaw(byte[] rawProfile, string key)
+        public static JsonNode? DecryptRawAsJson(byte[] rawProfile, string key)
         {
             try
             {
                 var profileJsonEncrypted = Encoding.UTF8.GetString(rawProfile);
                 var profileJson = CryptoUtils.Xor(profileJsonEncrypted, key);
                 var profileJsonNode = JsonNode.Parse(profileJson);
-                return ModelUtils.Unbox<Profile>(profileJsonNode);
+                return profileJsonNode;
             }
             catch { return null; }
         }

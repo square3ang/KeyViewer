@@ -1,5 +1,4 @@
 ﻿using DG.Tweening;
-using JSON;
 using KeyViewer.Core;
 using KeyViewer.Core.Interfaces;
 using KeyViewer.Models;
@@ -8,7 +7,6 @@ using KeyViewer.Unity.UI;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

@@ -53,7 +53,7 @@ namespace KeyViewer.Core
         }
         public static JsonArray GetReferencesAsJson(Profile profile)
         {
-            return ModelUtils.WrapList(GetReferences(profile));
+            return ModelUtils.WrapCollection(GetReferences(profile));
         }
         public static List<Reference> GetReferences(Profile profile)
         {

@@ -46,7 +46,7 @@ namespace KeyViewer.Models
             //node[nameof(BlurEnabled)] = BlurEnabled;
             //node[nameof(BlurConfig)] = BlurConfig.Serialize();
             node[nameof(ObjectConfig)] = ObjectConfig.Serialize();
-            node[nameof(RainImages)] = ModelUtils.WrapList(RainImages);
+            node[nameof(RainImages)] = ModelUtils.WrapCollection(RainImages);
             node[nameof(ImageDisplayMode)] = ImageDisplayMode.ToString();
             node[nameof(Direction)] = Direction.ToString();
             return node;

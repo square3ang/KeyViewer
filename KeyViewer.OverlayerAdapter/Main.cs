@@ -1,8 +1,7 @@
 ﻿using HarmonyLib;
 using KeyViewer.Core.TextReplacing;
-using KeyViewer.Utils;
-using System.Collections.Generic;
 using Overlayer.Tags;
+using System.Collections.Generic;
 using System.Reflection;
 using static UnityModManagerNet.UnityModManager;
 

@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
+using Overlayer.Tags;
 using System;
 using System.Linq;
-using Overlayer.Tags;
 
 namespace KeyViewer.OverlayerAdapter
 {
