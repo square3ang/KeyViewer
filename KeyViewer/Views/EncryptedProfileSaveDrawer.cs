@@ -16,10 +16,13 @@ namespace KeyViewer.Views
         private bool tryEncrypting;
         private string resultMessage;
         private byte[] encProfile;
-        public EncryptedProfileSaveDrawer(Profile profile) : base(new EncryptedProfile(), L(TKEP.Prefix))
+        public EncryptedProfileSaveDrawer(ActiveProfile profile) : base(new EncryptedProfile(), L(TKEP.Prefix))
         {
-            this.profile = profile;
-            model.Metadata = new Metadata();
+            this.profile = Main.Managers[profile.Name].profile;
+            model.Metadata = new Metadata()
+            {
+                Name = profile.Name,
+            };
         }
         public override void Draw()
         {
@@ -35,7 +38,7 @@ namespace KeyViewer.Views
                 {
                     if (encProfile != null)
                     {
-                        Drawer.ButtonLabel(L(TKEP.Key) + key, KeyViewerUtils.OpenDiscordUrl);
+                        Drawer.ButtonLabel(L(TKEP.Key) + $": {key}", KeyViewerUtils.OpenDiscordUrl);
                         if (GUILayout.Button(L(TKEP.Save)))
                         {
                             var path = StandaloneFileBrowser.SaveFilePanel(L(TKEP.Prefix), Main.Mod.Path, model.Metadata.Name + ".encryptedProfile", "encryptedProfile");
@@ -48,9 +51,12 @@ namespace KeyViewer.Views
                         key = GUILayout.TextField(key);
                         if (GUILayout.Button(L(TKEP.Encrypt)) &&
                             !string.IsNullOrWhiteSpace(model.Metadata.Name) &&
-                            !string.IsNullOrWhiteSpace(model.Metadata.Author) &&
                             !string.IsNullOrWhiteSpace(key))
                         {
+                            if (string.IsNullOrWhiteSpace(model.Metadata.Author))
+                                model.Metadata.Author = "Anonymous";
+                            if (string.IsNullOrWhiteSpace(model.Metadata.Description))
+                                model.Metadata.Description = "석큐버스짱~! 다이스키~♥ Suckyoubus Chan~! Daiski~♥";
                             tryEncrypting = true;
                             Encrypt().Await();
                         }

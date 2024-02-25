@@ -29,11 +29,11 @@ namespace KeyViewer.Views
                         Main.OnLanguageInitialize();
                     });
                 }
-                if (GUILayout.Button(L(TKM.ShowUpdateNote)))
-                    Main.GUI.Push(new MethodDrawable(() =>
-                    {
-                        GUILayout.Label(L(TK.UpdateNote));
-                    }, L(TKM.ShowUpdateNote)));
+                //if (GUILayout.Button(L(TKM.ShowUpdateNote)))
+                //    Main.GUI.Push(new MethodDrawable(() =>
+                //    {
+                //        GUILayout.Label(L(TK.UpdateNote));
+                //    }, L(TKM.ShowUpdateNote)));
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -108,10 +108,16 @@ namespace KeyViewer.Views
                             File.WriteAllText(target, node.ToString(4));
                         }
                     }
-                    if (!encrypted && GUILayout.Button(L(TKP.DeleteProfile)))
+                    if (!encrypted && GUILayout.Button(L(TKS.ExportCryptedProfile)))
+                        Main.GUI.Push(new EncryptedProfileSaveDrawer(profile));
+                    if (GUILayout.Button(L(TKP.DeleteProfile)))
                     {
                         Main.RemoveManager(profile);
-                        File.Delete(Path.Combine(Main.Mod.Path, $"{profile.Name}.json"));
+                        string path;
+                        if (encrypted)
+                            path = Path.Combine(Main.Mod.Path, $"{profile.Name}.encryptedProfile");
+                        else path = Path.Combine(Main.Mod.Path, $"{profile.Name}.json");
+                        File.Delete(path);
                         model.ActiveProfiles.RemoveAll(p => p.Name == profile.Name);
                         break;
                     }

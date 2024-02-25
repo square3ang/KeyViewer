@@ -18,6 +18,7 @@
             internal static readonly string SelectProfile = Prefix + "SELECT_PROFILE";
             internal static readonly string OpenModDir = Prefix + "OPEN_MOD_DIR";
             internal static readonly string ExportProfile = Prefix + "EXPORT_PROFILE";
+            internal static readonly string ExportCryptedProfile = Prefix + "EXPORT_CRYPTED_PROFILE";
         }
         public static class Profile
         {
@@ -45,7 +46,6 @@
             internal static readonly string DeleteProfile = Prefix + "DELETE_PROFILE";
             internal static readonly string SwapKeys = Prefix + "SWAP_KEYS";
             internal static readonly string DoNotAssAss = Prefix + "DO_NOT_ASS_ASS";
-            internal static readonly string SaveCryptedProfile = Prefix + "SAVE_CRYPTED_PROFILE";
         }
         public static class Misc
         {

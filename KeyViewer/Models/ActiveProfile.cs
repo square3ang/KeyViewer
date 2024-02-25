@@ -1,5 +1,6 @@
 ﻿using JSON;
 using KeyViewer.Core.Interfaces;
+using KeyViewer.Utils;
 
 namespace KeyViewer.Models
 {
@@ -39,7 +40,7 @@ namespace KeyViewer.Models
         public void Deserialize(JsonNode node)
         {
             Name = node[nameof(Name)];
-            Key = node[nameof(Key)];
+            Key = node[nameof(Key)].IfNotExist(null);
             Active = node[nameof(Active)];
         }
     }

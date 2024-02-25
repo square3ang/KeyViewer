@@ -1,13 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace KeyViewer.Utils
+namespace KeyViewer.WebAPI.Core.Utils
 {
     public static class CryptoUtils
     {
-        public const string DefaultKey = "Suckyoubus Chan~!! Daiski~♥♥";
+        public const string DefaultKey1 = "SuckYouBus Chan~!♥ DaIskI~♥!";
+        public static readonly byte[] DefaultKey1Bytes = Encoding.UTF8.GetBytes(DefaultKey1);
+        public const string DefaultKey2 = "RunasLover Chan~!♥ DaIskI~♥!";
+        public static readonly byte[] DefaultKey2Bytes = Encoding.UTF8.GetBytes(DefaultKey2);
         public static byte[] EncryptAes(string data, string key)
         {
             byte[] rawKey = Encoding.UTF8.GetBytes(key);

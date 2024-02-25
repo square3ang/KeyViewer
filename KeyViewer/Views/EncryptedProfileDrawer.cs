@@ -85,7 +85,7 @@ namespace KeyViewer.Views
             success = false;
             try
             {
-                var profile = await KeyViewerWebAPI.DecryptProfile(model.RawProfile, key);
+                var profile = await KeyViewerWebAPI.DecryptRawProfile(model.RawProfile, key);
                 if (profile != null)
                 {
                     StaticCoroutine.Queue(StaticCoroutine.SyncRunner(() => Main.Settings.ActiveProfiles.Add(Main.CreateManagerImmediate(meta.Name, profile, key).activeProfile)));

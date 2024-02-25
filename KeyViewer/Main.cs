@@ -73,7 +73,9 @@ namespace KeyViewer
                     Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
                 Managers = new Dictionary<string, KeyManager>();
                 List<string> notExistProfiles = new List<string>();
-                foreach (var profile in Settings.ActiveProfiles)
+                var jsonProfiles = Settings.ActiveProfiles.Where(ap => ap.Key == null);
+                var encryptedProfiles = Settings.ActiveProfiles.Where(ap => ap.Key != null);
+                foreach (var profile in jsonProfiles.Concat(encryptedProfiles))
                 {
                     if (!AddManager(profile))
                         notExistProfiles.Add(profile.Name);
@@ -135,13 +137,11 @@ namespace KeyViewer
         }
         public static void OnSaveGUI(ModEntry modEntry)
         {
-            JsonNode settingsNode = Settings.Serialize();
-            File.WriteAllText(Constants.SettingsPath, settingsNode.ToString(4));
+            File.WriteAllText(Constants.SettingsPath, Settings.Serialize().ToString(4));
             foreach (var (name, manager) in Managers)
             {
                 if (manager.encrypted) continue;
-                Profile p = manager.profile;
-                File.WriteAllText(Path.Combine(Mod.Path, $"{name}.json"), p.Serialize().ToString(4));
+                File.WriteAllText(Path.Combine(Mod.Path, $"{name}.json"), manager.profile.Serialize().ToString(4));
             }
         }
         public static void OnShowGUI(ModEntry modEntry)
@@ -163,18 +163,19 @@ namespace KeyViewer
             ListeningDrawer = null;
             GUI.Init(new SettingsDrawer(Settings));
         }
-
         public static bool AddManager(ActiveProfile profile, bool forceInit = false)
         {
-            var profilePath = profile.Key == null ?
+            var hasKey = !string.IsNullOrWhiteSpace(profile.Key);
+            var profilePath = !hasKey ?
                 Path.Combine(Mod.Path, $"{profile.Name}.json") :
                 Path.Combine(Mod.Path, $"{profile.Name}.encryptedProfile");
             if (File.Exists(profilePath))
             {
                 if (profile.Active)
                 {
-                    if (profile.Key != null)
+                    if (hasKey)
                     {
+                        if (Managers.TryGetValue(profile.Name, out _)) return true;
                         KeyViewerUtils.LoadEncryptedProfile(File.ReadAllBytes(profilePath), profile.Key);
                         return true;
                     }
@@ -216,31 +217,20 @@ namespace KeyViewer
         }
         public static IEnumerator InitializeManagersCo()
         {
-            if (AssetManager.Initialized)
-            {
-                foreach (var (name, manager) in Managers)
-                {
-                    manager.Init();
-                    manager.UpdateKeys();
-                    Logger.Log($"Initialized Key Manager {name}.");
-                    yield return null;
-                }
-                OnManagersInitialized();
-                yield break;
-            }
-            else
-            {
+            if (!AssetManager.Initialized)
                 yield return new WaitUntil(() => !AssetManager.Initialized);
-                foreach (var (name, manager) in Managers)
+            foreach (var (name, manager) in Managers)
+            {
+                var elapsed = MiscUtils.MeasureTime(() =>
                 {
                     manager.Init();
                     manager.UpdateKeys();
-                    Logger.Log($"Initialized Key Manager {name}.");
-                    yield return null;
-                }
-                OnManagersInitialized();
-                yield break;
+                });
+                Logger.Log($"Initialized Key Manager {name}. ({elapsed.TotalMilliseconds}ms)");
+                yield return null;
             }
+            OnManagersInitialized();
+            yield break;
         }
         public static void ReleaseManagers()
         {
