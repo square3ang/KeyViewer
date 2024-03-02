@@ -354,6 +354,7 @@
     <Compile Include="Models\EaseConfig.cs" />
     <Compile Include="Models\DecryptedProfile.cs" />
     <Compile Include="Models\EncryptedProfile.cs" />
+    <Compile Include="Models\FileReference.cs" />
     <Compile Include="Models\GColor.cs" />
     <Compile Include="Models\GUIStatus.cs" />
     <Compile Include="Models\Judge.cs" />

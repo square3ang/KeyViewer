@@ -9,7 +9,7 @@ namespace KeyViewer.WebAPI.Core
 {
     public static class EncryptedProfileHelper
     {
-        public static byte[]? Encrypt(Profile profile, string key, Metadata metadata, List<ProfileImporter.Reference> refs)
+        public static byte[]? Encrypt(Profile profile, string key, Metadata metadata, List<FileReference> refs)
         {
             try
             {

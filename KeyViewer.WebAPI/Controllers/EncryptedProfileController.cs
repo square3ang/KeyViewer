@@ -37,7 +37,7 @@ namespace KeyViewer.WebAPI.Controllers
             var node = JsonNode.Parse(strJson);
             var metadata = ModelUtils.Unbox<Metadata>(node["Metadata"]);
             var profileNode = node["Profile"];
-            var references = ModelUtils.UnwrapList<ProfileImporter.Reference>((JsonArray)profileNode["References"]);
+            var references = ModelUtils.UnwrapList<FileReference>((JsonArray)profileNode["References"]);
             var profile = ModelUtils.Unbox<Profile>(profileNode);
             var result = EncryptedProfileHelper.Encrypt(profile, key, metadata, references);
             if (result == null)

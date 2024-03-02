@@ -1,4 +1,5 @@
 ﻿using KeyViewer.API;
+using KeyViewer.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -58,6 +59,22 @@ namespace KeyViewer.Utils
             if (!Directory.Exists(destDir))
                 Directory.CreateDirectory(destDir);
             ZipFile.ExtractToDirectory(zipFile, destDir);
+        }
+        static Dictionary<string, FileReference> refCache = new Dictionary<string, FileReference>();
+        public static FileReference GetReference(string path, FileReference.Type referenceType)
+        {
+            var target = path.Replace("{ModDir}", Main.Mod.Path);
+            if (refCache.TryGetValue(target, out var reference)) return reference;
+            var @ref = new FileReference();
+            @ref.From = target;
+            @ref.Name = Path.GetFileName(target);
+            @ref.ReferenceType = referenceType;
+            if (File.Exists(target))
+            {
+                @ref.Raw = File.ReadAllBytes(target);
+                return refCache[target] = @ref;
+            }
+            return null;
         }
     }
     public class RawFile
