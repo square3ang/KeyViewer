@@ -2,6 +2,7 @@
 using KeyViewer.Core.Interfaces;
 using KeyViewer.Models;
 using KeyViewer.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -103,7 +104,7 @@ namespace KeyViewer.Core
                 node[nameof(ReferenceType)] = ReferenceType.ToString();
                 node[nameof(From)] = From;
                 node[nameof(Name)] = Name;
-                node[nameof(Raw)] = Raw;
+                node[nameof(Raw)] = Convert.ToBase64String(Raw);
                 node[nameof(Raw)].Inline = true;
                 return node;
             }
@@ -112,7 +113,9 @@ namespace KeyViewer.Core
                 ReferenceType = EnumHelper<Type>.Parse(node[nameof(ReferenceType)]);
                 From = node[nameof(From)];
                 Name = node[nameof(Name)];
-                Raw = node[nameof(Raw)];
+                var rawNode = node[nameof(Raw)];
+                if (rawNode.IsArray) Raw = rawNode;
+                else Raw = Convert.FromBase64String(rawNode.Value);
             }
             public Reference Copy()
             {
@@ -120,7 +123,7 @@ namespace KeyViewer.Core
                 newRef.ReferenceType = ReferenceType;
                 newRef.From = From;
                 newRef.Name = Name;
-                newRef.Raw = Raw;
+                newRef.Raw = (byte[])Raw.Clone();
                 return newRef;
             }
         }

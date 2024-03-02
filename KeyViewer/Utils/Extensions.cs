@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
@@ -14,6 +15,32 @@ namespace KeyViewer.Utils
 {
     public static class Extensions
     {
+        public static string Stringify(this byte[] array)
+        {
+            StringBuilder buffer = new StringBuilder();
+            int length = array.Length;
+            for (int i = 0; i < length; i++)
+                if (i + 1 < length)
+                    buffer.Append((char)(array[i] << 8 | array[++i]));
+                else buffer.Append((char)(array[i] << 8));
+            return buffer.ToString();
+        }
+        public static byte[] ToBytes(this string str)
+        {
+            char[] chars = str.ToCharArray();
+            int charsLength = chars.Length;
+            bool isOdd = (chars[charsLength - 1] & 0xff) == 0;
+            byte[] buffer = new byte[charsLength * 2 - (isOdd ? 1 : 0)];
+            int length = buffer.Length;
+            for (int i = 0; i < length; i += 2)
+            {
+                char c = chars[i / 2];
+                buffer[i] = (byte)(c >> 8);
+                if (i + 1 < length)
+                    buffer[i + 1] = (byte)(c & 0xff);
+            }
+            return buffer;
+        }
         public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> kvp, out TKey key, out TValue value)
         {
             key = kvp.Key;
