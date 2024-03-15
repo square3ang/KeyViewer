@@ -1,5 +1,4 @@
 using JSON;
-using KeyViewer.Core;
 using KeyViewer.Models;
 using KeyViewer.Utils;
 using KeyViewer.WebAPI.Core;

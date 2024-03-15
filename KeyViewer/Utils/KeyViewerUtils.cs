@@ -37,7 +37,7 @@ namespace KeyViewer.Utils
             watch.Start();
             var dp = await KeyViewerWebAPI.DecryptProfile(encryptedProfile, key);
             var m = dp.Metadata;
-            StaticCoroutine.Queue(StaticCoroutine.SyncRunner(() => Main.CreateManagerImmediate(m.Name, dp.Profile, key)));
+            StaticCoroutine.QAct(() => Main.CreateManagerImmediate(m.Name, dp.Profile, key));
             watch.Stop();
             Main.Logger.Log($"Loaded Encrypted Profile '{m.Name}' ({watch.Elapsed.TotalMilliseconds}ms)");
         }

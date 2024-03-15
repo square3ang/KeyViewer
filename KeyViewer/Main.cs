@@ -260,7 +260,7 @@ namespace KeyViewer
             LastestVersion = await KeyViewerWebAPI.GetVersion();
             DiscordLink = await KeyViewerWebAPI.GetDiscordLink();
             DownloadLink = await KeyViewerWebAPI.GetDownloadLink();
-            StaticCoroutine.Queue(StaticCoroutine.SyncRunner(EnsureKeyViewerVersion));
+            StaticCoroutine.QAct(EnsureKeyViewerVersion);
             WebAPIInitialized = true;
         }
         public static void EnsureKeyViewerVersion()
