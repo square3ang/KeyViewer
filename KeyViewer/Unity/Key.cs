@@ -290,14 +290,14 @@ namespace KeyViewer.Unity
             if (Pressed)
             {
                 if (InputAPI.EventActive)
-                    InputAPI.KeyPress(Config.Code);
+                    InputAPI.KeyPress(this);
                 Config.Count++;
                 if (Config.EnableKPSMeter)
                     KpsCalc.Press();
                 Manager.kpsCalc.Press();
             }
             else if (InputAPI.EventActive)
-                InputAPI.KeyRelease(Config.Code);
+                InputAPI.KeyRelease(this);
             if (!Config.UpdateTextAlways)
                 ReplaceText();
 

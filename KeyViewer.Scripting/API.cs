@@ -170,7 +170,7 @@ namespace KeyViewer.Scripting
             FIWrapper wrapper = new FIWrapper(fi);
             InputAPI.OnKeyPressed += c =>
             {
-                if (code == c)
+                if (code == c.Config.Code)
                     wrapper.CallRaw();
             };
         }
@@ -191,7 +191,7 @@ namespace KeyViewer.Scripting
             FIWrapper wrapper = new FIWrapper(fi);
             InputAPI.OnKeyReleased += c =>
             {
-                if (code == c)
+                if (code == c.Config.Code)
                     wrapper.CallRaw();
             };
         }

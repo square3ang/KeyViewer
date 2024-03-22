@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KeyViewer.Unity;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,12 +22,12 @@ namespace KeyViewer.API
             => APIFlags[key] = true;
         public static void ReleaseKey(KeyCode key)
             => APIFlags[key] = false;
-        public static event Action<KeyCode> OnKeyPressed = delegate { };
-        public static event Action<KeyCode> OnKeyReleased = delegate { };
+        public static event Action<Key> OnKeyPressed = delegate { };
+        public static event Action<Key> OnKeyReleased = delegate { };
         internal static readonly Dictionary<KeyCode, bool> APIFlags = new Dictionary<KeyCode, bool>();
-        internal static void KeyPress(KeyCode key)
+        internal static void KeyPress(Key key)
             => OnKeyPressed(key);
-        internal static void KeyRelease(KeyCode key)
+        internal static void KeyRelease(Key key)
             => OnKeyReleased(key);
         private static bool active;
     }
