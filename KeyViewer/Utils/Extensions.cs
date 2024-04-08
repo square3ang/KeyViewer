@@ -15,6 +15,7 @@ namespace KeyViewer.Utils
 {
     public static class Extensions
     {
+        public static string TrimQuote(this string s) => s.Trim('\'', '"', '\\');
         public static string Stringify(this byte[] array)
         {
             StringBuilder buffer = new StringBuilder();
