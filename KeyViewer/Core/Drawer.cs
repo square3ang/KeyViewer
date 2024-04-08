@@ -66,6 +66,16 @@ namespace KeyViewer.Core
             GUILayout.EndHorizontal();
             return prev != str;
         }
+        public static bool CD_H_STR_TRIMQUOTE(ref string str)
+        {
+            string prev = str;
+            GUILayout.BeginHorizontal();
+            str = GUILayout.TextField(str);
+            str = str.TrimQuote();
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            return prev != str;
+        }
         public static bool CD_H_FLT(ref float val)
         {
             string str = val.ToString();
@@ -644,12 +654,13 @@ namespace KeyViewer.Core
             value = StringConverter.ToFloat(str);
             return result;
         }
-        public static bool DrawString(string label, ref string value)
+        public static bool DrawString(string label, ref string value, bool trimQuote = false)
         {
             string prev = value;
             GUILayout.BeginHorizontal();
-            Drawer.ButtonLabel(label, KeyViewerUtils.OpenDiscordUrl);
+            ButtonLabel(label, KeyViewerUtils.OpenDiscordUrl);
             value = GUILayout.TextField(value);
+            if (trimQuote) value = value.TrimQuote();
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             return prev != value;

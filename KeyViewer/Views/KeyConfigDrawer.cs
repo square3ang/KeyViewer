@@ -36,7 +36,7 @@ namespace KeyViewer.Views
 
             bool prevBgBlurEnabled = model.BackgroundBlurEnabled;
             bool changed = false;
-            changed |= Drawer.DrawString(L(TKKC.TextFont), ref model.Font);
+            changed |= Drawer.DrawString(L(TKKC.TextFont), ref model.Font, true);
             if (model.DummyName == null)
             {
                 if (Drawer.DrawBool(L(TKKC.EnableKPSMeter), ref model.EnableKPSMeter))
@@ -59,9 +59,9 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawPressReleaseH(L(TKKC.Text), model.Text, Drawer.CD_H_STR);
             if (model.EnableCountText)
                 changed |= Drawer.DrawPressReleaseH(L(TKKC.CountText), model.CountText, Drawer.CD_H_STR);
-            changed |= Drawer.DrawPressReleaseH(L(TKKC.BackgroundImage), model.Background, Drawer.CD_H_STR);
+            changed |= Drawer.DrawPressReleaseH(L(TKKC.BackgroundImage), model.Background, Drawer.CD_H_STR_TRIMQUOTE);
             if (model.EnableOutlineImage)
-                changed |= Drawer.DrawPressReleaseH(L(TKKC.OutlineImage), model.Outline, Drawer.CD_H_STR);
+                changed |= Drawer.DrawPressReleaseH(L(TKKC.OutlineImage), model.Outline, Drawer.CD_H_STR_TRIMQUOTE);
             if (model.BackgroundBlurEnabled)
                 changed |= Drawer.DrawBlurConfig(L(TKKC.KeyBackground, KeyViewerUtils.KeyName(model)), model.BackgroundBlurConfig);
 

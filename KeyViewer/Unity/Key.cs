@@ -386,10 +386,7 @@ namespace KeyViewer.Unity
                 rain = rainPool.Get();
                 rain.Press();
             }
-            else if (rain != null)
-            {
-                rain.Release();
-            }
+            else rain?.Release();
         }
         #endregion
 

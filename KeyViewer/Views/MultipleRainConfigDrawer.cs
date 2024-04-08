@@ -44,7 +44,7 @@ namespace KeyViewer.Views
                 changed |= Drawer.DrawList(model.RainImages, (ref RainImage i) =>
                 {
                     bool result = false;
-                    result |= Drawer.DrawString(L(TKRC.RainImagePath), ref i.Image);
+                    result |= Drawer.DrawString(L(TKRC.RainImagePath), ref i.Image, true);
                     result |= Drawer.DrawInt32(L(TKRC.RainImageCount), ref i.Count);
                     result |= Drawer.DrawSingleWithSlider(L(TKM.Roundness), ref i.Roundness, 0, Constants.Rad2Deg100, 300);
                     //result |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, i), i.BlurConfig);

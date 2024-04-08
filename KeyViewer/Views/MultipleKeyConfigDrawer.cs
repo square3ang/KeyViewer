@@ -33,7 +33,7 @@ namespace KeyViewer.Views
 
             bool changed = false;
             bool prevBgBlurEnabled = model.BackgroundBlurEnabled;
-            changed |= Drawer.DrawString(LD(TKKC.TextFont, "Font"), ref model.Font).IfTrue(() => Set("Font"));
+            changed |= Drawer.DrawString(LD(TKKC.TextFont, "Font"), ref model.Font, true).IfTrue(() => Set("Font"));
             if (model.DummyName == null)
             {
                 if (Drawer.DrawBool(LD(TKKC.EnableKPSMeter, "EnableKPSMeter"), ref model.EnableKPSMeter))
@@ -56,9 +56,9 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawPressReleaseH(LD<PressRelease<string>>(TKKC.Text, "Text"), model.Text, Drawer.CD_H_STR).IfTrue(() => SetPR<string>("Text"));
             if (model.EnableCountText)
                 changed |= Drawer.DrawPressReleaseH(LD<PressRelease<string>>(TKKC.CountText, "CountText"), model.CountText, Drawer.CD_H_STR).IfTrue(() => SetPR<string>("CountText"));
-            changed |= Drawer.DrawPressReleaseH(LD<PressRelease<string>>(TKKC.BackgroundImage, "Background"), model.Background, Drawer.CD_H_STR).IfTrue(() => SetPR<string>("Background"));
+            changed |= Drawer.DrawPressReleaseH(LD<PressRelease<string>>(TKKC.BackgroundImage, "Background"), model.Background, Drawer.CD_H_STR_TRIMQUOTE).IfTrue(() => SetPR<string>("Background"));
             if (model.EnableOutlineImage)
-                changed |= Drawer.DrawPressReleaseH(LD<PressRelease<string>>(TKKC.OutlineImage, "Outline"), model.Outline, Drawer.CD_H_STR).IfTrue(() => SetPR<string>("Outline"));
+                changed |= Drawer.DrawPressReleaseH(LD<PressRelease<string>>(TKKC.OutlineImage, "Outline"), model.Outline, Drawer.CD_H_STR_TRIMQUOTE).IfTrue(() => SetPR<string>("Outline"));
             if (model.BackgroundBlurEnabled)
                 changed |= Drawer.DrawBlurConfig(LD(TKKC.KeyBackground, "BackgroundBlurConfig", KeyViewerUtils.KeyName(model)), model.BackgroundBlurConfig).IfTrue(() => SetBlurConfig("BackgroundBlurConfig"));
 
