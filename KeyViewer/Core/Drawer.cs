@@ -450,7 +450,7 @@ namespace KeyViewer.Core
             GUILayout.EndVertical();
             return result;
         }
-        public static bool DrawList<T>(List<T> list, CustomDrawerRef<T> drawer)
+        public static bool DrawList<T>(List<T> list, CustomDrawerRef<T> drawer) where T : new()
         {
             bool result = false;
             GUILayout.BeginVertical();
@@ -458,7 +458,7 @@ namespace KeyViewer.Core
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("+"))
             {
-                list.Add(default);
+                list.Add(new T());
                 result = true;
             }
             if (list.Count > 0 && GUILayout.Button("-"))

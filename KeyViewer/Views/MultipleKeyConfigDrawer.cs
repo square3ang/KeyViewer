@@ -76,7 +76,7 @@ namespace KeyViewer.Views
 
             changed |= Drawer.DrawBool(LD(TKKC.EnableRain, "RainEnabled"), ref model.RainEnabled).IfTrue(() => Set("RainEnabled"));
             if (model.RainEnabled)
-                Drawer.TitleButton(L(TKKC.EditRainConfig), L(TKM.EditThis), () => Main.GUI.Push(new MultipleRainConfigDrawer(manager, targets.Select(t => KeyViewerUtils.KeyName(t)).ToList())));
+                Drawer.TitleButton(L(TKKC.EditRainConfig), L(TKM.EditThis), () => Main.GUI.Push(new MultipleRainConfigDrawer(manager, targets.Select(t => KeyViewerUtils.KeyName(t)).ToList(), model.Rain)));
 
             if (changed)
             {

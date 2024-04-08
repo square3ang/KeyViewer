@@ -39,8 +39,9 @@ namespace KeyViewer.Unity
         }
         public void Press()
         {
-            if (stretching) return;
+            if (!initialized || stretching) return;
             stretching = true;
+            image.sprite = key.RainImageManager.Get(out rImage);
             var color = config.ObjectConfig.Color;
             if (colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase, false);
@@ -49,7 +50,7 @@ namespace KeyViewer.Unity
         }
         public void Release()
         {
-            if (!stretching) return;
+            if (!initialized || !stretching) return;
             stretching = false;
             var color = config.ObjectConfig.Color;
             if (colorUpdateIgnores == 0)
@@ -62,7 +63,6 @@ namespace KeyViewer.Unity
         {
             if (!initialized) return;
             colorUpdateIgnores = 0;
-            image.sprite = key.RainImageManager.Get(out rImage);
             rt.sizeDelta = DefaultSize = GetInitialSize();
             rt.anchoredPosition = GetPosition(config.Direction);
             Position = rt.localPosition;

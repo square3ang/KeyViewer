@@ -2,6 +2,7 @@
 using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace KeyViewer.Models
@@ -30,7 +31,7 @@ namespace KeyViewer.Models
             //newConfig.BlurEnabled = BlurEnabled;
             //newConfig.BlurConfig = BlurConfig.Copy();
             newConfig.ObjectConfig = ObjectConfig.Copy();
-            newConfig.RainImages = new List<RainImage>(RainImages);
+            newConfig.RainImages = RainImages.ToList();
             newConfig.ImageDisplayMode = ImageDisplayMode;
             newConfig.Direction = Direction;
             return newConfig;

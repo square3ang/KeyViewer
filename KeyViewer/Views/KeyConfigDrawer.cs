@@ -3,6 +3,7 @@ using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using System.Linq;
+using UnityEngine;
 using TKKC = KeyViewer.Core.Translation.TranslationKeys.KeyConfig;
 using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 
@@ -22,7 +23,16 @@ namespace KeyViewer.Views
                 if (Drawer.DrawString(L(TKKC.DummyKeyName), ref model.DummyName))
                     Name = model.DummyName;
             }
-            else Drawer.ButtonLabel(L(TKKC.KeyCode) + ":" + model.Code, KeyViewerUtils.OpenDiscordUrl);
+            else
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    Drawer.ButtonLabel(L(TKKC.KeyCode), KeyViewerUtils.OpenDiscordUrl);
+                    Drawer.DrawEnum(L(TKKC.KeyCode), ref model.Code, model.GetHashCode());
+                }
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+            }
 
             bool prevBgBlurEnabled = model.BackgroundBlurEnabled;
             bool changed = false;

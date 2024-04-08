@@ -20,7 +20,7 @@ namespace KeyViewer.Views
         public List<RainConfig> targetsCopy;
         private string name;
         private bool imageListExpanded = false;
-        public MultipleRainConfigDrawer(KeyManager manager, List<string> targets) : base(new RainConfig(), L(TKRC.KeyConfiguration, KeyViewerUtils.AggregateComma(targets)))
+        public MultipleRainConfigDrawer(KeyManager manager, List<string> targets, RainConfig criterion) : base(criterion ?? new RainConfig(), L(TKRC.KeyConfiguration, KeyViewerUtils.AggregateComma(targets)))
         {
             this.manager = manager;
             name = KeyViewerUtils.AggregateComma(targets);
