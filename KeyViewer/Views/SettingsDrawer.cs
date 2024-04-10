@@ -5,8 +5,6 @@ using KeyViewer.Utils;
 using SFB;
 using System.IO;
 using UnityEngine;
-using TK = KeyViewer.Core.Translation.TranslationKeys;
-using TKM = KeyViewer.Core.Translation.TranslationKeys.Misc;
 using TKP = KeyViewer.Core.Translation.TranslationKeys.Profile;
 using TKS = KeyViewer.Core.Translation.TranslationKeys.Settings;
 

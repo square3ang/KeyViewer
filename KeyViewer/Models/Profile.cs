@@ -23,7 +23,7 @@ namespace KeyViewer.Models
             newProfile.ViewOnlyGamePlay = ViewOnlyGamePlay;
             newProfile.LimitNotRegisteredKeys = LimitNotRegisteredKeys;
             newProfile.ResetOnStart = ResetOnStart;
-            newProfile.DoNotAssAss = true;
+            newProfile.DoNotAssAss = DoNotAssAss;
             newProfile.KeySpacing = KeySpacing;
             newProfile.VectorConfig = VectorConfig.Copy();
             newProfile.KPSUpdateRate = KPSUpdateRate;

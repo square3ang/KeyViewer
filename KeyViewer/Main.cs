@@ -120,9 +120,9 @@ namespace KeyViewer
                 foreach (var code in EnumHelper<KeyCode>.GetValues())
                     if (Input.GetKeyDown(code))
                         ListeningDrawer.OnKeyDown(code);
-            bool showViewer = true;
             foreach (var manager in Managers.Values)
             {
+                bool showViewer = true;
                 if (manager.profile.ViewOnlyGamePlay)
                     showViewer = IsPlaying;
                 if (showViewer != manager.gameObject.activeSelf)

@@ -66,7 +66,7 @@ namespace KeyViewer.Scripting
                 typeof(ObjectConfig),
                 typeof(KeyConfig),
                 typeof(RainConfig),
-                typeof(Models.Profile),
+                typeof(Profile),
                 typeof(KeyManagerProxy),
                 typeof(KeyProxy),
                 typeof(ListProxy),
