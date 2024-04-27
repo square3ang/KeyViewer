@@ -307,6 +307,14 @@ namespace KeyViewer.Utils
         {
             Application.OpenURL(Main.DiscordLink);
         }
+        public static void OpenMysteryUrl()
+        {
+            Application.OpenURL("https://5hanayome.adofai.dev");
+        }
+        public static void OpenDiscord2Url()
+        {
+            Application.OpenURL("https://discord.keyviewer.net");
+        }
         public static void OpenDownloadUrl()
         {
             if (Main.HasUpdate)

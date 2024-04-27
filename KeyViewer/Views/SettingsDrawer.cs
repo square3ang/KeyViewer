@@ -115,7 +115,8 @@ namespace KeyViewer.Views
                         if (encrypted)
                             path = Path.Combine(Main.Mod.Path, $"{profile.Name}.encryptedProfile");
                         else path = Path.Combine(Main.Mod.Path, $"{profile.Name}.json");
-                        File.Delete(path);
+                        //File.Delete(path);
+                        Main.ToDeleteFiles.Add(path);
                         model.ActiveProfiles.RemoveAll(p => p.Name == profile.Name);
                         break;
                     }

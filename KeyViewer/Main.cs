@@ -43,6 +43,7 @@ namespace KeyViewer
         public static string DownloadLink { get; private set; }
         public static bool HasUpdate { get; private set; }
         public static bool WebAPIInitialized { get; private set; } = false;
+        public static HashSet<string> ToDeleteFiles { get; private set; }
         public static event System.Action OnManagersInitialized = delegate { };
         public static void Load(ModEntry modEntry)
         {
@@ -72,6 +73,7 @@ namespace KeyViewer
                 if (File.Exists(Constants.SettingsPath))
                     Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
                 Managers = new Dictionary<string, KeyManager>();
+                ToDeleteFiles = new HashSet<string>();
                 List<string> notExistProfiles = new List<string>();
                 var jsonProfiles = Settings.ActiveProfiles.Where(ap => ap.Key == null);
                 var encryptedProfiles = Settings.ActiveProfiles.Where(ap => ap.Key != null);
@@ -100,6 +102,7 @@ namespace KeyViewer
             {
                 IsEnabled = false;
                 ReleaseManagers();
+                ToDeleteFiles = null;
                 Harmony.UnpatchAll(Harmony.Id);
                 Harmony = null;
                 Language.OnInitialize -= OnLanguageInitialize;
@@ -143,6 +146,8 @@ namespace KeyViewer
                 if (manager.encrypted) continue;
                 File.WriteAllText(Path.Combine(Mod.Path, $"{name}.json"), manager.profile.Serialize().ToString(4));
             }
+            foreach (var path in ToDeleteFiles)
+                File.Delete(path);
         }
         public static void OnShowGUI(ModEntry modEntry)
         {
@@ -265,7 +270,7 @@ namespace KeyViewer
         }
         public static void EnsureKeyViewerVersion()
         {
-            if (LastestVersion > ModVersion)
+            if (HasUpdate = LastestVersion > ModVersion)
             {
                 Lang.ActivateUpdateMode();
                 ErrorCanvasContext ecc = new ErrorCanvasContext();

@@ -8,6 +8,9 @@
         public static readonly string UpdateNote = "U_P_D_A_T_E_NOTE";
         public static readonly string Raw = "R_A_W";
         public static readonly string BOATK = "BASED_ON_ADOFAI_TWEAKS_KEYVIEWER";
+        public static readonly string KO = "KEYVIEWER_OFFICIAL";
+        public static readonly string LINK = "LINK";
+
         public static class Settings
         {
             public const string Prefix = "SETTINGS_";
