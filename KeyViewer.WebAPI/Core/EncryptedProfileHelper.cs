@@ -26,7 +26,11 @@ namespace KeyViewer.WebAPI.Core
                 var aes = CryptoUtils.EncryptAes(encProfileJson, CryptoUtils.DefaultKey1).Compress();
                 return CryptoUtils.Xor(aes, CryptoUtils.DefaultKey2Bytes);
             }
+#if !DEBUG
             catch { return null; }
+#else
+            catch (Exception e) { Console.WriteLine($"Error On 'Encrypt'!\n{e}"); return null; }
+#endif
         }
         public static JsonNode? OpenAsJson(byte[] encryptedProfile)
         {
@@ -36,7 +40,11 @@ namespace KeyViewer.WebAPI.Core
                 var encProfileJson = CryptoUtils.DecryptAes(xorDecrypt.Decompress(), CryptoUtils.DefaultKey1);
                 return JsonNode.Parse(encProfileJson);
             }
+#if !DEBUG
             catch { return null; }
+#else
+            catch (Exception e) { Console.WriteLine($"Error On 'OpenAsJson'!\n{e}"); return null; }
+#endif
         }
         public static EncryptedProfile? Open(byte[] encryptedProfile)
         {
@@ -45,7 +53,11 @@ namespace KeyViewer.WebAPI.Core
                 var encProfileJsonNode = OpenAsJson(encryptedProfile);
                 return ModelUtils.Unbox<EncryptedProfile>(encProfileJsonNode);
             }
+#if !DEBUG
             catch { return null; }
+#else
+            catch (Exception e) { Console.WriteLine($"Error On 'Open'!\n{e}"); return null; }
+#endif
         }
         public static JsonNode? DecryptAsJson(byte[] encryptedProfile, string key)
         {
@@ -56,7 +68,11 @@ namespace KeyViewer.WebAPI.Core
                 var profileJson = CryptoUtils.Xor(profileJsonEncrypted, key);
                 return JsonNode.Parse(profileJson);
             }
+#if !DEBUG
             catch { return null; }
+#else
+            catch (Exception e) { Console.WriteLine($"Error On 'DecryptAsJson'!\n{e}"); return null; }
+#endif
         }
         public static Profile? Decrypt(byte[] encryptedProfile, string key)
         {
@@ -65,7 +81,11 @@ namespace KeyViewer.WebAPI.Core
                 var profileJson = DecryptAsJson(encryptedProfile, key);
                 return ModelUtils.Unbox<Profile>(profileJson);
             }
+#if !DEBUG
             catch { return null; }
+#else
+            catch (Exception e) { Console.WriteLine($"Error On 'Decrypt'!\n{e}"); return null; }
+#endif
         }
         public static JsonNode? DecryptRawAsJson(byte[] rawProfile, string key)
         {
@@ -76,7 +96,11 @@ namespace KeyViewer.WebAPI.Core
                 var profileJsonNode = JsonNode.Parse(profileJson);
                 return profileJsonNode;
             }
+#if !DEBUG
             catch { return null; }
+#else
+            catch (Exception e) { Console.WriteLine($"Error On 'DecryptRawAsJson'!\n{e}"); return null; }
+#endif
         }
         public static Profile? DecryptRaw(byte[] rawProfile, string key)
         {
@@ -85,7 +109,11 @@ namespace KeyViewer.WebAPI.Core
                 var profileJsonNode = DecryptRawAsJson(rawProfile, key);
                 return ModelUtils.Unbox<Profile>(profileJsonNode);
             }
+#if !DEBUG
             catch { return null; }
+#else
+            catch (Exception e) { Console.WriteLine($"Error On 'DecryptRaw'!\n{e}"); return null; }
+#endif
         }
     }
 }

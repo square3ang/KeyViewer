@@ -11,7 +11,12 @@ namespace KeyViewer.Core
 {
     public static class KeyViewerWebAPI
     {
-        public const string API = PROD_API;
+        public const string API =
+#if DEBUG
+            DEV_API;
+#else
+            PROD_API;
+#endif
         public const string DEV_API = "http://localhost:1111";
         public const string PROD_API = "https://api.keyviewer.net";
         public static async Task<string> Handshake() => await Main.HttpClient.GetStringAsync(API + "/handshake");
