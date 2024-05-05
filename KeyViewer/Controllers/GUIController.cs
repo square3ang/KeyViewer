@@ -74,11 +74,16 @@ namespace KeyViewer.Controllers
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             current.Draw();
+
             GUILayout.BeginHorizontal();
             Drawer.ButtonLabel(Main.Lang[TranslationKeys.KO], KeyViewerUtils.OpenMysteryUrl);
             Drawer.ButtonLabel(Main.Lang[TranslationKeys.LINK], KeyViewerUtils.OpenDiscord2Url);
+            GUILayout.Space(1);
+            Drawer.ButtonLabel(Main.Lang[TranslationKeys.KW], KeyViewerUtils.OpenMysteryUrl);
+            Drawer.ButtonLabel(Main.Lang[TranslationKeys.LINK], KeyViewerUtils.OpenWikiUrl);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+
             Drawer.ButtonLabel(Main.Lang[TranslationKeys.BOATK], () => Application.OpenURL("https://github.com/PizzaLovers007/AdofaiTweaks/tree/master/AdofaiTweaks/Tweaks/KeyViewer"));
         }
         public void Skip(Action onSkip = null, int frames = 1)

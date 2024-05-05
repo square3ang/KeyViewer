@@ -10,6 +10,7 @@
         public static readonly string BOATK = "BASED_ON_ADOFAI_TWEAKS_KEYVIEWER";
         public static readonly string KO = "KEYVIEWER_OFFICIAL";
         public static readonly string LINK = "LINK";
+        public static readonly string KW = "KEYVIEWER_WIKI";
 
         public static class Settings
         {

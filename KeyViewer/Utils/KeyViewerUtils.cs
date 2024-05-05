@@ -320,6 +320,10 @@ namespace KeyViewer.Utils
             if (Main.HasUpdate)
                 Application.OpenURL(Main.DownloadLink);
         }
+        public static void OpenWikiUrl()
+        {
+            Application.OpenURL("https://keyviewer.wikidocs.cc");
+        }
         public static Vector2 GetPivot(Pivot pivot)
         {
             switch (pivot)
