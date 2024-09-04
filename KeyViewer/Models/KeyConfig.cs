@@ -2,6 +2,7 @@
 using JSON;
 using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using System.Linq;
 using UnityEngine;
 
 namespace KeyViewer.Models
@@ -40,6 +41,7 @@ namespace KeyViewer.Models
         public bool RainEnabled = false;
         public RainConfig Rain = new RainConfig();
 
+        public KeyCode[] Codes = new KeyCode[0];
         public KeyConfig Copy()
         {
             KeyConfig newConfig = new KeyConfig();
@@ -76,6 +78,7 @@ namespace KeyViewer.Models
             newConfig.RainEnabled = RainEnabled;
             newConfig.Rain = Rain.Copy();
 
+            Codes = (KeyCode[])Codes.Clone();
             return newConfig;
         }
         public JsonNode Serialize()
@@ -114,6 +117,7 @@ namespace KeyViewer.Models
             node[nameof(RainEnabled)] = RainEnabled;
             node[nameof(Rain)] = Rain.Serialize();
 
+            node[nameof(Codes)] = Codes.Select(k => k.ToString()).ToArray();
             return node;
         }
         public void Deserialize(JsonNode node)
@@ -149,6 +153,8 @@ namespace KeyViewer.Models
 
             RainEnabled = node[nameof(RainEnabled)];
             Rain = ModelUtils.Unbox<RainConfig>(node[nameof(Rain)]);
+
+            Codes = node[nameof(Codes)].IfNotExist(new JsonArray()).AsArray.Values.Select(n => EnumHelper<KeyCode>.Parse(n.Value)).ToArray();
         }
     }
 }
