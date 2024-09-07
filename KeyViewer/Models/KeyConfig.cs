@@ -11,6 +11,7 @@ namespace KeyViewer.Models
     {
         public int Count = 0;
         public KeyCode Code = KeyCode.None;
+        public KeyCode[] Codes = new KeyCode[0];
         public string DummyName = null;
         public string Font = "Default";
         public bool EnableKPSMeter = false;
@@ -41,13 +42,13 @@ namespace KeyViewer.Models
         public bool RainEnabled = false;
         public RainConfig Rain = new RainConfig();
 
-        public KeyCode[] Codes = new KeyCode[0];
         public KeyConfig Copy()
         {
             KeyConfig newConfig = new KeyConfig();
 
             newConfig.Count = Count;
             newConfig.Code = Code;
+            newConfig.Codes = (KeyCode[])Codes.Clone();
             newConfig.DummyName = DummyName;
             newConfig.Font = Font;
             newConfig.EnableKPSMeter = EnableKPSMeter;
@@ -77,8 +78,6 @@ namespace KeyViewer.Models
 
             newConfig.RainEnabled = RainEnabled;
             newConfig.Rain = Rain.Copy();
-
-            Codes = (KeyCode[])Codes.Clone();
             return newConfig;
         }
         public JsonNode Serialize()
@@ -87,6 +86,7 @@ namespace KeyViewer.Models
 
             node[nameof(Count)] = Count;
             node[nameof(Code)] = Code.ToString();
+            node[nameof(Codes)] = Codes.Select(k => k.ToString()).ToArray();
             node[nameof(DummyName)] = DummyName;
             node[nameof(Font)] = Font;
             node[nameof(EnableKPSMeter)] = EnableKPSMeter;
@@ -117,13 +117,13 @@ namespace KeyViewer.Models
             node[nameof(RainEnabled)] = RainEnabled;
             node[nameof(Rain)] = Rain.Serialize();
 
-            node[nameof(Codes)] = Codes.Select(k => k.ToString()).ToArray();
             return node;
         }
         public void Deserialize(JsonNode node)
         {
             Count = node[nameof(Count)];
             Code = EnumHelper<KeyCode>.Parse(node[nameof(Code)]);
+            Codes = node[nameof(Codes)].IfNotExist(new JsonArray()).AsArray.Values.Select(n => EnumHelper<KeyCode>.Parse(n.Value)).ToArray();
             DummyName = node[nameof(DummyName)].IfNotExist(null);
             Font = node[nameof(Font)];
             EnableKPSMeter = node[nameof(EnableKPSMeter)];
@@ -153,8 +153,6 @@ namespace KeyViewer.Models
 
             RainEnabled = node[nameof(RainEnabled)];
             Rain = ModelUtils.Unbox<RainConfig>(node[nameof(Rain)]);
-
-            Codes = node[nameof(Codes)].IfNotExist(new JsonArray()).AsArray.Values.Select(n => EnumHelper<KeyCode>.Parse(n.Value)).ToArray();
         }
     }
 }
