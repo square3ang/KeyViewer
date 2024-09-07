@@ -261,6 +261,26 @@ namespace KeyViewer.Unity
                 default: return Vector2.zero;
             }
         }
+        private Vector2 GetMaskPositionWithoutOffset(Direction dir)
+        {
+            var rainVConfig = Config.Rain.ObjectConfig.VectorConfig;
+            Vector2 vec = transform.position;
+            float x = Size.x, y = Size.y;
+            int softness = Config.Rain.Softness.Get(Pressed);
+            float spacing = Manager.profile.KeySpacing;
+            switch (dir)
+            {
+                case Direction.Up:
+                    return new Vector2(vec.x, vec.y + (y / 2 - softness) + spacing);
+                case Direction.Down:
+                    return new Vector2(vec.x, vec.y - (y / 2 - softness) - spacing);
+                case Direction.Left:
+                    return new Vector2(vec.x - (x / 2 - softness) - spacing, vec.y);
+                case Direction.Right:
+                    return new Vector2(vec.x + (x / 2 - softness) + spacing, vec.y);
+                default: return Vector2.zero;
+            }
+        }
         private Vector2Int GetSoftness(Direction dir)
         {
             switch (dir)
@@ -380,7 +400,8 @@ namespace KeyViewer.Unity
             var rainConfig = Config.Rain;
             rainMask.softness = GetSoftness(rainConfig.Direction);
             RainMaskRt.sizeDelta = GetSizeDelta(rainConfig.Direction);
-            RainMaskRt.position = GetMaskPosition(rainConfig.Direction);
+            var pos = GetMaskPositionWithoutOffset(rainConfig.Direction);
+            KeyViewerUtils.ApplyVectorConfigForRainMaskOnly(RainMaskRt, rainConfig.ObjectConfig.VectorConfig, Pressed, pos);
             if (Pressed)
             {
                 rain = rainPool.Get();

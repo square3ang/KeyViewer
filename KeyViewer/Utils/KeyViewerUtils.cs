@@ -10,6 +10,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static CameraFilterPack_NightVisionFX;
 
 namespace KeyViewer.Utils
 {
@@ -268,6 +269,49 @@ namespace KeyViewer.Utils
                     .SetAutoKill(false);
                 else rt.localScale = scale;
             }
+        }
+        public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, bool fixScale, Vector2 sizeDelta, bool scaleSizeDelta = true)
+        {
+            DOTween.Kill(rt, true);
+
+            var rEase = vConfig.Rotation.GetEase(pressed);
+            if (rEase.IsValid)
+                rt.DOLocalRotate(vConfig.Rotation.Get(pressed), rEase.Duration)
+                .SetEase(rEase.Ease)
+                .SetAutoKill(false);
+            else rt.localRotation = Quaternion.Euler(vConfig.Rotation.Get(pressed));
+
+            Vector3 scale = vConfig.Scale.Get(pressed);
+            if (fixScale)
+                scale = FixedScale(rt.parent.localScale, scale);
+            var sEase = vConfig.Scale.GetEase(pressed);
+            if (scaleSizeDelta)
+            {
+                if (sEase.IsValid)
+                    rt.DOSizeDelta(sizeDelta * scale, sEase.Duration)
+                    .SetEase(sEase.Ease)
+                    .SetAutoKill(false);
+                else rt.sizeDelta = sizeDelta * scale;
+            }
+            else
+            {
+                if (sEase.IsValid)
+                    rt.DOScale(scale, sEase.Duration)
+                    .SetEase(sEase.Ease)
+                    .SetAutoKill(false);
+                else rt.localScale = scale;
+            }
+        }
+        public static void ApplyVectorConfigForRainMaskOnly(RectTransform rt, VectorConfig vConfig, bool pressed, Vector2 offset)
+        {
+            DOTween.Kill(rt, true);
+
+            var oEase = vConfig.Offset.GetEase(pressed);
+            if (oEase.IsValid)
+                rt.DOMove(vConfig.Offset.Get(pressed) + (Vector3)offset, oEase.Duration)
+                .SetEase(oEase.Ease)
+                .SetAutoKill(false);
+            else rt.position = vConfig.Offset.Get(pressed) + (Vector3)offset;
         }
         public static void SetMaskAnchor(RectTransform rt, Direction dir, Pivot pivot = Pivot.MiddleCenter, Anchor anchor = Anchor.MiddleCenter)
         {

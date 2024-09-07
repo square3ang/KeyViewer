@@ -46,7 +46,8 @@ namespace KeyViewer.Unity
             if (colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase, false);
             else colorUpdateIgnores--;
-            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false, DefaultSize, false);
+            //KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false, DefaultSize, false);
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, false, DefaultSize, false);
         }
         public void Release()
         {
@@ -56,8 +57,9 @@ namespace KeyViewer.Unity
             if (colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase, false);
             else colorUpdateIgnores--;
-            Vector2 adjustedPosition = KeyViewerUtils.AdjustRainPosition(config.Direction, Position, objConfig.VectorConfig.Offset.Pressed);
-            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false, DefaultSize, false);
+            //Vector2 adjustedPosition = KeyViewerUtils.AdjustRainPosition(config.Direction, Position, objConfig.VectorConfig.Offset.Pressed);
+            //KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false, DefaultSize, false);
+            KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, false, DefaultSize, false);
         }
         public void OnEnable()
         {
