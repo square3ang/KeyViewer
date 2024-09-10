@@ -39,7 +39,7 @@ namespace KeyViewer.Views
                     if (encProfile != null)
                     {
                         Drawer.ButtonLabel(L(TKEP.Key) + $": {key}", KeyViewerUtils.OpenDiscordUrl);
-                        if (GUILayout.Button(L(TKEP.Save)))
+                        if (Drawer.Button(L(TKEP.Save)))
                         {
                             var path = StandaloneFileBrowser.SaveFilePanel(L(TKEP.Prefix), Main.Mod.Path, model.Metadata.Name + ".encryptedProfile", "encryptedProfile");
                             if (!string.IsNullOrWhiteSpace(path)) File.WriteAllBytes(path, encProfile);
@@ -49,7 +49,7 @@ namespace KeyViewer.Views
                     {
                         Drawer.ButtonLabel(L(TKEP.Key), KeyViewerUtils.OpenDiscordUrl);
                         key = GUILayout.TextField(key);
-                        if (GUILayout.Button(L(TKEP.Encrypt)) &&
+                        if (Drawer.Button(L(TKEP.Encrypt)) &&
                             !string.IsNullOrWhiteSpace(model.Metadata.Name) &&
                             !string.IsNullOrWhiteSpace(key))
                         {

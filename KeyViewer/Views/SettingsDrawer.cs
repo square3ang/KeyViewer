@@ -27,7 +27,7 @@ namespace KeyViewer.Views
                         Main.OnLanguageInitialize();
                     });
                 }
-                //if (GUILayout.Button(L(TKM.ShowUpdateNote)))
+                //if (Drawer.Button(L(TKM.ShowUpdateNote)))
                 //    Main.GUI.Push(new MethodDrawable(() =>
                 //    {
                 //        GUILayout.Label(L(TK.UpdateNote));
@@ -38,7 +38,7 @@ namespace KeyViewer.Views
 
             GUILayout.BeginHorizontal();
             {
-                if (GUILayout.Button(L(TKS.ImportProfile)))
+                if (Drawer.Button(L(TKS.ImportProfile)))
                 {
                     var profiles = StandaloneFileBrowser.OpenFilePanel(L(TKS.SelectProfile), Main.Mod.Path, new[] { new ExtensionFilter("V4", "json", "encryptedProfile"), new ExtensionFilter("V3", "xml"), }, true);
                     foreach (var profile in profiles)
@@ -58,7 +58,7 @@ namespace KeyViewer.Views
                             Main.GUI.Push(new EncryptedProfileDrawer(File.ReadAllBytes(file.FullName)));
                     }
                 }
-                if (GUILayout.Button(L(TKS.CreateProfile)))
+                if (Drawer.Button(L(TKS.CreateProfile)))
                 {
                     var profile = new ActiveProfile(GetNewProfileName(), true);
                     model.ActiveProfiles.Add(profile);
@@ -66,7 +66,7 @@ namespace KeyViewer.Views
                     File.WriteAllText(Path.Combine(Main.Mod.Path, $"{profile.Name}.json"), newProfile.Serialize().ToString(4));
                     Main.AddManager(profile, true);
                 }
-                if (GUILayout.Button(L(TKS.OpenModDir)))
+                if (Drawer.Button(L(TKS.OpenModDir)))
                     Application.OpenURL(Path.GetFullPath(Main.Mod.Path));
             }
             GUILayout.FlexibleSpace();
@@ -92,10 +92,10 @@ namespace KeyViewer.Views
                     if (!encrypted && profile.Active)
                     {
                         var manager = Main.Managers[profile.Name];
-                        if (GUILayout.Button(L(TKP.ConfigurateProfile, profile.Name)))
+                        if (Drawer.Button(L(TKP.ConfigurateProfile, profile.Name)))
                             Main.GUI.Push(new ProfileDrawer(manager, manager.profile, profile.Name));
                     }
-                    if (!encrypted && GUILayout.Button(L(TKS.ExportProfile)))
+                    if (!encrypted && Drawer.Button(L(TKS.ExportProfile)))
                     {
                         string target = StandaloneFileBrowser.SaveFilePanel(L(TKS.SelectProfile), Persistence.GetLastUsedFolder(), $"{profile.Name}.json", "json");
                         if (!string.IsNullOrWhiteSpace(target))
@@ -106,9 +106,9 @@ namespace KeyViewer.Views
                             File.WriteAllText(target, node.ToString(4));
                         }
                     }
-                    if (!encrypted && GUILayout.Button(L(TKS.ExportCryptedProfile)))
+                    if (!encrypted && Drawer.Button(L(TKS.ExportCryptedProfile)))
                         Main.GUI.Push(new EncryptedProfileSaveDrawer(profile));
-                    if (GUILayout.Button(L(TKP.DeleteProfile)))
+                    if (Drawer.Button(L(TKP.DeleteProfile)))
                     {
                         Main.RemoveManager(profile);
                         string path;

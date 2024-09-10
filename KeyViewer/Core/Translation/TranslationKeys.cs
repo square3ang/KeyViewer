@@ -105,6 +105,7 @@
             internal static readonly string Pivot = Prefix + "PIVOT";
             internal static readonly string Roundness = Prefix + "ROUNDNESS";
             internal static readonly string BlurConfig = Prefix + "BLUR_CONFIG";
+            internal static readonly string RealLatestVersion = Prefix + "REAL_LATEST_VERSION";
         }
         public static class KeyConfig
         {

@@ -59,7 +59,7 @@ namespace KeyViewer.Views
                 {
                     Drawer.ButtonLabel(L(TEP.Key), KeyViewerUtils.OpenDiscordUrl);
                     key = GUILayout.TextField(key);
-                    if (GUILayout.Button(L(TEP.Import)))
+                    if (Drawer.Button(L(TEP.Import)))
                     {
                         tryDecrypting = true;
                         Decrypt().ContinueWith(t =>

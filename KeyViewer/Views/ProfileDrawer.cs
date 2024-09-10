@@ -51,12 +51,12 @@ namespace KeyViewer.Views
                 Drawer.ButtonLabel(L(TKP.RegisteredKeys), KeyViewerUtils.OpenDiscordUrl);
                 if (model.Keys.Any(k => !selectedKeys.Contains(k)))
                 {
-                    if (GUILayout.Button(L(TKP.SelectAllKeys)))
+                    if (Drawer.Button(L(TKP.SelectAllKeys)))
                         model.Keys.ForEach(k => selectedKeys.Add(k));
                 }
                 else
                 {
-                    if (GUILayout.Button(L(TKP.DeselectAllKeys)))
+                    if (Drawer.Button(L(TKP.DeselectAllKeys)))
                     {
                         selectedKeys.Clear();
                         criterion = null;
@@ -79,7 +79,7 @@ namespace KeyViewer.Views
                             var selected = selectedKeys.Contains(key);
                             if (criterion == key) str = $"<color=yellow>{str}</color>";
                             else if (selected) str = $"<color=cyan>{str}</color>";
-                            if (GUILayout.Button(str))
+                            if (Drawer.Button(str))
                             {
                                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                                 {
@@ -113,7 +113,7 @@ namespace KeyViewer.Views
 
                 GUILayout.BeginHorizontal();
                 {
-                    if (GUILayout.Button(!listening ? L(TKP.StartKeyRegistering) : L(TKP.StopKeyRegistering)))
+                    if (Drawer.Button(!listening ? L(TKP.StartKeyRegistering) : L(TKP.StopKeyRegistering)))
                     {
                         if (Main.ListeningDrawer != null)
                             Main.ListeningDrawer = null;
@@ -121,10 +121,10 @@ namespace KeyViewer.Views
                         listening = Main.ListeningDrawer != null;
                     }
                     GUILayout.Space(10);
-                    if (GUILayout.Button(!configMode ? L(TKM.Enable, L(TKP.ConfigurationMode)) : L(TKM.Disable, L(TKP.ConfigurationMode))))
+                    if (Drawer.Button(!configMode ? L(TKM.Enable, L(TKP.ConfigurationMode)) : L(TKM.Disable, L(TKP.ConfigurationMode))))
                         configMode = !configMode;
                     GUILayout.Space(10);
-                    if (GUILayout.Button(L(TKP.CreateDummyKey)))
+                    if (Drawer.Button(L(TKP.CreateDummyKey)))
                     {
                         var dummy = new KeyConfig() { DummyName = L(TKP.DummyName, dummyNumber++) };
                         model.Keys.Add(dummy);
@@ -133,7 +133,7 @@ namespace KeyViewer.Views
                     if (!model.Keys.Any(k => k.Code == KeyCode.Mouse0))
                     {
                         GUILayout.Space(10);
-                        if (GUILayout.Button(L(TKP.RegisterMouse0Key)))
+                        if (Drawer.Button(L(TKP.RegisterMouse0Key)))
                         {
                             model.Keys.Add(new KeyConfig() { Code = KeyCode.Mouse0 });
                             manager.UpdateKeys();
@@ -142,7 +142,7 @@ namespace KeyViewer.Views
                     if (selectedKeys.Count == 2)
                     {
                         GUILayout.Space(10);
-                        if (GUILayout.Button(L(TKP.SwapKeys)))
+                        if (Drawer.Button(L(TKP.SwapKeys)))
                         {
                             var list = selectedKeys.ToList();
                             int a = model.Keys.IndexOf(list[0]);
@@ -158,7 +158,7 @@ namespace KeyViewer.Views
                     if (selectedKeys.Count > 0)
                     {
                         GUILayout.Space(10);
-                        if (GUILayout.Button(L(TKP.MakeBar)))
+                        if (Drawer.Button(L(TKP.MakeBar)))
                         {
                             KeyViewerUtils.MakeBar(manager.profile, manager.keys.FindAll(k => selectedKeys.Contains(k.Config)).Select(k => k.Config).ToList());
                             manager.UpdateLayout();
@@ -169,7 +169,7 @@ namespace KeyViewer.Views
                     if (selectedKeys.Count > 1)
                     {
                         GUILayout.Space(10);
-                        if (GUILayout.Button(L(TKP.EditMultipleKey)))
+                        if (Drawer.Button(L(TKP.EditMultipleKey)))
                         {
                             Main.GUI.Push(new MultipleKeyConfigDrawer(manager, selectedKeys.Select(k => KeyViewerUtils.KeyName(k)).ToList(), criterion?.Copy()));
                             selectedKeys.Clear();
