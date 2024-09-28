@@ -11,7 +11,7 @@ namespace KeyViewer.Core.Input
         public static bool AnyKeyDown => AsyncInputManager.keyDownMask.Any();
         public static bool GetKey(KeyCode code) => AsyncInput.GetKey(Convert(code));
         public static bool GetKeyUp(KeyCode code) => AsyncInput.GetKeyUp(Convert(code));
-        public static bool GetKeyDown(KeyCode code) => AsyncInput.GetKeyDown(Convert(code), false);
+        public static bool GetKeyDown(KeyCode code) => AsyncInput.GetKeyDown(Convert(code));
         public static KeyCode Convert(KeyLabel label)
         {
             switch (label)

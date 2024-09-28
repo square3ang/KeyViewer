@@ -371,6 +371,7 @@
     <Compile Include="Models\VectorConfig.cs" />
     <Compile Include="Models\ObjectConfig.cs" />
     <Compile Include="Patches\AssassinationPatch.cs" />
+    <Compile Include="Patches\FixAsyncInputGhost.cs" />
     <Compile Include="Patches\BlockInputPatch.cs" />
     <Compile Include="Patches\JudgementColorPatch.cs" />
     <Compile Include="Patches\KeyLimiterPatch.cs" />
