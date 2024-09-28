@@ -75,6 +75,8 @@ namespace KeyViewer.Core
                 { KeyCode.RightControl, "RCtrl" },
                 { KeyCode.LeftAlt, "LAlt" },
                 { KeyCode.RightAlt, "RAlt" },
+                // Exception!! RAlt를 비동기때문에 Menu로 대체!!
+                { KeyCode.Menu, "RAlt" },
                 { KeyCode.Delete, "Del" },
                 { KeyCode.PageDown, "Pg↓" },
                 { KeyCode.PageUp, "Pg↑" },

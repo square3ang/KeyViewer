@@ -76,6 +76,10 @@ namespace KeyViewer.Views
                         {
                             var key = model.Keys[i];
                             var str = key.DummyName != null ? key.DummyName : key.Code.ToString();
+
+                            // ㅄ같은 비동기 때문에 예외조건 추가
+                            if (key.Code == KeyCode.Menu) str = "RightAlt";
+
                             var selected = selectedKeys.Contains(key);
                             if (criterion == key) str = $"<color=yellow>{str}</color>";
                             else if (selected) str = $"<color=cyan>{str}</color>";
@@ -136,6 +140,15 @@ namespace KeyViewer.Views
                         if (Drawer.Button(L(TKP.RegisterMouse0Key)))
                         {
                             model.Keys.Add(new KeyConfig() { Code = KeyCode.Mouse0 });
+                            manager.UpdateKeys();
+                        }
+                    }
+                    if (!model.Keys.Any(k => k.Code == KeyCode.Menu))
+                    {
+                        GUILayout.Space(10);
+                        if (Drawer.Button(L(TKP.RegisterRAltKey)))
+                        {
+                            model.Keys.Add(new KeyConfig() { Code = KeyCode.Menu });
                             manager.UpdateKeys();
                         }
                     }

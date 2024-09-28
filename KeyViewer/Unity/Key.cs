@@ -1,5 +1,6 @@
 ﻿using KeyViewer.API;
 using KeyViewer.Core;
+using KeyViewer.Core.Input;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Models;
 using KeyViewer.Utils;
@@ -304,9 +305,9 @@ namespace KeyViewer.Unity
             if (!string.IsNullOrEmpty(Config.DummyName)) return;
             if (InputAPI.Active)
                 Pressed = InputAPI.APIFlags.TryGetValue(Config.Code, out var p) ? p : false;
-            else Pressed = Input.GetKey(Config.Code);
+            else Pressed = KeyInput.GetKey(Config.Code);
             for (int i = 0; i < Config.Codes.Length; i++)
-                Pressed |= Input.GetKey(Config.Codes[i]);
+                Pressed |= KeyInput.GetKey(Config.Codes[i]);
             if (prevPressed == Pressed) return;
             prevPressed = Pressed;
             if (Pressed)

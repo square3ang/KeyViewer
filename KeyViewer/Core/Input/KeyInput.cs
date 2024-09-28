@@ -5,7 +5,7 @@ namespace KeyViewer.Core.Input
 {
     public static class KeyInput
     {
-        public static bool AsyncAvailable => AsyncInputManager.isActive && (scrController.instance?.gameworld ?? false) && scrController.instance?.currentState == States.PlayerControl;
+        public static bool AsyncAvailable => AsyncInputManager.isActive;
         public static bool AnyKey => AsyncAvailable ? AsyncInputCompat.AnyKey : SyncInput.anyKey;
         public static bool AnyKeyDown => AsyncAvailable ? AsyncInputCompat.AnyKeyDown : SyncInput.anyKeyDown;
         public static bool Shift => GetKey(KeyCode.LeftShift) || GetKey(KeyCode.RightShift);

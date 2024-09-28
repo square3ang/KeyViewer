@@ -2,6 +2,7 @@
 using JSON;
 using KeyViewer.Controllers;
 using KeyViewer.Core;
+using KeyViewer.Core.Input;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Core.Translation;
 using KeyViewer.Migration.V3;
