@@ -143,12 +143,21 @@ namespace KeyViewer.Views
                             manager.UpdateKeys();
                         }
                     }
-                    if (!model.Keys.Any(k => k.Code == KeyCode.Menu))
+                    if (!model.Keys.Any(k => k.Code == KeyCode.RightAlt))
                     {
                         GUILayout.Space(10);
                         if (Drawer.Button(L(TKP.RegisterRAltKey)))
                         {
-                            model.Keys.Add(new KeyConfig() { Code = KeyCode.Menu });
+                            model.Keys.Add(new KeyConfig() { Code = KeyCode.RightAlt });
+                            manager.UpdateKeys();
+                        }
+                    }
+                    if (!model.Keys.Any(k => k.Code == KeyCode.RightControl))
+                    {
+                        GUILayout.Space(10);
+                        if (Drawer.Button(L(TKP.RegisterRCtrlKey)))
+                        {
+                            model.Keys.Add(new KeyConfig() { Code = KeyCode.RightControl });
                             manager.UpdateKeys();
                         }
                     }

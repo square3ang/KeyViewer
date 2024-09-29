@@ -11,12 +11,14 @@ using KeyViewer.Patches;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using KeyViewer.Views;
+using SkyHook;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
@@ -46,6 +48,7 @@ namespace KeyViewer
         public static bool WebAPIInitialized { get; private set; } = false;
         public static HashSet<string> ToDeleteFiles { get; private set; }
         public static event System.Action OnManagersInitialized = delegate { };
+        public static bool IsWindows { get; private set; }
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
@@ -59,12 +62,14 @@ namespace KeyViewer
             HttpClient = new HttpClient();
             modEntry.Info.Version = Constants.Version;
             typeof(ModEntry).GetField(nameof(ModEntry.Version)).SetValue(modEntry, ModVersion = System.Version.Parse(Constants.Version));
+            IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         }
         public static bool OnToggle(ModEntry modEntry, bool toggle)
         {
             if (toggle)
             {
                 InitializeWebAPI();
+                WinInput.Initialize();
                 Tag.InitializeWrapperAssembly();
                 FontManager.Initialize();
                 AssetManager.Initialize();
@@ -110,9 +115,10 @@ namespace KeyViewer
                 JudgementColorPatch.Release();
                 //AssetManager.Release();
                 FontManager.Release();
+                WinInput.Release();
                 Tag.ReleaseWrapperAssembly();
-                System.GC.Collect(System.GC.MaxGeneration, System.GCCollectionMode.Forced, true);
                 Resources.UnloadUnusedAssets();
+                System.GC.Collect(System.GC.MaxGeneration, System.GCCollectionMode.Forced, true);
             }
             return true;
         }
@@ -132,6 +138,15 @@ namespace KeyViewer
                 if (showViewer != manager.gameObject.activeSelf)
                     manager.gameObject.SetActive(showViewer);
             }
+
+
+
+            foreach (var code in EnumHelper<KeyCode>.GetValues())
+                if (Input.GetKeyDown(code))
+                    Main.Logger.Log($"KeyDown(UnityEngine): {code}");
+            foreach (var code in EnumHelper<KeyLabel>.GetValues())
+                if (AsyncInput.GetKeyDown(code))
+                    Main.Logger.Log($"KeyDown(SkyHook): {code}");
         }
         public static void OnGUI(ModEntry modEntry)
         {

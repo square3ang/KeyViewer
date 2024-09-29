@@ -316,6 +316,7 @@
     <Compile Include="Core\GUILayoutEx.cs" />
     <Compile Include="Core\Input\AsyncInputCompat.cs" />
     <Compile Include="Core\Input\KeyInput.cs" />
+    <Compile Include="Core\Input\WinInput.cs" />
     <Compile Include="Core\Interfaces\ICopyable.cs" />
     <Compile Include="Core\Interfaces\IModel.cs" />
     <Compile Include="Core\KPSCalculator.cs" />
@@ -371,7 +372,6 @@
     <Compile Include="Models\VectorConfig.cs" />
     <Compile Include="Models\ObjectConfig.cs" />
     <Compile Include="Patches\AssassinationPatch.cs" />
-    <Compile Include="Patches\FixAsyncInputGhost.cs" />
     <Compile Include="Patches\BlockInputPatch.cs" />
     <Compile Include="Patches\JudgementColorPatch.cs" />
     <Compile Include="Patches\KeyLimiterPatch.cs" />

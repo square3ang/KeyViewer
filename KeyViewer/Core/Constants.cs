@@ -8,7 +8,7 @@ namespace KeyViewer.Core
     {
         public static string SettingsPath => Path.Combine(Main.Mod.Path, "Settings.json");
 
-        public const string Version = "4.9.2";
+        public const string Version = "4.9.3";
         public const float Rad2Deg100 = .5729f;
 
         public static readonly Color TooEarlyColor = new Color(1.000f, 0.000f, 0.000f, 1.000f);
@@ -75,8 +75,6 @@ namespace KeyViewer.Core
                 { KeyCode.RightControl, "RCtrl" },
                 { KeyCode.LeftAlt, "LAlt" },
                 { KeyCode.RightAlt, "RAlt" },
-                // Exception!! RAlt를 비동기때문에 Menu로 대체!!
-                { KeyCode.Menu, "RAlt" },
                 { KeyCode.Delete, "Del" },
                 { KeyCode.PageDown, "Pg↓" },
                 { KeyCode.PageUp, "Pg↑" },

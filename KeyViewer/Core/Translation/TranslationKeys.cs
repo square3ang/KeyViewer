@@ -51,6 +51,7 @@
             internal static readonly string SwapKeys = Prefix + "SWAP_KEYS";
             internal static readonly string DoNotAssAss = Prefix + "DO_NOT_ASS_ASS";
             internal static readonly string RegisterRAltKey = Prefix + "REGISTER_RALT_KEY";
+            internal static readonly string RegisterRCtrlKey = Prefix + "REGISTER_RCTRL_KEY";
         }
         public static class Misc
         {

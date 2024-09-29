@@ -5,7 +5,7 @@ namespace KeyViewer.Core.Input
 {
     public static class KeyInput
     {
-        public static bool AsyncAvailable => AsyncInputManager.isActive;
+        public static bool AsyncAvailable => false; //AsyncInputManager.isActive;
         public static bool AnyKey => AsyncAvailable ? AsyncInputCompat.AnyKey : SyncInput.anyKey;
         public static bool AnyKeyDown => AsyncAvailable ? AsyncInputCompat.AnyKeyDown : SyncInput.anyKeyDown;
         public static bool Shift => GetKey(KeyCode.LeftShift) || GetKey(KeyCode.RightShift);
@@ -13,6 +13,11 @@ namespace KeyViewer.Core.Input
         public static bool Alt => GetKey(KeyCode.LeftAlt) || GetKey(KeyCode.RightAlt);
         public static bool GetKey(KeyCode code)
         {
+            if (Main.IsWindows)
+            {
+                if (code == KeyCode.RightAlt) return WinInput.RAlt;
+                if (code == KeyCode.RightControl) return WinInput.RCtrl;
+            }
             if (AsyncAvailable)
                 return AsyncInputCompat.GetKey(code);
             return SyncInput.GetKey(code);
