@@ -59,6 +59,7 @@ namespace KeyViewer
             modEntry.OnSaveGUI = OnSaveGUI;
             modEntry.OnShowGUI = OnShowGUI;
             modEntry.OnHideGUI = OnHideGUI;
+            modEntry.OnLateUpdate += OnLateUpdate;
             HttpClient = new HttpClient();
             modEntry.Info.Version = Constants.Version;
             typeof(ModEntry).GetField(nameof(ModEntry.Version)).SetValue(modEntry, ModVersion = System.Version.Parse(Constants.Version));
@@ -138,15 +139,6 @@ namespace KeyViewer
                 if (showViewer != manager.gameObject.activeSelf)
                     manager.gameObject.SetActive(showViewer);
             }
-
-
-
-            foreach (var code in EnumHelper<KeyCode>.GetValues())
-                if (Input.GetKeyDown(code))
-                    Main.Logger.Log($"KeyDown(UnityEngine): {code}");
-            foreach (var code in EnumHelper<KeyLabel>.GetValues())
-                if (AsyncInput.GetKeyDown(code))
-                    Main.Logger.Log($"KeyDown(SkyHook): {code}");
         }
         public static void OnGUI(ModEntry modEntry)
         {
@@ -177,7 +169,10 @@ namespace KeyViewer
             ListeningDrawer = null;
             BlockInput = false;
         }
-
+        public static void OnLateUpdate(ModEntry modEntry, float deltaTime)
+        {
+            WinInput.UpdatePrevStates();
+        }
         public static void OnLanguageInitialize()
         {
             GUI.Flush();

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using KeyViewer.Core.Input;
-using KeyViewer.Models;
+using KeyViewer.Migration.V2;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static RDInputType;
@@ -16,7 +17,7 @@ namespace KeyViewer.Patches
         [HarmonyPatch(typeof(RDInputType_Keyboard), "Main")]
         public static void Sync(RDInputType_Keyboard __instance, ref int __result, ButtonState state)
         {
-            var result = GetPressedCounts((MainStateCount)GetStateCountMethodSync(__instance, state), false);
+            var result = GetPressedCounts((MainStateCount)GetStateCountMethodSync(__instance, state), false, state);
             if (result < 0) return;
             __result = result;
         }
@@ -24,27 +25,30 @@ namespace KeyViewer.Patches
         [HarmonyPatch(typeof(RDInputType_AsyncKeyboard), "Main")]
         public static void Async(RDInputType_AsyncKeyboard __instance, ref int __result, ButtonState state)
         {
-            var result = GetPressedCounts((MainStateCount)GetStateCountMethodAsync(__instance, state), true);
+            var result = GetPressedCounts((MainStateCount)GetStateCountMethodAsync(__instance, state), true, state);
             if (result < 0) return;
             __result = result;
         }
-        private static int GetPressedCounts(MainStateCount stateCount, bool async)
+        private static int GetPressedCounts(MainStateCount stateCount, bool async, ButtonState bs)
         {
             var profiles = Main.Managers.Select(m => m.Value.profile);
             profiles = profiles.Where(p => p.LimitNotRegisteredKeys);
-            if (!profiles.Any()) return -1;
-            return profiles.Sum(p => GetPressedCount(p, stateCount, async));
-        }
-        private static int GetPressedCount(Profile profile, MainStateCount stateCount, bool async)
-        {
-            if (Main.BlockInput) return 0;
-            var activeKeys = profile.Keys
-                .Select(kc => kc.Code)
-                .Where(k => k != KeyCode.None)
-                .Distinct();
+            if (!profiles.Any()) return -1; 
+            var activeKeys = profiles.SelectMany(p => p.Keys).Select(k => k.Code).Where(c => c != KeyCode.None).Distinct();
+            int count = 0;
             if (async)
-                return stateCount.keys.Where(k => activeKeys.Contains(AsyncInputCompat.Convert(((AsyncKeyCode)k.value).label))).Count();
-            return stateCount.keys.Where(k => activeKeys.Contains((KeyCode)k.value)).Count();
+                count = stateCount.keys.Where(k => activeKeys.Contains(AsyncInputCompat.Convert(((AsyncKeyCode)k.value).label))).Count();
+            else count = stateCount.keys.Where(k => activeKeys.Contains((KeyCode)k.value)).Count();
+            if (Main.IsWindows)
+            {
+                foreach (var mapping in WinInput.GetMappings().Where(k => activeKeys.Contains(k)))
+                {
+                    if (bs == ButtonState.IsDown && WinInput.GetState(mapping)) count++;
+                    if (bs == ButtonState.WentDown && WinInput.IsDown(mapping)) count++;
+                    if (bs == ButtonState.WentUp && WinInput.IsUp(mapping)) count++;
+                }
+            }
+            return count;
         }
     }
 }

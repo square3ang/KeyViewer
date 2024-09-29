@@ -1,6 +1,7 @@
 ﻿#pragma warning disable IDE0079
 #pragma warning disable IDE1006
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 using OggVorbisEncoder.Setup;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,7 @@ namespace KeyViewer.Core.Input
         private static HHook hInstance;
         private static int[] mappings;
         private static Dictionary<int, bool> states;
+        private static Dictionary<int, bool> prevStates;
         public static void Initialize()
         {
             if (!Main.IsWindows) return;
@@ -70,6 +72,7 @@ namespace KeyViewer.Core.Input
             }
             mappings = Enumerable.Repeat(-1, (int)EnumHelper<KeyCode>.GetValues().Max()).ToArray();
             states = new Dictionary<int, bool>();
+            prevStates = new Dictionary<int, bool>();
 
             SetMapping(KeyCode.RightAlt, 21); // Right Alt
             SetMapping(KeyCode.RightControl, 25); // Right Control
@@ -92,10 +95,14 @@ namespace KeyViewer.Core.Input
         public static void Release()
         {
             if (hInstance == null) return;
+            mappings = null;
+            states = null;
+            prevStates = null;
             KBDHooker.UnHook(hInstance);
             hInstance = null;
         }
 
+        public static bool HasMapping(KeyCode mapping) => TryGetState(mapping, out _);
         public static void SetMapping(KeyCode code, int winKeyCode)
         {
             mappings[(int)code] = winKeyCode;
@@ -107,6 +114,12 @@ namespace KeyViewer.Core.Input
             if (m < 0) return false;
             return states[m];
         }
+        public static IEnumerable<KeyCode> GetMappings()
+        {
+            for (int i = 0; i < mappings.Length; i++)
+                if (mappings[i] >= 0)
+                    yield return (KeyCode)i;
+        }
         public static bool TryGetState(KeyCode mapping, out bool state)
         { 
             state = false;
@@ -114,6 +127,31 @@ namespace KeyViewer.Core.Input
             if (m < 0) return false;
             state = states[m];
             return state;
+        }
+
+        public static bool Is(KeyCode mapping)
+        {
+            int m = mappings[(int)mapping];
+            if (m < 0 || !prevStates.TryGetValue(m, out bool value)) return false;
+            return value;
+        }
+        public static bool IsUp(KeyCode mapping)
+        {
+            int m = mappings[(int)mapping];
+            if (m < 0 || !prevStates.TryGetValue(m, out bool value)) return true;
+            return value && !states[m];
+        }
+        public static bool IsDown(KeyCode mapping)
+        {
+            int m = mappings[(int)mapping];
+            if (m < 0 || !prevStates.TryGetValue(m, out bool value)) return false;
+            return !value && states[m];
+        }
+        public static void UpdatePrevStates()
+        {
+            if (!Main.IsWindows) return;
+            foreach (var m in states.Keys)
+                prevStates[m] = states[m];
         }
 
         static WinInput()
