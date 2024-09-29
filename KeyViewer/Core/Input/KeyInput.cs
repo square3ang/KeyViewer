@@ -13,11 +13,8 @@ namespace KeyViewer.Core.Input
         public static bool Alt => GetKey(KeyCode.LeftAlt) || GetKey(KeyCode.RightAlt);
         public static bool GetKey(KeyCode code)
         {
-            if (Main.IsWindows)
-            {
-                if (code == KeyCode.RightAlt) return WinInput.RAlt;
-                if (code == KeyCode.RightControl) return WinInput.RCtrl;
-            }
+            if (Main.IsWindows && WinInput.TryGetState(code, out bool state))
+                return state;
             if (AsyncAvailable)
                 return AsyncInputCompat.GetKey(code);
             return SyncInput.GetKey(code);

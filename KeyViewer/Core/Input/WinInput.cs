@@ -1,7 +1,11 @@
 ﻿#pragma warning disable IDE0079
 #pragma warning disable IDE1006
+using KeyViewer.Utils;
+using OggVorbisEncoder.Setup;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -54,8 +58,8 @@ namespace KeyViewer.Core.Input
     {
         private static bool firstInit = true;
         private static HHook hInstance;
-        private static bool ralt = false;
-        private static bool rctrl = false;
+        private static int[] mappings;
+        private static Dictionary<int, bool> states;
         public static void Initialize()
         {
             if (!Main.IsWindows) return;
@@ -64,13 +68,23 @@ namespace KeyViewer.Core.Input
                 Application.quitting += Release;
                 firstInit = false;
             }
+            mappings = Enumerable.Repeat(-1, (int)EnumHelper<KeyCode>.GetValues().Max()).ToArray();
+            states = new Dictionary<int, bool>();
+
+            SetMapping(KeyCode.RightAlt, 21); // Right Alt
+            SetMapping(KeyCode.RightControl, 25); // Right Control
+
             hInstance = KBDHooker.HookThis((nCode, wParam, lParam) =>
             {
                 bool isDown = ((int)wParam - 256) == 0;
                 WinKeyCode code = KBDHooker.GetKeyCode(lParam);
 
-                if (code == WinKeyCode.RALT) ralt = isDown;
-                if (code == WinKeyCode.RCTRL) rctrl = isDown;
+                for (int i = 0; i < mappings.Length; i++)
+                {
+                    int m = mappings[i];
+                    if (m < 0 || m != (int)code) continue;
+                    states[m] = isDown;
+                }
 
                 return KBDHooker.CallNextHookEx(hInstance, nCode, wParam, lParam);
             });
@@ -82,8 +96,25 @@ namespace KeyViewer.Core.Input
             hInstance = null;
         }
 
-        public static bool RAlt => ralt;
-        public static bool RCtrl => rctrl;
+        public static void SetMapping(KeyCode code, int winKeyCode)
+        {
+            mappings[(int)code] = winKeyCode;
+            states[winKeyCode] = false;
+        }
+        public static bool GetState(KeyCode mapping)
+        {
+            int m = mappings[(int)mapping];
+            if (m < 0) return false;
+            return states[m];
+        }
+        public static bool TryGetState(KeyCode mapping, out bool state)
+        { 
+            state = false;
+            int m = mappings[(int)mapping];
+            if (m < 0) return false;
+            state = states[m];
+            return state;
+        }
 
         static WinInput()
         {
