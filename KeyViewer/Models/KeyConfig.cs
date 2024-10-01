@@ -11,7 +11,7 @@ namespace KeyViewer.Models
     {
         public int Count = 0;
         public KeyCode Code = KeyCode.None;
-        public KeyCode[] Codes = new KeyCode[0];
+        //public KeyCode[] Codes = new KeyCode[0];
         public string DummyName = null;
         public string Font = "Default";
         public bool EnableKPSMeter = false;
@@ -48,7 +48,7 @@ namespace KeyViewer.Models
 
             newConfig.Count = Count;
             newConfig.Code = Code;
-            newConfig.Codes = (KeyCode[])Codes.Clone();
+            //newConfig.Codes = (KeyCode[])Codes.Clone();
             newConfig.DummyName = DummyName;
             newConfig.Font = Font;
             newConfig.EnableKPSMeter = EnableKPSMeter;
@@ -86,7 +86,7 @@ namespace KeyViewer.Models
 
             node[nameof(Count)] = Count;
             node[nameof(Code)] = Code.ToString();
-            node[nameof(Codes)] = Codes.Select(k => k.ToString()).ToArray();
+            //node[nameof(Codes)] = Codes.Select(k => k.ToString()).ToArray();
             node[nameof(DummyName)] = DummyName;
             node[nameof(Font)] = Font;
             node[nameof(EnableKPSMeter)] = EnableKPSMeter;
@@ -123,7 +123,7 @@ namespace KeyViewer.Models
         {
             Count = node[nameof(Count)];
             Code = EnumHelper<KeyCode>.Parse(node[nameof(Code)]);
-            Codes = node[nameof(Codes)].IfNotExist(new JsonArray()).AsArray.Values.Select(n => EnumHelper<KeyCode>.Parse(n.Value)).ToArray();
+            //Codes = node[nameof(Codes)].IfNotExist(new JsonArray()).AsArray.Values.Select(n => EnumHelper<KeyCode>.Parse(n.Value)).ToArray();
             DummyName = node[nameof(DummyName)].IfNotExist(null);
             Font = node[nameof(Font)];
             EnableKPSMeter = node[nameof(EnableKPSMeter)];

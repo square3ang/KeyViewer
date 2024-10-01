@@ -306,8 +306,8 @@ namespace KeyViewer.Unity
             if (InputAPI.Active)
                 Pressed = InputAPI.APIFlags.TryGetValue(Config.Code, out var p) ? p : false;
             else Pressed = KeyInput.GetKey(Config.Code);
-            for (int i = 0; i < Config.Codes.Length; i++)
-                Pressed |= KeyInput.GetKey(Config.Codes[i]);
+            /*for (int i = 0; i < Config.Codes.Length; i++)
+                Pressed |= KeyInput.GetKey(Config.Codes[i]);*/
             if (prevPressed == Pressed) return;
             prevPressed = Pressed;
             if (Pressed)

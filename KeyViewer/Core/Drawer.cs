@@ -719,9 +719,9 @@ namespace KeyViewer.Core
                 label = ilovesuckyoubus[index];
             if (GUILayout.Button(label, GUI.skin.label, options))
             {
-                targetTime = Time.time + 1.5f;
+                /*targetTime = Time.time + 1.5f;
                 if (++index == ilovesuckyoubus.Length) index = 0;
-                Main.Logger.Log(ilovesuckyoubus[index]);
+                Main.Logger.Log(ilovesuckyoubus[index]);*/
             }
         }
         public static bool Button(string label)

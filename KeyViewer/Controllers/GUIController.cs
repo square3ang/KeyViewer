@@ -85,9 +85,11 @@ namespace KeyViewer.Controllers
             GUILayout.EndHorizontal();
 
             string[] ver = Main.Lang[TranslationKeys.Misc.RealLatestVersion].Split('.');
-            if (GUILayout.Button($"<color=#2BDCFF>C</color><color=#33DDF5>#</color><color=#3BDEEC>#</color><color=#44E0E3>'</color><color=#4CE1D9>s</color> <color=#5DE4C7>M</color><color=#66E5BE>O</color><color=#6EE7B4>D</color> <color=#7FEAA2>S</color><color=#88EB98>e</color><color=#90EC8F>r</color><color=#99EE86>v</color><color=#A1EF7D>e</color><color=#AAF173>r</color><color=#B2F26A>!</color> <color=#C3F557>(</color><color=#CCF64E>K</color><color=#D4F845>e</color><color=#DDF93C>y</color><color=#E5FA32>V</color><color=#EEFC29>i</color><color=#F6FD20>e</color><color=#FEFF16>w</color><color=#FEF81F>e</color><color=#FEF127>r</color> <color=#FEE338>L</color><color=#FEDC40>a</color><color=#FED549>t</color><color=#FECF51>e</color><color=#FEC859>s</color><color=#FEC162>t</color> <color=#FEB372>V</color><color=#FEAC7B>e</color><color=#FEA683>r</color><color=#FE9F8C>s</color><color=#FE9894>i</color><color=#FE919C>o</color><color=#FE8AA5>n</color><color=#FE83AD>:</color><color=#FE7DB5>{ver[0]}</color><color=#FE76BE>.</color><color=#FE6FC6>{ver[1]}</color><color=#FE68CE>.</color><color=#FE61D7>{ver[2]}</color><color=#FE5ADF>)</color>", GUI.skin.label))
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button($"Square Mod Server"))
                 Application.OpenURL(Main.DiscordLink);
-
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
             if (GUILayout.Button(Main.Lang[TranslationKeys.BOATK], GUI.skin.label))
                 Application.OpenURL("https://github.com/PizzaLovers007/AdofaiTweaks/tree/master/AdofaiTweaks/Tweaks/KeyViewer");
         }

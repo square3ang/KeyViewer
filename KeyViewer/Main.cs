@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using JSON;
 using KeyViewer.Controllers;
 using KeyViewer.Core;
@@ -23,6 +24,7 @@ using System.Xml.Serialization;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
+using Object = UnityEngine.Object;
 
 namespace KeyViewer
 {
@@ -271,12 +273,16 @@ namespace KeyViewer
         }
         public static async void InitializeWebAPI()
         {
-            if (WebAPIInitialized) return;
+            /*if (WebAPIInitialized) return;
             Logger.Log($"Handshake Response:{await KeyViewerWebAPI.Handshake()}");
             LastestVersion = await KeyViewerWebAPI.GetVersion();
             DiscordLink = await KeyViewerWebAPI.GetDiscordLink();
             DownloadLink = await KeyViewerWebAPI.GetDownloadLink();
-            StaticCoroutine.QAct(EnsureKeyViewerVersion);
+            StaticCoroutine.QAct(EnsureKeyViewerVersion);*/
+            LastestVersion = new Version(0, 0, 0);
+            DiscordLink = "https://discord.gg/WhkXF9vrER";
+            DownloadLink = "";
+            
             WebAPIInitialized = true;
         }
         public static void EnsureKeyViewerVersion()
