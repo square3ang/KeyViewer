@@ -22,7 +22,7 @@ namespace KeyViewer.Views
                 {
                     Main.GUI.Skip(() =>
                     {
-                        KeyViewerUtils.OpenDiscordUrl();
+                        //KeyViewerUtils.OpenDiscordUrl();
                         Main.Lang = Language.GetLanguage(model.Language);
                         Main.OnLanguageInitialize();
                     });
