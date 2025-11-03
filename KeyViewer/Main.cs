@@ -63,7 +63,8 @@ namespace KeyViewer
             modEntry.OnLateUpdate += OnLateUpdate;
             modEntry.Info.Version = Constants.Version;
             typeof(ModEntry).GetField(nameof(ModEntry.Version)).SetValue(modEntry, ModVersion = System.Version.Parse(Constants.Version));
-            IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            // Temporary fix
+            // IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
             Lang.OnInitialize += OnLanguageInitialize;
         }
@@ -71,7 +72,8 @@ namespace KeyViewer
         {
             if (toggle)
             {
-                WinInput.Initialize();
+                // Temporary fix
+                // WinInput.Initialize();
                 Tag.InitializeWrapperAssembly();
                 FontManager.Initialize();
                 AssetManager.Initialize();
