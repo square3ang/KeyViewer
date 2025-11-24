@@ -72,13 +72,6 @@ namespace KeyViewer
                 AssetManager.Initialize();
                 JudgementColorPatch.Initialize();
                 Settings = new Settings();
-                Lang.Language = Settings.Lang;
-                Lang.OnInitialize += OnLanguageInitialize;
-                var settingsDrawer = new SettingsDrawer(Settings);
-                Lang.OnInitialize += () => {
-                    settingsDrawer.NeedLangInit = true;
-                };
-                _ = Lang.Load(Path.Combine(Mod.Path, "lang"));
                 if (File.Exists(Constants.SettingsPath))
                     Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
                 Managers = new Dictionary<string, KeyManager>();
@@ -98,6 +91,15 @@ namespace KeyViewer
                     Settings.ActiveProfiles.Add(def);
                     AddManager(def);
                 }
+
+                Lang.Language = Settings.Lang;
+                Lang.OnInitialize += OnLanguageInitialize;
+                var settingsDrawer = new SettingsDrawer(Settings);
+                Lang.OnInitialize += () => {
+                    settingsDrawer.NeedLangInit = true;
+                };
+                _ = Lang.Load(Path.Combine(Mod.Path, "lang"));
+
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
                 StaticCoroutine.Run(InitializeManagersCo());
