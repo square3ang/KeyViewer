@@ -8,7 +8,7 @@ namespace KeyViewer.Models
 {
     public class Settings : IModel, ICopyable<Settings>
     {
-        public string Lang = "English";
+        public string Lang = "Default";
         public bool useLegacyTheme = false;
         public List<ActiveProfile> ActiveProfiles = new List<ActiveProfile>();
         public JsonNode Serialize()
