@@ -1,6 +1,7 @@
 {
-  "English": {
-    "0KTL_KEYVIEWER": "DO_NOT_TRANSLATE_THIS",
+  "en-US": {
+    "0KTL_KEYVIEWER": "DO_NOT_TRANSLATE_THIS_KEY!",
+    "0NATIVELANG": "English",
     "0TRANSLATORS": [
       "KEYVIEWER"
     ],

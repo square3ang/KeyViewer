@@ -19,6 +19,7 @@ namespace KeyViewer.Controllers
         public void Init(IDrawable drawable)
         {
             first = current = drawable;
+            hasOnceCalled = false;
         }
         public void Push(IDrawable drawable)
         {
@@ -38,6 +39,7 @@ namespace KeyViewer.Controllers
                 else drawables[depth++] = current;
             }
             current = drawable;
+            hasOnceCalled = false;
         }
         public void Pop()
         {
@@ -45,7 +47,11 @@ namespace KeyViewer.Controllers
             var cache = current;
             current = drawables[--depth];
             drawables[depth] = cache;
+            hasOnceCalled = false;
         }
+
+        private bool hasOnceCalled = false;
+
         public void Draw()
         {
             if (skipFrames > 0)
@@ -71,6 +77,12 @@ namespace KeyViewer.Controllers
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+
+            if(!hasOnceCalled) {
+                current?.OnceCall();
+                hasOnceCalled = true;
+            }
+
             current.Draw();
         }
         public void Skip(Action onSkip = null, int frames = 1)

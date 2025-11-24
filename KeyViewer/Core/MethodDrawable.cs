@@ -7,11 +7,14 @@ namespace KeyViewer.Core
     {
         public string Name { get; set; }
         public Action drawerMethod { get; set; }
+        public Action onceMethod { get; set; }
         public void Draw() => drawerMethod?.Invoke();
-        public MethodDrawable(Action drawer, string name)
+        public void OnceCall() => onceMethod?.Invoke();
+        public MethodDrawable(Action drawer, string name, Action once = null)
         {
             drawerMethod = drawer;
             Name = name;
+            onceMethod = once;
         }
     }
 }

@@ -14,5 +14,6 @@ namespace KeyViewer.Core
         }
         public abstract void Draw();
         public virtual void OnKeyDown(KeyCode code) { }
+        public virtual void OnceCall() { }
     }
 }

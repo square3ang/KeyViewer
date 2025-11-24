@@ -11,6 +11,7 @@ using KeyViewer.Patches;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using KeyViewer.Views;
+using KeyViewer.Core.Translation;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +24,6 @@ using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
 using Object = UnityEngine.Object;
-using Overlayer.Core.Translatior;
 
 namespace KeyViewer
 {
@@ -63,8 +63,6 @@ namespace KeyViewer
             modEntry.OnLateUpdate += OnLateUpdate;
             // Temporary fix
             // IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
-            Lang.OnInitialize += OnLanguageInitialize;
         }
         public static bool OnToggle(ModEntry modEntry, bool toggle)
         {
@@ -77,6 +75,13 @@ namespace KeyViewer
                 AssetManager.Initialize();
                 JudgementColorPatch.Initialize();
                 Settings = new Settings();
+                Lang.Language = Settings.Lang;
+                Lang.OnInitialize += OnLanguageInitialize;
+                var settingsDrawer = new SettingsDrawer(Settings);
+                Lang.OnInitialize += () => {
+                    settingsDrawer.NeedLangInit = true;
+                };
+                _ = Lang.Load(Path.Combine(Mod.Path, "lang"));
                 if (File.Exists(Constants.SettingsPath))
                     Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
                 Managers = new Dictionary<string, KeyManager>();
@@ -98,11 +103,14 @@ namespace KeyViewer
                     Settings.ActiveProfiles.Add(def);
                     AddManager(def);
                 }
-                Lang.CurrentLanguage = Settings.Lang;
-                _ = Lang.LoadTranslationsAsync(Path.Combine(Mod.Path, "lang"));
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
                 StaticCoroutine.Run(InitializeManagersCo());
+
+                GUI.Init(settingsDrawer);
+                GUI.Flush();
+
+                ListeningDrawer = null;
                 IsEnabled = true;
             }
             else
@@ -118,6 +126,7 @@ namespace KeyViewer
                 WinInput.Release();
                 Tag.ReleaseWrapperAssembly();
                 Resources.UnloadUnusedAssets();
+                Lang.Release();
                 System.GC.Collect(System.GC.MaxGeneration, System.GCCollectionMode.Forced, true);
             }
             return true;
@@ -141,9 +150,7 @@ namespace KeyViewer
         }
         public static void OnGUI(ModEntry modEntry)
         {
-            if (Lang.GetLoading())
-                GUILayout.Label("Preparing...");
-            else GUI.Draw();
+            GUI.Draw();
         }
         public static void OnSaveGUI(ModEntry modEntry)
         {
@@ -174,9 +181,12 @@ namespace KeyViewer
         }
         public static void OnLanguageInitialize()
         {
-            GUI.Flush();
-            ListeningDrawer = null;
-            GUI.Init(new SettingsDrawer(Settings));
+            string[] translatorLogs = Lang.Logs;
+            if(translatorLogs != null && translatorLogs.Length > 0) {
+                foreach(var log in translatorLogs) {
+                    Logger.Log(log);
+                }
+            }
         }
         public static bool AddManager(ActiveProfile profile, bool forceInit = false)
         {

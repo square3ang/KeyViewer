@@ -328,7 +328,6 @@
     <Compile Include="Core\TextReplacing\Replacer.cs" />
     <Compile Include="Core\TextReplacing\Tag.cs" />
     <Compile Include="Core\Translation\Translator.cs" />
-    <Compile Include="Core\Translation\TranslatorHelper.cs" />
     <Compile Include="Lib\JSON.cs" />
     <Compile Include="Lib\JSON.Unity.cs" />
     <Compile Include="Main.cs" />
@@ -458,8 +457,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="MiscFiles\info.json" />
-    <None Include="MiscFiles\lang\English.json" />
-    <None Include="MiscFiles\lang\Korean.json" />
+    <None Include="MiscFiles\lang\en-US.json" />
+    <None Include="MiscFiles\lang\ko-KR.json" />
     <None Include="rapidgui\Component\IMColorPicker\Resources\imPreset.asset" />
     <None Include="rapidgui\Component\IMColorPicker\Scripts\Editor\RapidGUI.IMColorPicier.Editor.asmdef" />
     <None Include="rapidgui\Component\IMColorPicker\Test\IMColorPickerTest.unity" />
