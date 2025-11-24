@@ -84,11 +84,9 @@ namespace KeyViewer
                 Managers = new Dictionary<string, KeyManager>();
                 ToDeleteFiles = new HashSet<string>();
                 List<string> notExistProfiles = new List<string>();
-                var jsonProfiles = Settings.ActiveProfiles.Where(ap => ap.Key == null);
-                var encryptedProfiles = Settings.ActiveProfiles.Where(ap => ap.Key != null);
-                foreach (var profile in jsonProfiles.Concat(encryptedProfiles))
-                {
-                    if (!AddManager(profile))
+                var profiles = Settings.ActiveProfiles;
+                foreach(var profile in profiles) {
+                    if(!AddManager(profile))
                         notExistProfiles.Add(profile.Name);
                 }
                 Settings.ActiveProfiles.RemoveAll(p => notExistProfiles.Contains(p.Name));
@@ -187,19 +185,11 @@ namespace KeyViewer
         }
         public static bool AddManager(ActiveProfile profile, bool forceInit = false)
         {
-            var hasKey = !string.IsNullOrWhiteSpace(profile.Key);
-            var profilePath = !hasKey ?
-                Path.Combine(Mod.Path, $"{profile.Name}.json") :
-                Path.Combine(Mod.Path, $"{profile.Name}.encryptedProfile");
+            var profilePath = Path.Combine(Mod.Path, $"{profile.Name}.json");
             if (File.Exists(profilePath))
             {
                 if (profile.Active)
                 {
-                    if (hasKey)
-                    {
-                        if (Managers.TryGetValue(profile.Name, out _)) return true;
-                        return true;
-                    }
                     var profileNode = JsonNode.Parse(File.ReadAllText(profilePath));
                     var p = ProfileImporter.Import(profileNode);
                     if (Managers.TryGetValue(profile.Name, out var manager))

@@ -10,22 +10,18 @@ namespace KeyViewer.Models
         {
             Name = name;
             Active = active;
-            Key = null;
         }
         public ActiveProfile(string name, bool active, string key)
         {
             Name = name;
             Active = active;
-            Key = key;
         }
         public string Name;
-        public string Key;
         public bool Active;
         public ActiveProfile Copy()
         {
             var profile = new ActiveProfile();
             profile.Name = Name;
-            profile.Key = Key;
             profile.Active = Active;
             return profile;
         }
@@ -33,14 +29,12 @@ namespace KeyViewer.Models
         {
             var node = JsonNode.Empty;
             node[nameof(Name)] = Name;
-            node[nameof(Key)] = Key;
             node[nameof(Active)] = Active;
             return node;
         }
         public void Deserialize(JsonNode node)
         {
             Name = node[nameof(Name)];
-            Key = node[nameof(Key)].IfNotExist(null);
             Active = node[nameof(Active)];
         }
     }
