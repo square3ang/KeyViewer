@@ -40,9 +40,6 @@ namespace KeyViewer
         public static ModelDrawable<Profile> ListeningDrawer { get; internal set; }
         public static Harmony Harmony { get; private set; }
         public static GUIController GUI { get; private set; }
-        public static HttpClient HttpClient { get; private set; }
-        public static System.Version LastestVersion { get; private set; }
-        public static System.Version ModVersion { get; private set; }
         public static HashSet<string> ToDeleteFiles { get; private set; }
         public static event System.Action OnManagersInitialized = delegate { };
         public static bool IsWindows { get; private set; }
