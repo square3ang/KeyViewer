@@ -61,8 +61,6 @@ namespace KeyViewer
             modEntry.OnShowGUI = OnShowGUI;
             modEntry.OnHideGUI = OnHideGUI;
             modEntry.OnLateUpdate += OnLateUpdate;
-            modEntry.Info.Version = Constants.Version;
-            typeof(ModEntry).GetField(nameof(ModEntry.Version)).SetValue(modEntry, ModVersion = System.Version.Parse(Constants.Version));
             // Temporary fix
             // IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
