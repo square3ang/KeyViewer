@@ -1,6 +1,5 @@
 ﻿using System;
 using HarmonyLib;
-using JSON;
 using KeyViewer.Controllers;
 using KeyViewer.Core;
 using KeyViewer.Core.Input;
@@ -24,6 +23,7 @@ using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
 using Object = UnityEngine.Object;
+using Newtonsoft.Json.Linq;
 
 namespace KeyViewer
 {
@@ -43,9 +43,11 @@ namespace KeyViewer
         public static HashSet<string> ToDeleteFiles { get; private set; }
         public static event System.Action OnManagersInitialized = delegate { };
         public static bool IsWindows { get; private set; }
+        public static string ProfilePath;
         public static void Load(ModEntry modEntry)
         {
             Mod = modEntry;
+            ProfilePath = Path.Combine(Mod.Path, "profiles");
             Logger = modEntry.Logger;
 
             GUI = new GUIController();
@@ -72,8 +74,10 @@ namespace KeyViewer
                 AssetManager.Initialize();
                 JudgementColorPatch.Initialize();
                 Settings = new Settings();
-                if (File.Exists(Constants.SettingsPath))
-                    Settings.Deserialize(JsonNode.Parse(File.ReadAllText(Constants.SettingsPath)));
+                if(File.Exists(Constants.SettingsPath)) {
+                    var json = JToken.Parse(File.ReadAllText(Constants.SettingsPath));
+                    Settings.Deserialize(json);
+                }
                 Managers = new Dictionary<string, KeyManager>();
                 ToDeleteFiles = new HashSet<string>();
                 List<string> notExistProfiles = new List<string>();
@@ -85,8 +89,8 @@ namespace KeyViewer
                 Settings.ActiveProfiles.RemoveAll(p => notExistProfiles.Contains(p.Name));
                 if (!Settings.ActiveProfiles.Any())
                 {
-                    File.WriteAllText(Path.Combine(Mod.Path, "Default.json"),
-                        new Profile().Serialize().ToString(4));
+                    File.WriteAllText(Path.Combine(ProfilePath, "Default.json"),
+                        new Profile().Serialize().ToString());
                     var def = new ActiveProfile("Default", true);
                     Settings.ActiveProfiles.Add(def);
                     AddManager(def);
@@ -151,11 +155,10 @@ namespace KeyViewer
         }
         public static void OnSaveGUI(ModEntry modEntry)
         {
-            File.WriteAllText(Constants.SettingsPath, Settings.Serialize().ToString(4));
+            File.WriteAllText(Constants.SettingsPath, Settings.Serialize().ToString());
             foreach (var (name, manager) in Managers)
             {
-                if (manager.encrypted) continue;
-                File.WriteAllText(Path.Combine(Mod.Path, $"{name}.json"), manager.profile.Serialize().ToString(4));
+                File.WriteAllText(Path.Combine(ProfilePath, $"{name}.json"), manager.profile.Serialize().ToString());
             }
             foreach (var path in ToDeleteFiles)
                 File.Delete(path);
@@ -187,18 +190,20 @@ namespace KeyViewer
         }
         public static bool AddManager(ActiveProfile profile, bool forceInit = false)
         {
-            var profilePath = Path.Combine(Mod.Path, $"{profile.Name}.json");
+            var profilePath = Path.Combine(ProfilePath, $"{profile.Name}.json");
             if (File.Exists(profilePath))
             {
-                if (profile.Active)
-                {
-                    var profileNode = JsonNode.Parse(File.ReadAllText(profilePath));
-                    var p = ProfileImporter.Import(profileNode);
-                    if (Managers.TryGetValue(profile.Name, out var manager))
+                if(profile.Active) {
+                    var profileJson = JToken.Parse(File.ReadAllText(profilePath));
+                    var p = ProfileImporter.Import(profileJson);
+
+                    if(Managers.TryGetValue(profile.Name, out var manager)) {
                         Object.Destroy(manager);
+                    }
+
                     Managers[profile.Name] = KeyManager.CreateManager(profile.Name, p);
-                    if (forceInit)
-                    {
+
+                    if(forceInit) {
                         Managers[profile.Name].Init();
                         Managers[profile.Name].UpdateKeys();
                         Logger.Log($"Initialized Key Manager {profile.Name}.");
@@ -223,7 +228,6 @@ namespace KeyViewer
             var manager = KeyManager.CreateManager(profile.Name, p);
             manager.Init();
             manager.UpdateKeys();
-            manager.encrypted = true;
             Managers[name] = manager;
             Logger.Log($"Initialized Key Manager {profile.Name}.");
             return (manager, profile);
@@ -283,7 +287,7 @@ namespace KeyViewer
                 for (int i = 0; i < newSettings.ActiveProfiles.Count; i++)
                 {
                     var profile = newSettings.ActiveProfiles[i];
-                    File.WriteAllText(Path.Combine(Mod.Path, $"{profile.Name}.json"), profilesNode[i].ToString(4));
+                    File.WriteAllText(Path.Combine(ProfilePath, $"{profile.Name}.json"), profilesNode[i].ToString());
                     AddManager(profile, true);
                 }
                 GUI.Flush();
@@ -297,7 +301,7 @@ namespace KeyViewer
                     serializer = new XmlSerializer(typeof(V3Profile), GetXAO(false));
                     var v3p = serializer.Deserialize(File.OpenRead(path)) as V3Profile;
                     var profile = V3Migrator.MigrateProfile(v3p);
-                    File.WriteAllText(Path.Combine(Mod.Path, $"{v3p.Name}.json"), profile.Serialize().ToString(4));
+                    File.WriteAllText(Path.Combine(ProfilePath, $"{v3p.Name}.json"), profile.Serialize().ToString());
                     var activeProfile = new ActiveProfile(v3p.Name, true);
                     Settings.ActiveProfiles.Add(activeProfile);
                     AddManager(activeProfile, true);

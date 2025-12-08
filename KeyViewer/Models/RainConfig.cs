@@ -1,6 +1,6 @@
-﻿using JSON;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -36,9 +36,9 @@ namespace KeyViewer.Models
             newConfig.Direction = Direction;
             return newConfig;
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            var node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(Speed)] = Speed.Serialize();
             node[nameof(Length)] = Length.Serialize();
             node[nameof(Softness)] = Softness.Serialize();
@@ -52,19 +52,26 @@ namespace KeyViewer.Models
             node[nameof(Direction)] = Direction.ToString();
             return node;
         }
-        public void Deserialize(JsonNode node)
+        public void Deserialize(JToken node)
         {
+            var defaultSettings = new RainConfig();
+
             Speed = ModelUtils.Unbox<PressRelease<float>>(node[nameof(Speed)]);
             Length = ModelUtils.Unbox<PressRelease<float>>(node[nameof(Length)]);
             Softness = ModelUtils.Unbox<PressRelease<int>>(node[nameof(Softness)]);
-            PoolSize = node[nameof(PoolSize)];
-            Roundness = node[nameof(Roundness)];
+            PoolSize = node[nameof(PoolSize)]?.Value<int>() ?? defaultSettings.PoolSize;
+            Roundness = node[nameof(Roundness)]?.Value<float>() ?? defaultSettings.Roundness;
             //BlurEnabled = node[nameof(BlurEnabled)];
             //BlurConfig = ModelUtils.Unbox<BlurConfig>(node[nameof(BlurConfig)]) ?? new BlurConfig();
             ObjectConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(ObjectConfig)]);
-            RainImages = ModelUtils.UnwrapList<RainImage>(node[nameof(RainImages)].AsArray) ?? new List<RainImage>();
-            ImageDisplayMode = EnumHelper<RainImageDisplayMode>.Parse(node[nameof(ImageDisplayMode)]);
-            Direction = EnumHelper<Direction>.Parse(node[nameof(Direction)]);
+            RainImages = ModelUtils.UnwrapList<RainImage>(node[nameof(RainImages)]);
+            ImageDisplayMode = EnumHelper<RainImageDisplayMode>.Parse(
+                node[nameof(ImageDisplayMode)]?.Value<string>(),
+                defaultSettings.ImageDisplayMode);
+            Direction = EnumHelper<Direction>.Parse(
+                node[nameof(Direction)]?.Value<string>(),
+                defaultSettings.Direction
+            );
         }
     }
 }

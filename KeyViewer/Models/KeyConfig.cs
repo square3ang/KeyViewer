@@ -1,8 +1,7 @@
 ﻿using DG.Tweening;
-using JSON;
 using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
-using System.Linq;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace KeyViewer.Models
@@ -80,10 +79,9 @@ namespace KeyViewer.Models
             newConfig.Rain = Rain.Copy();
             return newConfig;
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            var node = JsonNode.Empty;
-
+            var node = new JObject();
             node[nameof(Count)] = Count;
             node[nameof(Code)] = Code.ToString();
             //node[nameof(Codes)] = Codes.Select(k => k.ToString()).ToArray();
@@ -119,22 +117,24 @@ namespace KeyViewer.Models
 
             return node;
         }
-        public void Deserialize(JsonNode node)
+        public void Deserialize(JToken node)
         {
-            Count = node[nameof(Count)];
-            Code = EnumHelper<KeyCode>.Parse(node[nameof(Code)]);
+            var defaultSettings = new KeyConfig();
+
+            Count = node[nameof(Count)]?.Value<int>() ?? defaultSettings.Count;
+            Code = EnumHelper<KeyCode>.Parse(node[nameof(Code)]?.Value<string>() ?? defaultSettings.Code.ToString());
             //Codes = node[nameof(Codes)].IfNotExist(new JsonArray()).AsArray.Values.Select(n => EnumHelper<KeyCode>.Parse(n.Value)).ToArray();
-            DummyName = node[nameof(DummyName)].IfNotExist(null);
-            Font = node[nameof(Font)];
-            EnableKPSMeter = node[nameof(EnableKPSMeter)];
-            UpdateTextAlways = node[nameof(UpdateTextAlways)];
-            EnableCountText = node[nameof(EnableCountText)];
-            EnableOutlineImage = node[nameof(EnableOutlineImage)];
-            DisableSorting = node[nameof(DisableSorting)];
-            DoNotScaleText = node[nameof(DoNotScaleText)];
-            BackgroundBlurEnabled = node[nameof(BackgroundBlurEnabled)];
-            TextFontSize = node[nameof(TextFontSize)].IfNotExist(75);
-            CountTextFontSize = node[nameof(CountTextFontSize)].IfNotExist(50);
+            DummyName = node[nameof(DummyName)]?.Value<string>() ?? defaultSettings.DummyName;
+            Font = node[nameof(Font)]?.Value<string>() ?? defaultSettings.Font;
+            EnableKPSMeter = node[nameof(EnableKPSMeter)]?.Value<bool>() ?? defaultSettings.EnableKPSMeter;
+            UpdateTextAlways = node[nameof(UpdateTextAlways)]?.Value<bool>() ?? defaultSettings.UpdateTextAlways;
+            EnableCountText = node[nameof(EnableCountText)]?.Value<bool>() ?? defaultSettings.EnableCountText;
+            EnableOutlineImage = node[nameof(EnableOutlineImage)]?.Value<bool>() ?? defaultSettings.EnableOutlineImage;
+            DisableSorting = node[nameof(DisableSorting)]?.Value<bool>() ?? defaultSettings.DisableSorting;
+            DoNotScaleText = node[nameof(DoNotScaleText)]?.Value<bool>() ?? defaultSettings.DoNotScaleText;
+            BackgroundBlurEnabled = node[nameof(BackgroundBlurEnabled)]?.Value<bool>() ?? defaultSettings.BackgroundBlurEnabled;
+            TextFontSize = node[nameof(TextFontSize)]?.Value<float>() ?? defaultSettings.TextFontSize;
+            CountTextFontSize = node[nameof(CountTextFontSize)]?.Value<float>() ?? defaultSettings.CountTextFontSize;
 
             Text = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Text)]);
             CountText = ModelUtils.Unbox<PressRelease<string>>(node[nameof(CountText)]);
@@ -145,13 +145,13 @@ namespace KeyViewer.Models
             CountTextConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(CountTextConfig)]);
             BackgroundConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(BackgroundConfig)]);
             OutlineConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(OutlineConfig)]);
-            BackgroundRoundness = node[nameof(BackgroundRoundness)];
-            OutlineRoundness = node[nameof(OutlineRoundness)];
+            BackgroundRoundness = node[nameof(BackgroundRoundness)]?.Value<float>() ?? defaultSettings.BackgroundRoundness;
+            OutlineRoundness = node[nameof(OutlineRoundness)]?.Value<float>() ?? defaultSettings.OutlineRoundness;
             BackgroundBlurConfig = ModelUtils.Unbox<BlurConfig>(node[nameof(BackgroundBlurConfig)]) ?? new BlurConfig();
 
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
 
-            RainEnabled = node[nameof(RainEnabled)];
+            RainEnabled = node[nameof(RainEnabled)]?.Value<bool>() ?? defaultSettings.RainEnabled;
             Rain = ModelUtils.Unbox<RainConfig>(node[nameof(Rain)]);
         }
     }

@@ -1,5 +1,4 @@
-﻿using JSON;
-using KeyViewer.Models;
+﻿using KeyViewer.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -62,11 +61,7 @@ namespace KeyViewer.Utils
             if (b) a();
             return b;
         }
-        public static string ToStringN(this JsonNode node)
-        {
-            if (node == null) return null;
-            return node.Value;
-        }
+
         /// <summary>
         /// For Avoid Warning
         /// </summary>
@@ -203,7 +198,6 @@ namespace KeyViewer.Utils
                     }
             }
         }
-        public static JsonNode IfNotExist(this JsonNode node, JsonNode other) => node == null ? other : node;
         public static byte[] Compress(this byte[] data)
         {
             using (MemoryStream output = new MemoryStream())

@@ -1,14 +1,14 @@
-﻿using JSON;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 
 namespace KeyViewer.Models
 {
     public class RainImage : IModel, ICopyable<RainImage>
     {
-        public int Count;
-        public string Image;
-        public float Roundness;
+        public int Count = 0;
+        public string Image = null;
+        public float Roundness = 0f;
         //public bool BlurEnabled = false;
         //public BlurConfig BlurConfig = new BlurConfig();
         public RainImage Copy()
@@ -21,9 +21,9 @@ namespace KeyViewer.Models
             //image.BlurConfig = BlurConfig.Copy();
             return image;
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            var node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(Count)] = Count;
             node[nameof(Image)] = Image;
             node[nameof(Roundness)] = Roundness;
@@ -31,11 +31,13 @@ namespace KeyViewer.Models
             //node[nameof(BlurConfig)] = BlurConfig.Serialize();
             return node;
         }
-        public void Deserialize(JsonNode node)
+        public void Deserialize(JToken node)
         {
-            Count = node[nameof(Count)];
-            Image = node[nameof(Image)].IfNotExist(null);
-            Roundness = node[nameof(Roundness)];
+            var defaultSetttings = new RainImage();
+
+            Count = node[nameof(Count)]?.Value<int>() ?? defaultSetttings.Count;
+            Image = node[nameof(Image)]?.Value<string>() ?? defaultSetttings.Image;
+            Roundness = node[nameof(Roundness)]?.Value<float>() ?? defaultSetttings.Roundness;
             //BlurEnabled = node[nameof(BlurEnabled)];
             //BlurConfig = ModelUtils.Unbox<BlurConfig>(node[nameof(BlurConfig)]) ?? new BlurConfig();
         }

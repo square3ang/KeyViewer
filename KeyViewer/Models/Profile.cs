@@ -1,6 +1,6 @@
-﻿using JSON;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,9 +29,9 @@ namespace KeyViewer.Models
             newProfile.KPSUpdateRate = KPSUpdateRate;
             return newProfile;
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            var node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(Keys)] = ModelUtils.WrapCollection(Keys);
             node[nameof(ViewOnlyGamePlay)] = ViewOnlyGamePlay;
             node[nameof(LimitNotRegisteredKeys)] = LimitNotRegisteredKeys;
@@ -42,16 +42,18 @@ namespace KeyViewer.Models
             node[nameof(KPSUpdateRate)] = KPSUpdateRate;
             return node;
         }
-        public void Deserialize(JsonNode node)
+        public void Deserialize(JToken node)
         {
-            Keys = ModelUtils.UnwrapList<KeyConfig>(node[nameof(Keys)].AsArray);
-            ViewOnlyGamePlay = node[nameof(ViewOnlyGamePlay)];
-            LimitNotRegisteredKeys = node[nameof(LimitNotRegisteredKeys)];
-            ResetOnStart = node[nameof(ResetOnStart)];
-            DoNotAssAss = true;// node[nameof(DoNotAssAss)].IfNotExist(true);
-            KeySpacing = node[nameof(KeySpacing)];
+            var defaultSettings = new Profile();
+
+            Keys = ModelUtils.UnwrapList<KeyConfig>(node[nameof(Keys)]);
+            ViewOnlyGamePlay = node[nameof(ViewOnlyGamePlay)]?.Value<bool>() ?? defaultSettings.ViewOnlyGamePlay;
+            LimitNotRegisteredKeys = node[nameof(LimitNotRegisteredKeys)]?.Value<bool>() ?? defaultSettings.LimitNotRegisteredKeys;
+            ResetOnStart = node[nameof(ResetOnStart)]?.Value<bool>() ?? defaultSettings.ResetOnStart;
+            DoNotAssAss = true; // node[nameof(DoNotAssAss)].IfNotExist(true);
+            KeySpacing = node[nameof(KeySpacing)]?.Value<float>() ?? defaultSettings.KeySpacing;
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
-            KPSUpdateRate = node[nameof(KPSUpdateRate)];
+            KPSUpdateRate = node[nameof(KPSUpdateRate)]?.Value<int>() ?? defaultSettings.KPSUpdateRate;
         }
     }
 }

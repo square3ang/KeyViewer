@@ -1,4 +1,4 @@
-﻿using JSON;
+﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,13 +8,12 @@ namespace KeyViewer.Migration.V3
     // V3 To V4
     public class V3Migrator
     {
-        public static Models.Settings Migrate(V3Settings settings, out List<JsonNode> profiles)
-        {
+        public static Models.Settings Migrate(V3Settings settings, out List<JObject> profiles) {
             var v4Settings = new Models.Settings();
             v4Settings.ActiveProfiles.AddRange(settings.Profiles.Select(p => new Models.ActiveProfile(p.Name, true)));
-            profiles = new List<JsonNode>();
+            profiles = new List<JObject>();
             foreach (var profile in settings.Profiles)
-                profiles.Add(MigrateProfile(profile).Serialize());
+                profiles.Add((JObject)MigrateProfile(profile).Serialize());
             return v4Settings;
         }
         public static Models.Profile MigrateProfile(V3Profile profile)

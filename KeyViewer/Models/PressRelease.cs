@@ -1,6 +1,6 @@
-﻿using JSON;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 
 namespace KeyViewer.Models
 {
@@ -48,9 +48,9 @@ namespace KeyViewer.Models
             newPR.Status = Status.Copy();
             return newPR;
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            JsonNode node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(Pressed)] = ModelUtils.ToNode<T>(Pressed);
             node[nameof(Released)] = ModelUtils.ToNode<T>(Released);
             node[nameof(PressedEase)] = PressedEase.Serialize();
@@ -58,7 +58,7 @@ namespace KeyViewer.Models
             node[nameof(Status)] = Status.Serialize();
             return node;
         }
-        public void Deserialize(JsonNode node)
+        public void Deserialize(JToken node)
         {
             Pressed = (T)ModelUtils.ToObject<T>(node[nameof(Pressed)]);
             Released = (T)ModelUtils.ToObject<T>(node[nameof(Released)]);
@@ -96,9 +96,9 @@ namespace KeyViewer.Models
             ReleasedEase = value;
             return this;
         }
-        public new JsonNode Serialize()
+        public new JToken Serialize()
         {
-            JsonNode node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(Pressed)] = Pressed.Serialize();
             node[nameof(Released)] = Released.Serialize();
             node[nameof(PressedEase)] = PressedEase.Serialize();
@@ -106,13 +106,13 @@ namespace KeyViewer.Models
             node[nameof(Status)] = Status.Serialize();
             return node;
         }
-        public new void Deserialize(JsonNode node)
+        public new void Deserialize(JToken node)
         {
             Pressed = ModelUtils.Unbox<T>(node[nameof(Pressed)]);
             Released = ModelUtils.Unbox<T>(node[nameof(Released)]);
             PressedEase = ModelUtils.Unbox<EaseConfig>(node[nameof(PressedEase)]);
             ReleasedEase = ModelUtils.Unbox<EaseConfig>(node[nameof(ReleasedEase)]);
-            Status = ModelUtils.Unbox<GUIStatus>(node[nameof(Status)]) ?? new GUIStatus();
+            Status = ModelUtils.Unbox<GUIStatus>(node[nameof(Status)]);
         }
         public new PressReleaseM<T> Copy()
         {

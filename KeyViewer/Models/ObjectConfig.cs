@@ -1,6 +1,6 @@
-﻿using JSON;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace KeyViewer.Models
@@ -42,9 +42,9 @@ namespace KeyViewer.Models
             newConfig.JudgeColorEase = JudgeColorEase.Copy();
             return newConfig;
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            var node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(VectorConfig)] = VectorConfig.Serialize();
             node[nameof(Color)] = Color.Serialize();
             node[nameof(ChangeColorWithJudge)] = ChangeColorWithJudge;
@@ -52,11 +52,12 @@ namespace KeyViewer.Models
             node[nameof(JudgeColorEase)] = JudgeColorEase?.Serialize();
             return node;
         }
-        public void Deserialize(JsonNode node)
+        public void Deserialize(JToken node)
         {
+            var defaultSettings = new ObjectConfig();
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
             Color = ModelUtils.Unbox<PressReleaseM<GColor>>(node[nameof(Color)]);
-            ChangeColorWithJudge = node[nameof(ChangeColorWithJudge)];
+            ChangeColorWithJudge = node[nameof(ChangeColorWithJudge)]?.Value<bool>() ?? defaultSettings.ChangeColorWithJudge;
             JudgeColors = ModelUtils.Unbox<JudgeM<GColor>>(node[nameof(JudgeColors)]);
             JudgeColorEase = ModelUtils.Unbox<EaseConfig>(node[nameof(JudgeColorEase)]) ?? new EaseConfig();
         }

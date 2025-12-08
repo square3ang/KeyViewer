@@ -1,5 +1,5 @@
-﻿using JSON;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
+using Newtonsoft.Json.Linq;
 
 namespace KeyViewer.Models
 {
@@ -14,17 +14,19 @@ namespace KeyViewer.Models
             status.Enabled = Enabled;
             return status;
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            var node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(Expanded)] = Expanded;
             node[nameof(Enabled)] = Enabled;
             return node;
         }
-        public void Deserialize(JsonNode node)
+        public void Deserialize(JToken node)
         {
-            Expanded = node[nameof(Expanded)];
-            Enabled = node[nameof(Enabled)];
+            var defaultSettings = new GUIStatus();
+
+            Expanded = node[nameof(Expanded)]?.Value<bool>() ?? defaultSettings.Expanded;
+            Enabled = node[nameof(Enabled)]?.Value<bool>() ?? defaultSettings.Enabled;
         }
     }
 }

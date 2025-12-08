@@ -17,6 +17,11 @@ namespace KeyViewer.Utils
                 NameValues[Names[i]] = Values[i];
         }
         public static T Parse(string name) => NameValues.TryGetValue(name, out var value) ? value : default;
+        public static T Parse(string? value, T defaultValue) {
+            if(string.IsNullOrEmpty(value))
+                return defaultValue;
+            return (T)Enum.Parse(typeof(T), value, ignoreCase: true);
+        }
         public static bool TryParse(string name, out T value) => NameValues.TryGetValue(name, out value);
         public static string[] GetNames() => Names;
         public static T[] GetValues() => Values;

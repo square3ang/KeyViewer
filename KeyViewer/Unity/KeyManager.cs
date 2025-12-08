@@ -22,7 +22,6 @@ namespace KeyViewer.Unity
         public Canvas keysCanvas;
         public Vector2 defaultSize;
 
-        internal bool encrypted;
         internal KPSCalculator kpsCalc;
         internal List<Key> keys;
         internal Vector2 centerOffset;

@@ -1,6 +1,6 @@
-﻿using JSON;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 
 namespace KeyViewer.Models
 {
@@ -72,9 +72,9 @@ namespace KeyViewer.Models
                     break;
             }
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            JsonNode node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(TooEarly)] = ModelUtils.ToNode<T>(TooEarly);
             node[nameof(VeryEarly)] = ModelUtils.ToNode<T>(VeryEarly);
             node[nameof(EarlyPerfect)] = ModelUtils.ToNode<T>(EarlyPerfect);
@@ -87,7 +87,7 @@ namespace KeyViewer.Models
             node[nameof(FailOverload)] = ModelUtils.ToNode<T>(FailOverload);
             return node;
         }
-        public void Deserialize(JsonNode node)
+        public void Deserialize(JToken node)
         {
             TooEarly = (T)ModelUtils.ToObject<T>(node[nameof(TooEarly)]);
             VeryEarly = (T)ModelUtils.ToObject<T>(node[nameof(VeryEarly)]);
@@ -118,9 +118,9 @@ namespace KeyViewer.Models
     }
     public class JudgeM<T> : Judge<T>, IModel, ICopyable<JudgeM<T>> where T : IModel, ICopyable<T>, new()
     {
-        public new JsonNode Serialize()
+        public new JObject Serialize()
         {
-            JsonNode node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(TooEarly)] = TooEarly.Serialize();
             node[nameof(VeryEarly)] = VeryEarly.Serialize();
             node[nameof(EarlyPerfect)] = EarlyPerfect.Serialize();
@@ -133,7 +133,7 @@ namespace KeyViewer.Models
             node[nameof(FailOverload)] = FailOverload.Serialize();
             return node;
         }
-        public new void Deserialize(JsonNode node)
+        public new void Deserialize(JToken node)
         {
             TooEarly = ModelUtils.Unbox<T>(node[nameof(TooEarly)]);
             VeryEarly = ModelUtils.Unbox<T>(node[nameof(VeryEarly)]);

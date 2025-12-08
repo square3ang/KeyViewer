@@ -137,12 +137,12 @@ namespace KeyViewer.Views
             }
             GUILayout.BeginHorizontal();
             if(Drawer.Button(Main.Lang.Get("SETTINGS_IMPORT_PROFILE", "Import Profile"))) {
-                var profiles = StandaloneFileBrowser.OpenFilePanel(Main.Lang.Get("SETTINGS_SELECT_PROFILE", "Select Profile"), Main.Mod.Path, new[] { new ExtensionFilter("V4", "json"), new ExtensionFilter("V3", "xml"), }, true);
+                var profiles = StandaloneFileBrowser.OpenFilePanel(Main.Lang.Get("SETTINGS_SELECT_PROFILE", "Select Profile"), Main.ProfilePath, new[] { new ExtensionFilter("V4", "json"), new ExtensionFilter("V3", "xml"), }, true);
                 foreach(var profile in profiles) {
                     FileInfo file = new FileInfo(profile);
                     if(file.Extension == ".json") {
-                        if(!File.Exists(Path.Combine(Main.Mod.Path, file.Name)))
-                            file.CopyTo(Path.Combine(Main.Mod.Path, file.Name));
+                        if(!File.Exists(Path.Combine(Main.ProfilePath, file.Name)))
+                            file.CopyTo(Path.Combine(Main.ProfilePath, file.Name));
                         var activeProfile = new ActiveProfile(Path.GetFileNameWithoutExtension(file.FullName), true);
                         model.ActiveProfiles.Add(activeProfile);
                         Main.AddManager(activeProfile, true);
@@ -154,7 +154,7 @@ namespace KeyViewer.Views
                 var profile = new ActiveProfile(GetNewProfileName(), true);
                 model.ActiveProfiles.Add(profile);
                 Profile newProfile = new Profile();
-                File.WriteAllText(Path.Combine(Main.Mod.Path, $"{profile.Name}.json"), newProfile.Serialize().ToString(4));
+                File.WriteAllText(Path.Combine(Main.ProfilePath, $"{profile.Name}.json"), newProfile.Serialize().ToString());
                 Main.AddManager(profile, true);
             }
             if(Drawer.Button(Main.Lang.Get("SETTINGS_OPEN_MOD_DIR", "Open Mod Directory")))
@@ -182,7 +182,7 @@ namespace KeyViewer.Views
                 GUI.color = new Color(1f, 0.8f, 0.8f);
                 if(Drawer.Button(Main.Lang.Get("DESTROY", "Destroy"))) {
                     Main.RemoveManager(profile);
-                    string path = Path.Combine(Main.Mod.Path, $"{profile.Name}.json");
+                    string path = Path.Combine(Main.ProfilePath, $"{profile.Name}.json");
                     //File.Delete(path);
                     Main.ToDeleteFiles.Add(path);
                     model.ActiveProfiles.RemoveAll(p => p.Name == profile.Name);
@@ -195,7 +195,7 @@ namespace KeyViewer.Views
                         Profile p = Main.Managers[profile.Name].profile;
                         var node = p.Serialize();
                         node["References"] = ProfileImporter.GetReferencesAsJson(p);
-                        File.WriteAllText(target, node.ToString(4));
+                        File.WriteAllText(target, node.ToString());
                     }
                 }
                 GUI.color = Color.white;
@@ -208,7 +208,7 @@ namespace KeyViewer.Views
         private static string GetNewProfileName()
         {
             string result = "Profile " + newProfileNum + ".json";
-            while (File.Exists(Path.Combine(Main.Mod.Path, result)))
+            while (File.Exists(Path.Combine(Main.ProfilePath, result)))
                 result = "Profile " + ++newProfileNum + ".json";
             return $"Profile {newProfileNum++}";
         }

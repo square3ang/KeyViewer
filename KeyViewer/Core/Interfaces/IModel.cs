@@ -1,10 +1,8 @@
-﻿using JSON;
+﻿using Newtonsoft.Json.Linq;
 
-namespace KeyViewer.Core.Interfaces
-{
-    public interface IModel
-    {
-        JsonNode Serialize();
-        void Deserialize(JsonNode node);
+namespace KeyViewer.Core.Interfaces {
+    public interface IModel {
+        JToken Serialize();
+        void Deserialize(JToken node);
     }
 }

@@ -1,6 +1,6 @@
-﻿using JSON;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 
 namespace KeyViewer.Models
 {
@@ -16,8 +16,8 @@ namespace KeyViewer.Models
             Name = name;
             Active = active;
         }
-        public string Name;
-        public bool Active;
+        public string Name = "None";
+        public bool Active = false;
         public ActiveProfile Copy()
         {
             var profile = new ActiveProfile();
@@ -25,17 +25,21 @@ namespace KeyViewer.Models
             profile.Active = Active;
             return profile;
         }
-        public JsonNode Serialize()
-        {
-            var node = JsonNode.Empty;
-            node[nameof(Name)] = Name;
-            node[nameof(Active)] = Active;
+        public JToken Serialize() {
+            var node = new JObject {
+                [nameof(Name)] = Name,
+                [nameof(Active)] = Active
+            };
             return node;
         }
-        public void Deserialize(JsonNode node)
-        {
-            Name = node[nameof(Name)];
-            Active = node[nameof(Active)];
+
+        public void Deserialize(JToken node) {
+            if(node == null) {
+                return;
+            }
+            var defaultSettings = new ActiveProfile();
+            Name = node[nameof(Name)]?.Value<string>() ?? defaultSettings.Name;
+            Active = node[nameof(Active)]?.Value<bool>() ?? defaultSettings.Active;
         }
     }
 }

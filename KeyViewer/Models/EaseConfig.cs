@@ -1,7 +1,7 @@
 ﻿using DG.Tweening;
-using JSON;
 using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 
 namespace KeyViewer.Models
 {
@@ -25,19 +25,20 @@ namespace KeyViewer.Models
             config.Status = Status.Copy();
             return config;
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            var node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(Ease)] = Ease.ToString();
             node[nameof(Duration)] = Duration;
             node[nameof(Status)] = Status.Serialize();
             return node;
         }
-        public void Deserialize(JsonNode node)
-        {
-            Ease = EnumHelper<Ease>.Parse(node[nameof(Ease)]);
-            Duration = node[nameof(Duration)];
-            Status = ModelUtils.Unbox<GUIStatus>(node[nameof(Status)]);
+        public void Deserialize(JToken node) {
+            var defaultSettings = new EaseConfig();
+
+            Ease = EnumHelper<Ease>.Parse(node[nameof(Ease)]?.Value<string>() ?? defaultSettings.Ease.ToString());
+            Duration = node[nameof(Duration)]?.Value<float>() ?? defaultSettings.Duration;
+            Status = ModelUtils.Unbox<GUIStatus>(node[nameof(Status)]) ?? defaultSettings.Status.Copy();
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using JSON;
-using KeyViewer.Core.Interfaces;
+﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace KeyViewer.Models
@@ -22,9 +22,9 @@ namespace KeyViewer.Models
             newRos.Anchor = Anchor;
             return newRos;
         }
-        public JsonNode Serialize()
+        public JToken Serialize()
         {
-            var node = JsonNode.Empty;
+            var node = new JObject();
             node[nameof(Rotation)] = Rotation.Serialize();
             node[nameof(Offset)] = Offset.Serialize();
             node[nameof(Scale)] = Scale.Serialize();
@@ -32,13 +32,21 @@ namespace KeyViewer.Models
             node[nameof(Anchor)] = Anchor.ToString();
             return node;
         }
-        public void Deserialize(JsonNode node)
+        public void Deserialize(JToken node)
         {
+            var defaultSettings = new VectorConfig();
+
             Rotation = ModelUtils.Unbox<PressRelease<Vector3>>(node[nameof(Rotation)]);
             Offset = ModelUtils.Unbox<PressRelease<Vector3>>(node[nameof(Offset)]);
             Scale = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(Scale)]);
-            Pivot = EnumHelper<Pivot>.Parse(node[nameof(Pivot)].IfNotExist(nameof(Pivot.MiddleCenter)));
-            Anchor = EnumHelper<Anchor>.Parse(node[nameof(Anchor)].IfNotExist(nameof(Anchor.MiddleCenter)));
+            Pivot = EnumHelper<Pivot>.Parse(
+                node[nameof(Pivot)]?.Value<string>(),
+                defaultSettings.Pivot
+            );
+            Anchor = EnumHelper<Anchor>.Parse(
+                node[nameof(Anchor)]?.Value<string>(),
+                defaultSettings.Anchor
+            );
         }
     }
 }
