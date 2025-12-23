@@ -86,6 +86,9 @@ namespace KeyViewer
                     if(!AddManager(profile))
                         notExistProfiles.Add(profile.Name);
                 }
+                if(!Directory.Exists(ProfilePath)) {
+                    Directory.CreateDirectory(ProfilePath);
+                }
                 Settings.ActiveProfiles.RemoveAll(p => notExistProfiles.Contains(p.Name));
                 if (!Settings.ActiveProfiles.Any())
                 {
