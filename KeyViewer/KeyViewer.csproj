@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KeyViewer</RootNamespace>
     <AssemblyName>KeyViewer</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <LangVersion>10.0</LangVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -456,6 +457,7 @@
     <None Include="MiscFiles\info.json" />
     <None Include="MiscFiles\lang\en-US.json" />
     <None Include="MiscFiles\lang\ko-KR.json" />
+    <None Include="MiscFiles\lang\zh-CN.json" />
     <None Include="rapidgui\Component\IMColorPicker\Resources\imPreset.asset" />
     <None Include="rapidgui\Component\IMColorPicker\Scripts\Editor\RapidGUI.IMColorPicier.Editor.asmdef" />
     <None Include="rapidgui\Component\IMColorPicker\Test\IMColorPickerTest.unity" />
