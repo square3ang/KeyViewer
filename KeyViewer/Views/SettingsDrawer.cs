@@ -202,6 +202,13 @@ namespace KeyViewer.Views
                 GUILayout.Label(profile.Name);
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
+
+                if(NeedLangInit) {
+                    NeedLangInit = false;
+                    languages = null;
+                    userLanguages = null;
+                    LanguageInit();
+                }
             }
         }
         private static int newProfileNum = 1;
