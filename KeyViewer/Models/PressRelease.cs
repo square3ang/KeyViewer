@@ -137,7 +137,7 @@ namespace KeyViewer.Models
             if(ReleasedEase != null && PressedEase.IsValid) {
                 node[nameof(ReleasedEase)] = ReleasedEase.Serialize();
             }
-            if(PressedEase != null && PressedEase.IsValid && PressedEase != ReleasedEase) {
+            if(PressedEase != null && (PressedEase.IsValid && PressedEase != ReleasedEase || !ReleasedEase.IsValid)) {
                 node[nameof(PressedEase)] = PressedEase.Serialize();
             }
             return node;
