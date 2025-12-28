@@ -12,6 +12,7 @@ namespace KeyViewer.Models
         public PressRelease<Vector2> Scale = Vector2.one;
         public Pivot Pivot = Pivot.MiddleCenter;
         public Anchor Anchor = Anchor.MiddleCenter;
+
         public VectorConfig Copy()
         {
             VectorConfig newRos = new VectorConfig();
@@ -25,20 +26,45 @@ namespace KeyViewer.Models
         public JToken Serialize()
         {
             var node = new JObject();
-            node[nameof(Rotation)] = Rotation.Serialize();
-            node[nameof(Offset)] = Offset.Serialize();
-            node[nameof(Scale)] = Scale.Serialize();
-            node[nameof(Pivot)] = Pivot.ToString();
-            node[nameof(Anchor)] = Anchor.ToString();
+            if(Rotation.Pressed != Vector3.zero && Rotation.Released != Vector3.zero) {
+                node[nameof(Rotation)] = Rotation.Serialize();
+            }
+            if(Offset.Pressed != Vector3.zero && Offset.Released != Vector3.zero) {
+                node[nameof(Offset)] = Offset.Serialize();
+            }
+            if(Scale.Pressed != Vector2.one || Scale.Released != Vector2.one) {
+                node[nameof(Scale)] = Scale.Serialize();
+            }
+            if(Pivot != Pivot.MiddleCenter) {
+                node[nameof(Pivot)] = Pivot.ToString();
+            }
+            if(Anchor != Anchor.MiddleCenter) {
+                node[nameof(Anchor)] = Anchor.ToString();
+            }
             return node;
         }
         public void Deserialize(JToken node)
         {
             var defaultSettings = new VectorConfig();
 
-            Rotation = ModelUtils.Unbox<PressRelease<Vector3>>(node[nameof(Rotation)]);
-            Offset = ModelUtils.Unbox<PressRelease<Vector3>>(node[nameof(Offset)]);
-            Scale = ModelUtils.Unbox<PressRelease<Vector2>>(node[nameof(Scale)]);
+            JToken rotationRaw = node[nameof(Rotation)];
+            if(rotationRaw == null) {
+                Rotation = defaultSettings.Rotation;
+            } else {
+                Rotation = ModelUtils.Unbox<PressRelease<Vector3>>(rotationRaw);
+            }
+            JToken offsetRaw = node[nameof(Offset)];
+            if(offsetRaw == null) {
+                Offset = defaultSettings.Offset;
+            } else {
+                Offset = ModelUtils.Unbox<PressRelease<Vector3>>(offsetRaw);
+            }
+            JToken scaleRaw = node[nameof(Scale)];
+            if(scaleRaw == null) {
+                Scale = defaultSettings.Scale;
+            } else {
+                Scale = ModelUtils.Unbox<PressRelease<Vector2>>(scaleRaw);
+            }
             Pivot = EnumHelper<Pivot>.Parse(
                 node[nameof(Pivot)]?.Value<string>(),
                 defaultSettings.Pivot

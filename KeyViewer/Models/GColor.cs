@@ -21,12 +21,6 @@ namespace KeyViewer.Models
         public Color bottomLeft { get => _color.bottomLeft; set => SetBottomLeftColor(value); }
         public Color bottomRight { get => _color.bottomRight; set => SetBottomRightColor(value); }
 
-        public GUIStatus status;
-        public GUIStatus topLeftStatus;
-        public GUIStatus topRightStatus;
-        public GUIStatus bottomLeftStatus;
-        public GUIStatus bottomRightStatus;
-
         public string topLeftHex { get => _topLeftHex; set => SetTopLeftHex(value); }
         public string topRightHex { get => _topRightHex; set => SetTopRightHex(value); }
         public string bottomLeftHex { get => _bottomLeftHex; set => SetBottomLeftHex(value); }
@@ -37,6 +31,11 @@ namespace KeyViewer.Models
         public float b { get => _color.topLeft.b; set => SetTopLeftColor(_color.topLeft with { b = value }); }
         public float a { get => _color.topLeft.a; set => SetTopLeftColor(_color.topLeft with { a = value }); }
 
+        public bool isSame =>
+            _color.topLeft == _color.topRight &&
+            _color.topLeft == _color.bottomLeft &&
+            _color.topLeft == _color.bottomRight;
+
         public GColor(Color color) {
             _color = new VertexGradient(color);
             var hex = ColorUtility.ToHtmlStringRGBA(color);
@@ -44,21 +43,6 @@ namespace KeyViewer.Models
             _topRightHex = hex;
             _bottomLeftHex = hex;
             _bottomRightHex = hex;
-            status = new GUIStatus() {
-                Expanded = false,
-            };
-            topLeftStatus = new GUIStatus() {
-                Expanded = false,
-            };
-            topRightStatus = new GUIStatus() {
-                Expanded = false,
-            };
-            bottomLeftStatus = new GUIStatus() {
-                Expanded = false,
-            };
-            bottomRightStatus = new GUIStatus() {
-                Expanded = false,
-            };
         }
         public GColor(VertexGradient color) {
             _color = color;
@@ -66,22 +50,6 @@ namespace KeyViewer.Models
             _topRightHex = ColorUtility.ToHtmlStringRGBA(color.topRight);
             _bottomLeftHex = ColorUtility.ToHtmlStringRGBA(color.bottomLeft);
             _bottomRightHex = ColorUtility.ToHtmlStringRGBA(color.bottomRight);
-            status = new GUIStatus() {
-                Expanded = false,
-            };
-            topLeftStatus = new GUIStatus() {
-                Expanded = false,
-            };
-            topRightStatus = new GUIStatus() {
-                Expanded = false,
-            };
-            bottomLeftStatus = new GUIStatus() {
-                Expanded = false,
-            };
-            bottomRightStatus = new GUIStatus() {
-                Expanded = false,
-            };
-
         }
         public GColor Copy() {
             var col = new GColor();
@@ -90,59 +58,36 @@ namespace KeyViewer.Models
             col.topRight = topRight;
             col.bottomLeft = bottomLeft;
             col.bottomRight = bottomRight;
-            col.status = status.Copy();
-            col.topLeftStatus = topLeftStatus.Copy();
-            col.topRightStatus = topRightStatus.Copy();
-            col.bottomLeftStatus = bottomLeftStatus.Copy();
-            col.bottomRightStatus = bottomRightStatus.Copy();
             return col;
         }
         public JToken Serialize() {
+            if(isSame) {
+                return new JObject {
+                    [nameof(topLeft)] = ModelUtils.ToNode(topLeft),
+                };
+            }
             return new JObject {
-                [nameof(gradientEnabled)] = gradientEnabled,
                 [nameof(topLeft)] = ModelUtils.ToNode(topLeft),
                 [nameof(topRight)] = ModelUtils.ToNode(topRight),
                 [nameof(bottomLeft)] = ModelUtils.ToNode(bottomLeft),
                 [nameof(bottomRight)] = ModelUtils.ToNode(bottomRight),
-                [nameof(status)] = status?.Serialize(),
-                [nameof(topLeftStatus)] = topLeftStatus?.Serialize(),
-                [nameof(topRightStatus)] = topRightStatus?.Serialize(),
-                [nameof(bottomLeftStatus)] = bottomLeftStatus?.Serialize(),
-                [nameof(bottomRightStatus)] = bottomRightStatus?.Serialize()
             };
         }
         public void Deserialize(JToken node) {
-            gradientEnabled = node.Value<bool?>(nameof(gradientEnabled)) ?? false;
-
             topLeft = node[nameof(topLeft)] != null
                 ? ModelUtils.ToColor(node[nameof(topLeft)])
                 : default;
             topRight = node[nameof(topRight)] != null
                 ? ModelUtils.ToColor(node[nameof(topRight)])
-                : default;
+                : topLeft;
             bottomLeft = node[nameof(bottomLeft)] != null
                 ? ModelUtils.ToColor(node[nameof(bottomLeft)])
-                : default;
+                : topLeft;
             bottomRight = node[nameof(bottomRight)] != null
                 ? ModelUtils.ToColor(node[nameof(bottomRight)])
-                : default;
+                : topLeft;
 
-            topLeftStatus = node[nameof(topLeftStatus)] != null
-                ? ModelUtils.Unbox<GUIStatus>(node[nameof(topLeftStatus)])
-                : new GUIStatus();
-            topRightStatus = node[nameof(topRightStatus)] != null
-                ? ModelUtils.Unbox<GUIStatus>(node[nameof(topRightStatus)])
-                : new GUIStatus();
-            bottomLeftStatus = node[nameof(bottomLeftStatus)] != null
-                ? ModelUtils.Unbox<GUIStatus>(node[nameof(bottomLeftStatus)])
-                : new GUIStatus();
-            bottomRightStatus = node[nameof(bottomRightStatus)] != null
-                ? ModelUtils.Unbox<GUIStatus>(node[nameof(bottomRightStatus)])
-                : new GUIStatus();
-
-            status = node[nameof(status)] != null
-                ? ModelUtils.Unbox<GUIStatus>(node[nameof(status)])
-                : new GUIStatus();
+            gradientEnabled = !isSame;
         }
 
         private void SetTopLeftColor(Color color) {

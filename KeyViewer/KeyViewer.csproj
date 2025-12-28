@@ -57,6 +57,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Users\dongs\source\repos\NAudio\NAudio\bin\Release\net472\Microsoft.Win32.Registry.dll</HintPath>
     </Reference>
+    <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
+      <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Newtonsoft.Json.dll</HintPath>
@@ -312,10 +315,12 @@
     <Compile Include="API\InputAPI.cs" />
     <Compile Include="Core\AssetManager.cs" />
     <Compile Include="Core\Constants.cs" />
+    <Compile Include="Core\DllImporter.cs" />
     <Compile Include="Core\EnsurePool.cs" />
     <Compile Include="Core\FontManager.cs" />
     <Compile Include="Controllers\GUIController.cs" />
     <Compile Include="Core\GUILayoutEx.cs" />
+    <Compile Include="Core\IconManager.cs" />
     <Compile Include="Core\Input\AsyncInputCompat.cs" />
     <Compile Include="Core\Input\KeyInput.cs" />
     <Compile Include="Core\Input\WinInput.cs" />
@@ -324,6 +329,7 @@
     <Compile Include="Core\KPSCalculator.cs" />
     <Compile Include="Core\MethodDrawable.cs" />
     <Compile Include="Core\ModelDrawable.cs" />
+    <Compile Include="Core\NeoDrawer.cs" />
     <Compile Include="Core\ProfileImporter.cs" />
     <Compile Include="Core\RainImageManager.cs" />
     <Compile Include="Core\TextReplacing\Replacer.cs" />
@@ -351,7 +357,6 @@
     <Compile Include="Models\EaseConfig.cs" />
     <Compile Include="Models\FileReference.cs" />
     <Compile Include="Models\GColor.cs" />
-    <Compile Include="Models\GUIStatus.cs" />
     <Compile Include="Models\Judge.cs" />
     <Compile Include="Models\KeyConfig.cs" />
     <Compile Include="Models\Metadata.cs" />
@@ -458,12 +463,21 @@
     <None Include="MiscFiles\lang\en-US.json" />
     <None Include="MiscFiles\lang\ko-KR.json" />
     <None Include="MiscFiles\lang\zh-CN.json" />
+    <None Include="packages.config" />
     <None Include="rapidgui\Component\IMColorPicker\Resources\imPreset.asset" />
     <None Include="rapidgui\Component\IMColorPicker\Scripts\Editor\RapidGUI.IMColorPicier.Editor.asmdef" />
     <None Include="rapidgui\Component\IMColorPicker\Test\IMColorPickerTest.unity" />
     <None Include="rapidgui\Component\Utilities\Cursor\Resources\cursorData.asset" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MiscFiles\images\up.png" />
+    <EmbeddedResource Include="MiscFiles\images\RGUIoutline.png" />
+    <EmbeddedResource Include="MiscFiles\images\active.png" />
+    <EmbeddedResource Include="MiscFiles\images\inactive.png" />
+    <EmbeddedResource Include="MiscFiles\images\gradation.png" />
+    <EmbeddedResource Include="MiscFiles\images\updown.png" />
+    <EmbeddedResource Include="MiscFiles\images\xrotate.png" />
+    <EmbeddedResource Include="MiscFiles\images\zrotate.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorder.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorderHighlighted.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imCircle.png" />

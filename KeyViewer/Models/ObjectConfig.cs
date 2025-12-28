@@ -47,9 +47,15 @@ namespace KeyViewer.Models
             var node = new JObject();
             node[nameof(VectorConfig)] = VectorConfig.Serialize();
             node[nameof(Color)] = Color.Serialize();
-            node[nameof(ChangeColorWithJudge)] = ChangeColorWithJudge;
-            node[nameof(JudgeColors)] = JudgeColors?.Serialize();
-            node[nameof(JudgeColorEase)] = JudgeColorEase?.Serialize();
+            if(ChangeColorWithJudge) {
+                node[nameof(ChangeColorWithJudge)] = ChangeColorWithJudge;
+            }
+            if(JudgeColors != null) {
+                node[nameof(JudgeColors)] = JudgeColors.Serialize();
+            }
+            if(JudgeColorEase != null && JudgeColorEase.IsValid) {
+                node[nameof(JudgeColorEase)] = JudgeColorEase.Serialize();
+            }
             return node;
         }
         public void Deserialize(JToken node)

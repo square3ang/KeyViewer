@@ -85,15 +85,33 @@ namespace KeyViewer.Models
             node[nameof(Count)] = Count;
             node[nameof(Code)] = Code.ToString();
             //node[nameof(Codes)] = Codes.Select(k => k.ToString()).ToArray();
-            node[nameof(DummyName)] = DummyName;
-            node[nameof(Font)] = Font;
-            node[nameof(EnableKPSMeter)] = EnableKPSMeter;
-            node[nameof(UpdateTextAlways)] = UpdateTextAlways;
-            node[nameof(EnableCountText)] = EnableCountText;
-            node[nameof(EnableOutlineImage)] = EnableOutlineImage;
-            node[nameof(DisableSorting)] = DisableSorting;
-            node[nameof(DoNotScaleText)] = DoNotScaleText;
-            node[nameof(BackgroundBlurEnabled)] = BackgroundBlurEnabled;
+            if(DummyName != null) {
+                node[nameof(DummyName)] = DummyName;
+            }
+            if(Font != "Default") {
+                node[nameof(Font)] = Font;
+            }
+            if(EnableKPSMeter) {
+                node[nameof(EnableKPSMeter)] = EnableKPSMeter;
+            }
+            if(UpdateTextAlways) {
+                node[nameof(UpdateTextAlways)] = UpdateTextAlways;
+            }
+            if(EnableCountText) {
+                node[nameof(EnableCountText)] = EnableCountText;
+            }
+            if(EnableOutlineImage) {
+                node[nameof(EnableOutlineImage)] = EnableOutlineImage;
+            }
+            if(DisableSorting) {
+                node[nameof(DisableSorting)] = DisableSorting;
+            }
+            if(DoNotScaleText) {
+                node[nameof(DoNotScaleText)] = DoNotScaleText;
+            }
+            if(BackgroundBlurEnabled) {
+                node[nameof(BackgroundBlurEnabled)] = BackgroundBlurEnabled;
+            }
             node[nameof(TextFontSize)] = TextFontSize;
             node[nameof(CountTextFontSize)] = CountTextFontSize;
 

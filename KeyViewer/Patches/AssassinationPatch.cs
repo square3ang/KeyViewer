@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using System;
-using System.Linq;
 
 namespace KeyViewer.Patches
 {
@@ -11,7 +10,6 @@ namespace KeyViewer.Patches
         [HarmonyPatch(typeof(scrController), "Hit")]
         public static void HitPatch(scrController __instance)
         {
-            if (!CanAssassinate()) return;
             if (ADOBase.sceneName == "scnLevelSelect") return;
             if (__instance.state != States.PlayerControl) return;
             var listFloors = scrLevelMaker.instance.listFloors;
@@ -25,11 +23,6 @@ namespace KeyViewer.Patches
         public static void UnblockInputPatch()
         {
             Main.BlockInput = false;
-        }
-        public static bool CanAssassinate()
-        {
-            var profiles = Main.Managers.Select(km => km.Value.profile);
-            return profiles.Any(p => !p.DoNotAssAss);
         }
     }
 }

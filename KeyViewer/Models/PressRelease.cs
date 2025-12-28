@@ -10,7 +10,6 @@ namespace KeyViewer.Models
         public T Released;
         public EaseConfig PressedEase = new EaseConfig();
         public EaseConfig ReleasedEase = new EaseConfig();
-        public GUIStatus Status = new GUIStatus();
         public PressRelease() { }
         public PressRelease(T value) => Set(value);
         public PressRelease(T pressed, T released)
@@ -45,26 +44,56 @@ namespace KeyViewer.Models
             newPR.Released = Released;
             newPR.PressedEase = PressedEase.Copy();
             newPR.ReleasedEase = ReleasedEase.Copy();
-            newPR.Status = Status.Copy();
             return newPR;
         }
-        public JToken Serialize()
-        {
+        public JToken Serialize() {
             var node = new JObject();
-            node[nameof(Pressed)] = ModelUtils.ToNode<T>(Pressed);
-            node[nameof(Released)] = ModelUtils.ToNode<T>(Released);
-            node[nameof(PressedEase)] = PressedEase.Serialize();
-            node[nameof(ReleasedEase)] = ReleasedEase.Serialize();
-            node[nameof(Status)] = Status.Serialize();
+            if(Released != null) {
+                node[nameof(Released)] = ModelUtils.ToNode<T>(Released);
+            }
+            if(Pressed != null && !IsSame) {
+                node[nameof(Pressed)] = ModelUtils.ToNode<T>(Pressed);
+            }
+            if(ReleasedEase != null && ReleasedEase.IsValid) {
+                node[nameof(ReleasedEase)] = ReleasedEase.Serialize();
+            }
+            if(PressedEase != null && PressedEase.IsValid && PressedEase != ReleasedEase) {
+                node[nameof(PressedEase)] = PressedEase.Serialize();
+            }
             return node;
         }
         public void Deserialize(JToken node)
         {
-            Pressed = (T)ModelUtils.ToObject<T>(node[nameof(Pressed)]);
-            Released = (T)ModelUtils.ToObject<T>(node[nameof(Released)]);
-            PressedEase = ModelUtils.Unbox<EaseConfig>(node[nameof(PressedEase)]);
-            ReleasedEase = ModelUtils.Unbox<EaseConfig>(node[nameof(ReleasedEase)]);
-            Status = ModelUtils.Unbox<GUIStatus>(node[nameof(Status)]) ?? new GUIStatus();
+            JToken releasedRaw = node[nameof(Released)];
+            JToken pressedRaw = node[nameof(Pressed)];
+            bool nullReleased = releasedRaw == null;
+            if(!nullReleased) {
+                Released = (T)ModelUtils.ToObject<T>(releasedRaw);
+            }
+            if(pressedRaw == null) {
+                if(nullReleased) {
+                    Pressed = default;
+                } else {
+                    Pressed = Released;
+                }
+            } else {
+                Pressed = (T)ModelUtils.ToObject<T>(pressedRaw);
+            }
+            JToken releasedEaseRaw = node[nameof(ReleasedEase)];
+            JToken pressedEaseRaw = node[nameof(PressedEase)];
+            bool nullReleasedEase = releasedEaseRaw == null;
+            if(!nullReleasedEase) {
+                ReleasedEase = ModelUtils.Unbox<EaseConfig>(releasedEaseRaw);
+            }
+            if(pressedEaseRaw == null) {
+                if(nullReleasedEase) {
+                    PressedEase = new EaseConfig();
+                } else {
+                    PressedEase = ReleasedEase;
+                }
+            } else {
+                PressedEase = ModelUtils.Unbox<EaseConfig>(pressedEaseRaw);
+            }
         }
         public bool IsSame => Equals(Pressed, Released);
         public static implicit operator PressRelease<T>(T value) => new PressRelease<T>(value);
@@ -99,20 +128,52 @@ namespace KeyViewer.Models
         public new JToken Serialize()
         {
             var node = new JObject();
-            node[nameof(Pressed)] = Pressed.Serialize();
-            node[nameof(Released)] = Released.Serialize();
-            node[nameof(PressedEase)] = PressedEase.Serialize();
-            node[nameof(ReleasedEase)] = ReleasedEase.Serialize();
-            node[nameof(Status)] = Status.Serialize();
+            if(Released != null) {
+                node[nameof(Released)] = Released.Serialize();
+            }
+            if(Pressed != null && !IsSame) {
+                node[nameof(Pressed)] = Pressed.Serialize();
+            }
+            if(ReleasedEase != null && PressedEase.IsValid) {
+                node[nameof(ReleasedEase)] = ReleasedEase.Serialize();
+            }
+            if(PressedEase != null && PressedEase.IsValid && PressedEase != ReleasedEase) {
+                node[nameof(PressedEase)] = PressedEase.Serialize();
+            }
             return node;
         }
         public new void Deserialize(JToken node)
         {
-            Pressed = ModelUtils.Unbox<T>(node[nameof(Pressed)]);
-            Released = ModelUtils.Unbox<T>(node[nameof(Released)]);
-            PressedEase = ModelUtils.Unbox<EaseConfig>(node[nameof(PressedEase)]);
-            ReleasedEase = ModelUtils.Unbox<EaseConfig>(node[nameof(ReleasedEase)]);
-            Status = ModelUtils.Unbox<GUIStatus>(node[nameof(Status)]);
+            JToken releasedRaw = node[nameof(Released)];
+            JToken pressedRaw = node[nameof(Pressed)];
+            bool nullReleased = releasedRaw == null;
+            if(!nullReleased) {
+                Released = ModelUtils.Unbox<T>(node[nameof(Released)]);
+            }
+            if(pressedRaw == null) {
+                if(nullReleased) {
+                    Pressed = default;
+                } else {
+                    Pressed = Released;
+                }
+            } else {
+                Pressed = ModelUtils.Unbox<T>(node[nameof(Pressed)]);
+            }
+            JToken releasedEaseRaw = node[nameof(ReleasedEase)];
+            JToken pressedEaseRaw = node[nameof(PressedEase)];
+            bool nullReleasedEase = releasedEaseRaw == null;
+            if(!nullReleasedEase) {
+                ReleasedEase = ModelUtils.Unbox<EaseConfig>(releasedRaw);
+            }
+            if(pressedEaseRaw == null) {
+                if(nullReleasedEase) {
+                    PressedEase = new EaseConfig();
+                } else {
+                    PressedEase = ReleasedEase;
+                }
+            } else {
+                PressedEase = ModelUtils.Unbox<EaseConfig>(pressedRaw);
+            }
         }
         public new PressReleaseM<T> Copy()
         {
@@ -121,7 +182,6 @@ namespace KeyViewer.Models
             newPR.Released = Released.Copy();
             newPR.PressedEase = PressedEase.Copy();
             newPR.ReleasedEase = ReleasedEase.Copy();
-            newPR.Status = Status.Copy();
             return newPR;
         }
         public static implicit operator PressReleaseM<T>(T value) => new PressReleaseM<T>(value);

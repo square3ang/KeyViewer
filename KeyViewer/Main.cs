@@ -1,16 +1,18 @@
-﻿using System;
-using HarmonyLib;
+﻿using HarmonyLib;
 using KeyViewer.Controllers;
 using KeyViewer.Core;
 using KeyViewer.Core.Input;
 using KeyViewer.Core.TextReplacing;
+using KeyViewer.Core.Translation;
 using KeyViewer.Migration.V3;
 using KeyViewer.Models;
 using KeyViewer.Patches;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using KeyViewer.Views;
-using KeyViewer.Core.Translation;
+using Newtonsoft.Json.Linq;
+using Overlayer.Core;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +25,6 @@ using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
 using Object = UnityEngine.Object;
-using Newtonsoft.Json.Linq;
 
 namespace KeyViewer
 {
@@ -110,6 +111,8 @@ namespace KeyViewer
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
                 StaticCoroutine.Run(InitializeManagersCo());
+
+                DllImporter.NCalcInitialize();
 
                 GUI.Init(settingsDrawer);
                 GUI.Flush();

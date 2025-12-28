@@ -2,6 +2,8 @@
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
+using Overlayer.Core;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -14,46 +16,16 @@ namespace KeyViewer.Views
         {
             this.manager = manager;
         }
+
+        public override void OnceCall() {
+            NeoDrawer.StaticInstance.FieldResetDictById();
+        }
+
         public override void Draw()
         {
-            if (model.DummyName != null)
-            {
-                if (Drawer.DrawString(Main.Lang.Get("KEYCONFIG_DUMMY_KEY_NAME", "Dummy Key Name"), ref model.DummyName))
-                    Name = model.DummyName;
-            }
-            else
-            {
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Label(Main.Lang.Get("KEYCONFIG_KEY_CODE", "Key Code") + (model.Code == KeyCode.Menu ? " (Fake)" : ""));
-                    Drawer.DrawEnum(Main.Lang.Get("KEYCONFIG_KEY_CODE", "Key Code"), ref model.Code, model.GetHashCode());
-                }
-                GUILayout.FlexibleSpace();
-                GUILayout.EndHorizontal();
-            }
+            NeoDrawer.StaticInstance.FieldResetId();
 
-            bool prevBgBlurEnabled = model.BackgroundBlurEnabled;
-            bool changed = false;
-            changed |= Drawer.DrawString(Main.Lang.Get("KEYCONFIG_TEXT_FONT", "Text Font"), ref model.Font, true);
-            if (model.DummyName == null)
-            {
-                if (Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_KPS_METER", "Enable KPS Meter"), ref model.EnableKPSMeter))
-                {
-                    changed = true;
-                    if (model.EnableKPSMeter)
-                        KPSCalculator.Sync(manager.keys.Select(k => k.Config.EnableKPSMeter ? k.KpsCalc : null).Where(c => c != null));
-                    else manager[model.Code.ToString()].KpsCalc.Stop();
-                }
-            }
-            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_UPDATE_TEXT_ALWAYS", "Update Text Always"), ref model.UpdateTextAlways);
-            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_COUNT_TEXT", "Enable Count Text"), ref model.EnableCountText);
-            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_OUTLINE_IMAGE", "Enable Outline Image"), ref model.EnableOutlineImage);
-            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_DISABLE_SORTING", "Disable Sorting"), ref model.DisableSorting);
-            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_DO_NOT_SCALE_TEXT", "Do Not Scale Text"), ref model.DoNotScaleText);
-            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_BACKGROUND_BLUR", "Enable Backgruond Blur"), ref model.BackgroundBlurEnabled);
-            changed |= Drawer.DrawSingleWithSlider(Main.Lang.Get("KEYCONFIG_TEXT_FONT_SIZE", "Text Font Size"), ref model.TextFontSize, 0, 300, 300);
-            changed |= Drawer.DrawSingleWithSlider(Main.Lang.Get("KEYCONFIG_COUNT_TEXT_FONT_SIZE", "Count Text Font Size"), ref model.CountTextFontSize, 0, 300, 300);
-
+            /*
             changed |= Drawer.DrawPressReleaseH(Main.Lang.Get("KEYCONFIG_TEXT", "Text "), model.Text, Drawer.CD_H_STR);
             if (model.EnableCountText)
                 changed |= Drawer.DrawPressReleaseH(Main.Lang.Get("KEYCONFIG_COUNT_TEXT", "Count Text"), model.CountText, Drawer.CD_H_STR);
@@ -78,13 +50,70 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_RAIN", "Enable Rain"), ref model.RainEnabled);
             if (model.RainEnabled)
                 Drawer.TitleButton(Main.Lang.Get("KEYCONFIG_EDIT_RAIN_CONFIG", "Edit Rain Config"), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new RainConfigDrawer(manager, model)));
+            */
+
+            if(model.DummyName != null) {
+                if(Drawer.DrawString(Main.Lang.Get("KEYCONFIG_DUMMY_KEY_NAME", "Dummy Key Name"), ref model.DummyName)) {
+                    Name = model.DummyName;
+                }
+            } else {
+                GUILayout.BeginHorizontal();
+                {
+                    int current = (int)model.Code;
+                    bool result = Drawer.SelectionPopup(
+                        ref current,
+                        Enum.GetNames(typeof(KeyCode)),
+                        $"{Main.Lang.Get("KEYCONFIG_KEY_CODE", "Key Code")}{(model.Code == KeyCode.Menu ? $" ({Main.Lang.Get("FAKE", "Fake")})" : "")}"
+                    );
+                    if(result) {
+                        model.Code = (KeyCode)current;
+                    }
+                }
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+            }
+
+            bool prevBgBlurEnabled = model.BackgroundBlurEnabled;
+            bool changed = false;
+            {
+                string tempFont = model.Font;
+                bool tempChanged = Drawer.DrawString(Main.Lang.Get("KEYCONFIG_TEXT_FONT", "Text Font"), ref tempFont);
+                if(tempChanged) {
+                    model.Font = tempFont.TrimQuote();
+                    changed = true;
+                }
+            }
+            if(model.DummyName == null) {
+                if(Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_KPS_METER", "Enable KPS Meter"), ref model.EnableKPSMeter)) {
+                    changed = true;
+                    if(model.EnableKPSMeter) {
+                        KPSCalculator.Sync(manager.keys.Select(k => k.Config.EnableKPSMeter ? k.KpsCalc : null).Where(c => c != null));
+                    } else {
+                        manager[model.Code.ToString()].KpsCalc.Stop();
+                    }
+                }
+            }
+            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_UPDATE_TEXT_ALWAYS", "Update Text Always"), ref model.UpdateTextAlways);
+            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_COUNT_TEXT", "Enable Count Text"), ref model.EnableCountText);
+            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_OUTLINE_IMAGE", "Enable Outline Image"), ref model.EnableOutlineImage);
+            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_DISABLE_SORTING", "Disable Sorting"), ref model.DisableSorting);
+            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_DO_NOT_SCALE_TEXT", "Do Not Scale Text"), ref model.DoNotScaleText);
+            changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_BACKGROUND_BLUR", "Enable Backgruond Blur"), ref model.BackgroundBlurEnabled);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("KEYCONFIG_TEXT_FONT_SIZE", "Text Font Size"), ref model.TextFontSize, 0, 300, 300);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("KEYCONFIG_COUNT_TEXT_FONT_SIZE", "Count Text Font Size"), ref model.CountTextFontSize, 0, 300, 300);
+            {
+
+            }
 
             if (changed)
             {
-                if (!prevBgBlurEnabled && model.BackgroundBlurEnabled)
+                if(!prevBgBlurEnabled && model.BackgroundBlurEnabled) {
                     KeyViewerUtils.ApplyBlurColorConfig(model);
+                }
                 manager.UpdateLayout();
             }
+
+            NeoDrawer.StaticInstance.UpdateFocused();
         }
     }
 }

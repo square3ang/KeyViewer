@@ -42,7 +42,15 @@ namespace KeyViewer.Views
                 changed |= Drawer.DrawList(model.RainImages, (ref RainImage i) =>
                 {
                     bool result = false;
-                    result |= Drawer.DrawString(Main.Lang.Get("RAINCONFIG_RAIN_IMAGE_PATH", "Image Path"), ref i.Image, true);
+                    {
+                        string tempPath = i.Image;
+                        bool tempResult = Drawer.DrawString(Main.Lang.Get("RAINCONFIG_RAIN_IMAGE_PATH", "Image Path"), ref tempPath, true);
+                        if (tempResult)
+                        {
+                            i.Image = tempPath.TrimQuote();
+                            result = true;
+                        }
+                    }
                     result |= Drawer.DrawInt32(Main.Lang.Get("RAINCONFIG_RAIN_IMAGE_COUNT", "Image Count"), ref i.Count);
                     result |= Drawer.DrawSingleWithSlider(Main.Lang.Get("MISC_ROUNDNESS", "Roundness"), ref i.Roundness, 0, Constants.Rad2Deg100, 300);
                     //result |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, i), i.BlurConfig);

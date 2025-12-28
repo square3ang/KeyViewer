@@ -32,7 +32,16 @@ namespace KeyViewer.Views
 
             bool changed = false;
             bool prevBgBlurEnabled = model.BackgroundBlurEnabled;
-            changed |= Drawer.DrawString(FormatText(Main.Lang.Get("KEYCONFIG_TEXT_FONT", "Text Font"), "Font"), ref model.Font, true).IfTrue(() => Set("Font"));
+            {
+                string tempFont = model.Font;
+                bool tempChanged = Drawer.DrawString(FormatText(Main.Lang.Get("KEYCONFIG_TEXT_FONT", "Text Font"), "Font"), ref tempFont);
+                if (tempChanged)
+                {
+                    changed = true;
+                    model.Font = tempFont.TrimQuote();
+                    Set("Font");
+                }
+            }
             if (model.DummyName == null)
             {
                 if (Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_KPS_METER", "Enable KPS Meter"), ref model.EnableKPSMeter))

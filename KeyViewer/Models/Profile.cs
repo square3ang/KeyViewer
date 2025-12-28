@@ -12,7 +12,6 @@ namespace KeyViewer.Models
         public bool ViewOnlyGamePlay = false;
         public bool LimitNotRegisteredKeys = false;
         public bool ResetOnStart = false;
-        public bool DoNotAssAss = true;
         public float KeySpacing = 10f;
         public VectorConfig VectorConfig = new VectorConfig();
         public int KPSUpdateRate = 1000;
@@ -23,7 +22,6 @@ namespace KeyViewer.Models
             newProfile.ViewOnlyGamePlay = ViewOnlyGamePlay;
             newProfile.LimitNotRegisteredKeys = LimitNotRegisteredKeys;
             newProfile.ResetOnStart = ResetOnStart;
-            newProfile.DoNotAssAss = DoNotAssAss;
             newProfile.KeySpacing = KeySpacing;
             newProfile.VectorConfig = VectorConfig.Copy();
             newProfile.KPSUpdateRate = KPSUpdateRate;
@@ -36,7 +34,6 @@ namespace KeyViewer.Models
             node[nameof(ViewOnlyGamePlay)] = ViewOnlyGamePlay;
             node[nameof(LimitNotRegisteredKeys)] = LimitNotRegisteredKeys;
             node[nameof(ResetOnStart)] = ResetOnStart;
-            node[nameof(DoNotAssAss)] = DoNotAssAss;
             node[nameof(KeySpacing)] = KeySpacing;
             node[nameof(VectorConfig)] = VectorConfig.Serialize();
             node[nameof(KPSUpdateRate)] = KPSUpdateRate;
@@ -50,7 +47,6 @@ namespace KeyViewer.Models
             ViewOnlyGamePlay = node[nameof(ViewOnlyGamePlay)]?.Value<bool>() ?? defaultSettings.ViewOnlyGamePlay;
             LimitNotRegisteredKeys = node[nameof(LimitNotRegisteredKeys)]?.Value<bool>() ?? defaultSettings.LimitNotRegisteredKeys;
             ResetOnStart = node[nameof(ResetOnStart)]?.Value<bool>() ?? defaultSettings.ResetOnStart;
-            DoNotAssAss = true; // node[nameof(DoNotAssAss)].IfNotExist(true);
             KeySpacing = node[nameof(KeySpacing)]?.Value<float>() ?? defaultSettings.KeySpacing;
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
             KPSUpdateRate = node[nameof(KPSUpdateRate)]?.Value<int>() ?? defaultSettings.KPSUpdateRate;
