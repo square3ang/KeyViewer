@@ -85,7 +85,7 @@ namespace KeyViewer.Models
             node[nameof(Count)] = Count;
             node[nameof(Code)] = Code.ToString();
             //node[nameof(Codes)] = Codes.Select(k => k.ToString()).ToArray();
-            if(DummyName != null) {
+            if(!string.IsNullOrEmpty(DummyName)) {
                 node[nameof(DummyName)] = DummyName;
             }
             if(Font != "Default") {
@@ -115,10 +115,22 @@ namespace KeyViewer.Models
             node[nameof(TextFontSize)] = TextFontSize;
             node[nameof(CountTextFontSize)] = CountTextFontSize;
 
-            node[nameof(Text)] = Text.Serialize();
-            node[nameof(CountText)] = CountText.Serialize();
-            node[nameof(Background)] = Background.Serialize();
-            node[nameof(Outline)] = Outline.Serialize();
+            var text = Text.Serialize();
+            if(!string.IsNullOrEmpty(text.ToString())) {
+                node[nameof(Text)] = Text.Serialize();
+            }
+            var countText = CountText.Serialize();
+            if(!string.IsNullOrEmpty(countText.ToString())) {
+                node[nameof(CountText)] = CountText.Serialize();
+            }
+            var backGround = Background.Serialize();
+            if(!string.IsNullOrEmpty(backGround.ToString())) {
+                node[nameof(Background)] = Background.Serialize();
+            }
+            var outline = Outline.Serialize();
+            if(!string.IsNullOrEmpty(outline.ToString())) {
+                node[nameof(Outline)] = Outline.Serialize();
+            }
 
             node[nameof(TextConfig)] = TextConfig.Serialize();
             node[nameof(CountTextConfig)] = CountTextConfig.Serialize();
