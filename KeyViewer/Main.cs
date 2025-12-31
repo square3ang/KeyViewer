@@ -79,26 +79,23 @@ namespace KeyViewer
                     var json = JToken.Parse(File.ReadAllText(Constants.SettingsPath));
                     Settings.Deserialize(json);
                 }
+
                 Managers = new Dictionary<string, KeyManager>();
                 ToDeleteFiles = new HashSet<string>();
+
                 List<string> notExistProfiles = new List<string>();
                 var profiles = Settings.ActiveProfiles;
                 foreach(var profile in profiles) {
-                    if(!AddManager(profile))
+                    if(!AddManager(profile)) {
                         notExistProfiles.Add(profile.Name);
+                    }
                 }
+
                 if(!Directory.Exists(ProfilePath)) {
                     Directory.CreateDirectory(ProfilePath);
                 }
+
                 Settings.ActiveProfiles.RemoveAll(p => notExistProfiles.Contains(p.Name));
-                if (!Settings.ActiveProfiles.Any())
-                {
-                    File.WriteAllText(Path.Combine(ProfilePath, "Default.json"),
-                        new Profile().Serialize().ToString());
-                    var def = new ActiveProfile("Default", true);
-                    Settings.ActiveProfiles.Add(def);
-                    AddManager(def);
-                }
 
                 Lang.Language = Settings.Lang;
                 Lang.OnInitialize += OnLanguageInitialize;
