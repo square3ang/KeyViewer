@@ -211,13 +211,12 @@ namespace KeyViewer.Views
                 }
             }
         }
-        private static int newProfileNum = 1;
-        private static string GetNewProfileName()
-        {
-            string result = "Profile " + newProfileNum + ".json";
-            while (File.Exists(Path.Combine(Main.ProfilePath, result)))
-                result = "Profile " + ++newProfileNum + ".json";
-            return $"Profile {newProfileNum++}";
+        private static string GetNewProfileName() {
+            int num = 0;
+            while(File.Exists(Path.Combine(Main.ProfilePath, $"Profile {num}.json"))) {
+                num++;
+            }
+            return $"Profile {num}";
         }
     }
 }
