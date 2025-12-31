@@ -10,7 +10,6 @@ namespace KeyViewer.Models
     {
         public int Count = 0;
         public KeyCode Code = KeyCode.None;
-        //public KeyCode[] Codes = new KeyCode[0];
         public string DummyName = null;
         public string Font = "Default";
         public bool EnableKPSMeter = false;
@@ -84,7 +83,6 @@ namespace KeyViewer.Models
             var node = new JObject();
             node[nameof(Count)] = Count;
             node[nameof(Code)] = Code.ToString();
-            //node[nameof(Codes)] = Codes.Select(k => k.ToString()).ToArray();
             if(!string.IsNullOrEmpty(DummyName)) {
                 node[nameof(DummyName)] = DummyName;
             }
@@ -153,7 +151,6 @@ namespace KeyViewer.Models
 
             Count = node[nameof(Count)]?.Value<int>() ?? defaultSettings.Count;
             Code = EnumHelper<KeyCode>.Parse(node[nameof(Code)]?.Value<string>() ?? defaultSettings.Code.ToString());
-            //Codes = node[nameof(Codes)].IfNotExist(new JsonArray()).AsArray.Values.Select(n => EnumHelper<KeyCode>.Parse(n.Value)).ToArray();
             DummyName = node[nameof(DummyName)]?.Value<string>() ?? defaultSettings.DummyName;
             Font = node[nameof(Font)]?.Value<string>() ?? defaultSettings.Font;
             EnableKPSMeter = node[nameof(EnableKPSMeter)]?.Value<bool>() ?? defaultSettings.EnableKPSMeter;
