@@ -728,6 +728,42 @@ namespace KeyViewer.Core
             return c;
         }
 
+        public static bool DrawPressReleaseBase(PressReleaseBase<string> prb) {
+            bool changed = false;
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Icon_Down);
+            Color old = GUI.color;
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Button("CP")) {
+                prb.Pressed = prb.Released;
+                changed = true;
+            }
+            GUI.color = old;
+            string newPressed = GUILayout.TextField(prb.Pressed, myTextField);
+            if(newPressed != prb.Pressed) {
+                prb.Pressed = newPressed;
+                changed = true;
+            }
+            GUILayout.Space(14);
+            GUILayout.Label(Icon_Up);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Button("CP")) {
+                prb.Released = prb.Pressed;
+                changed = true;
+            }
+            GUI.color = old;
+            string newReleased = GUILayout.TextField(prb.Released, myTextField);
+            if(newReleased != prb.Released) {
+                prb.Released = newReleased;
+                changed = true;
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            return changed;
+        }
+
         private static bool isImageInited = false;
 
         public static Texture2D Icon_Active;

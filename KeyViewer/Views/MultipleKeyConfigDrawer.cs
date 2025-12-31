@@ -60,7 +60,7 @@ namespace KeyViewer.Views
             changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_ENABLE_BACKGROUND_BLUR", "Enable Backgruond Blur"), "BackgroundBlurEnabled"), ref model.BackgroundBlurEnabled).IfTrue(() => Set("BackgroundBlurEnabled"));
             changed |= Drawer.DrawSingleWithSlider(FormatText(Main.Lang.Get("KEYCONFIG_TEXT_FONT_SIZE", "Text Font Size"), "TextFontSize"), ref model.TextFontSize, 0, 300, 300).IfTrue(() => Set("TextFontSize"));
             changed |= Drawer.DrawSingleWithSlider(FormatText(Main.Lang.Get("KEYCONFIG_COUNT_TEXT_FONT_SIZE", "Count Text Font Size"), "CountTextFontSize"), ref model.CountTextFontSize, 0, 300, 300).IfTrue(() => Set("CountTextFontSize"));
-
+            /*
             changed |= Drawer.DrawPressReleaseH(FormatText(Main.Lang.Get("KEYCONFIG_TEXT", "Text "), "Text"), model.Text, Drawer.CD_H_STR).IfTrue(() => SetPR<string>("Text"));
             if (model.EnableCountText)
                 changed |= Drawer.DrawPressReleaseH(FormatText(Main.Lang.Get("KEYCONFIG_COUNT_TEXT", "Count Text"), "CountText"), model.CountText, Drawer.CD_H_STR).IfTrue(() => SetPR<string>("CountText"));
@@ -69,7 +69,7 @@ namespace KeyViewer.Views
                 changed |= Drawer.DrawPressReleaseH(FormatText(Main.Lang.Get("KEYCONFIG_OUTLINE_IMAGE", "Outline Image"), "Outline"), model.Outline, Drawer.CD_H_STR_TRIMQUOTE).IfTrue(() => SetPR<string>("Outline"));
             if (model.BackgroundBlurEnabled)
                 changed |= Drawer.DrawBlurConfig(FormatText(Main.Lang.Get("KEYCONFIG_KEY_BACKGROUND", "Key {0} Background"), "BackgroundBlurConfig", KeyViewerUtils.KeyName(model)), model.BackgroundBlurConfig).IfTrue(() => SetBlurConfig("BackgroundBlurConfig"));
-
+            */
             changed |= Drawer.DrawVectorConfig(model.VectorConfig).IfTrue(() => SetVectorConfig("VectorConfig"));
 
             Drawer.DrawObjectConfig(FormatText(Main.Lang.Get("KEYCONFIG_EDIT_TEXT_CONFIG", "Edit Text Config"), "TextConfig"), string.Format(Main.Lang.Get("KEYCONFIG_KEY_TEXT", "Key {0} Text"), model.DummyName != null ? model.DummyName : model.Code), model.TextConfig, () => OnChangeOC("TextConfig"));

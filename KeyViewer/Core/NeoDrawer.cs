@@ -1,5 +1,8 @@
-﻿using NCalc;
+﻿using KeyViewer;
+using KeyViewer.Core;
 using KeyViewer.Models;
+using NCalc;
+using Newtonsoft.Json.Linq;
 using RapidGUI;
 using System;
 using System.Collections.Generic;
@@ -11,8 +14,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
-using KeyViewer.Core;
-using KeyViewer;
 
 namespace Overlayer.Core {
     public class NeoDrawer {
@@ -825,6 +826,25 @@ namespace Overlayer.Core {
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
+            return changed;
+        }
+
+        public bool DrawBlurConfig(BlurConfig blurConfig, string uniqueID = null) {
+            bool changed = false;
+
+            Color old = GUI.color;
+            if(uniqueID == null) {
+                GUI.color = new Color(1.0f, 0.55f, 0.25f);
+                changed |= DrawSingleWithSlider("S", ref blurConfig.Spacing, 0, 40, 300f);
+                GUI.color = new Color(0.35f, 0.9f, 1.0f);
+                changed |= DrawSingleWithSlider("V", ref blurConfig.Vibrancy, 0, 2, 300f);
+            } else {
+                GUI.color = new Color(1.0f, 0.55f, 0.25f);
+                changed |= DrawSingleWithSlider("S", ref blurConfig.Spacing, 0, 40, 300f, uniqueID + "_0");
+                GUI.color = new Color(0.35f, 0.9f, 1.0f);
+                changed |= DrawSingleWithSlider("V", ref blurConfig.Vibrancy, 0, 2, 300f, uniqueID + "_1");
+            }
+            GUI.color = old;
             return changed;
         }
     }

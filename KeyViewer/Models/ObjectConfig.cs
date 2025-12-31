@@ -12,23 +12,23 @@ namespace KeyViewer.Models
         {
             VectorConfig = new VectorConfig();
             VectorConfig.Scale = defaultScale;
-            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
+            Color = new PressReleaseModel<GColor>(defaultPressed, defaultReleased);
         }
         public ObjectConfig(Vector2 pressedScale, Vector2 releasedScale, Color defaultPressed, Color defaultReleased)
         {
             VectorConfig = new VectorConfig();
             VectorConfig.Scale.Pressed = pressedScale;
             VectorConfig.Scale.Released = releasedScale;
-            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
+            Color = new PressReleaseModel<GColor>(defaultPressed, defaultReleased);
         }
         public ObjectConfig(PressRelease<Vector2> scale, Color defaultPressed, Color defaultReleased)
         {
             VectorConfig = new VectorConfig();
             VectorConfig.Scale = scale;
-            Color = new PressReleaseM<GColor>(defaultPressed, defaultReleased);
+            Color = new PressReleaseModel<GColor>(defaultPressed, defaultReleased);
         }
         public VectorConfig VectorConfig;
-        public PressReleaseM<GColor> Color;
+        public PressReleaseModel<GColor> Color;
         public bool ChangeColorWithJudge = false;
         public JudgeM<GColor> JudgeColors = null;
         public EaseConfig JudgeColorEase = new EaseConfig();
@@ -62,7 +62,7 @@ namespace KeyViewer.Models
         {
             var defaultSettings = new ObjectConfig();
             VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
-            Color = ModelUtils.Unbox<PressReleaseM<GColor>>(node[nameof(Color)]);
+            Color = ModelUtils.Unbox<PressReleaseModel<GColor>>(node[nameof(Color)]);
             ChangeColorWithJudge = node[nameof(ChangeColorWithJudge)]?.Value<bool>() ?? defaultSettings.ChangeColorWithJudge;
             JudgeColors = ModelUtils.Unbox<JudgeM<GColor>>(node[nameof(JudgeColors)]);
             JudgeColorEase = ModelUtils.Unbox<EaseConfig>(node[nameof(JudgeColorEase)]) ?? new EaseConfig();

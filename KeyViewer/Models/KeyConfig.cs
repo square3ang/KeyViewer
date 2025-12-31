@@ -23,10 +23,10 @@ namespace KeyViewer.Models
         public float TextFontSize = 75;
         public float CountTextFontSize = 50;
 
-        public PressRelease<string> Text = new PressRelease<string>(null);
-        public PressRelease<string> CountText = new PressRelease<string>(null);
-        public PressRelease<string> Background = new PressRelease<string>(null);
-        public PressRelease<string> Outline = new PressRelease<string>(null);
+        public PressReleaseBase<string> Text = new PressReleaseBase<string>(null);
+        public PressReleaseBase<string> CountText = new PressReleaseBase<string>(null);
+        public PressReleaseBase<string> Background = new PressReleaseBase<string>(null);
+        public PressReleaseBase<string> Outline = new PressReleaseBase<string>(null);
 
         public ObjectConfig TextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
         public ObjectConfig CountTextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);

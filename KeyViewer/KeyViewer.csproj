@@ -361,6 +361,8 @@
     <Compile Include="Models\KeyConfig.cs" />
     <Compile Include="Models\Metadata.cs" />
     <Compile Include="Models\PressRelease.cs" />
+    <Compile Include="Models\PressReleaseBase.cs" />
+    <Compile Include="Models\PressReleaseModel.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Models\RainConfig.cs" />
     <Compile Include="Core\Drawer.cs" />
