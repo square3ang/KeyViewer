@@ -183,7 +183,7 @@ namespace KeyViewer.Views
                 if(Drawer.Button(Main.Lang.Get("DESTROY", "Destroy"))) {
                     Main.RemoveManager(profile);
                     string path = Path.Combine(Main.ProfilePath, $"{profile.Name}.json");
-                    //File.Delete(path);
+                    File.Delete(path);
                     Main.ToDeleteFiles.Add(path);
                     model.ActiveProfiles.RemoveAll(p => p.Name == profile.Name);
                     break;
