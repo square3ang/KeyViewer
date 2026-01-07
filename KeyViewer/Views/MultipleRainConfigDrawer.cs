@@ -58,8 +58,6 @@ namespace KeyViewer.Views
                 }).IfTrue(() => SetList<RainImage>("RainImages"));
             }, Main.Lang.Get("RAINCONFIG_RAIN_IMAGES", "Rain Images"), ref imageListExpanded);
 
-            Drawer.DrawObjectConfig(Main.Lang.Get("RAINCONFIG_EDIT_RAIN_CONFIG", "Edit Rain Object Config"), string.Format(Main.Lang.Get("RAINCONFIG_KEY_RAIN", "Key {0} Rain"), name), model.ObjectConfig, () => OnChangeOC("ObjectConfig"));
-
             //if (model.BlurEnabled) changed |= Drawer.DrawBlurConfig(L(TKM.BlurConfig, Name), model.BlurConfig).IfTrue(() => SetBlurConfig("PoolSize"));
 
             GUILayout.BeginHorizontal();

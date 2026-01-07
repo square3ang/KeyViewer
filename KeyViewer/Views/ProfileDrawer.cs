@@ -29,7 +29,7 @@ namespace KeyViewer.Views
             //if (model.DoNotAssAss) Drawer.DrawBool(L(TKP.DoNotAssAss), ref model.DoNotAssAss);
             changed |= Drawer.DrawInt32(Main.Lang.Get("PROFILE_KPS_UPDATE_RATE", "KPS Update Rate"), ref model.KPSUpdateRate);
             changed |= Drawer.DrawSingleWithSlider(Main.Lang.Get("PROFILE_KEY_SPACING", "Key Spacing"), ref model.KeySpacing, 0, 100, 300f);
-            changed |= Drawer.DrawVectorConfig(model.VectorConfig);
+            //changed |= Drawer.DrawVectorConfig(model.VectorConfig);
             GUILayoutEx.HorizontalLine(1);
             DrawKeyConfigGUI();
             if (changed) manager.UpdateLayout();

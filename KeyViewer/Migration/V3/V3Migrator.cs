@@ -112,9 +112,9 @@ namespace KeyViewer.Migration.V3
             var ease = new Models.EaseConfig(keyConfig.Ease, keyConfig.EaseDuration);
             var height = keyHeight * scale.y;
             var heightOffset = (keyHeight - height) / 4f;
-            var offsetVector = new Vector3(keyConfig.OffsetX, keyConfig.OffsetY);
+            var offsetVector = new Vector2(keyConfig.OffsetX, keyConfig.OffsetY);
 
-            v4Config.VectorConfig.Offset = new Vector3(keyConfig.Width / 2f + x, height / 2f) + offsetVector;
+            v4Config.VectorConfig.Offset = new Vector2(keyConfig.Width / 2f + x, height / 2f) + offsetVector;
 
             v4Config.TextFontSize = keyConfig.TextFontSize;
             v4Config.CountTextFontSize = keyConfig.CountTextFontSize;
@@ -145,7 +145,7 @@ namespace KeyViewer.Migration.V3
         private static Models.RainConfig MigrateRain(KeyRain_Config rainConfig)
         {
             var v4Config = new Models.RainConfig();
-            v4Config.ObjectConfig.VectorConfig.Offset = new Vector3(rainConfig.OffsetX, rainConfig.OffsetY) / 5f;
+            v4Config.ObjectConfig.VectorConfig.Offset = new Vector2(rainConfig.OffsetX, rainConfig.OffsetY) / 5f;
             v4Config.Speed = rainConfig.RainSpeed;
             v4Config.PoolSize = rainConfig.RainPoolSize;
             v4Config.Softness = rainConfig.Softness;

@@ -91,13 +91,13 @@ namespace KeyViewer.Utils
             var t = k.transform;
             t.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             t.localScale = vConfig.Scale.Released;
-            t.localPosition = vConfig.Offset.Released + (Vector3)k.Position;
+            t.localPosition = vConfig.Offset.Released + k.Position;
         }
         public static void ApplyConfigLayout(Rain r, VectorConfig vConfig, Vector2 sizeDelta, bool scaleSizeDelta)
         {
             var rt = r.rt;
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
-            rt.localPosition = vConfig.Offset.Released + (Vector3)r.Position;
+            rt.localPosition = vConfig.Offset.Released + r.Position;
             if (scaleSizeDelta)
                 rt.sizeDelta = sizeDelta * vConfig.Scale.Released;
             else rt.localScale = vConfig.Scale.Released;
@@ -205,10 +205,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                t.DOLocalMove(vConfig.Offset.Get(pressed) + (Vector3)k.Position, oEase.Duration)
+                t.DOLocalMove(vConfig.Offset.Get(pressed) + k.Position, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else t.localPosition = vConfig.Offset.Get(pressed) + (Vector3)k.Position;
+            else t.localPosition = vConfig.Offset.Get(pressed) + k.Position;
 
             var sEase = vConfig.Scale.GetEase(pressed);
             if (sEase.IsValid)
@@ -234,10 +234,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                rt.DOLocalMove(vConfig.Offset.Get(pressed) + (Vector3)offset, oEase.Duration)
+                rt.DOLocalMove(vConfig.Offset.Get(pressed) + offset, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else rt.localPosition = vConfig.Offset.Get(pressed) + (Vector3)offset;
+            else rt.localPosition = vConfig.Offset.Get(pressed) + offset;
 
             Vector3 scale = vConfig.Scale.Get(pressed);
             if (fixScale)
@@ -298,10 +298,10 @@ namespace KeyViewer.Utils
 
             var oEase = vConfig.Offset.GetEase(pressed);
             if (oEase.IsValid)
-                rt.DOMove(vConfig.Offset.Get(pressed) + (Vector3)offset, oEase.Duration)
+                rt.DOMove(vConfig.Offset.Get(pressed) + offset, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else rt.position = vConfig.Offset.Get(pressed) + (Vector3)offset;
+            else rt.position = vConfig.Offset.Get(pressed) + offset;
         }
         public static void SetMaskAnchor(RectTransform rt, Direction dir, Pivot pivot = Pivot.MiddleCenter, Anchor anchor = Anchor.MiddleCenter)
         {

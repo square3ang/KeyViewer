@@ -8,7 +8,7 @@ namespace KeyViewer.Models
     public class VectorConfig : IModel, ICopyable<VectorConfig>
     {
         public PressRelease<Vector3> Rotation = Vector3.zero;
-        public PressRelease<Vector3> Offset = Vector3.zero;
+        public PressRelease<Vector2> Offset = Vector2.zero;
         public PressRelease<Vector2> Scale = Vector2.one;
         public Pivot Pivot = Pivot.MiddleCenter;
         public Anchor Anchor = Anchor.MiddleCenter;
@@ -29,7 +29,7 @@ namespace KeyViewer.Models
             if(Rotation.Pressed != Vector3.zero && Rotation.Released != Vector3.zero) {
                 node[nameof(Rotation)] = Rotation.Serialize();
             }
-            if(Offset.Pressed != Vector3.zero && Offset.Released != Vector3.zero) {
+            if(Offset.Pressed != Vector2.zero && Offset.Released != Vector2.zero) {
                 node[nameof(Offset)] = Offset.Serialize();
             }
             if(Scale.Pressed != Vector2.one || Scale.Released != Vector2.one) {
@@ -57,7 +57,7 @@ namespace KeyViewer.Models
             if(offsetRaw == null) {
                 Offset = defaultSettings.Offset;
             } else {
-                Offset = ModelUtils.Unbox<PressRelease<Vector3>>(offsetRaw);
+                Offset = ModelUtils.Unbox<PressRelease<Vector2>>(offsetRaw);
             }
             JToken scaleRaw = node[nameof(Scale)];
             if(scaleRaw == null) {

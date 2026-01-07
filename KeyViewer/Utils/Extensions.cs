@@ -190,7 +190,7 @@ namespace KeyViewer.Utils
                         break;
                     }
 
-                case Anchor.StretchAll:
+                case Anchor.FullStretch:
                     {
                         source.anchorMin = new Vector2(0, 0);
                         source.anchorMax = new Vector2(1, 1);

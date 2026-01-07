@@ -69,7 +69,7 @@ namespace KeyViewer.Views
                 changed |= Drawer.DrawPressReleaseH(FormatText(Main.Lang.Get("KEYCONFIG_OUTLINE_IMAGE", "Outline Image"), "Outline"), model.Outline, Drawer.CD_H_STR_TRIMQUOTE).IfTrue(() => SetPR<string>("Outline"));
             if (model.BackgroundBlurEnabled)
                 changed |= Drawer.DrawBlurConfig(FormatText(Main.Lang.Get("KEYCONFIG_KEY_BACKGROUND", "Key {0} Background"), "BackgroundBlurConfig", KeyViewerUtils.KeyName(model)), model.BackgroundBlurConfig).IfTrue(() => SetBlurConfig("BackgroundBlurConfig"));
-            */
+            
             changed |= Drawer.DrawVectorConfig(model.VectorConfig).IfTrue(() => SetVectorConfig("VectorConfig"));
 
             Drawer.DrawObjectConfig(FormatText(Main.Lang.Get("KEYCONFIG_EDIT_TEXT_CONFIG", "Edit Text Config"), "TextConfig"), string.Format(Main.Lang.Get("KEYCONFIG_KEY_TEXT", "Key {0} Text"), model.DummyName != null ? model.DummyName : model.Code), model.TextConfig, () => OnChangeOC("TextConfig"));
@@ -78,7 +78,7 @@ namespace KeyViewer.Views
             Drawer.DrawObjectConfig(FormatText(Main.Lang.Get("KEYCONFIG_EDIT_BACKGROUND_CONFIG", "Edit Background Config"), "BackgroundConfig"), string.Format(Main.Lang.Get("KEYCONFIG_KEY_BACKGROUND", "Key {0} Background"), model.DummyName != null ? model.DummyName : model.Code), model.BackgroundConfig, () => OnChangeOC("BackgroundConfig"));
             if (model.EnableOutlineImage)
                 Drawer.DrawObjectConfig(FormatText(Main.Lang.Get("KEYCONFIG_EDIT_OUTLINE_CONFIG", "Edit Outline Config"), "OutlineConfig"), string.Format(Main.Lang.Get("KEYCONFIG_KEY_OUTLINE", "Key {0} Outline"), model.DummyName != null ? model.DummyName : model.Code), model.OutlineConfig, () => OnChangeOC("OutlineConfig"));
-
+            */
             changed |= Drawer.DrawSingleWithSlider(FormatText(Main.Lang.Get("KEYCONFIG_BACKGROUND_IMAGE_ROUNDNESS", "Background Image Roundness"), "BackgroundRoundness"), ref model.BackgroundRoundness, 0, Constants.Rad2Deg100, 300).IfTrue(() => Set("BackgroundRoundness"));
             changed |= Drawer.DrawSingleWithSlider(FormatText(Main.Lang.Get("KEYCONFIG_OUTLINE_IMAGE_ROUNDNESS", "Outline Image Roundness"), "OutlineRoundness"), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300).IfTrue(() => Set("OutlineRoundness"));
 

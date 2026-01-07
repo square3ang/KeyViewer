@@ -1,4 +1,6 @@
-﻿using KeyViewer.Core.Interfaces;
+﻿using DG.Tweening;
+using HarmonyLib;
+using KeyViewer.Core.Interfaces;
 using KeyViewer.Models;
 using KeyViewer.Utils;
 using RapidGUI;
@@ -127,64 +129,6 @@ namespace KeyViewer.Core
             }, string.Format(Main.Lang.Get("MISC_BLUR_CONFIG", "{0} Blur Config"), objName), ref force);
             return result;
         }
-        public static void DrawObjectConfig(string label, string objName, ObjectConfig objConfig, Action onChange) {
-            bool force = true;
-            TitleButton(label, Main.Lang.Get("MISC_EDIT", "Edit"), () => {
-                string bts = string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_OBJECTCONFIG_FROM", "Object Config From {0}"), objName));
-                Main.GUI.Push(new MethodDrawable(() => {
-                    GUILayoutEx.ExpandableGUI((() => {
-                        GUILayout.BeginVertical();
-                        {
-                            GUILayout.Label(Main.Lang.Get("MISC_PRESSED", "Pressed"));
-                            DrawGColor(ref objConfig.Color.Pressed).IfTrue(onChange);
-                        }
-                        GUILayout.EndVertical();
-                        if(CanEase<GColor>.Value)
-                            DrawEaseConfig(Main.Lang.Get("MISC_PRESSED_EASE", "Pressed Ease"), objConfig.Color.PressedEase);
-                        TitleButton(Main.Lang.Get("MISC_COPY_FROM_RELEASED", "Copy From Released"), Main.Lang.Get("MISC_COPY", "Copy"), () => {
-                            objConfig.Color.Pressed = objConfig.Color.Released.Copy();
-                            objConfig.Color.PressedEase = objConfig.Color.ReleasedEase.Copy();
-                            onChange();
-                        });
-
-                        GUILayout.BeginVertical();
-                        {
-                            GUILayout.Label(Main.Lang.Get("MISC_RELEASED", "Released"));
-                            DrawGColor(ref objConfig.Color.Released).IfTrue(onChange);
-                        }
-                        GUILayout.EndVertical();
-                        if(CanEase<GColor>.Value)
-                            DrawEaseConfig(Main.Lang.Get("MISC_PRESSED_EASE", "Pressed Ease"), objConfig.Color.ReleasedEase);
-                        TitleButton(Main.Lang.Get("MISC_COPY_FROM_PRESSED", "Copy From Pressed"), Main.Lang.Get("MISC_COPY", "Copy"), () => {
-                            objConfig.Color.Released = objConfig.Color.Pressed;
-                            objConfig.Color.ReleasedEase = objConfig.Color.PressedEase.Copy();
-                        });
-                    }), Main.Lang.Get("MISC_COLOR", "Color"), ref force);
-                    string title = string.Format(string.Format(Main.Lang.Get("MISC_JUDGECOLOR_FROM", "Judge Color From {0}"), objName));
-                    DrawObjectConfig(objConfig, j => {
-                        bool judgeChanged = false;
-                        TitleButton(string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), Main.Lang.Get("MISC_JUDGECOLOR", "Judge Color")), Main.Lang.Get("MISC_EDIT", "Edit"), () => {
-                            Main.GUI.Push(new MethodDrawable(() => {
-                                var colors = objConfig.JudgeColors;
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_TOO_EARLY", "<color=#ED3E3E>Too Early</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.TooEarly), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_TOO_EARLY", "<color=#ED3E3E>Too Early</color>"))))));
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_VERY_EARLY", "<color=#EB9A46>Very Early</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.VeryEarly), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_VERY_EARLY", "<color=#EB9A46>Very Early</color>"))))));
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_EARLY_PERFECT", "<color=#E3E370>Early Perfect</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.EarlyPerfect), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_EARLY_PERFECT", "<color=#E3E370>Early Perfect</color>"))))));
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_PERFECT", "<color=#86E370>Perfect</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.Perfect), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_PERFECT", "<color=#86E370>Perfect</color>"))))));
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_LATE_PERFECT", "<color=#E3E370>Late Perfect</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.LatePerfect), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_LATE_PERFECT", "<color=#E3E370>Late Perfect</color>"))))));
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_VERY_LATE", "<color=#EB9A46>Very Late</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.VeryLate), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_VERY_LATE", "<color=#EB9A46>Very Late</color>"))))));
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_TOO_LATE", "<color=#ED3E3E>Too Late</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.TooLate), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_TOO_LATE", "<color=#ED3E3E>Too Late</color>"))))));
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_MULTI_PRESS", "<color=#00FFED>Multipress</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.Multipress), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_MULTI_PRESS", "<color=#00FFED>Multipress</color>"))))));
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_FAIL_MISS", "<color=#DA59FF>Miss</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.FailMiss), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_FAIL_MISS", "<color=#DA59FF>Miss</color>"))))));
-                                TitleButton(string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_FAIL_OVERLOAD", "<color=#DA59FF>Overload</color>")), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new MethodDrawable(() => DrawGColor(ref colors.FailOverload), string.Format(Main.Lang.Get("MISC_EDIT_THIS", "Edit {0}"), string.Format(Main.Lang.Get("MISC_THIS_COLOR", "{0} Color"), Main.Lang.Get("MISC_FAIL_OVERLOAD", "<color=#DA59FF>Overload</color>"))))));
-                                if(CanEase<GColor>.Value)
-                                    DrawEaseConfig(Main.Lang.Get("MISC_EASE", "Ease"), objConfig.JudgeColorEase);
-                            }, title));
-                        });
-                        return judgeChanged;
-                    }).IfTrue(onChange);
-                }, bts));
-            });
-        }
         public static void TitleButton(string label, string btnLabel, Action pressed) {
             GUILayout.BeginHorizontal();
             GUILayout.Label(label);
@@ -231,52 +175,7 @@ namespace KeyViewer.Core
             }
             return result;
         }
-        public static bool DrawObjectConfig(ObjectConfig objConfig, CustomDrawer<JudgeM<GColor>> judgeColorDrawer) {
-            bool result = DrawVectorConfig(objConfig.VectorConfig);
-            if(DrawBool(Main.Lang.Get("MISC_CHANGE_COLOR_WITH_JUDGE", "Change Color With Judge"), ref objConfig.ChangeColorWithJudge)) {
-                result = true;
-                if(objConfig.ChangeColorWithJudge) {
-                    var jc = objConfig.JudgeColors = new JudgeM<GColor>();
-                    jc.TooEarly = Constants.TooEarlyColor;
-                    jc.VeryEarly = Constants.VeryEarlyColor;
-                    jc.EarlyPerfect = Constants.EarlyPerfectColor;
-                    jc.Perfect = Constants.PerfectColor;
-                    jc.LatePerfect = Constants.LatePerfectColor;
-                    jc.VeryLate = Constants.VeryLateColor;
-                    jc.TooLate = Constants.TooLateColor;
-                    jc.Multipress = Constants.MultipressColor;
-                    jc.FailMiss = Constants.FailMissColor;
-                    jc.FailOverload = Constants.FailOverloadColor;
-                } else
-                    objConfig.JudgeColors = null;
-            }
-            if(objConfig.ChangeColorWithJudge)
-                result |= judgeColorDrawer?.Invoke(objConfig.JudgeColors) ?? false;
-            return result;
-        }
-        public static bool DrawVectorConfig(VectorConfig vConfig) {
-            bool result = false;
-            result |= DrawPressReleaseV(Main.Lang.Get("MISC_SCALE", "Scale"), vConfig.Scale, CD_V_VEC2_0_10_300);
-            result |= DrawPressReleaseV(Main.Lang.Get("MISC_OFFSET", "Offset"), vConfig.Offset, CD_V_VEC3_WIDTH_HEIGHT_Z_300);
-            result |= DrawPressReleaseV(Main.Lang.Get("MISC_ROTATION", "Rotation"), vConfig.Rotation, CD_V_VEC3_M180_180_300);
 
-            GUILayout.BeginHorizontal();
-            {
-                GUILayout.Label(Main.Lang.Get("MISC_PIVOT", "Pivot"));
-                result |= DrawEnum(Main.Lang.Get("MISC_PIVOT", "Pivot"), ref vConfig.Pivot, vConfig.GetHashCode());
-            }
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            {
-                GUILayout.Label(Main.Lang.Get("MISC_ANCHOR", "Anchor"));
-                result |= DrawEnum(Main.Lang.Get("MISC_ANCHOR", "Anchor"), ref vConfig.Anchor, vConfig.GetHashCode());
-            }
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            return result;
-        }
         public static bool DrawVector2WithSlider(string label, ref Vector2 vec2, float lValue, float rValue) {
             bool result = false;
             GUILayout.Label($"<b>{label}</b>");
@@ -554,6 +453,27 @@ namespace KeyViewer.Core
             @enum = EnumHelper<T>.GetValues()[current];
             return result;
         }
+
+        public static bool DrawEnum<T>(ref T @enum) where T : Enum {
+            int current = EnumHelper<T>.IndexOf(@enum);
+            string[] names = EnumHelper<T>.GetNames();
+            bool result = SelectionPopup(ref current, names, "");
+            @enum = EnumHelper<T>.GetValues()[current];
+            return result;
+        }
+
+        public static bool DrawEase(ref Ease ease) {
+            string[] names = Enum.GetNames(typeof(Ease));
+            int current = (int)ease;
+            Texture2D[] easeImages = new Texture2D[] { null, Icon_EaseLinear, Icon_EaseInSine, Icon_EaseOutSine, Icon_EaseInOutSine, Icon_EaseInQuad, Icon_EaseOutQuad, Icon_EaseInOutQuad, Icon_EaseInCubic, Icon_EaseOutCubic, Icon_EaseInOutCubic, Icon_EaseInQuart, Icon_EaseOutQuart, Icon_EaseInOutQuart, Icon_EaseInQuint, Icon_EaseOutQuint, Icon_EaseInOutQuint, Icon_EaseInExpo, Icon_EaseOutExpo, Icon_EaseInOutExpo, Icon_EaseInCirc, Icon_EaseOutCirc, Icon_EaseInOutCirc, Icon_EaseInElastic, Icon_EaseOutElastic, Icon_EaseInOutElastic, Icon_EaseInBack, Icon_EaseOutBack, Icon_EaseInOutBack, Icon_EaseInBounce, Icon_EaseOutBounce, Icon_EaseInOutBounce };
+            bool result = SelectionPopup(ref current, names, easeImages, "");
+            if(result) {
+                ease = (Ease)current;
+                return true;
+            }
+            return false;
+        }
+
         public static bool DrawInt16(string label, ref short value) {
             string str = value.ToString();
             bool result = DrawString(label, ref str);
@@ -711,6 +631,9 @@ namespace KeyViewer.Core
         public static bool Button(string str, params GUILayoutOption[] options) {
             return GUILayout.Button(str, myButton, options);
         }
+        public static bool Button(Texture2D texture, params GUILayoutOption[] options) {
+            return GUILayout.Button(texture, myButton, options);
+        }
 
         public static bool SelectionPopup(ref int selected, string[] options, string label,
             params GUILayoutOption[] layoutOptions) {
@@ -728,14 +651,30 @@ namespace KeyViewer.Core
             return c;
         }
 
+        public static bool SelectionPopup(ref int selected, string[] options, Texture2D[] images, string label,
+            params GUILayoutOption[] layoutOptions) {
+            if(label != "") {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(label);
+            }
+
+            var news = RGUI.SelectionPopup(selected, options, images, null, layoutOptions);
+            var c = selected != news;
+
+            selected = news;
+            if(label != "")
+                GUILayout.EndHorizontal();
+            return c;
+        }
+
         public static bool DrawPressReleaseBase(PressReleaseBase<string> prb) {
             bool changed = false;
+            Color old = GUI.color;
 
             GUILayout.BeginHorizontal();
             GUILayout.Label(Icon_Down);
-            Color old = GUI.color;
             GUI.color = new Color(0.5f, 1f, 0.5f);
-            if(Button("CP")) {
+            if(Button(Icon_Copy, GUILayout.Width(34))) {
                 prb.Pressed = prb.Released;
                 changed = true;
             }
@@ -748,7 +687,7 @@ namespace KeyViewer.Core
             GUILayout.Space(14);
             GUILayout.Label(Icon_Up);
             GUI.color = new Color(0.5f, 1f, 0.5f);
-            if(Button("CP")) {
+            if(Button(Icon_Copy, GUILayout.Width(34))) {
                 prb.Released = prb.Pressed;
                 changed = true;
             }
@@ -764,20 +703,223 @@ namespace KeyViewer.Core
             return changed;
         }
 
+        public static bool DrawAnchor(ref Anchor anchor) {
+            bool changed = false;
+
+            Color old = GUI.color;
+            GUILayout.BeginHorizontal();
+            GUI.color = anchor == Anchor.TopLeft ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorTopLeft, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.TopLeft; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = anchor == Anchor.TopCenter ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorTopCenter, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.TopCenter; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = anchor == Anchor.TopRight ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorTopRight, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.TopRight; changed = true; }
+            GUILayout.Space(8);
+            GUI.color = anchor == Anchor.HorizontalStretchTop ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorHorizontalStretchTop, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.HorizontalStretchTop; changed = true; }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(4);
+            GUILayout.BeginHorizontal();
+            GUI.color = anchor == Anchor.MiddleLeft ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorMiddleLeft, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.MiddleLeft; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = anchor == Anchor.MiddleCenter ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorMiddleCenter, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.MiddleCenter; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = anchor == Anchor.MiddleRight ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorMiddleRight, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.MiddleRight; changed = true; }
+            GUILayout.Space(8);
+            GUI.color = anchor == Anchor.HorizontalStretchMiddle ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorHorizontalStretchMiddle, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.HorizontalStretchMiddle; changed = true; }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(4);
+            GUILayout.BeginHorizontal();
+            GUI.color = anchor == Anchor.BottomLeft ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorBottomLeft, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.BottomLeft; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = anchor == Anchor.BottomCenter ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorBottomCenter, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.BottomCenter; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = anchor == Anchor.BottomRight ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorBottomRight, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.BottomRight; changed = true; }
+            GUILayout.Space(8);
+            GUI.color = anchor == Anchor.HorizontalStretchBottom ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorHorizontalStretchBottom, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.HorizontalStretchBottom; changed = true; }
+            GUILayout.EndHorizontal();
+            GUILayout.Space(8);
+            GUILayout.BeginHorizontal();
+            GUI.color = anchor == Anchor.VerticalStretchLeft ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorVerticalStretchLeft, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.VerticalStretchLeft; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = anchor == Anchor.VerticalStretchCenter ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorVerticalStretchCenter, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.VerticalStretchCenter; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = anchor == Anchor.VerticalStretchRight ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorVerticalStretchRight, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.VerticalStretchRight; changed = true; }
+            GUILayout.Space(8);
+            GUI.color = anchor == Anchor.FullStretch ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_AnchorFullStretch, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.FullStretch; changed = true;  }
+            GUILayout.EndHorizontal();
+
+            GUI.color = old;
+            return changed;
+        }
+
+        public static bool DrawPivot(ref Pivot pivot) {
+            bool changed = false;
+            Color old = GUI.color;
+
+            GUILayout.BeginHorizontal();
+            GUI.color = pivot == Pivot.TopLeft ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_UpLeft, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { pivot = Pivot.TopLeft; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = pivot == Pivot.TopCenter ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_Up, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { pivot = Pivot.TopCenter; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = pivot == Pivot.TopRight ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_UpRight, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { pivot = Pivot.TopRight; changed = true; }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(4);
+            GUILayout.BeginHorizontal();
+            GUI.color = pivot == Pivot.MiddleLeft ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_Left, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { pivot = Pivot.MiddleLeft; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = pivot == Pivot.MiddleCenter ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_Center, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { pivot = Pivot.MiddleCenter; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = pivot == Pivot.MiddleRight ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_Right, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { pivot = Pivot.MiddleRight; changed = true; }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(4);
+            GUILayout.BeginHorizontal();
+            GUI.color = pivot == Pivot.BottomLeft ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_DownLeft, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { pivot = Pivot.BottomLeft; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = pivot == Pivot.BottomCenter ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_Down, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { pivot = Pivot.BottomCenter; changed = true; }
+            GUILayout.Space(4);
+            GUI.color = pivot == Pivot.BottomRight ? Color.cyan : Color.white;
+            if(GUILayout.Button(Icon_DownRight, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { pivot = Pivot.BottomRight; changed = true; }
+            GUILayout.EndHorizontal();
+
+            GUI.color = old;
+            return changed;
+        }
+
+        public static void Tooltip(string text, bool ignoreWidth = false) {
+            if(string.IsNullOrEmpty(text)) {
+                GUI.Box(new Rect(0, 0, 0, 0), "");
+            } else {
+                Vector2 mousePosition = Event.current.mousePosition;
+
+                Vector2 textSize = GUI.skin.label.CalcSize(new GUIContent(text));
+                Rect labelPosition = new Rect(mousePosition.x, mousePosition.y - 40, 0, 0);
+
+                if(!ignoreWidth) {
+                    var windowwidth = ((Rect)AccessTools.Field(typeof(UnityModManagerNet.UnityModManager.UI), "mWindowRect")
+                            .GetValue(UnityModManagerNet.UnityModManager.UI.Instance))
+                        .width;
+                    var scroll = (Vector2[])AccessTools.Field(typeof(UnityModManagerNet.UnityModManager.UI), "mScrollPosition")
+                        .GetValue(UnityModManagerNet.UnityModManager.UI.Instance);
+                    windowwidth += scroll[UnityModManagerNet.UnityModManager.UI.Instance.tabId].x;
+                    if(labelPosition.x + textSize.x + 20 + 20 > windowwidth) {
+                        labelPosition.x = windowwidth - textSize.x - 20 - 20;
+                    }
+                }
+
+                labelPosition.width = textSize.x + 20;
+                labelPosition.height = textSize.y + 20;
+                GUI.Box(labelPosition, "", RGUIStyle.darkWindow);
+
+                labelPosition.x += 10;
+                labelPosition.y += 10;
+                GUI.Label(labelPosition, text);
+            }
+        }
+
         private static bool isImageInited = false;
 
         public static Texture2D Icon_Active;
         public static Texture2D Icon_Inactive;
 
-        public static Texture2D Icon_Down;
+        public static Texture2D Icon_Copy;
         public static Texture2D Icon_Gradation;
-        public static Texture2D Icon_Up;
         public static Texture2D Icon_UpDown;
         public static Texture2D Icon_LeftRight;
         public static Texture2D Icon_XRotate;
         public static Texture2D Icon_YRotate;
         public static Texture2D Icon_ZRotate;
+        public static Texture2D Icon_Sun;
+        public static Texture2D Icon_Blur;
+        public static Texture2D Icon_Scale;
+        public static Texture2D Icon_Offset;
+        public static Texture2D Icon_Rotate;
 
+        public static Texture2D Icon_Up;
+        public static Texture2D Icon_Down;
+        public static Texture2D Icon_Left;
+        public static Texture2D Icon_Right;
+        public static Texture2D Icon_UpLeft;
+        public static Texture2D Icon_UpRight;
+        public static Texture2D Icon_DownLeft;
+        public static Texture2D Icon_DownRight;
+        public static Texture2D Icon_Center;
+
+        public static Texture2D Icon_AnchorTopLeft;
+        public static Texture2D Icon_AnchorTopCenter;
+        public static Texture2D Icon_AnchorTopRight;
+        public static Texture2D Icon_AnchorMiddleLeft;
+        public static Texture2D Icon_AnchorMiddleCenter;
+        public static Texture2D Icon_AnchorMiddleRight;
+        public static Texture2D Icon_AnchorBottomLeft;
+        public static Texture2D Icon_AnchorBottomCenter;
+        public static Texture2D Icon_AnchorBottomRight;
+        public static Texture2D Icon_AnchorHorizontalStretchTop;
+        public static Texture2D Icon_AnchorHorizontalStretchMiddle;
+        public static Texture2D Icon_AnchorHorizontalStretchBottom;
+        public static Texture2D Icon_AnchorVerticalStretchLeft;
+        public static Texture2D Icon_AnchorVerticalStretchCenter;
+        public static Texture2D Icon_AnchorVerticalStretchRight;
+        public static Texture2D Icon_AnchorFullStretch;
+
+        public static Texture2D Icon_EaseLinear;
+        public static Texture2D Icon_EaseInSine;
+        public static Texture2D Icon_EaseOutSine;
+        public static Texture2D Icon_EaseInOutSine;
+        public static Texture2D Icon_EaseInQuad;
+        public static Texture2D Icon_EaseOutQuad;
+        public static Texture2D Icon_EaseInOutQuad;
+        public static Texture2D Icon_EaseInCubic;
+        public static Texture2D Icon_EaseOutCubic;
+        public static Texture2D Icon_EaseInOutCubic;
+        public static Texture2D Icon_EaseInQuart;
+        public static Texture2D Icon_EaseOutQuart;
+        public static Texture2D Icon_EaseInOutQuart;
+        public static Texture2D Icon_EaseInQuint;
+        public static Texture2D Icon_EaseOutQuint;
+        public static Texture2D Icon_EaseInOutQuint;
+        public static Texture2D Icon_EaseInExpo;
+        public static Texture2D Icon_EaseOutExpo;
+        public static Texture2D Icon_EaseInOutExpo;
+        public static Texture2D Icon_EaseInCirc;
+        public static Texture2D Icon_EaseOutCirc;
+        public static Texture2D Icon_EaseInOutCirc;
+        public static Texture2D Icon_EaseInElastic;
+        public static Texture2D Icon_EaseOutElastic;
+        public static Texture2D Icon_EaseInOutElastic;
+        public static Texture2D Icon_EaseInBack;
+        public static Texture2D Icon_EaseOutBack;
+        public static Texture2D Icon_EaseInOutBack;
+        public static Texture2D Icon_EaseInBounce;
+        public static Texture2D Icon_EaseOutBounce;
+        public static Texture2D Icon_EaseInOutBounce;
+    
         public static void InitializeImages() {
             if(isImageInited) {
                 return;
@@ -811,6 +953,7 @@ namespace KeyViewer.Core
             black.SetPixel(0, 0, Color.black);
             black.Apply();
 
+            Icon_Copy = CreateTextureFromByte(ImageManager.GetResourceBytes("copy.png"));
             Icon_Active = CreateTextureFromByte(ImageManager.GetResourceBytes("active.png"));
             Icon_Inactive = CreateTextureFromByte(ImageManager.GetResourceBytes("inactive.png"));
             Icon_Gradation = CreateTextureFromByte(ImageManager.GetResourceBytes("gradation.png"));
@@ -819,11 +962,90 @@ namespace KeyViewer.Core
             Icon_XRotate = CreateTextureFromByte(ImageManager.GetResourceBytes("xrotate.png"));
             Icon_YRotate = RotateTexture90(Icon_XRotate);
             Icon_ZRotate = CreateTextureFromByte(ImageManager.GetResourceBytes("zrotate.png"));
-            Icon_Up = CreateTextureFromByte(ImageManager.GetResourceBytes("up.png"));
-            Icon_Down = RotateTexture180(Icon_Up);
+            Icon_Sun = CreateTextureFromByte(ImageManager.GetResourceBytes("sun.png"));
+            Icon_Blur = CreateTextureFromByte(ImageManager.GetResourceBytes("blur.png"));
+            Icon_Scale = CreateTextureFromByte(ImageManager.GetResourceBytes("scale.png"));
+            Icon_Offset = CreateTextureFromByte(ImageManager.GetResourceBytes("offset.png"));
+            Icon_Rotate = CreateTextureFromByte(ImageManager.GetResourceBytes("rotate.png"));
 
+            Icon_Up = CreateTextureFromByte(ImageManager.GetResourceBytes("up.png"));
+            Icon_Left = RotateTexture90(Icon_Up);
+            Icon_Down = RotateTexture90(Icon_Left);
+            Icon_Right = RotateTexture90(Icon_Down);
+            Icon_UpLeft = CreateTextureFromByte(ImageManager.GetResourceBytes("upleft.png"));
+            Icon_DownLeft = RotateTexture90(Icon_UpLeft);
+            Icon_DownRight = RotateTexture90(Icon_DownLeft);
+            Icon_UpRight = RotateTexture90(Icon_DownRight);
+            Icon_Center = CreateTextureFromByte(ImageManager.GetResourceBytes("center.png"));
+
+            Icon_AnchorTopLeft = DoubleTexture(CreateTextureFromByte(ImageManager.GetResourceBytes("anchortopleft.png")));
+            Icon_AnchorBottomLeft = RotateTexture90(Icon_AnchorTopLeft);
+            Icon_AnchorBottomRight = RotateTexture90(Icon_AnchorBottomLeft);
+            Icon_AnchorTopRight = RotateTexture90(Icon_AnchorBottomRight);
+            Icon_AnchorMiddleLeft = DoubleTexture(CreateTextureFromByte(ImageManager.GetResourceBytes("anchormiddleleft.png")));
+            Icon_AnchorBottomCenter = RotateTexture90(Icon_AnchorMiddleLeft);
+            Icon_AnchorMiddleRight = RotateTexture90(Icon_AnchorBottomCenter);
+            Icon_AnchorTopCenter = RotateTexture90(Icon_AnchorMiddleRight);
+            Icon_AnchorMiddleCenter = DoubleTexture(CreateTextureFromByte(ImageManager.GetResourceBytes("anchormiddlecenter.png")));
+            Icon_AnchorHorizontalStretchTop = DoubleTexture(CreateTextureFromByte(ImageManager.GetResourceBytes("anchorhorizontalstretchtop.png")));
+            Icon_AnchorVerticalStretchLeft = RotateTexture90(Icon_AnchorHorizontalStretchTop);
+            Icon_AnchorHorizontalStretchBottom = RotateTexture90(Icon_AnchorVerticalStretchLeft);
+            Icon_AnchorVerticalStretchRight = RotateTexture90(Icon_AnchorHorizontalStretchBottom);
+            Icon_AnchorHorizontalStretchMiddle = DoubleTexture(CreateTextureFromByte(ImageManager.GetResourceBytes("anchorhorizontalstretchmiddle.png")));
+            Icon_AnchorVerticalStretchCenter = RotateTexture90(Icon_AnchorHorizontalStretchMiddle);
+            Icon_AnchorFullStretch = DoubleTexture(CreateTextureFromByte(ImageManager.GetResourceBytes("anchorfullstretch.png")));
+
+            Icon_EaseLinear = CreateTextureFromByte(ImageManager.GetResourceBytes("easelinear.png"));
+            Icon_EaseInSine = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinsine.png"));
+            Icon_EaseOutSine = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutsine.png"));
+            Icon_EaseInOutSine = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutsine.png"));
+            Icon_EaseInQuad = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinquad.png"));
+            Icon_EaseOutQuad = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutquad.png"));
+            Icon_EaseInOutQuad = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutquad.png"));
+            Icon_EaseInCubic = CreateTextureFromByte(ImageManager.GetResourceBytes("easeincubic.png"));
+            Icon_EaseOutCubic = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutcubic.png"));
+            Icon_EaseInOutCubic = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutcubic.png"));
+            Icon_EaseInQuart = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinquart.png"));
+            Icon_EaseOutQuart = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutquart.png"));
+            Icon_EaseInOutQuart = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutquart.png"));
+            Icon_EaseInQuint = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinquint.png"));
+            Icon_EaseOutQuint = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutquint.png"));
+            Icon_EaseInOutQuint = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutquint.png"));
+            Icon_EaseInExpo = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinexpo.png"));
+            Icon_EaseOutExpo = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutexpo.png"));
+            Icon_EaseInOutExpo = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutexpo.png"));
+            Icon_EaseInCirc = CreateTextureFromByte(ImageManager.GetResourceBytes("easeincirc.png"));
+            Icon_EaseOutCirc = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutcirc.png"));
+            Icon_EaseInOutCirc = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutcirc.png"));
+            Icon_EaseInElastic = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinelastic.png"));
+            Icon_EaseOutElastic = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutelastic.png"));
+            Icon_EaseInOutElastic = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutelastic.png"));
+            Icon_EaseInBack = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinback.png"));
+            Icon_EaseOutBack = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutback.png"));
+            Icon_EaseInOutBack = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutback.png"));
+            Icon_EaseInBounce = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinbounce.png"));
+            Icon_EaseOutBounce = CreateTextureFromByte(ImageManager.GetResourceBytes("easeoutbounce.png"));
+            Icon_EaseInOutBounce = CreateTextureFromByte(ImageManager.GetResourceBytes("easeinoutbounce.png"));
 
             isImageInited = true;
+        }
+
+        public static Texture2D DoubleTexture(Texture2D src) {
+            int w = src.width * 2;
+            int h = src.height * 2;
+            Texture2D dst = new Texture2D(w, h, src.format, false);
+
+            dst.filterMode = FilterMode.Point;
+            dst.wrapMode = TextureWrapMode.Clamp;
+
+            for(int y = 0; y < h; y++) {
+                for(int x = 0; x < w; x++) {
+                    dst.SetPixel(x, y, src.GetPixel(x / 2, y / 2));
+                }
+            }
+
+            dst.Apply();
+            return dst;
         }
 
         public static Texture2D RotateTexture90(Texture2D tex) {
@@ -914,6 +1136,8 @@ namespace KeyViewer.Core
         public static Texture2D outlineimg;
         public static Texture2D black;
 
+        private static GUIStyle nopadButton;
+
         static Drawer() {
             InitializeImages();
 
@@ -924,6 +1148,10 @@ namespace KeyViewer.Core
             mySlider = new GUIStyle(GUI.skin.horizontalSlider);
             myThumb = new GUIStyle(GUI.skin.horizontalSliderThumb);
             SetStyle(Main.Settings.useLegacyTheme);
+
+            nopadButton = new GUIStyle(myButton);
+            nopadButton.padding = new RectOffset(0, 0, 0, 0);
+            nopadButton.margin = new RectOffset(0, 0, 0, 0);
         }
     }
 }

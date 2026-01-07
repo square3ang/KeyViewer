@@ -28,7 +28,7 @@ namespace KeyViewer.Views
             NeoDrawer.StaticInstance.FieldResetId();
 
             if(model.DummyName != null) {
-                if(Drawer.DrawString(Main.Lang.Get("KEYCONFIG_DUMMY_KEY_NAME", "Dummy Key Name"), ref model.DummyName)) {
+                if(Drawer.DrawString(Main.Lang.Get("DUMMY_KEY_NAME", "Dummy Key Name"), ref model.DummyName)) {
                     Name = model.DummyName;
                 }
             } else {
@@ -38,7 +38,7 @@ namespace KeyViewer.Views
                     bool result = Drawer.SelectionPopup(
                         ref current,
                         Enum.GetNames(typeof(KeyCode)),
-                        $"{Main.Lang.Get("KEYCONFIG_KEY_CODE", "Key Code")}{(model.Code == KeyCode.Menu ? $" ({Main.Lang.Get("FAKE", "Fake")})" : "")}"
+                        $"{Main.Lang.Get("KEY_CODE", "Key Code")}{(model.Code == KeyCode.Menu ? $" ({Main.Lang.Get("FAKE", "Fake")})" : "")}"
                     );
                     if(result) {
                         model.Code = (KeyCode)current;
@@ -52,7 +52,7 @@ namespace KeyViewer.Views
             bool changed = false;
             {
                 string tempFont = model.Font;
-                bool tempChanged = Drawer.DrawString(Main.Lang.Get("KEYCONFIG_TEXT_FONT", "Text Font"), ref tempFont);
+                bool tempChanged = Drawer.DrawString(Main.Lang.Get("TEXT_FONT", "Text Font"), ref tempFont);
                 if(tempChanged) {
                     model.Font = tempFont.TrimQuote();
                     changed = true;
@@ -66,7 +66,7 @@ namespace KeyViewer.Views
             GUILayout.EndHorizontal();
             if(IsOpenBoolSettings) {
                 if(model.DummyName == null) {
-                    if(Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_KPS_METER", "Enable KPS Meter"), ref model.EnableKPSMeter)) {
+                    if(Drawer.DrawBool(Main.Lang.Get("ENABLE_KPS_METER", "Enable KPS Meter"), ref model.EnableKPSMeter)) {
                         changed = true;
                         if(model.EnableKPSMeter) {
                             KPSCalculator.Sync(manager.keys.Select(k => k.Config.EnableKPSMeter ? k.KpsCalc : null).Where(c => c != null));
@@ -75,54 +75,71 @@ namespace KeyViewer.Views
                         }
                     }
                 }
-                changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_UPDATE_TEXT_ALWAYS", "Update Text Always"), ref model.UpdateTextAlways);
-                changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_COUNT_TEXT", "Enable Count Text"), ref model.EnableCountText);
-                changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_OUTLINE_IMAGE", "Enable Outline Image"), ref model.EnableOutlineImage);
-                changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_DISABLE_SORTING", "Disable Sorting"), ref model.DisableSorting);
-                changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_DO_NOT_SCALE_TEXT", "Do Not Scale Text"), ref model.DoNotScaleText);
-                changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_BACKGROUND_BLUR", "Enable Backgruond Blur"), ref model.BackgroundBlurEnabled);
+                changed |= Drawer.DrawBool(Main.Lang.Get("ENABLE_COUNT_TEXT", "Enable Count Text"), ref model.EnableCountText);
+                changed |= Drawer.DrawBool(Main.Lang.Get("ENABLE_OUTLINE_IMAGE", "Enable Outline Image"), ref model.EnableOutlineImage);
+                changed |= Drawer.DrawBool(Main.Lang.Get("ENABLE_BACKGROUND_BLUR", "Enable Backgruond Blur"), ref model.BackgroundBlurEnabled);
+                changed |= Drawer.DrawBool(Main.Lang.Get("ENABLE_RAIN", "Enable Rain"), ref model.RainEnabled);
+                changed |= Drawer.DrawBool(Main.Lang.Get("UPDATE_TEXT_ALWAYS", "Update Text Always"), ref model.UpdateTextAlways);
+                changed |= Drawer.DrawBool(Main.Lang.Get("DISABLE_SORTING", "Disable Sorting"), ref model.DisableSorting);
+                changed |= Drawer.DrawBool(Main.Lang.Get("DO_NOT_SCALE_TEXT", "Do Not Scale Text"), ref model.DoNotScaleText);
+                
             }
-            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("KEYCONFIG_TEXT_FONT_SIZE", "Text Font Size"), ref model.TextFontSize, 0, 300, 300);
-            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("KEYCONFIG_COUNT_TEXT_FONT_SIZE", "Count Text Font Size"), ref model.CountTextFontSize, 0, 300, 300);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("TEXT_FONT_SIZE", "Text Font Size"), ref model.TextFontSize, 0, 300, 300);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("COUNT_TEXT_FONT_SIZE", "Count Text Font Size"), ref model.CountTextFontSize, 0, 300, 300);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("BACKGROUND_IMAGE_ROUNDNESS", "Background Image Roundness"), ref model.BackgroundRoundness, 0, Constants.Rad2Deg100, 300);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("OUTLINE_IMAGE_ROUNDNESS", "Outline Image Roundness"), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300);
 
-            GUILayout.Label(Main.Lang.Get("TEXT", "Text"));
+            GUILayout.BeginHorizontal();
+            if(Drawer.Button(Main.Lang.Get("TEXT", "Text"))) {
+                Main.GUI.Push(new MethodDrawable(() => {
+                }, Main.Lang.Get("TEXT", "Text")));
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
             changed |= Drawer.DrawPressReleaseBase(model.Text);
             if(model.EnableCountText) {
-                GUILayout.Label(Main.Lang.Get("COUNT_TEXT", "Count Text"));
+                GUILayout.BeginHorizontal();
+                if(Drawer.Button(Main.Lang.Get("COUNT_TEXT", "Count Text"))) {
+                    Main.GUI.Push(new MethodDrawable(() => {
+                    }, Main.Lang.Get("COUNT_TEXT", "Count Text")));
+                }
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
                 changed |= Drawer.DrawPressReleaseBase(model.CountText);
             }
-            GUILayout.Label(Main.Lang.Get("BACKGROUND_IMAGE", "Background Image"));
+            GUILayout.BeginHorizontal();
+            if(Drawer.Button(Main.Lang.Get("BACKGROUND_IMAGE", "Background Image"))) {
+                Main.GUI.Push(new MethodDrawable(() => {
+                }, Main.Lang.Get("BACKGROUND_IMAGE", "Background Image")));
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
             changed |= Drawer.DrawPressReleaseBase(model.Background);
             if(model.EnableOutlineImage) {
-                GUILayout.Label(Main.Lang.Get("OUTLINE_IMAGE", "Outline Image"));
+                GUILayout.BeginHorizontal();
+                if(Drawer.Button(Main.Lang.Get("OUTLINE_IMAGE", "Outline Image"))) {
+                    Main.GUI.Push(new MethodDrawable(() => {
+                    }, Main.Lang.Get("OUTLINE_IMAGE", "Outline Image")));
+                }
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
                 changed |= Drawer.DrawPressReleaseBase(model.Outline);
             }
             if(model.BackgroundBlurEnabled) {
-                GUILayout.Label(Main.Lang.Get("BACKGROUND_BLUR", "Background Blur"));
                 changed |= NeoDrawer.StaticInstance.DrawBlurConfig(model.BackgroundBlurConfig);
             }
-
-            {
-
-                changed |= Drawer.DrawVectorConfig(model.VectorConfig);
-
-                Drawer.DrawObjectConfig(Main.Lang.Get("KEYCONFIG_EDIT_TEXT_CONFIG", "Edit Text Config"), string.Format(Main.Lang.Get("KEYCONFIG_KEY_TEXT", "Key {0} Text"), (model.DummyName != null ? model.DummyName : model.Code)), model.TextConfig, () => manager.UpdateLayout());
-                if(model.EnableCountText)
-                    Drawer.DrawObjectConfig(Main.Lang.Get("KEYCONFIG_EDIT_COUNT_TEXT_CONFIG", "Edit Count Text Config"), string.Format(Main.Lang.Get("KEYCONFIG_EDIT_COUNT_TEXT_CONFIG", "Edit Count Text Config"), model.DummyName != null ? model.DummyName : model.Code), model.CountTextConfig, () => manager.UpdateLayout());
-                Drawer.DrawObjectConfig(Main.Lang.Get("KEYCONFIG_EDIT_BACKGROUND_CONFIG", "Edit Background Config"), string.Format(Main.Lang.Get("KEYCONFIG_KEY_BACKGROUND", "Key {0} Background"), model.DummyName != null ? model.DummyName : model.Code), model.BackgroundConfig, () => manager.UpdateLayout());
-                if(model.EnableOutlineImage)
-                    Drawer.DrawObjectConfig(Main.Lang.Get("KEYCONFIG_EDIT_OUTLINE_CONFIG", "Edit Outline Config"), string.Format(Main.Lang.Get("KEYCONFIG_KEY_OUTLINE", "Key {0} Outline"), model.DummyName != null ? model.DummyName : model.Code), model.OutlineConfig, () => manager.UpdateLayout());
-
-                changed |= Drawer.DrawSingleWithSlider(Main.Lang.Get("KEYCONFIG_BACKGROUND_IMAGE_ROUNDNESS", "Background Image Roundness"), ref model.BackgroundRoundness, 0, Constants.Rad2Deg100, 300);
-                changed |= Drawer.DrawSingleWithSlider(Main.Lang.Get("KEYCONFIG_OUTLINE_IMAGE_ROUNDNESS", "Outline Image Roundness"), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300);
-
-                changed |= Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_RAIN", "Enable Rain"), ref model.RainEnabled);
-                if(model.RainEnabled)
-                    Drawer.TitleButton(Main.Lang.Get("KEYCONFIG_EDIT_RAIN_CONFIG", "Edit Rain Config"), Main.Lang.Get("MISC_EDIT", "Edit"), () => Main.GUI.Push(new RainConfigDrawer(manager, model)));
+            if(model.RainEnabled) {
+                GUILayout.BeginHorizontal();
+                if(Drawer.Button(Main.Lang.Get("RAIN", "Rain"))) {
+                    Main.GUI.Push(new MethodDrawable(() => {
+                    }, Main.Lang.Get("RAIN", "Rain")));
+                }
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
             }
+            changed |= NeoDrawer.StaticInstance.DrawVectorConfig(model.VectorConfig);
 
-            if (changed)
-            {
+            if (changed) {
                 if(!prevBgBlurEnabled && model.BackgroundBlurEnabled) {
                     KeyViewerUtils.ApplyBlurColorConfig(model);
                 }

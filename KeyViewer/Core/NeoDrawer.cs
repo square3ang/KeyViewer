@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static HarmonyLib.AccessTools;
 
 namespace Overlayer.Core {
     public class NeoDrawer {
@@ -30,7 +31,7 @@ namespace Overlayer.Core {
             public string Str;
             public StateType State;
             public object ComputedValue;
-            
+
         }
 
         private string LastFocused;
@@ -46,7 +47,7 @@ namespace Overlayer.Core {
             }
             return false;
         }
-        
+
         public uint FieldGetId() {
             return id;
         }
@@ -83,7 +84,7 @@ namespace Overlayer.Core {
             return field;
         }
 
-        public  string FieldGetName(string uniqueID = null) {
+        public string FieldGetName(string uniqueID = null) {
             return $"Field_{uniqueID ?? (id - 1).ToString()}";
         }
 
@@ -232,7 +233,7 @@ namespace Overlayer.Core {
                 changed |= DrawSingleWithSlider("X", ref vec3.x, lValue, rValue, 300f, uniqueID + "_0");
                 changed |= DrawSingleWithSlider("Y", ref vec3.y, lValue, rValue, 300f, uniqueID + "_1");
                 changed |= DrawSingleWithSlider("Z", ref vec3.z, lValue, rValue, 300f, uniqueID + "_2");
-            } 
+            }
             return changed;
         }
 
@@ -331,7 +332,7 @@ namespace Overlayer.Core {
             GUILayout.Label(StatebyState(field.State), GUILayout.Width(10));
 
             Color newColor = RGUI.Field(color, "", GUILayout.Width(cWidth));
-            
+
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -367,9 +368,9 @@ namespace Overlayer.Core {
                     fieldBL = FieldGet();
                     fieldBR = FieldGet();
                 } else {
-                   fieldTR = FieldGet(uniqueID + "_1");
-                   fieldBL = FieldGet(uniqueID + "_2");
-                   fieldBR = FieldGet(uniqueID + "_3");
+                    fieldTR = FieldGet(uniqueID + "_1");
+                    fieldBL = FieldGet(uniqueID + "_2");
+                    fieldBR = FieldGet(uniqueID + "_3");
                 }
 
                 StrInitialize(ref fieldTL, ColorUtility.ToHtmlStringRGBA(color.topLeft));
@@ -831,20 +832,188 @@ namespace Overlayer.Core {
 
         public bool DrawBlurConfig(BlurConfig blurConfig, string uniqueID = null) {
             bool changed = false;
-
+            GUILayout.Label($"<b>{Main.Lang.Get("BACKGROUND_BLUR", "Background Blur")}</b>");
             Color old = GUI.color;
             if(uniqueID == null) {
                 GUI.color = new Color(1.0f, 0.55f, 0.25f);
-                changed |= DrawSingleWithSlider("S", ref blurConfig.Spacing, 0, 40, 300f);
+                changed |= DrawSingleWithSlider(Drawer.Icon_Blur, "S", ref blurConfig.Spacing, 0, 40, 300f);
                 GUI.color = new Color(0.35f, 0.9f, 1.0f);
-                changed |= DrawSingleWithSlider("V", ref blurConfig.Vibrancy, 0, 2, 300f);
+                changed |= DrawSingleWithSlider(Drawer.Icon_Sun, "V", ref blurConfig.Vibrancy, 0, 2, 300f);
             } else {
                 GUI.color = new Color(1.0f, 0.55f, 0.25f);
-                changed |= DrawSingleWithSlider("S", ref blurConfig.Spacing, 0, 40, 300f, uniqueID + "_0");
+                changed |= DrawSingleWithSlider(Drawer.Icon_Blur, "S", ref blurConfig.Spacing, 0, 40, 300f, uniqueID + "_0");
                 GUI.color = new Color(0.35f, 0.9f, 1.0f);
-                changed |= DrawSingleWithSlider("V", ref blurConfig.Vibrancy, 0, 2, 300f, uniqueID + "_1");
+                changed |= DrawSingleWithSlider(Drawer.Icon_Sun, "V", ref blurConfig.Vibrancy, 0, 2, 300f, uniqueID + "_1");
             }
             GUI.color = old;
+            return changed;
+        }
+
+        public bool DrawVectorConfig(VectorConfig vConfig) {
+            bool changed = false;
+            Color old = GUI.color;
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Scale);
+            GUILayout.Label($"<b>{Main.Lang.Get("SCALE", "Scale")}</b>");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Down);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                vConfig.Scale.Pressed = vConfig.Scale.Released;
+                vConfig.Scale.PressedEase = vConfig.Scale.ReleasedEase;
+                FieldGet(id.ToString())?.Str = vConfig.Scale.Released.x.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Scale.Released.y.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref vConfig.Scale.PressedEase.Ease);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(1.0f, 0.68f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_LeftRight, "X", ref vConfig.Scale.Pressed.x, 0, 10f, 300f);
+            GUI.color = new Color(0.68f, 1.0f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_UpDown, "Y", ref vConfig.Scale.Pressed.y, 0, 10f, 300f);
+            GUILayout.BeginHorizontal();
+            GUI.color = old;
+            GUILayout.Label(Drawer.Icon_Up);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                vConfig.Scale.Released = vConfig.Scale.Pressed;
+                vConfig.Scale.ReleasedEase = vConfig.Scale.PressedEase;
+                FieldGet(id.ToString())?.Str = vConfig.Scale.Pressed.x.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Scale.Pressed.y.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref vConfig.Scale.ReleasedEase.Ease);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(1.0f, 0.68f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_LeftRight, "X", ref vConfig.Scale.Released.x, 0, 10f, 300f);
+            GUI.color = new Color(0.68f, 1.0f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_UpDown, "Y", ref vConfig.Scale.Released.y, 0, 10f, 300f);
+            GUI.color = old;
+
+            int screenhw = Screen.width / 2;
+            int screenhh = Screen.height / 2;
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Offset);
+            GUILayout.Label($"<b>{Main.Lang.Get("OFFSET", "Offset")}</b>");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUI.color = old;
+            GUILayout.Label(Drawer.Icon_Down);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                vConfig.Offset.Pressed = vConfig.Offset.Released;
+                vConfig.Offset.PressedEase = vConfig.Offset.ReleasedEase;
+                FieldGet(id.ToString())?.Str = vConfig.Offset.Released.x.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Offset.Released.y.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref vConfig.Offset.PressedEase.Ease);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(1.0f, 0.68f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_LeftRight, "X", ref vConfig.Offset.Pressed.x, -screenhw, screenhw, 300f);
+            GUI.color = new Color(0.68f, 1.0f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_UpDown, "Y", ref vConfig.Offset.Pressed.y, -screenhh, screenhh, 300f);
+            GUILayout.BeginHorizontal();
+            GUI.color = old;
+            GUILayout.Label(Drawer.Icon_Up);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                vConfig.Offset.Released = vConfig.Offset.Pressed;
+                vConfig.Offset.ReleasedEase = vConfig.Offset.PressedEase;
+                FieldGet(id.ToString())?.Str = vConfig.Offset.Pressed.x.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Offset.Pressed.y.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref vConfig.Offset.ReleasedEase.Ease);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(1.0f, 0.68f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_LeftRight, "X", ref vConfig.Offset.Released.x, -screenhw, screenhw, 300f);
+            GUI.color = new Color(0.68f, 1.0f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_UpDown, "Y", ref vConfig.Offset.Released.y, -screenhh, screenhh, 300f);
+            GUI.color = old;
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Rotate);
+            GUILayout.Label($"<b>{Main.Lang.Get("ROTATION", "Rotation")}</b>");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUI.color = old;
+            GUILayout.Label(Drawer.Icon_Down);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                vConfig.Rotation.Pressed = vConfig.Rotation.Released;
+                vConfig.Rotation.PressedEase = vConfig.Rotation.ReleasedEase;
+                FieldGet(id.ToString())?.Str = vConfig.Rotation.Released.x.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Rotation.Released.y.ToString();
+                FieldGet((id + 2).ToString())?.Str = vConfig.Rotation.Released.z.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref vConfig.Rotation.PressedEase.Ease);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(1.0f, 0.68f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_XRotate, "X", ref vConfig.Rotation.Pressed.x, -180f, 180f, 300f);
+            GUI.color = new Color(0.68f, 1.0f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_YRotate, "Y", ref vConfig.Rotation.Pressed.y, -180f, 180f, 300f);
+            GUI.color = new Color(0.68f, 0.68f, 1.0f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_ZRotate, "Z", ref vConfig.Rotation.Pressed.z, -180f, 180f, 300f);
+            GUILayout.BeginHorizontal();
+            GUI.color = old;
+            GUILayout.Label(Drawer.Icon_Up);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                vConfig.Rotation.Released = vConfig.Rotation.Pressed;
+                vConfig.Rotation.ReleasedEase = vConfig.Rotation.PressedEase;
+                FieldGet(id.ToString())?.Str = vConfig.Rotation.Pressed.x.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Rotation.Pressed.y.ToString();
+                FieldGet((id + 2).ToString())?.Str = vConfig.Rotation.Pressed.z.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref vConfig.Rotation.ReleasedEase.Ease);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(1.0f, 0.68f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_XRotate, "X", ref vConfig.Rotation.Released.x, -180f, 180f, 300f);
+            GUI.color = new Color(0.68f, 1.0f, 0.68f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_YRotate, "Y", ref vConfig.Rotation.Released.y, -180f, 180f, 300f);
+            GUI.color = new Color(0.68f, 0.68f, 1.0f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_ZRotate, "Z", ref vConfig.Rotation.Released.z, -180f, 180f, 300f);
+            GUI.color = old;
+
+            GUILayout.Space(8);
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(6);
+            GUILayout.BeginVertical();
+            changed |= Drawer.DrawPivot(ref vConfig.Pivot);
+            GUILayout.EndVertical();
+            GUILayout.Space(16);
+            GUILayout.BeginVertical();
+            changed |= Drawer.DrawAnchor(ref vConfig.Anchor);
+            GUILayout.EndVertical();
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            return changed;
+        }
+
+        public bool DrawPressRelease(PressRelease<Vector2> vector, string uniqueID = null) {
+            bool changed = false;
+            
+            
             return changed;
         }
     }
