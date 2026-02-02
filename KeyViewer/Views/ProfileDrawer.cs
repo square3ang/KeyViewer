@@ -2,6 +2,7 @@
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
+using Overlayer.Core;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -20,19 +21,22 @@ namespace KeyViewer.Views
         {
             this.manager = manager;
         }
+        public override void OnceCall() {
+            NeoDrawer.StaticInstance.FieldResetDictById();
+        }
         public override void Draw()
         {
             bool changed = false;
+            DrawKeyConfigGUI();
+            GUILayoutEx.HorizontalLine(1);
             Drawer.DrawBool(Main.Lang.Get("PROFILE_VIEW_ONLY_GAME_PLAY", "View Only Game Play"), ref model.ViewOnlyGamePlay);
             changed |= Drawer.DrawBool(Main.Lang.Get("PROFILE_LIMIT_NOT_REGISTERED_KEYS", "Limit Input Not Registered Keys"), ref model.LimitNotRegisteredKeys);
             changed |= Drawer.DrawBool(Main.Lang.Get("PROFILE_RESET_ON_START", "Reset On Start"), ref model.ResetOnStart);
-            //if (model.DoNotAssAss) Drawer.DrawBool(L(TKP.DoNotAssAss), ref model.DoNotAssAss);
-            changed |= Drawer.DrawInt32(Main.Lang.Get("PROFILE_KPS_UPDATE_RATE", "KPS Update Rate"), ref model.KPSUpdateRate);
-            changed |= Drawer.DrawSingleWithSlider(Main.Lang.Get("PROFILE_KEY_SPACING", "Key Spacing"), ref model.KeySpacing, 0, 100, 300f);
-            //changed |= Drawer.DrawVectorConfig(model.VectorConfig);
-            GUILayoutEx.HorizontalLine(1);
-            DrawKeyConfigGUI();
+            changed |= NeoDrawer.StaticInstance.DrawInt32(Main.Lang.Get("PROFILE_KPS_UPDATE_RATE", "KPS Update Rate"), ref model.KPSUpdateRate);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("PROFILE_KEY_SPACING", "Key Spacing"), ref model.KeySpacing, 0, 100, 300f);
+            changed |= NeoDrawer.StaticInstance.DrawVectorConfig(model.VectorConfig);
             if (changed) manager.UpdateLayout();
+            NeoDrawer.StaticInstance.UpdateFocused();
         }
         public override void OnKeyDown(KeyCode code)
         {

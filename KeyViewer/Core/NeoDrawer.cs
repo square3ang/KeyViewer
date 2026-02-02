@@ -870,6 +870,8 @@ namespace Overlayer.Core {
             }
             GUI.color = old;
             Drawer.DrawEase(ref vConfig.Scale.PressedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref vConfig.Scale.PressedEase.Duration, 0, 5f, 170f);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUI.color = new Color(1.0f, 0.68f, 0.68f);
@@ -889,6 +891,8 @@ namespace Overlayer.Core {
             }
             GUI.color = old;
             Drawer.DrawEase(ref vConfig.Scale.ReleasedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref vConfig.Scale.ReleasedEase.Duration, 0, 5f, 170f);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUI.color = new Color(1.0f, 0.68f, 0.68f);
@@ -917,6 +921,8 @@ namespace Overlayer.Core {
             }
             GUI.color = old;
             Drawer.DrawEase(ref vConfig.Offset.PressedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref vConfig.Offset.PressedEase.Duration, 0, 5f, 170f);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUI.color = new Color(1.0f, 0.68f, 0.68f);
@@ -936,6 +942,8 @@ namespace Overlayer.Core {
             }
             GUI.color = old;
             Drawer.DrawEase(ref vConfig.Offset.ReleasedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref vConfig.Offset.ReleasedEase.Duration, 0, 5f, 170f);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUI.color = new Color(1.0f, 0.68f, 0.68f);
@@ -963,6 +971,8 @@ namespace Overlayer.Core {
             }
             GUI.color = old;
             Drawer.DrawEase(ref vConfig.Rotation.PressedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref vConfig.Rotation.PressedEase.Duration, 0, 5f, 170f);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUI.color = new Color(1.0f, 0.68f, 0.68f);
@@ -985,6 +995,8 @@ namespace Overlayer.Core {
             }
             GUI.color = old;
             Drawer.DrawEase(ref vConfig.Rotation.ReleasedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref vConfig.Rotation.ReleasedEase.Duration, 0, 5f, 170f);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUI.color = new Color(1.0f, 0.68f, 0.68f);

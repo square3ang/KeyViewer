@@ -860,6 +860,7 @@ namespace KeyViewer.Core
         public static Texture2D Icon_Scale;
         public static Texture2D Icon_Offset;
         public static Texture2D Icon_Rotate;
+        public static Texture2D Icon_Duration;
 
         public static Texture2D Icon_Up;
         public static Texture2D Icon_Down;
@@ -967,6 +968,7 @@ namespace KeyViewer.Core
             Icon_Scale = CreateTextureFromByte(ImageManager.GetResourceBytes("scale.png"));
             Icon_Offset = CreateTextureFromByte(ImageManager.GetResourceBytes("offset.png"));
             Icon_Rotate = CreateTextureFromByte(ImageManager.GetResourceBytes("rotate.png"));
+            Icon_Duration = CreateTextureFromByte(ImageManager.GetResourceBytes("duration.png"));
 
             Icon_Up = CreateTextureFromByte(ImageManager.GetResourceBytes("up.png"));
             Icon_Left = RotateTexture90(Icon_Up);

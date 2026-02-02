@@ -525,6 +525,7 @@
     <EmbeddedResource Include="MiscFiles\images\offset.png" />
     <EmbeddedResource Include="MiscFiles\images\rotate.png" />
     <EmbeddedResource Include="MiscFiles\images\scale.png" />
+    <EmbeddedResource Include="MiscFiles\images\duration.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorder.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorderHighlighted.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imCircle.png" />
