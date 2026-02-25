@@ -359,10 +359,12 @@ namespace Overlayer.Core {
             bool changed = ge != prevGe;
 
             if(color.gradientEnabled && canEnableGradient) {
+
                 NeoField fieldTL = FieldGet(uniqueID);
                 NeoField fieldTR;
                 NeoField fieldBL;
                 NeoField fieldBR;
+
                 if(string.IsNullOrEmpty(uniqueID)) {
                     fieldTR = FieldGet();
                     fieldBL = FieldGet();
@@ -379,20 +381,34 @@ namespace Overlayer.Core {
                 StrInitialize(ref fieldBR, ColorUtility.ToHtmlStringRGBA(color.bottomRight));
 
                 if(changed && ge) {
-                    fieldTR.Str = ColorUtility.ToHtmlStringRGBA(color.topLeft);
+                    fieldTL.Str = ColorUtility.ToHtmlStringRGBA(color.topLeft);
+                    fieldTR.Str = ColorUtility.ToHtmlStringRGBA(color.topRight);
                     fieldBL.Str = ColorUtility.ToHtmlStringRGBA(color.bottomLeft);
                     fieldBR.Str = ColorUtility.ToHtmlStringRGBA(color.bottomRight);
+
+                    fieldTL.State = NeoField.StateType.OK;
+                    fieldTR.State = NeoField.StateType.OK;
+                    fieldBL.State = NeoField.StateType.OK;
+                    fieldBR.State = NeoField.StateType.OK;
                 }
 
+                /* ! TOP ! */
+
                 GUILayout.BeginHorizontal();
+
+                // TL
                 Color newColorTL = RGUI.Field(color.topLeft, "", GUILayout.Width(cWidth));
                 GUILayout.Space(2f);
+
                 Color old = GUI.color;
                 if(fieldTL.State == NeoField.StateType.ERROR) {
                     GUI.color = new Color(1f, 0.5f, 0.5f);
                 }
+
                 GUI.SetNextControlName(FieldGetName(uniqueID));
                 string newHexTL = GUILayout.TextField(fieldTL.Str, 8, Drawer.myTextFieldNoPad, GUILayout.Width(80f));
+                GUI.color = old;
+
                 if(newHexTL != fieldTL.Str) {
                     fieldTL.Str = newHexTL;
                     changed = true;
@@ -404,24 +420,28 @@ namespace Overlayer.Core {
                         fieldTL.State = NeoField.StateType.ERROR;
                     }
                 }
+
                 if(newColorTL != color.topLeft) {
                     color.topLeft = newColorTL;
                     changed = true;
-                    fieldTR.Str = ColorUtility.ToHtmlStringRGBA(color.topLeft);
-                    fieldTR.State = NeoField.StateType.OK;
+
+                    fieldTL.Str = ColorUtility.ToHtmlStringRGBA(color.topLeft);
+                    fieldTL.State = NeoField.StateType.OK;
                 }
 
                 GUILayout.Space(4f);
                 GUILayout.Label("↖", GUILayout.Width(16));
-                GUI.color = old;
 
+                // TR
                 if(fieldTR.State == NeoField.StateType.ERROR) {
                     GUI.color = new Color(1f, 0.5f, 0.5f);
                 }
+
                 GUILayout.Label("↗", GUILayout.Width(16));
-                GUI.SetNextControlName(FieldGetName(uniqueID));
+                GUI.SetNextControlName(FieldGetName(uniqueID + "_1"));
                 string newHexTR = GUILayout.TextField(fieldTR.Str, 8, Drawer.myTextFieldNoPad, GUILayout.Width(80f));
                 GUI.color = old;
+
                 if(newHexTR != fieldTR.Str) {
                     fieldTR.Str = newHexTR;
                     changed = true;
@@ -433,25 +453,35 @@ namespace Overlayer.Core {
                         fieldTR.State = NeoField.StateType.ERROR;
                     }
                 }
+
                 Color newColorTR = RGUI.Field(color.topRight, "", GUILayout.Width(cWidth));
                 if(newColorTR != color.topRight) {
                     color.topRight = newColorTR;
                     changed = true;
+
                     fieldTR.Str = ColorUtility.ToHtmlStringRGBA(color.topRight);
                     fieldTR.State = NeoField.StateType.OK;
                 }
+
                 GUILayout.EndHorizontal();
                 GUILayout.FlexibleSpace();
 
+                /* ! BOTTOM ! */
 
                 GUILayout.BeginHorizontal();
+
+                // BL
                 Color newColorBL = RGUI.Field(color.bottomLeft, "", GUILayout.Width(cWidth));
                 GUILayout.Space(2f);
+
                 if(fieldBL.State == NeoField.StateType.ERROR) {
                     GUI.color = new Color(1f, 0.5f, 0.5f);
                 }
-                GUI.SetNextControlName(FieldGetName(uniqueID));
+
+                GUI.SetNextControlName(FieldGetName(uniqueID + "_2"));
                 string newHexBL = GUILayout.TextField(fieldBL.Str, 8, Drawer.myTextFieldNoPad, GUILayout.Width(80f));
+                GUI.color = old;
+
                 if(newHexBL != fieldBL.Str) {
                     fieldBL.Str = newHexBL;
                     changed = true;
@@ -463,24 +493,28 @@ namespace Overlayer.Core {
                         fieldBL.State = NeoField.StateType.ERROR;
                     }
                 }
+
                 if(newColorBL != color.bottomLeft) {
                     color.bottomLeft = newColorBL;
                     changed = true;
+
                     fieldBL.Str = ColorUtility.ToHtmlStringRGBA(color.bottomLeft);
                     fieldBL.State = NeoField.StateType.OK;
                 }
 
                 GUILayout.Space(4f);
                 GUILayout.Label("↙", GUILayout.Width(16));
-                GUI.color = old;
 
+                // BR
                 if(fieldBR.State == NeoField.StateType.ERROR) {
                     GUI.color = new Color(1f, 0.5f, 0.5f);
                 }
+
                 GUILayout.Label("↘", GUILayout.Width(16));
-                GUI.SetNextControlName(FieldGetName(uniqueID));
+                GUI.SetNextControlName(FieldGetName(uniqueID + "_3"));
                 string newHexBR = GUILayout.TextField(fieldBR.Str, 8, Drawer.myTextFieldNoPad, GUILayout.Width(80f));
                 GUI.color = old;
+
                 if(newHexBR != fieldBR.Str) {
                     fieldBR.Str = newHexBR;
                     changed = true;
@@ -492,13 +526,16 @@ namespace Overlayer.Core {
                         fieldBR.State = NeoField.StateType.ERROR;
                     }
                 }
+
                 Color newColorBR = RGUI.Field(color.bottomRight, "", GUILayout.Width(cWidth));
                 if(newColorBR != color.bottomRight) {
                     color.bottomRight = newColorBR;
                     changed = true;
+
                     fieldBR.Str = ColorUtility.ToHtmlStringRGBA(color.bottomRight);
                     fieldBR.State = NeoField.StateType.OK;
                 }
+
                 GUILayout.EndHorizontal();
                 GUILayout.FlexibleSpace();
             } else {
@@ -950,9 +987,10 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 vConfig.Scale.Pressed = vConfig.Scale.Released;
-                vConfig.Scale.PressedEase = vConfig.Scale.ReleasedEase;
-                FieldGet(id.ToString())?.Str = vConfig.Scale.Released.x.ToString();
-                FieldGet((id + 1).ToString())?.Str = vConfig.Scale.Released.y.ToString();
+                vConfig.Scale.PressedEase = vConfig.Scale.ReleasedEase.Copy();
+                FieldGet(id.ToString())?.Str = vConfig.Scale.ReleasedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Scale.Released.x.ToString();
+                FieldGet((id + 2).ToString())?.Str = vConfig.Scale.Released.y.ToString();
                 changed = true;
             }
             GUI.color = old;
@@ -971,9 +1009,10 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 vConfig.Scale.Released = vConfig.Scale.Pressed;
-                vConfig.Scale.ReleasedEase = vConfig.Scale.PressedEase;
-                FieldGet(id.ToString())?.Str = vConfig.Scale.Pressed.x.ToString();
-                FieldGet((id + 1).ToString())?.Str = vConfig.Scale.Pressed.y.ToString();
+                vConfig.Scale.ReleasedEase = vConfig.Scale.PressedEase.Copy();
+                FieldGet(id.ToString())?.Str = vConfig.Scale.PressedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Scale.Pressed.x.ToString();
+                FieldGet((id + 2).ToString())?.Str = vConfig.Scale.Pressed.y.ToString();
                 changed = true;
             }
             GUI.color = old;
@@ -1001,9 +1040,10 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 vConfig.Offset.Pressed = vConfig.Offset.Released;
-                vConfig.Offset.PressedEase = vConfig.Offset.ReleasedEase;
-                FieldGet(id.ToString())?.Str = vConfig.Offset.Released.x.ToString();
-                FieldGet((id + 1).ToString())?.Str = vConfig.Offset.Released.y.ToString();
+                vConfig.Offset.PressedEase = vConfig.Offset.ReleasedEase.Copy();
+                FieldGet(id.ToString())?.Str = vConfig.Offset.PressedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Offset.Pressed.x.ToString();
+                FieldGet((id + 2).ToString())?.Str = vConfig.Offset.Pressed.y.ToString();
                 changed = true;
             }
             GUI.color = old;
@@ -1022,9 +1062,10 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 vConfig.Offset.Released = vConfig.Offset.Pressed;
-                vConfig.Offset.ReleasedEase = vConfig.Offset.PressedEase;
-                FieldGet(id.ToString())?.Str = vConfig.Offset.Pressed.x.ToString();
-                FieldGet((id + 1).ToString())?.Str = vConfig.Offset.Pressed.y.ToString();
+                vConfig.Offset.ReleasedEase = vConfig.Offset.PressedEase.Copy();
+                FieldGet(id.ToString())?.Str = vConfig.Offset.PressedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Offset.Pressed.x.ToString();
+                FieldGet((id + 2).ToString())?.Str = vConfig.Offset.Pressed.y.ToString();
                 changed = true;
             }
             GUI.color = old;
@@ -1050,10 +1091,11 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 vConfig.Rotation.Pressed = vConfig.Rotation.Released;
-                vConfig.Rotation.PressedEase = vConfig.Rotation.ReleasedEase;
-                FieldGet(id.ToString())?.Str = vConfig.Rotation.Released.x.ToString();
-                FieldGet((id + 1).ToString())?.Str = vConfig.Rotation.Released.y.ToString();
-                FieldGet((id + 2).ToString())?.Str = vConfig.Rotation.Released.z.ToString();
+                vConfig.Rotation.PressedEase = vConfig.Rotation.ReleasedEase.Copy();
+                FieldGet(id.ToString())?.Str = vConfig.Rotation.ReleasedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Rotation.Released.x.ToString();
+                FieldGet((id + 2).ToString())?.Str = vConfig.Rotation.Released.y.ToString();
+                FieldGet((id + 3).ToString())?.Str = vConfig.Rotation.Released.z.ToString();
                 changed = true;
             }
             GUI.color = old;
@@ -1074,10 +1116,11 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 vConfig.Rotation.Released = vConfig.Rotation.Pressed;
-                vConfig.Rotation.ReleasedEase = vConfig.Rotation.PressedEase;
-                FieldGet(id.ToString())?.Str = vConfig.Rotation.Pressed.x.ToString();
-                FieldGet((id + 1).ToString())?.Str = vConfig.Rotation.Pressed.y.ToString();
-                FieldGet((id + 2).ToString())?.Str = vConfig.Rotation.Pressed.z.ToString();
+                vConfig.Rotation.ReleasedEase = vConfig.Rotation.PressedEase.Copy();
+                FieldGet(id.ToString())?.Str = vConfig.Rotation.PressedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = vConfig.Rotation.Pressed.x.ToString();
+                FieldGet((id + 2).ToString())?.Str = vConfig.Rotation.Pressed.y.ToString();
+                FieldGet((id + 3).ToString())?.Str = vConfig.Rotation.Pressed.z.ToString();
                 changed = true;
             }
             GUI.color = old;
@@ -1106,6 +1149,64 @@ namespace Overlayer.Core {
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
+            return changed;
+        }
+
+        public bool DrawObjectConfig(ObjectConfig oConfig) {
+            bool changed = false;
+            Color old = GUI.color;
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Up);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                oConfig.Color.Released = oConfig.Color.Pressed;
+                oConfig.Color.ReleasedEase = oConfig.Color.PressedEase.Copy();
+                FieldGet(id.ToString())?.Str = oConfig.Color.PressedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = oConfig.Color.Pressed.topLeft.ToString();
+                FieldGet((id + 2).ToString())?.Str = oConfig.Color.Pressed.topRight.ToString();
+                FieldGet((id + 3).ToString())?.Str = oConfig.Color.Pressed.bottomLeft.ToString();
+                FieldGet((id + 4).ToString())?.Str = oConfig.Color.Pressed.bottomRight.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref oConfig.Color.ReleasedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref oConfig.Color.ReleasedEase.Duration, 0, 5f, 170f);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            DrawGColor(ref oConfig.Color.Released, true);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Up);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                oConfig.Color.Pressed = oConfig.Color.Released;
+                oConfig.Color.PressedEase = oConfig.Color.ReleasedEase;
+                FieldGet(id.ToString())?.Str = oConfig.Color.ReleasedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = oConfig.Color.Released.topLeft.ToString();
+                FieldGet((id + 2).ToString())?.Str = oConfig.Color.Released.topRight.ToString();
+                FieldGet((id + 3).ToString())?.Str = oConfig.Color.Released.bottomLeft.ToString();
+                FieldGet((id + 4).ToString())?.Str = oConfig.Color.Released.bottomRight.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref oConfig.Color.PressedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref oConfig.Color.PressedEase.Duration, 0, 5f, 170f);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Center);
+            GUILayout.Label($"<b>{Main.Lang.Get("COLOR", "Color")}</b>");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            DrawGColor(ref oConfig.Color.Pressed, true);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Center);
+            GUILayout.Label($"<b>{Main.Lang.Get("VECTOR", "Vector")}</b>");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            DrawVectorConfig(oConfig.VectorConfig);
+
             return changed;
         }
 
@@ -1229,7 +1330,7 @@ namespace Overlayer.Core {
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
-
+            DrawObjectConfig(rConfig.ObjectConfig);
 
             return changed;
         }
