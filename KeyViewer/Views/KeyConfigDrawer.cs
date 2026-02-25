@@ -22,7 +22,6 @@ namespace KeyViewer.Views
         }
 
         public static bool IsOpenBoolSettings = false;
-        public static bool IsOpenRainSettings = false;
 
         public override void Draw()
         {
@@ -119,15 +118,11 @@ namespace KeyViewer.Views
             }
             if(model.RainEnabled) {
                 GUILayout.BeginHorizontal();
-                if(Drawer.Button($"<b>{Main.Lang.Get("RAIN", "Rain")}</b> {(IsOpenRainSettings ? "▼" : "▲")}")) {
-                    IsOpenRainSettings = !IsOpenRainSettings;
+                if(Drawer.Button($"<b>{Main.Lang.Get("RAIN", "Rain")}</b>")) {
+                    Main.GUI.Push(new RainConfigDrawer(manager, model));
                 }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
-                if(IsOpenRainSettings) {
-                    changed |= NeoDrawer.StaticInstance.DrawRainConfig(model.Rain);
-                    GUILayout.Space(8f);
-                }
             }
             GUILayout.Label($"<b>{Main.Lang.Get("VECTOR", "Vector")}</b>");
             changed |= NeoDrawer.StaticInstance.DrawVectorConfig(model.VectorConfig);

@@ -1156,7 +1156,7 @@ namespace Overlayer.Core {
             bool changed = false;
             Color old = GUI.color;
             GUILayout.BeginHorizontal();
-            GUILayout.Label(Drawer.Icon_Up);
+            GUILayout.Label(Drawer.Icon_Down);
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 oConfig.Color.Released = oConfig.Color.Pressed;
@@ -1295,11 +1295,11 @@ namespace Overlayer.Core {
             GUI.color = old;
             Drawer.DrawEase(ref rConfig.Length.ReleasedEase.Ease);
             GUILayout.Space(7);
-            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref rConfig.Speed.ReleasedEase.Duration, 0, 5f, 170f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref rConfig.Length.ReleasedEase.Duration, 0, 5f, 170f);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUI.color = new Color(0.63f, 0.44f, 1f);
-            changed |= DrawSingleWithSlider(Drawer.Icon_LeftRight, "L", ref rConfig.Speed.Released, 0, 500f, 300f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_LeftRight, "L", ref rConfig.Length.Released, 0, 500f, 300f);
             GUI.color = old;
 
             GUILayout.BeginHorizontal();
