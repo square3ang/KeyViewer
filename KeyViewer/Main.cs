@@ -95,17 +95,19 @@ namespace KeyViewer
                     try {
                         var profileName = Path.GetFileNameWithoutExtension(file);
 
-                        if(Settings.ActiveProfiles.Any(p => p.Name == profileName))
+                        var existingProfile = Settings.ActiveProfiles.FirstOrDefault(p => p.Name == profileName);
+                        if(existingProfile.Name != default(ActiveProfile).Name) {
+                            AddManager(existingProfile);
                             continue;
+                        }
 
-                        var profileJson = File.ReadAllText(file);
-                        var profileData = JsonConvert.DeserializeObject<Profile>(profileJson);
+                        var profileJsonNew = File.ReadAllText(file);
+                        var profileDataNew = JsonConvert.DeserializeObject<Profile>(profileJsonNew);
 
-                        var activeProfile = new ActiveProfile(profileName, true);
+                        var newActiveProfile = new ActiveProfile(profileName, existingProfile.Active);
+                        Settings.ActiveProfiles.Add(newActiveProfile);
 
-                        Settings.ActiveProfiles.Add(activeProfile);
-
-                        if(!AddManager(activeProfile)) {
+                        if(!AddManager(newActiveProfile)) {
                             notExistProfiles.Add(profileName);
                         }
                     } catch(Exception ex) {

@@ -453,6 +453,7 @@
     <Compile Include="Utils\ModelUtils.cs" />
     <Compile Include="Models\Pivot.cs" />
     <Compile Include="Utils\StringConverter.cs" />
+    <Compile Include="Views\MultipleRainConfigDrawer.cs" />
     <Compile Include="Views\RainConfigDrawer.cs" />
     <Compile Include="Views\MultipleKeyConfigDrawer.cs" />
     <Compile Include="Views\KeyConfigDrawer.cs" />
@@ -527,6 +528,10 @@
     <EmbeddedResource Include="MiscFiles\images\duration.png" />
     <EmbeddedResource Include="MiscFiles\images\speed.png" />
     <EmbeddedResource Include="MiscFiles\images\length.png" />
+    <EmbeddedResource Include="MiscFiles\images\softness.png" />
+    <EmbeddedResource Include="MiscFiles\images\roundness.png" />
+    <EmbeddedResource Include="MiscFiles\images\poolsize.png" />
+    <EmbeddedResource Include="MiscFiles\images\color.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorder.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorderHighlighted.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imCircle.png" />

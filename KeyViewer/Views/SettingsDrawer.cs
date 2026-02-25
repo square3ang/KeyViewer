@@ -39,10 +39,15 @@ namespace KeyViewer.Views
 
         public override void OnceCall() {
             LanguageInit();
+            destroyConfirm = [];
         }
+
+        private static HashSet<string> destroyConfirm;
 
         public override void Draw()
         {
+            bool reaction = false;
+
             if(Main.Lang.IsLoading) {
                 float elapsedTime = Time.time - preparinglastUpdateTime;
 
@@ -94,21 +99,27 @@ namespace KeyViewer.Views
                 int selectedIndex = Array.IndexOf(languages, Main.Lang.Language);
 
                 if(Drawer.Button("◀", GUILayout.Width(40))) {
+                    reaction = true;
                     selectedIndex = (selectedIndex - 1 + languages.Length) % languages.Length;
                     LanguageUpdate(selectedIndex);
                 }
 
                 if(Drawer.SelectionPopup(ref selectedIndex, userLanguages, "", GUILayout.Width(400))) {
+                    reaction = true;
                     LanguageUpdate(selectedIndex);
                 }
                 if(Drawer.Button("▶", GUILayout.Width(40))) {
+                    reaction = true;
                     selectedIndex = (selectedIndex + 1) % languages.Length;
                     LanguageUpdate(selectedIndex);
                 }
 
                 bool reloadLang = false;
                 try {
-                    reloadLang = Drawer.Button(Main.Lang.Get("RELOADLANG", "Reload Language Pack"), GUILayout.Width(320));
+                    if(Drawer.Button(Main.Lang.Get("RELOADLANG", "Reload Language Pack"), GUILayout.Width(320))) {
+                        reaction = true;
+                        reloadLang = true; 
+                    }
                 } catch {
                 } finally {
                     GUILayout.EndHorizontal();
@@ -123,20 +134,21 @@ namespace KeyViewer.Views
             }
             GUILayout.BeginHorizontal();
             if(Drawer.Button(Main.Lang.Get("EXTRA_MENU", "Extra Menu") + " " + (isOpenedExtraMenu ? "▼" : "▲"))) {
+                reaction = true;
                 isOpenedExtraMenu = !isOpenedExtraMenu;
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             if(isOpenedExtraMenu) {
-                if(Drawer.DrawBool(
-                        string.Format(Main.Lang.Get("USE_THIS", "Use {0}"), Main.Lang.Get("LEGACY_THEME", "Legacy Theme")),
-                        ref model.useLegacyTheme)) {
+                if(Drawer.DrawBool(string.Format(Main.Lang.Get("USE_THIS", "Use {0}"), Main.Lang.Get("LEGACY_THEME", "Legacy Theme")), ref model.useLegacyTheme)) {
+                    reaction = true;
                     Drawer.SetStyle(model.useLegacyTheme);
                     RGUIStyle.CreateStyles();
                 }
             }
             GUILayout.BeginHorizontal();
             if(Drawer.Button(Main.Lang.Get("SETTINGS_IMPORT_PROFILE", "Import Profile"))) {
+                reaction = true;
                 var profiles = StandaloneFileBrowser.OpenFilePanel(Main.Lang.Get("SETTINGS_SELECT_PROFILE", "Select Profile"), Main.ProfilePath, new[] { new ExtensionFilter("V4", "json"), new ExtensionFilter("V3", "xml"), }, true);
                 foreach(var profile in profiles) {
                     FileInfo file = new FileInfo(profile);
@@ -151,14 +163,17 @@ namespace KeyViewer.Views
                 }
             }
             if(Drawer.Button(Main.Lang.Get("SETTINGS_CREATE_PROFILE", "Create New Profile"))) {
+                reaction = true;
                 var profile = new ActiveProfile(GetNewProfileName(), true);
                 model.ActiveProfiles.Add(profile);
                 Profile newProfile = new Profile();
                 File.WriteAllText(Path.Combine(Main.ProfilePath, $"{profile.Name}.json"), newProfile.Serialize().ToString());
                 Main.AddManager(profile, true);
             }
-            if(Drawer.Button(Main.Lang.Get("SETTINGS_OPEN_MOD_DIR", "Open Mod Directory")))
+            if(Drawer.Button(Main.Lang.Get("SETTINGS_OPEN_MOD_DIR", "Open Mod Directory"))) {
+                reaction = true;
                 Application.OpenURL(Path.GetFullPath(Main.Mod.Path));
+            }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -180,16 +195,31 @@ namespace KeyViewer.Views
                     Main.GUI.Push(new ProfileDrawer(manager, manager.profile, profile.Name));
                 }
                 GUI.color = new Color(1f, 0.8f, 0.8f);
-                if(Drawer.Button(Main.Lang.Get("DESTROY", "Destroy"))) {
-                    Main.RemoveManager(profile);
-                    string path = Path.Combine(Main.ProfilePath, $"{profile.Name}.json");
-                    File.Delete(path);
-                    Main.ToDeleteFiles.Add(path);
-                    model.ActiveProfiles.RemoveAll(p => p.Name == profile.Name);
-                    break;
+                bool isConfirm = destroyConfirm.Contains(profile.Name);
+
+                if(isConfirm) {
+                    if(Drawer.Button(Main.Lang.Get("ONE_MORE", "One More!"))) {
+                        Main.RemoveManager(profile);
+                        string path = Path.Combine(Main.ProfilePath, $"{profile.Name}.json");
+
+                        if(File.Exists(path)) {
+                            File.Delete(path);
+                        }
+
+                        Main.ToDeleteFiles.Add(path);
+                        model.ActiveProfiles.RemoveAll(p => p.Name == profile.Name);
+
+                        destroyConfirm.Remove(profile.Name);
+                        break;
+                    }
+                } else {
+                    if(Drawer.Button(Main.Lang.Get("DESTROY", "Destroy"))) {
+                        destroyConfirm.Add(profile.Name);
+                    }
                 }
                 GUI.color = new Color(1f, 0.8f, 1f);
                 if(Drawer.Button(Main.Lang.Get("EXPORT", "Export"))) {
+                    reaction = true;
                     string target = StandaloneFileBrowser.SaveFilePanel(Main.Lang.Get("SETTINGS_SELECT_PROFILE", "Select Profile"), Persistence.GetLastUsedFolder(), $"{profile.Name}.json", "json");
                     if(!string.IsNullOrWhiteSpace(target)) {
                         Profile p = Main.Managers[profile.Name].profile;
@@ -202,6 +232,10 @@ namespace KeyViewer.Views
                 GUILayout.Label(profile.Name);
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
+
+                if(reaction) {
+                    destroyConfirm = [];
+                }
 
                 if(NeedLangInit) {
                     NeedLangInit = false;

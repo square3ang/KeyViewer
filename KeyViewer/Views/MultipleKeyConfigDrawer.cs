@@ -51,28 +51,33 @@ namespace KeyViewer.Views
                 Set("Font");
                 changed = true;
             }
-
-            if(model.DummyName == null) {
-                if(Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_KPS_METER", "Enable KPS Meter"), ref model.EnableKPSMeter)) {
-                    changed = true;
-                    if(model.EnableKPSMeter)
-                        KPSCalculator.Sync(manager.keys.Select(k => k.Config.EnableKPSMeter ? k.KpsCalc : null).Where(c => c != null));
-                    else
-                        manager[model.Code.ToString()].KpsCalc.Stop();
-                }
+            GUILayout.BeginHorizontal();
+            if(Drawer.Button(Main.Lang.Get("TOGGLE_SETTINGS", "Toggle Settings") + " " + (KeyConfigDrawer.IsOpenBoolSettings ? "▼" : "▲"))) {
+                KeyConfigDrawer.IsOpenBoolSettings = !KeyConfigDrawer.IsOpenBoolSettings;
             }
-
-            changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_UPDATE_TEXT_ALWAYS", "Update Text Always"), "UpdateTextAlways"), ref model.UpdateTextAlways).IfTrue(() => Set("UpdateTextAlways"));
-            changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_ENABLE_COUNT_TEXT", "Enable Count Text"), "EnableCountText"), ref model.EnableCountText).IfTrue(() => Set("EnableCountText"));
-            changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_ENABLE_OUTLINE_IMAGE", "Enable Outline Image"), "EnableOutlineImage"), ref model.EnableOutlineImage).IfTrue(() => Set("EnableOutlineImage"));
-            changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_DO_NOT_SCALE_TEXT", "Do Not Scale Text"), "DoNotScaleText"), ref model.DoNotScaleText).IfTrue(() => Set("DoNotScaleText"));
-            changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_ENABLE_BACKGROUND_BLUR", "Enable Backgruond Blur"), "BackgroundBlurEnabled"), ref model.BackgroundBlurEnabled).IfTrue(() => Set("BackgroundBlurEnabled"));
-            changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_ENABLE_RAIN", "Enable Rain"), "RainEnabled"), ref model.RainEnabled).IfTrue(() => Set("RainEnabled"));
-
-            changed |= Drawer.DrawSingleWithSlider(FormatText(Main.Lang.Get("KEYCONFIG_TEXT_FONT_SIZE", "Text Font Size"), "TextFontSize"), ref model.TextFontSize, 0, 300, 300).IfTrue(() => Set("TextFontSize"));
-            changed |= Drawer.DrawSingleWithSlider(FormatText(Main.Lang.Get("KEYCONFIG_COUNT_TEXT_FONT_SIZE", "Count Text Font Size"), "CountTextFontSize"), ref model.CountTextFontSize, 0, 300, 300).IfTrue(() => Set("CountTextFontSize"));
-            changed |= Drawer.DrawSingleWithSlider(FormatText(Main.Lang.Get("KEYCONFIG_BACKGROUND_IMAGE_ROUNDNESS", "Background Image Roundness"), "BackgroundRoundness"), ref model.BackgroundRoundness, 0, Constants.Rad2Deg100, 300).IfTrue(() => Set("BackgroundRoundness"));
-            changed |= Drawer.DrawSingleWithSlider(FormatText(Main.Lang.Get("KEYCONFIG_OUTLINE_IMAGE_ROUNDNESS", "Outline Image Roundness"), "OutlineRoundness"), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300).IfTrue(() => Set("OutlineRoundness"));
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            if(KeyConfigDrawer.IsOpenBoolSettings) {
+                if(model.DummyName == null) {
+                    if(Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_KPS_METER", "Enable KPS Meter"), ref model.EnableKPSMeter)) {
+                        changed = true;
+                        if(model.EnableKPSMeter)
+                            KPSCalculator.Sync(manager.keys.Select(k => k.Config.EnableKPSMeter ? k.KpsCalc : null).Where(c => c != null));
+                        else
+                            manager[model.Code.ToString()].KpsCalc.Stop();
+                    }
+                }
+                changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_UPDATE_TEXT_ALWAYS", "Update Text Always"), "UpdateTextAlways"), ref model.UpdateTextAlways).IfTrue(() => Set("UpdateTextAlways"));
+                changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_ENABLE_COUNT_TEXT", "Enable Count Text"), "EnableCountText"), ref model.EnableCountText).IfTrue(() => Set("EnableCountText"));
+                changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_ENABLE_OUTLINE_IMAGE", "Enable Outline Image"), "EnableOutlineImage"), ref model.EnableOutlineImage).IfTrue(() => Set("EnableOutlineImage"));
+                changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_DO_NOT_SCALE_TEXT", "Do Not Scale Text"), "DoNotScaleText"), ref model.DoNotScaleText).IfTrue(() => Set("DoNotScaleText"));
+                changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_ENABLE_BACKGROUND_BLUR", "Enable Backgruond Blur"), "BackgroundBlurEnabled"), ref model.BackgroundBlurEnabled).IfTrue(() => Set("BackgroundBlurEnabled"));
+                changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_ENABLE_RAIN", "Enable Rain"), "RainEnabled"), ref model.RainEnabled).IfTrue(() => Set("RainEnabled"));
+            }
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("TEXT_FONT_SIZE", "Text Font Size"), ref model.TextFontSize, 0, 300, 300);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("COUNT_TEXT_FONT_SIZE", "Count Text Font Size"), ref model.CountTextFontSize, 0, 300, 300);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("BACKGROUND_IMAGE_ROUNDNESS", "Background Image Roundness"), ref model.BackgroundRoundness, 0, Constants.Rad2Deg100, 300);
+            changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("OUTLINE_IMAGE_ROUNDNESS", "Outline Image Roundness"), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300);
 
             GUILayout.Space(8f);
 
@@ -110,11 +115,11 @@ namespace KeyViewer.Views
 
             if(model.RainEnabled) {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label($"<b>{Main.Lang.Get("KEYCONFIG_RAIN", "Rain")}</b>");
+                if(Drawer.Button($"<b>{Main.Lang.Get("RAIN", "Rain")}</b>")) {
+                    Main.GUI.Push(new MultipleRainConfigDrawer(manager, targets.Select(KeyViewerUtils.KeyName).ToList(), model.Rain));
+                }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
-                changed |= NeoDrawer.StaticInstance.DrawRainConfig(model.Rain).IfTrue(() => Set("Rain"));
-                GUILayout.Space(10f);
             }
 
             changed |= NeoDrawer.StaticInstance.DrawVectorConfig(model.VectorConfig).IfTrue(() => SetVectorConfig("VectorConfig"));

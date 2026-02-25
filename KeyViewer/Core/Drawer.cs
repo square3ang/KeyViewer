@@ -1,12 +1,8 @@
 ﻿using DG.Tweening;
 using HarmonyLib;
-using KeyViewer.Core.Interfaces;
 using KeyViewer.Models;
-using KeyViewer.Utils;
 using RapidGUI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace KeyViewer.Core
@@ -366,6 +362,9 @@ namespace KeyViewer.Core
         public static Texture2D Icon_Speed;
         public static Texture2D Icon_Lenght;
         public static Texture2D Icon_Softness;
+        public static Texture2D Icon_Roundness;
+        public static Texture2D Icon_PoolSize;
+        public static Texture2D Icon_Color;
 
         public static Texture2D Icon_Up;
         public static Texture2D Icon_Down;
@@ -477,6 +476,9 @@ namespace KeyViewer.Core
             Icon_Speed = CreateTextureFromByte(ImageManager.GetResourceBytes("speed.png"));
             Icon_Lenght = CreateTextureFromByte(ImageManager.GetResourceBytes("length.png"));
             Icon_Softness = CreateTextureFromByte(ImageManager.GetResourceBytes("softness.png"));
+            Icon_Roundness = CreateTextureFromByte(ImageManager.GetResourceBytes("roundness.png"));
+            Icon_PoolSize = CreateTextureFromByte(ImageManager.GetResourceBytes("poolsize.png"));
+            Icon_Color = CreateTextureFromByte(ImageManager.GetResourceBytes("color.png"));
 
             Icon_Up = CreateTextureFromByte(ImageManager.GetResourceBytes("up.png"));
             Icon_Left = RotateTexture90(Icon_Up);
