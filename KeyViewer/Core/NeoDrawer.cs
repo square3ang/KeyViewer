@@ -830,6 +830,93 @@ namespace Overlayer.Core {
             return changed;
         }
 
+        public bool DrawInt32WithSlider(Texture2D icon, string label, ref int value, int lValue, int rValue, float width, string uniqueID = null) {
+            NeoField field = FieldGet(uniqueID);
+            StrInitialize(ref field, value.ToString());
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(icon);
+            GUILayout.Label(label);
+            GUILayout.Space(4f);
+
+            bool changed = false;
+
+            float slider = GUILayout.HorizontalSlider(value, lValue, rValue, Drawer.mySlider, Drawer.myThumb, GUILayout.Width(width));
+
+            int sliderInt = Mathf.RoundToInt(slider);
+            if(sliderInt != value) {
+                value = sliderInt;
+                field.Str = value.ToString();
+                field.State = NeoField.StateType.OK;
+                changed = true;
+            }
+
+            GUILayout.Space(8f);
+
+            Color old = GUI.color;
+            ColorbyState(field.State);
+
+            string fieldName = FieldGetName(uniqueID);
+            GUI.SetNextControlName(fieldName);
+            string newField = GUILayout.TextField(field.Str, Drawer.myTextField);
+            GUI.color = old;
+
+            if(newField != field.Str) {
+                field.Str = newField;
+
+                if(string.IsNullOrEmpty(field.Str)) {
+                    field.State = NeoField.StateType.ERROR;
+                } else {
+                    if(int.TryParse(newField, out int parsed)) {
+                        value = parsed;
+                        field.ComputedValue = parsed;
+                        field.State = NeoField.StateType.OK;
+                        changed = true;
+                    } else {
+                        var result = Calc(field.Str);
+                        if(result == null) {
+                            field.State = NeoField.StateType.ERROR;
+                        } else {
+                            double computed = Convert.ToDouble(result);
+
+                            if(double.IsNaN(computed) || double.IsInfinity(computed)) {
+                                field.State = NeoField.StateType.ERROR;
+                            } else if(computed > rValue) {
+                                value = rValue;
+                                field.State = NeoField.StateType.WARNING;
+                                changed = true;
+                            } else if(computed < lValue) {
+                                value = lValue;
+                                field.State = NeoField.StateType.WARNING;
+                                changed = true;
+                            } else {
+                                int computedInt = (int)Math.Round(computed);
+                                value = computedInt;
+                                field.ComputedValue = computedInt;
+                                field.State = NeoField.StateType.COMPUTE;
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            object objValue = value;
+            if(ApplyFieldValueOnEvent(ref field, fieldName, ref objValue, typeof(int))) {
+                value = (int)objValue;
+                changed = true;
+            }
+
+            GUILayout.Space(2f);
+            GUILayout.Label(StatebyState(field.State), GUILayout.Width(12));
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            return changed;
+        }
+
+
         public bool DrawBlurConfig(BlurConfig blurConfig, string uniqueID = null) {
             bool changed = false;
             GUILayout.Label($"<b>{Main.Lang.Get("BACKGROUND_BLUR", "Background Blur")}</b>");
@@ -1022,10 +1109,128 @@ namespace Overlayer.Core {
             return changed;
         }
 
-        public bool DrawPressRelease(PressRelease<Vector2> vector, string uniqueID = null) {
+        public bool DrawRainConfig(RainConfig rConfig) {
             bool changed = false;
-            
-            
+            Color old = GUI.color;
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Scale);
+            GUILayout.Label($"<b>{Main.Lang.Get("SPEED", "Speed")}</b>");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Down);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                rConfig.Speed.Pressed = rConfig.Speed.Released;
+                rConfig.Speed.PressedEase = rConfig.Speed.ReleasedEase;
+                FieldGet(id.ToString())?.Str = rConfig.Speed.Released.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref rConfig.Speed.PressedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref rConfig.Speed.PressedEase.Duration, 0, 5f, 170f);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(0.44f, 1f, 0.92f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Speed, "V", ref rConfig.Speed.Pressed, 0, 500f, 300f);
+            GUILayout.BeginHorizontal();
+            GUI.color = old;
+            GUILayout.Label(Drawer.Icon_Up);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                rConfig.Speed.Released = rConfig.Speed.Pressed;
+                rConfig.Speed.ReleasedEase = rConfig.Speed.PressedEase;
+                FieldGet(id.ToString())?.Str = rConfig.Speed.Pressed.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref rConfig.Speed.ReleasedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref rConfig.Speed.ReleasedEase.Duration, 0, 5f, 170f);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(0.44f, 1f, 0.92f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Speed, "V", ref rConfig.Speed.Released, 0, 500f, 300f);
+            GUI.color = old;
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Scale);
+            GUILayout.Label($"<b>{Main.Lang.Get("LENGTH", "Length")}</b>");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Down);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                rConfig.Length.Pressed = rConfig.Length.Released;
+                rConfig.Length.PressedEase = rConfig.Length.ReleasedEase;
+                FieldGet(id.ToString())?.Str = rConfig.Length.Released.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref rConfig.Length.PressedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref rConfig.Length.PressedEase.Duration, 0, 5f, 170f);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(0.63f, 0.44f, 1f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_LeftRight, "L", ref rConfig.Length.Pressed, 0, 500f, 300f);
+            GUILayout.BeginHorizontal();
+            GUI.color = old;
+            GUILayout.Label(Drawer.Icon_Up);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                rConfig.Length.Released = rConfig.Length.Pressed;
+                rConfig.Length.ReleasedEase = rConfig.Length.PressedEase;
+                FieldGet(id.ToString())?.Str = rConfig.Length.Pressed.ToString();
+                changed = true;
+            }
+            GUI.color = old;
+            Drawer.DrawEase(ref rConfig.Length.ReleasedEase.Ease);
+            GUILayout.Space(7);
+            changed |= DrawSingleWithSlider(Drawer.Icon_Duration, "", ref rConfig.Speed.ReleasedEase.Duration, 0, 5f, 170f);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUI.color = new Color(0.63f, 0.44f, 1f);
+            changed |= DrawSingleWithSlider(Drawer.Icon_LeftRight, "L", ref rConfig.Speed.Released, 0, 500f, 300f);
+            GUI.color = old;
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Scale);
+            GUILayout.Label($"<b>{Main.Lang.Get("SOFTNESS", "Softness")}</b>");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(Drawer.Icon_Down);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                rConfig.Softness.Pressed = rConfig.Softness.Released;
+                FieldGet(id.ToString())?.Str = rConfig.Softness.Released.ToString();
+                changed = true;
+            }
+            GUI.color = new Color(0.78f, 1f, 0.44f);
+            changed |= DrawInt32WithSlider(Drawer.Icon_LeftRight, "S", ref rConfig.Softness.Pressed, 0, 1000, 300f);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            GUI.color = old;
+            GUILayout.Label(Drawer.Icon_Up);
+            GUI.color = new Color(0.5f, 1f, 0.5f);
+            if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
+                rConfig.Softness.Released = rConfig.Softness.Pressed;
+                FieldGet(id.ToString())?.Str = rConfig.Softness.Pressed.ToString();
+                changed = true;
+            }
+            GUI.color = new Color(0.78f, 1f, 0.44f);
+            changed |= DrawInt32WithSlider(Drawer.Icon_LeftRight, "S", ref rConfig.Softness.Released, 0, 1000, 300f);
+            GUI.color = old;
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+
+
             return changed;
         }
     }

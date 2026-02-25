@@ -11,7 +11,7 @@ namespace KeyViewer.Models
     {
         public PressRelease<float> Speed = 400f;
         public PressRelease<float> Length = 400f;
-        public PressRelease<int> Softness = 100;
+        public PressReleaseBase<int> Softness = 100;
         public int PoolSize = 25;
         public float Roundness = 0;
         //public bool BlurEnabled = false;

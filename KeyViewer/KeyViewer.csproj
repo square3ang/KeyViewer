@@ -454,8 +454,6 @@
     <Compile Include="Models\Pivot.cs" />
     <Compile Include="Utils\StringConverter.cs" />
     <Compile Include="Views\MultipleKeyConfigDrawer.cs" />
-    <Compile Include="Views\MultipleRainConfigDrawer.cs" />
-    <Compile Include="Views\RainConfigDrawer.cs" />
     <Compile Include="Views\KeyConfigDrawer.cs" />
     <Compile Include="Views\ProfileDrawer.cs" />
     <Compile Include="Views\SettingsDrawer.cs" />
@@ -526,6 +524,8 @@
     <EmbeddedResource Include="MiscFiles\images\rotate.png" />
     <EmbeddedResource Include="MiscFiles\images\scale.png" />
     <EmbeddedResource Include="MiscFiles\images\duration.png" />
+    <EmbeddedResource Include="MiscFiles\images\speed.png" />
+    <EmbeddedResource Include="MiscFiles\images\length.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorder.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorderHighlighted.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imCircle.png" />

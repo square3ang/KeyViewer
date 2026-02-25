@@ -22,6 +22,7 @@ namespace KeyViewer.Views
         }
 
         public static bool IsOpenBoolSettings = false;
+        public static bool IsOpenRainSettings = false;
 
         public override void Draw()
         {
@@ -90,37 +91,25 @@ namespace KeyViewer.Views
             changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("OUTLINE_IMAGE_ROUNDNESS", "Outline Image Roundness"), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300);
 
             GUILayout.BeginHorizontal();
-            if(Drawer.Button(Main.Lang.Get("TEXT", "Text"))) {
-                Main.GUI.Push(new MethodDrawable(() => {
-                }, Main.Lang.Get("TEXT", "Text")));
-            }
+            GUILayout.Label($"<b>{Main.Lang.Get("TEXT", "Text")}</b>");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             changed |= Drawer.DrawPressReleaseBase(model.Text);
             if(model.EnableCountText) {
                 GUILayout.BeginHorizontal();
-                if(Drawer.Button(Main.Lang.Get("COUNT_TEXT", "Count Text"))) {
-                    Main.GUI.Push(new MethodDrawable(() => {
-                    }, Main.Lang.Get("COUNT_TEXT", "Count Text")));
-                }
+                GUILayout.Label($"<b>{Main.Lang.Get("COUNT_TEXT", "Count Text")}</b>");
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
                 changed |= Drawer.DrawPressReleaseBase(model.CountText);
             }
             GUILayout.BeginHorizontal();
-            if(Drawer.Button(Main.Lang.Get("BACKGROUND_IMAGE", "Background Image"))) {
-                Main.GUI.Push(new MethodDrawable(() => {
-                }, Main.Lang.Get("BACKGROUND_IMAGE", "Background Image")));
-            }
+            GUILayout.Label($"<b>{Main.Lang.Get("BACKGROUND_IMAGE", "Background Image")}</b>");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             changed |= Drawer.DrawPressReleaseBase(model.Background);
             if(model.EnableOutlineImage) {
                 GUILayout.BeginHorizontal();
-                if(Drawer.Button(Main.Lang.Get("OUTLINE_IMAGE", "Outline Image"))) {
-                    Main.GUI.Push(new MethodDrawable(() => {
-                    }, Main.Lang.Get("OUTLINE_IMAGE", "Outline Image")));
-                }
+                GUILayout.Label($"<b>{Main.Lang.Get("OUTLINE_IMAGE", "Outline Image")}</b>");
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
                 changed |= Drawer.DrawPressReleaseBase(model.Outline);
@@ -130,13 +119,17 @@ namespace KeyViewer.Views
             }
             if(model.RainEnabled) {
                 GUILayout.BeginHorizontal();
-                if(Drawer.Button(Main.Lang.Get("RAIN", "Rain"))) {
-                    Main.GUI.Push(new MethodDrawable(() => {
-                    }, Main.Lang.Get("RAIN", "Rain")));
+                if(Drawer.Button($"<b>{Main.Lang.Get("RAIN", "Rain")}</b> {(IsOpenRainSettings ? "▼" : "▲")}")) {
+                    IsOpenRainSettings = !IsOpenRainSettings;
                 }
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
+                if(IsOpenRainSettings) {
+                    changed |= NeoDrawer.StaticInstance.DrawRainConfig(model.Rain);
+                    GUILayout.Space(8f);
+                }
             }
+            GUILayout.Label($"<b>{Main.Lang.Get("VECTOR", "Vector")}</b>");
             changed |= NeoDrawer.StaticInstance.DrawVectorConfig(model.VectorConfig);
 
             if (changed) {
