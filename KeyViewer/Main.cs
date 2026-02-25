@@ -88,7 +88,6 @@ namespace KeyViewer
                     Directory.CreateDirectory(ProfilePath);
                 }
 
-                // ProfilePath 내 모든 JSON 파일 읽기
                 var profileFiles = Directory.GetFiles(ProfilePath, "*.json");
                 List<string> notExistProfiles = new List<string>();
 
