@@ -375,16 +375,16 @@ namespace Overlayer.Core {
                     fieldBR = FieldGet(uniqueID + "_3");
                 }
 
-                StrInitialize(ref fieldTL, ColorUtility.ToHtmlStringRGBA(color.topLeft));
-                StrInitialize(ref fieldTR, ColorUtility.ToHtmlStringRGBA(color.topRight));
-                StrInitialize(ref fieldBL, ColorUtility.ToHtmlStringRGBA(color.bottomLeft));
-                StrInitialize(ref fieldBR, ColorUtility.ToHtmlStringRGBA(color.bottomRight));
+                StrInitialize(ref fieldTL, color.topLeftHex);
+                StrInitialize(ref fieldTR, color.topRightHex);
+                StrInitialize(ref fieldBL, color.bottomLeftHex);
+                StrInitialize(ref fieldBR, color.bottomRightHex);
 
                 if(changed && ge) {
-                    fieldTL.Str = ColorUtility.ToHtmlStringRGBA(color.topLeft);
-                    fieldTR.Str = ColorUtility.ToHtmlStringRGBA(color.topRight);
-                    fieldBL.Str = ColorUtility.ToHtmlStringRGBA(color.bottomLeft);
-                    fieldBR.Str = ColorUtility.ToHtmlStringRGBA(color.bottomRight);
+                    fieldTL.Str = color.topLeftHex;
+                    fieldTR.Str = color.topRightHex;
+                    fieldBL.Str = color.bottomLeftHex;
+                    fieldBR.Str = color.bottomRightHex;
 
                     fieldTL.State = NeoField.StateType.OK;
                     fieldTR.State = NeoField.StateType.OK;
@@ -425,7 +425,7 @@ namespace Overlayer.Core {
                     color.topLeft = newColorTL;
                     changed = true;
 
-                    fieldTL.Str = ColorUtility.ToHtmlStringRGBA(color.topLeft);
+                    fieldTL.Str = color.topLeftHex;
                     fieldTL.State = NeoField.StateType.OK;
                 }
 
@@ -459,7 +459,7 @@ namespace Overlayer.Core {
                     color.topRight = newColorTR;
                     changed = true;
 
-                    fieldTR.Str = ColorUtility.ToHtmlStringRGBA(color.topRight);
+                    fieldTR.Str = color.topLeftHex;
                     fieldTR.State = NeoField.StateType.OK;
                 }
 
@@ -498,7 +498,7 @@ namespace Overlayer.Core {
                     color.bottomLeft = newColorBL;
                     changed = true;
 
-                    fieldBL.Str = ColorUtility.ToHtmlStringRGBA(color.bottomLeft);
+                    fieldBL.Str = color.topLeftHex;
                     fieldBL.State = NeoField.StateType.OK;
                 }
 
@@ -532,7 +532,7 @@ namespace Overlayer.Core {
                     color.bottomRight = newColorBR;
                     changed = true;
 
-                    fieldBR.Str = ColorUtility.ToHtmlStringRGBA(color.bottomRight);
+                    fieldBR.Str = color.topLeftHex;
                     fieldBR.State = NeoField.StateType.OK;
                 }
 
@@ -1162,10 +1162,10 @@ namespace Overlayer.Core {
                 oConfig.Color.Released = oConfig.Color.Pressed;
                 oConfig.Color.ReleasedEase = oConfig.Color.PressedEase.Copy();
                 FieldGet(id.ToString())?.Str = oConfig.Color.PressedEase.Duration.ToString();
-                FieldGet((id + 1).ToString())?.Str = oConfig.Color.Pressed.topLeft.ToString();
-                FieldGet((id + 2).ToString())?.Str = oConfig.Color.Pressed.topRight.ToString();
-                FieldGet((id + 3).ToString())?.Str = oConfig.Color.Pressed.bottomLeft.ToString();
-                FieldGet((id + 4).ToString())?.Str = oConfig.Color.Pressed.bottomRight.ToString();
+                FieldGet((id + 1).ToString())?.Str = oConfig.Color.Pressed.topLeftHex;
+                FieldGet((id + 2).ToString())?.Str = oConfig.Color.Pressed.topRightHex;
+                FieldGet((id + 3).ToString())?.Str = oConfig.Color.Pressed.bottomLeftHex;
+                FieldGet((id + 4).ToString())?.Str = oConfig.Color.Pressed.bottomRightHex;
                 changed = true;
             }
             GUI.color = old;
@@ -1180,12 +1180,12 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 oConfig.Color.Pressed = oConfig.Color.Released;
-                oConfig.Color.PressedEase = oConfig.Color.ReleasedEase;
+                oConfig.Color.PressedEase = oConfig.Color.ReleasedEase.Copy();
                 FieldGet(id.ToString())?.Str = oConfig.Color.ReleasedEase.Duration.ToString();
-                FieldGet((id + 1).ToString())?.Str = oConfig.Color.Released.topLeft.ToString();
-                FieldGet((id + 2).ToString())?.Str = oConfig.Color.Released.topRight.ToString();
-                FieldGet((id + 3).ToString())?.Str = oConfig.Color.Released.bottomLeft.ToString();
-                FieldGet((id + 4).ToString())?.Str = oConfig.Color.Released.bottomRight.ToString();
+                FieldGet((id + 1).ToString())?.Str = oConfig.Color.Released.topLeftHex;
+                FieldGet((id + 2).ToString())?.Str = oConfig.Color.Released.topRightHex;
+                FieldGet((id + 3).ToString())?.Str = oConfig.Color.Released.bottomLeftHex;
+                FieldGet((id + 4).ToString())?.Str = oConfig.Color.Released.bottomRightHex;
                 changed = true;
             }
             GUI.color = old;
@@ -1224,8 +1224,9 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 rConfig.Speed.Pressed = rConfig.Speed.Released;
-                rConfig.Speed.PressedEase = rConfig.Speed.ReleasedEase;
-                FieldGet(id.ToString())?.Str = rConfig.Speed.Released.ToString();
+                rConfig.Speed.PressedEase = rConfig.Speed.ReleasedEase.Copy();
+                FieldGet(id.ToString())?.Str = rConfig.Speed.ReleasedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = rConfig.Speed.Released.ToString();
                 changed = true;
             }
             GUI.color = old;
@@ -1242,8 +1243,9 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 rConfig.Speed.Released = rConfig.Speed.Pressed;
-                rConfig.Speed.ReleasedEase = rConfig.Speed.PressedEase;
-                FieldGet(id.ToString())?.Str = rConfig.Speed.Pressed.ToString();
+                rConfig.Speed.ReleasedEase = rConfig.Speed.PressedEase.Copy();
+                FieldGet(id.ToString())?.Str = rConfig.Speed.PressedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = rConfig.Speed.Pressed.ToString();
                 changed = true;
             }
             GUI.color = old;
@@ -1266,8 +1268,9 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 rConfig.Length.Pressed = rConfig.Length.Released;
-                rConfig.Length.PressedEase = rConfig.Length.ReleasedEase;
-                FieldGet(id.ToString())?.Str = rConfig.Length.Released.ToString();
+                rConfig.Length.PressedEase = rConfig.Length.ReleasedEase.Copy();
+                FieldGet(id.ToString())?.Str = rConfig.Length.ReleasedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = rConfig.Length.Released.ToString();
                 changed = true;
             }
             GUI.color = old;
@@ -1284,8 +1287,9 @@ namespace Overlayer.Core {
             GUI.color = new Color(0.5f, 1f, 0.5f);
             if(Drawer.Button(Drawer.Icon_Copy, GUILayout.Width(34))) {
                 rConfig.Length.Released = rConfig.Length.Pressed;
-                rConfig.Length.ReleasedEase = rConfig.Length.PressedEase;
-                FieldGet(id.ToString())?.Str = rConfig.Length.Pressed.ToString();
+                rConfig.Length.ReleasedEase = rConfig.Length.PressedEase.Copy();
+                FieldGet(id.ToString())?.Str = rConfig.Length.PressedEase.Duration.ToString();
+                FieldGet((id + 1).ToString())?.Str = rConfig.Length.Pressed.ToString();
                 changed = true;
             }
             GUI.color = old;
