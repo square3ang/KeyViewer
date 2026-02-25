@@ -10,6 +10,7 @@ using KeyViewer.Patches;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using KeyViewer.Views;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Overlayer.Core;
 using System;
@@ -83,16 +84,35 @@ namespace KeyViewer
                 Managers = new Dictionary<string, KeyManager>();
                 ToDeleteFiles = new HashSet<string>();
 
-                List<string> notExistProfiles = new List<string>();
-                var profiles = Settings.ActiveProfiles;
-                foreach(var profile in profiles) {
-                    if(!AddManager(profile)) {
-                        notExistProfiles.Add(profile.Name);
-                    }
-                }
-
                 if(!Directory.Exists(ProfilePath)) {
                     Directory.CreateDirectory(ProfilePath);
+                }
+
+                // ProfilePath 내 모든 JSON 파일 읽기
+                var profileFiles = Directory.GetFiles(ProfilePath, "*.json");
+                List<string> notExistProfiles = new List<string>();
+
+                foreach(var file in profileFiles) {
+                    try {
+                        var profileName = Path.GetFileNameWithoutExtension(file);
+
+                        if(Settings.ActiveProfiles.Any(p => p.Name == profileName))
+                            continue;
+
+                        var profileJson = File.ReadAllText(file);
+                        var profileData = JsonConvert.DeserializeObject<Profile>(profileJson);
+
+                        var activeProfile = new ActiveProfile(profileName, true);
+
+                        Settings.ActiveProfiles.Add(activeProfile);
+
+                        if(!AddManager(activeProfile)) {
+                            notExistProfiles.Add(profileName);
+                        }
+                    } catch(Exception ex) {
+                        Logger.Log($"Failed to load profile {file}: {ex.Message}");
+                        notExistProfiles.Add(Path.GetFileNameWithoutExtension(file));
+                    }
                 }
 
                 Settings.ActiveProfiles.RemoveAll(p => notExistProfiles.Contains(p.Name));
