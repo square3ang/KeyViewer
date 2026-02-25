@@ -532,6 +532,9 @@
     <EmbeddedResource Include="MiscFiles\images\roundness.png" />
     <EmbeddedResource Include="MiscFiles\images\poolsize.png" />
     <EmbeddedResource Include="MiscFiles\images\color.png" />
+    <EmbeddedResource Include="MiscFiles\images\image.png" />
+    <EmbeddedResource Include="MiscFiles\images\random.png" />
+    <EmbeddedResource Include="MiscFiles\images\sequential.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorder.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imBorderHighlighted.png" />
     <Content Include="rapidgui\Component\IMColorPicker\Resources\imCircle.png" />

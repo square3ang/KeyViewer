@@ -365,6 +365,9 @@ namespace KeyViewer.Core
         public static Texture2D Icon_Roundness;
         public static Texture2D Icon_PoolSize;
         public static Texture2D Icon_Color;
+        public static Texture2D Icon_Image;
+        public static Texture2D Icon_Sequential;
+        public static Texture2D Icon_Random;
 
         public static Texture2D Icon_Up;
         public static Texture2D Icon_Down;
@@ -479,6 +482,9 @@ namespace KeyViewer.Core
             Icon_Roundness = CreateTextureFromByte(ImageManager.GetResourceBytes("roundness.png"));
             Icon_PoolSize = CreateTextureFromByte(ImageManager.GetResourceBytes("poolsize.png"));
             Icon_Color = CreateTextureFromByte(ImageManager.GetResourceBytes("color.png"));
+            Icon_Image = CreateTextureFromByte(ImageManager.GetResourceBytes("image.png"));
+            Icon_Sequential = CreateTextureFromByte(ImageManager.GetResourceBytes("sequential.png"));
+            Icon_Random = CreateTextureFromByte(ImageManager.GetResourceBytes("random.png"));
 
             Icon_Up = CreateTextureFromByte(ImageManager.GetResourceBytes("up.png"));
             Icon_Left = RotateTexture90(Icon_Up);

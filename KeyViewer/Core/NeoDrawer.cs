@@ -1352,6 +1352,55 @@ namespace Overlayer.Core {
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
+            GUILayout.Label($"<b>{Main.Lang.Get("IMAGE", "Image")}</b>");
+            GUILayout.BeginHorizontal();
+
+            if(Drawer.Button("+", GUILayout.Width(50))) {
+                changed = true;
+                rConfig.RainImages.Add(new RainImage());
+            }
+
+            if(Drawer.Button("-", GUILayout.Width(50)) && rConfig.RainImages.Count > 0) {
+                changed = true;
+                int index = rConfig.RainImages.Count - 1;
+                rConfig.RainImages.RemoveAt(index);
+                FieldsRemove($"ric{index}");
+                FieldsRemove($"rir{index}");
+            }
+
+            GUILayout.EndHorizontal();
+
+            for(int i = 0; i < rConfig.RainImages.Count; i++) {
+                var ri = rConfig.RainImages[i];
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(Drawer.Icon_Image);
+                GUILayout.Label(i.ToString());
+                Drawer.DrawString("", ref ri.Image);
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+                DrawInt32(Main.Lang.Get("COUNT", "Count"), ref ri.Count, $"ric{i}");
+                DrawSingleWithSlider(Drawer.Icon_Roundness, Main.Lang.Get("ROUNDNESS", "Roundness"), ref ri.Roundness, 0f, Constants.Rad2Deg100, 200f, $"rir{i}");
+                GUILayoutEx.HorizontalLine(1f, 300f);
+            }
+
+            if(rConfig.RainImages.Count > 0) {
+                GUILayout.Label($"<b>{Main.Lang.Get("IMAGE_CYCLE_MODE", "Image Cycle Mode")}</b>");
+                GUILayout.BeginHorizontal();
+                GUI.color = rConfig.ImageDisplayMode == RainImageDisplayMode.Sequential ? Color.cyan : old;
+                if(Drawer.Button(Drawer.Icon_Sequential, GUILayout.Width(40f))) {
+                    changed = true;
+                    rConfig.ImageDisplayMode = RainImageDisplayMode.Sequential;
+                }
+                GUI.color = rConfig.ImageDisplayMode == RainImageDisplayMode.Random ? Color.cyan : old;
+                if(Drawer.Button(Drawer.Icon_Random, GUILayout.Width(40f))) {
+                    changed = true;
+                    rConfig.ImageDisplayMode = RainImageDisplayMode.Random;
+                }
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+                GUI.color = old;
+            }
+
             changed |= DrawObjectConfig(rConfig.ObjectConfig);
 
             return changed;
