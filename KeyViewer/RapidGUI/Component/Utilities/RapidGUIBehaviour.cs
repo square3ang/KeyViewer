@@ -1,37 +1,34 @@
 ﻿using System;
 using UnityEngine;
 
-namespace RapidGUI {
-    public class RapidGUIBehaviour : MonoBehaviour {
-        #region static 
+namespace RapidGUI;
 
-        static RapidGUIBehaviour instance;
-        public static RapidGUIBehaviour Instance {
-            get {
-                if(instance == null) {
-                    instance = FindObjectOfType<RapidGUIBehaviour>();
-                    if(instance == null) {
-                        var ga = new GameObject("RapidGUI");
-                        instance = ga.AddComponent<RapidGUIBehaviour>();
-                    }
+public class RapidGUIBehaviour : MonoBehaviour {
+    #region static 
 
-                    if(Application.isPlaying) {
-                        DontDestroyOnLoad(instance);
-                    }
+    public static RapidGUIBehaviour Instance {
+        get {
+            if(field == null) {
+                field = FindObjectOfType<RapidGUIBehaviour>();
+                if(field == null) {
+                    var ga = new GameObject("RapidGUI");
+                    field = ga.AddComponent<RapidGUIBehaviour>();
                 }
 
-                return instance;
+                if(Application.isPlaying) {
+                    DontDestroyOnLoad(field);
+                }
             }
-        }
 
-        #endregion
-
-        public KeyCode closeFocusedWindowKey = KeyCode.Q;
-        public int prefixLabelSlideButton = 1;
-        public Action onGUI;
-
-        public void OnGUI() {
-            onGUI?.Invoke();
+            return field;
         }
     }
+
+    #endregion
+
+    public KeyCode closeFocusedWindowKey = KeyCode.Q;
+    public int prefixLabelSlideButton = 1;
+    public Action onGUI;
+
+    public void OnGUI() => onGUI?.Invoke();
 }

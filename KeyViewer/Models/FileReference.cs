@@ -4,49 +4,49 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 
-namespace KeyViewer.Models {
-    public class FileReference : IModel, ICopyable<FileReference> {
-        public enum Type {
-            Font,
-            Image,
-        }
-        public Type ReferenceType;
-        public string From;
-        public string Name;
-        public byte[] Raw;
-        public JToken Serialize() {
-            var node = new JObject();
-            node[nameof(ReferenceType)] = ReferenceType.ToString();
-            node[nameof(From)] = From;
-            node[nameof(Name)] = Name;
-            node[nameof(Raw)] = Convert.ToBase64String(Raw.Compress());
-            return node;
-        }
-        public void Deserialize(JToken node) {
-            ReferenceType = EnumHelper<Type>.Parse(node[nameof(ReferenceType)]?.Value<string>() ?? "");
+namespace KeyViewer.Models;
 
-            From = node[nameof(From)]?.Value<string>() ?? "";
-            Name = node[nameof(Name)]?.Value<string>() ?? "";
+public class FileReference : IModel, ICopyable<FileReference> {
+    public enum Type {
+        Font,
+        Image,
+    }
+    public Type ReferenceType;
+    public string From;
+    public string Name;
+    public byte[] Raw;
+    public JToken Serialize() {
+        var node = new JObject {
+            [nameof(ReferenceType)] = ReferenceType.ToString(),
+            [nameof(From)] = From,
+            [nameof(Name)] = Name,
+            [nameof(Raw)] = Convert.ToBase64String(Raw.Compress())
+        };
+        return node;
+    }
+    public void Deserialize(JToken node) {
+        ReferenceType = EnumHelper<Type>.Parse(node[nameof(ReferenceType)]?.Value<string>() ?? "");
 
-            var rawNode = node[nameof(Raw)];
-            if(rawNode == null) {
-                Raw = Array.Empty<byte>();
-                return;
-            }
+        From = node[nameof(From)]?.Value<string>() ?? "";
+        Name = node[nameof(Name)]?.Value<string>() ?? "";
 
-            if(rawNode.Type == JTokenType.Array) {
-                Raw = rawNode.Values<byte>().ToArray().Decompress();
-            } else {
-                Raw = Convert.FromBase64String(rawNode.Value<string>()).Decompress();
-            }
+        var rawNode = node[nameof(Raw)];
+        if(rawNode == null) {
+            Raw = Array.Empty<byte>();
+            return;
         }
-        public FileReference Copy() {
-            var newRef = new FileReference();
-            newRef.ReferenceType = ReferenceType;
-            newRef.From = From;
-            newRef.Name = Name;
-            newRef.Raw = (byte[])Raw.Clone();
-            return newRef;
-        }
+
+        Raw = rawNode.Type == JTokenType.Array
+            ? rawNode.Values<byte>().ToArray().Decompress()
+            : Convert.FromBase64String(rawNode.Value<string>()).Decompress();
+    }
+    public FileReference Copy() {
+        var newRef = new FileReference {
+            ReferenceType = ReferenceType,
+            From = From,
+            Name = Name,
+            Raw = (byte[])Raw.Clone()
+        };
+        return newRef;
     }
 }

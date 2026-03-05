@@ -15,9 +15,7 @@ public class RainConfigDrawer : ModelDrawable<RainConfig> {
         this.config = config;
     }
 
-    public override void OnceCall() {
-        NeoDrawer.StaticInstance.FieldResetDictById();
-    }
+    public override void OnceCall() => NeoDrawer.StaticInstance.FieldResetDictById();
 
     public override void Draw() {
         NeoDrawer.StaticInstance.FieldResetId();

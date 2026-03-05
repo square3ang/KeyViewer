@@ -1,7 +1,7 @@
-﻿namespace KeyViewer.Migration.V3 {
-    public enum SpecialKeyType {
-        None,
-        KPS,
-        Total
-    }
+﻿namespace KeyViewer.Migration.V3;
+
+public enum SpecialKeyType {
+    None,
+    KPS,
+    Total
 }

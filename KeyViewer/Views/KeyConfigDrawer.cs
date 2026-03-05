@@ -11,13 +11,9 @@ namespace KeyViewer.Views;
 
 public class KeyConfigDrawer : ModelDrawable<KeyConfig> {
     public KeyManager manager;
-    public KeyConfigDrawer(KeyManager manager, KeyConfig config) : base(config, string.Format(Main.Lang.Get("KEYCONFIG", "{0} Key Config"), config.DummyName == null ? config.Code : config.DummyName)) {
-        this.manager = manager;
-    }
+    public KeyConfigDrawer(KeyManager manager, KeyConfig config) : base(config, string.Format(Main.Lang.Get("KEYCONFIG", "{0} Key Config"), config.DummyName == null ? config.Code : config.DummyName)) => this.manager = manager;
 
-    public override void OnceCall() {
-        NeoDrawer.StaticInstance.FieldResetDictById();
-    }
+    public override void OnceCall() => NeoDrawer.StaticInstance.FieldResetDictById();
 
     public static bool IsOpenBoolSettings = false;
 
