@@ -1,11 +1,9 @@
 ﻿using System.Xml.Serialization;
 using UnityEngine;
 
-namespace KeyViewer.Migration.V3
-{
+namespace KeyViewer.Migration.V3 {
     [XmlRoot("RainConfig")]
-    public class KeyRain_Config
-    {
+    public class KeyRain_Config {
         public float OffsetX = 0f;
         public float OffsetY = 0f;
         public float RainSpeed = 400f;

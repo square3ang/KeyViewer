@@ -8,35 +8,31 @@ using System.Xml.Serialization;
 using TMPro;
 using UnityEngine;
 
-namespace KeyViewer.Migration.V2
-{
+namespace KeyViewer.Migration.V2 {
     // V2 To V3
-    public class V2Migrator
-    {
+    public class V2Migrator {
         public Dictionary<KeyCode, int> KeyCounts;
         public Dictionary<KeyCode, KeySetting> KeySettings;
         public KeyViewerSettings Settings;
-        public V2Migrator(string keyCountsPath, string keySettingsPath, string settingsPath)
-        {
-            if (!string.IsNullOrWhiteSpace(keyCountsPath))
+        public V2Migrator(string keyCountsPath, string keySettingsPath, string settingsPath) {
+            if(!string.IsNullOrWhiteSpace(keyCountsPath))
                 KeyCounts = JsonConvert.DeserializeObject<Dictionary<KeyCode, int>>(File.ReadAllText(keyCountsPath));
-            else KeyCounts = new Dictionary<KeyCode, int>();
-            if (!string.IsNullOrWhiteSpace(keySettingsPath))
+            else
+                KeyCounts = new Dictionary<KeyCode, int>();
+            if(!string.IsNullOrWhiteSpace(keySettingsPath))
                 KeySettings = JsonConvert.DeserializeObject<Dictionary<KeyCode, KeySetting>>(File.ReadAllText(keySettingsPath));
-            else KeySettings = new Dictionary<KeyCode, KeySetting>();
-            if (!string.IsNullOrWhiteSpace(settingsPath))
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(KeyViewerSettings));
+            else
+                KeySettings = new Dictionary<KeyCode, KeySetting>();
+            if(!string.IsNullOrWhiteSpace(settingsPath)) {
+                XmlSerializer serializer = new(typeof(KeyViewerSettings));
                 Settings = (KeyViewerSettings)serializer.Deserialize(File.Open(settingsPath, FileMode.Open));
-            }
-            else throw new InvalidOperationException("Settings Path Cannot Be Null!");
+            } else
+                throw new InvalidOperationException("Settings Path Cannot Be Null!");
         }
-        public V3Settings Migrate()
-        {
-            List<V3Profile> profiles = new List<V3Profile>();
-            foreach (KeyViewerProfile pf in Settings.Profiles)
-            {
-                V3Profile newProfile = new V3Profile();
+        public V3Settings Migrate() {
+            List<V3Profile> profiles = new();
+            foreach(KeyViewerProfile pf in Settings.Profiles) {
+                V3Profile newProfile = new();
                 newProfile.Name = pf.Name;
                 newProfile.MakeBarSpecialKeys = false;
                 newProfile.ViewerOnlyGameplay = pf.ViewerOnlyGameplay;
@@ -47,10 +43,8 @@ namespace KeyViewer.Migration.V2
                 newProfile.ShowKeyPressTotal = pf.ShowKeyPressTotal;
                 newProfile.IgnoreSkippedKeys = Settings.IgnoreSkippedKeys;
                 newProfile.KPSUpdateRateMs = Settings.UpdateRate;
-                newProfile.ActiveKeys = pf.ActiveKeys.Select(code =>
-                {
-                    switch (code)
-                    {
+                newProfile.ActiveKeys = pf.ActiveKeys.Select(code => {
+                    switch(code) {
                         case KeyCode.None:
                             return new Key_Config() { SpecialType = SpecialKeyType.KPS };
                         case KeyCode.Joystick1Button0:
@@ -62,24 +56,20 @@ namespace KeyViewer.Migration.V2
                 MigrateProfile(pf, newProfile.ActiveKeys);
                 profiles.Add(newProfile);
             }
-            V3Settings settings = new V3Settings();
+            V3Settings settings = new();
             settings.Profiles = profiles;
             settings.ProfileIndex = Settings.ProfileIndex;
             return settings;
         }
-        void MigrateProfile(KeyViewerProfile pf, List<Key_Config> keyConfs)
-        {
-            foreach (var conf in keyConfs)
-            {
-                if (KeyCounts.TryGetValue(conf.Code, out int count))
+        void MigrateProfile(KeyViewerProfile pf, List<Key_Config> keyConfs) {
+            foreach(var conf in keyConfs) {
+                if(KeyCounts.TryGetValue(conf.Code, out int count))
                     conf.Count = (uint)count;
-                if (KeySettings.TryGetValue(conf.SpecialType switch
-                {
+                if(KeySettings.TryGetValue(conf.SpecialType switch {
                     SpecialKeyType.KPS => KeyCode.None,
                     SpecialKeyType.Total => KeyCode.Joystick1Button0,
                     _ => conf.Code
-                }, out KeySetting keySetting))
-                {
+                }, out KeySetting keySetting)) {
                     PoSize posSize = keySetting.ps;
 
                     Point offset = posSize.Pos;

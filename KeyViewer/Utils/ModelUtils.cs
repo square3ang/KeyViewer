@@ -1,15 +1,11 @@
 ﻿using KeyViewer.Core.Interfaces;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityModManagerNet.UnityModManager;
 
-namespace KeyViewer.Utils
-{
-    public static class ModelUtils
-    {
+namespace KeyViewer.Utils {
+    public static class ModelUtils {
         public static readonly Type model_t = typeof(IModel);
         public static readonly Type vec2_t = typeof(Vector2);
         public static readonly Type vec3_t = typeof(Vector3);
@@ -206,7 +202,7 @@ namespace KeyViewer.Utils
                 return default;
             }
 
-            T t = new T();
+            T t = new();
             t.Deserialize(token);
             return t;
         }
@@ -226,7 +222,7 @@ namespace KeyViewer.Utils
                 return list;
 
             foreach(var v in array) {
-                T t = new T();
+                T t = new();
                 t.Deserialize(v);
                 list.Add(t);
             }
@@ -251,7 +247,7 @@ namespace KeyViewer.Utils
                 return set;
 
             foreach(var v in array) {
-                T t = new T();
+                T t = new();
                 t.Deserialize(v);
                 set.Add(t);
             }

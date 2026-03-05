@@ -3,21 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace KeyViewer.Migration.V3
-{
+namespace KeyViewer.Migration.V3 {
     // V3 To V4
-    public class V3Migrator
-    {
+    public class V3Migrator {
         public static Models.Settings Migrate(V3Settings settings, out List<JObject> profiles) {
             var v4Settings = new Models.Settings();
             v4Settings.ActiveProfiles.AddRange(settings.Profiles.Select(p => new Models.ActiveProfile(p.Name, true)));
             profiles = new List<JObject>();
-            foreach (var profile in settings.Profiles)
+            foreach(var profile in settings.Profiles)
                 profiles.Add((JObject)MigrateProfile(profile).Serialize());
             return v4Settings;
         }
-        public static Models.Profile MigrateProfile(V3Profile profile)
-        {
+        public static Models.Profile MigrateProfile(V3Profile profile) {
             var v4Profile = new Models.Profile();
             v4Profile.ViewOnlyGamePlay = profile.ViewerOnlyGameplay;
             v4Profile.LimitNotRegisteredKeys = profile.LimitNotRegisteredKeys;
@@ -26,55 +23,52 @@ namespace KeyViewer.Migration.V3
             var scale = profile.KeyViewerSize / 100f;
             v4Profile.VectorConfig.Offset.Set(new Vector3(profile.KeyViewerXPos / 2 * Screen.width, profile.KeyViewerYPos / 2 * Screen.height));
             v4Profile.VectorConfig.Scale.Set(new Vector3(scale, scale));
-            List<Key_Config> specialV3Keys = new List<Key_Config>();
-            List<Models.KeyConfig> specialKeys = new List<Models.KeyConfig>();
+            List<Key_Config> specialV3Keys = new();
+            List<Models.KeyConfig> specialKeys = new();
             float x = 0, dummyX = 0;
-            foreach (var key in profile.ActiveKeys)
-            {
-                if (key.SpecialType != SpecialKeyType.None)
+            foreach(var key in profile.ActiveKeys) {
+                if(key.SpecialType != SpecialKeyType.None)
                     specialV3Keys.Add(key);
-                else v4Profile.Keys.Add(MigrateKey(key, profile.ShowKeyPressTotal, profile.AnimateKeys, ref x));
+                else
+                    v4Profile.Keys.Add(MigrateKey(key, profile.ShowKeyPressTotal, profile.AnimateKeys, ref x));
             }
-            foreach (var key in specialV3Keys)
-            {
+            foreach(var key in specialV3Keys) {
                 Models.KeyConfig v4Key;
-                if (profile.MakeBarSpecialKeys)
+                if(profile.MakeBarSpecialKeys)
                     v4Key = MigrateKey(key, profile.ShowKeyPressTotal, profile.AnimateKeys, ref dummyX);
-                else v4Key = MigrateKey(key, profile.ShowKeyPressTotal, profile.AnimateKeys, ref x);
+                else
+                    v4Key = MigrateKey(key, profile.ShowKeyPressTotal, profile.AnimateKeys, ref x);
                 v4Key.UpdateTextAlways = true;
                 specialKeys.Add(v4Key);
                 v4Profile.Keys.Add(v4Key);
             }
-            if (profile.MakeBarSpecialKeys)
+            if(profile.MakeBarSpecialKeys)
                 MakeBar(specialKeys, specialV3Keys, profile.AnimateKeys, x);
             return v4Profile;
         }
-        private static Models.KeyConfig MigrateKey(Key_Config keyConfig, bool showCountText, bool animateKeys, ref float x)
-        {
+        private static Models.KeyConfig MigrateKey(Key_Config keyConfig, bool showCountText, bool animateKeys, ref float x) {
             bool isSpecial = keyConfig.SpecialType != SpecialKeyType.None;
             var v4Config = new Models.KeyConfig();
             v4Config.Code = keyConfig.Code;
             v4Config.Font = keyConfig.Font;
             v4Config.EnableCountText = showCountText;
-            if (keyConfig.SpecialType != SpecialKeyType.None)
+            if(keyConfig.SpecialType != SpecialKeyType.None)
                 v4Config.DummyName = keyConfig.SpecialType.ToString();
             v4Config.DoNotScaleText = true;
             v4Config.DisableSorting = true;
             v4Config.Count = (int)keyConfig.Count;
-            if (isSpecial)
-            {
-                if (keyConfig.SpecialType == SpecialKeyType.KPS)
+            if(isSpecial) {
+                if(keyConfig.SpecialType == SpecialKeyType.KPS)
                     v4Config.CountText = "{CurKPS}";
-                else v4Config.CountText = "{Count}";
+                else
+                    v4Config.CountText = "{Count}";
             }
             v4Config.Text = keyConfig.KeyTitle?.Replace("\\", "\\\\");
-            if (keyConfig.RainEnabled)
-            {
+            if(keyConfig.RainEnabled) {
                 v4Config.RainEnabled = true;
                 v4Config.Rain = MigrateRain(keyConfig.RainConfig);
             }
-            if (keyConfig.ChangeBgColorJudge)
-            {
+            if(keyConfig.ChangeBgColorJudge) {
                 var bgConfig = v4Config.BackgroundConfig;
                 bgConfig.ChangeColorWithJudge = true;
                 var jc = bgConfig.JudgeColors = new Models.JudgeM<Models.GColor>();
@@ -89,8 +83,7 @@ namespace KeyViewer.Migration.V3
                 jc.FailMiss = keyConfig.FailMissColor;
                 jc.FailOverload = keyConfig.FailOverloadColor;
             }
-            if (v4Config.RainEnabled && keyConfig.ChangeRainColorJudge)
-            {
+            if(v4Config.RainEnabled && keyConfig.ChangeRainColorJudge) {
                 var rainConfig = v4Config.Rain;
                 rainConfig.ObjectConfig.ChangeColorWithJudge = true;
                 var jc = rainConfig.ObjectConfig.JudgeColors = new Models.JudgeM<Models.GColor>();
@@ -142,8 +135,7 @@ namespace KeyViewer.Migration.V3
             x += keyConfig.Width + 10;
             return v4Config;
         }
-        private static Models.RainConfig MigrateRain(KeyRain_Config rainConfig)
-        {
+        private static Models.RainConfig MigrateRain(KeyRain_Config rainConfig) {
             var v4Config = new Models.RainConfig();
             v4Config.ObjectConfig.VectorConfig.Offset = new Vector2(rainConfig.OffsetX, rainConfig.OffsetY) / 5f;
             v4Config.Speed = rainConfig.RainSpeed;
@@ -152,30 +144,27 @@ namespace KeyViewer.Migration.V3
             v4Config.ObjectConfig.Color.Set(rainConfig.RainColor);
             v4Config.Direction = (Models.Direction)rainConfig.Direction;
             v4Config.Length = rainConfig.RainLength;
-            Vector2 newScale = new Vector2(rainConfig.RainWidth < 0 ? 1 : rainConfig.RainWidth / 100f,
+            Vector2 newScale = new(rainConfig.RainWidth < 0 ? 1 : rainConfig.RainWidth / 100f,
                                             rainConfig.RainHeight < 0 ? 1 : rainConfig.RainHeight / 100f);
             v4Config.ObjectConfig.VectorConfig.Scale = newScale;
             v4Config.ImageDisplayMode = rainConfig.SequentialImages ? Models.RainImageDisplayMode.Sequential : Models.RainImageDisplayMode.Random;
-            for (int i = 0; i < rainConfig.RainImages.Length; i++)
-            {
+            for(int i = 0; i < rainConfig.RainImages.Length; i++) {
                 string img = rainConfig.RainImages[i];
-                Models.RainImage ri = new Models.RainImage();
+                Models.RainImage ri = new();
                 ri.Image = img;
                 ri.Count = rainConfig.RainImageCounts[i];
                 v4Config.RainImages.Add(ri);
             }
             return v4Config;
         }
-        private static void MakeBar(List<Models.KeyConfig> keys, List<Key_Config> v3Keys, bool animateKeys, float lastX)
-        {
+        private static void MakeBar(List<Models.KeyConfig> keys, List<Key_Config> v3Keys, bool animateKeys, float lastX) {
             float tempX = 0;
             int updateCount = 0;
-            for (int i = 0; i < keys.Count; i++)
-            {
+            for(int i = 0; i < keys.Count; i++) {
                 var config = v3Keys[i];
                 var v4Config = keys[i];
                 int spacing = updateCount * 10;
-                Vector2 size = new Vector2(0, 75 * (config.Height / 100));
+                Vector2 size = new(0, 75 * (config.Height / 100));
                 size.x = (lastX - 10) / keys.Count * (config.Width / 100) - spacing / 2;
                 var scale = new Vector2(size.x / 100f, size.y / 150f);
                 float heightOffset = config.Height / 5f;

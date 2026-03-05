@@ -3,15 +3,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KeyViewer.API
-{
-    public static class InputAPI
-    {
-        public static bool Active
-        {
+namespace KeyViewer.API {
+    public static class InputAPI {
+        public static bool Active {
             get => active;
-            set
-            {
+            set {
                 active = value;
                 EventActive = value;
                 APIFlags.Clear();
@@ -24,7 +20,7 @@ namespace KeyViewer.API
             => APIFlags[key] = false;
         public static event Action<Key> OnKeyPressed = delegate { };
         public static event Action<Key> OnKeyReleased = delegate { };
-        internal static readonly Dictionary<KeyCode, bool> APIFlags = new Dictionary<KeyCode, bool>();
+        internal static readonly Dictionary<KeyCode, bool> APIFlags = new();
         internal static void KeyPress(Key key)
             => OnKeyPressed(key);
         internal static void KeyRelease(Key key)

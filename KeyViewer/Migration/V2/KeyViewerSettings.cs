@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KeyViewer.Migration.V2
-{
-    public class KeyViewerSettings
-    {
+namespace KeyViewer.Migration.V2 {
+    public class KeyViewerSettings {
         public Color P;
         public Color EP;
         public Color LP;
@@ -25,8 +23,7 @@ namespace KeyViewer.Migration.V2
         public Color ReleasedBackgroundColor;
         public Color PressedTextColor;
         public Color ReleasedTextColor;
-        public KeyViewerSettings()
-        {
+        public KeyViewerSettings() {
             this.PressedOutlineColor = Color.black;
             this.ReleasedOutlineColor = Color.black;
             this.PressedBackgroundColor = Color.black;

@@ -66,7 +66,7 @@ namespace KeyViewer.Core {
         }
 
         public static List<FileReference> GetReferences(Profile profile) {
-            List<FileReference> references = new List<FileReference>();
+            List<FileReference> references = new();
 
             foreach(var key in profile.Keys) {
                 if(!string.IsNullOrWhiteSpace(key.Font)) {

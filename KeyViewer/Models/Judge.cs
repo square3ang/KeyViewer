@@ -2,10 +2,8 @@
 using KeyViewer.Utils;
 using Newtonsoft.Json.Linq;
 
-namespace KeyViewer.Models
-{
-    public class Judge<T> : IModel, ICopyable<Judge<T>>
-    {
+namespace KeyViewer.Models {
+    public class Judge<T> : IModel, ICopyable<Judge<T>> {
         public T TooEarly;
         public T VeryEarly;
         public T EarlyPerfect;
@@ -16,27 +14,34 @@ namespace KeyViewer.Models
         public T Multipress;
         public T FailMiss;
         public T FailOverload;
-        public T Get(HitMargin hitMargin)
-        {
-            switch (hitMargin)
-            {
-                case HitMargin.TooEarly: return TooEarly;
-                case HitMargin.VeryEarly: return VeryEarly;
-                case HitMargin.EarlyPerfect: return EarlyPerfect;
-                case HitMargin.Perfect: return Perfect;
-                case HitMargin.LatePerfect: return LatePerfect;
-                case HitMargin.VeryLate: return VeryLate;
-                case HitMargin.TooLate: return TooLate;
-                case HitMargin.Multipress: return Multipress;
-                case HitMargin.FailMiss: return FailMiss;
-                case HitMargin.FailOverload: return FailOverload;
-                default: return Perfect;
+        public T Get(HitMargin hitMargin) {
+            switch(hitMargin) {
+                case HitMargin.TooEarly:
+                    return TooEarly;
+                case HitMargin.VeryEarly:
+                    return VeryEarly;
+                case HitMargin.EarlyPerfect:
+                    return EarlyPerfect;
+                case HitMargin.Perfect:
+                    return Perfect;
+                case HitMargin.LatePerfect:
+                    return LatePerfect;
+                case HitMargin.VeryLate:
+                    return VeryLate;
+                case HitMargin.TooLate:
+                    return TooLate;
+                case HitMargin.Multipress:
+                    return Multipress;
+                case HitMargin.FailMiss:
+                    return FailMiss;
+                case HitMargin.FailOverload:
+                    return FailOverload;
+                default:
+                    return Perfect;
             }
         }
-        public void Set(HitMargin hitMargin, T value)
-        {
-            switch (hitMargin)
-            {
+        public void Set(HitMargin hitMargin, T value) {
+            switch(hitMargin) {
                 case HitMargin.TooEarly:
                     TooEarly = value;
                     break;
@@ -72,8 +77,7 @@ namespace KeyViewer.Models
                     break;
             }
         }
-        public JToken Serialize()
-        {
+        public JToken Serialize() {
             var node = new JObject();
             node[nameof(TooEarly)] = ModelUtils.ToNode<T>(TooEarly);
             node[nameof(VeryEarly)] = ModelUtils.ToNode<T>(VeryEarly);
@@ -87,8 +91,7 @@ namespace KeyViewer.Models
             node[nameof(FailOverload)] = ModelUtils.ToNode<T>(FailOverload);
             return node;
         }
-        public void Deserialize(JToken node)
-        {
+        public void Deserialize(JToken node) {
             TooEarly = (T)ModelUtils.ToObject<T>(node[nameof(TooEarly)]);
             VeryEarly = (T)ModelUtils.ToObject<T>(node[nameof(VeryEarly)]);
             EarlyPerfect = (T)ModelUtils.ToObject<T>(node[nameof(EarlyPerfect)]);
@@ -100,8 +103,7 @@ namespace KeyViewer.Models
             FailMiss = (T)ModelUtils.ToObject<T>(node[nameof(FailMiss)]);
             FailOverload = (T)ModelUtils.ToObject<T>(node[nameof(FailOverload)]);
         }
-        public Judge<T> Copy()
-        {
+        public Judge<T> Copy() {
             var newJudge = new Judge<T>();
             newJudge.TooEarly = TooEarly;
             newJudge.VeryEarly = VeryEarly;
@@ -116,10 +118,8 @@ namespace KeyViewer.Models
             return newJudge;
         }
     }
-    public class JudgeM<T> : Judge<T>, IModel, ICopyable<JudgeM<T>> where T : IModel, ICopyable<T>, new()
-    {
-        public new JObject Serialize()
-        {
+    public class JudgeM<T> : Judge<T>, IModel, ICopyable<JudgeM<T>> where T : IModel, ICopyable<T>, new() {
+        public new JObject Serialize() {
             var node = new JObject();
             node[nameof(TooEarly)] = TooEarly.Serialize();
             node[nameof(VeryEarly)] = VeryEarly.Serialize();
@@ -133,8 +133,7 @@ namespace KeyViewer.Models
             node[nameof(FailOverload)] = FailOverload.Serialize();
             return node;
         }
-        public new void Deserialize(JToken node)
-        {
+        public new void Deserialize(JToken node) {
             TooEarly = ModelUtils.Unbox<T>(node[nameof(TooEarly)]);
             VeryEarly = ModelUtils.Unbox<T>(node[nameof(VeryEarly)]);
             EarlyPerfect = ModelUtils.Unbox<T>(node[nameof(EarlyPerfect)]);
@@ -146,8 +145,7 @@ namespace KeyViewer.Models
             FailMiss = ModelUtils.Unbox<T>(node[nameof(FailMiss)]);
             FailOverload = ModelUtils.Unbox<T>(node[nameof(FailOverload)]);
         }
-        public new JudgeM<T> Copy()
-        {
+        public new JudgeM<T> Copy() {
             var newJudge = new JudgeM<T>();
             newJudge.TooEarly = TooEarly.Copy();
             newJudge.VeryEarly = VeryEarly.Copy();

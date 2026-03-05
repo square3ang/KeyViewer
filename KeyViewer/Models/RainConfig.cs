@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace KeyViewer.Models
-{
-    public class RainConfig : IModel, ICopyable<RainConfig>
-    {
+namespace KeyViewer.Models {
+    public class RainConfig : IModel, ICopyable<RainConfig> {
         public PressRelease<float> Speed = 400f;
         public PressRelease<float> Length = 400f;
         public PressReleaseBase<int> Softness = 100;
@@ -16,13 +14,12 @@ namespace KeyViewer.Models
         public float Roundness = 0;
         //public bool BlurEnabled = false;
         //public BlurConfig BlurConfig = new BlurConfig();
-        public ObjectConfig ObjectConfig = new ObjectConfig(Vector2.one, Color.white, Color.white);
-        public List<RainImage> RainImages = new List<RainImage>();
+        public ObjectConfig ObjectConfig = new(Vector2.one, Color.white, Color.white);
+        public List<RainImage> RainImages = new();
         public RainImageDisplayMode ImageDisplayMode = RainImageDisplayMode.Sequential;
         public Direction Direction = Direction.Up;
-        public RainConfig Copy()
-        {
-            RainConfig newConfig = new RainConfig();
+        public RainConfig Copy() {
+            RainConfig newConfig = new();
             newConfig.Speed = Speed.Copy();
             newConfig.Length = Length.Copy();
             newConfig.Softness = Softness.Copy();
@@ -36,8 +33,7 @@ namespace KeyViewer.Models
             newConfig.Direction = Direction;
             return newConfig;
         }
-        public JToken Serialize()
-        {
+        public JToken Serialize() {
             var node = new JObject();
             node[nameof(Speed)] = Speed.Serialize();
             node[nameof(Length)] = Length.Serialize();
@@ -52,8 +48,7 @@ namespace KeyViewer.Models
             node[nameof(Direction)] = Direction.ToString();
             return node;
         }
-        public void Deserialize(JToken node)
-        {
+        public void Deserialize(JToken node) {
             var defaultSettings = new RainConfig();
 
             Speed = ModelUtils.Unbox<PressRelease<float>>(node[nameof(Speed)]);

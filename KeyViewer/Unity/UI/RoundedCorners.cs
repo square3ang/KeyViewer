@@ -2,13 +2,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KeyViewer.Unity.UI
-{
+namespace KeyViewer.Unity.UI {
     [ExecuteInEditMode]								//Required to check the OnEnable function
     [DisallowMultipleComponent]                     //You can only have one of these in every object.
     [RequireComponent(typeof(RectTransform))]
-    public class RoundedCorners : MonoBehaviour
-    {
+    public class RoundedCorners : MonoBehaviour {
         private static readonly int Props = Shader.PropertyToID("_WidthHeightRadius");
 
         public float radius = 40f;
@@ -16,14 +14,12 @@ namespace KeyViewer.Unity.UI
 
         [HideInInspector, SerializeField] private MaskableGraphic image;
 
-        private void OnValidate()
-        {
+        private void OnValidate() {
             Validate();
             Refresh();
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() {
             image.material = null;      //This makes so that when the component is removed, the UI material returns to null
 
             Destroy(material);
@@ -31,40 +27,32 @@ namespace KeyViewer.Unity.UI
             material = null;
         }
 
-        private void OnEnable()
-        {
+        private void OnEnable() {
             Validate();
             Refresh();
         }
 
-        private void OnRectTransformDimensionsChange()
-        {
-            if (enabled && material != null)
-            {
+        private void OnRectTransformDimensionsChange() {
+            if(enabled && material != null) {
                 Refresh();
             }
         }
 
-        public void Validate()
-        {
-            if (material == null)
-            {
+        public void Validate() {
+            if(material == null) {
                 material = new Material(AssetManager.RoundedCorners);
             }
 
-            if (image == null)
-            {
+            if(image == null) {
                 TryGetComponent(out image);
             }
 
-            if (image != null)
-            {
+            if(image != null) {
                 image.material = material;
             }
         }
 
-        public void Refresh()
-        {
+        public void Refresh() {
             var rect = ((RectTransform)transform).rect;
 
             //Multiply radius value by 2 to make the radius value appear consistent with ImageWithIndependentRoundedCorners script.

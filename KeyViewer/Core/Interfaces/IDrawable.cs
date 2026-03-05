@@ -1,7 +1,5 @@
-﻿namespace KeyViewer.Core.Interfaces
-{
-    public interface IDrawable
-    {
+﻿namespace KeyViewer.Core.Interfaces {
+    public interface IDrawable {
         string Name { get; }
         void Draw();
         void OnceCall();

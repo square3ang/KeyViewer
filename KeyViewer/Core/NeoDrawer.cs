@@ -2,23 +2,15 @@
 using KeyViewer.Core;
 using KeyViewer.Models;
 using NCalc;
-using Newtonsoft.Json.Linq;
 using RapidGUI;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static HarmonyLib.AccessTools;
 
 namespace Overlayer.Core {
     public class NeoDrawer {
-        public static NeoDrawer StaticInstance = new NeoDrawer();
+        public static NeoDrawer StaticInstance = new();
         public class NeoField {
             public enum StateType {
                 OK = 0,

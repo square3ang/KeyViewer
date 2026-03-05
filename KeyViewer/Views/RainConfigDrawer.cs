@@ -19,8 +19,7 @@ public class RainConfigDrawer : ModelDrawable<RainConfig> {
         NeoDrawer.StaticInstance.FieldResetDictById();
     }
 
-    public override void Draw()
-    {
+    public override void Draw() {
         NeoDrawer.StaticInstance.FieldResetId();
 
         bool changed = false;

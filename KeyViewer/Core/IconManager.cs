@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 
 namespace KeyViewer.Core {
@@ -14,7 +13,7 @@ namespace KeyViewer.Core {
                     return null;
                 }
 
-                using(MemoryStream ms = new MemoryStream()) {
+                using(MemoryStream ms = new()) {
                     stream.CopyTo(ms);
                     return ms.ToArray();
                 }

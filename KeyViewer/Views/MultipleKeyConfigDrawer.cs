@@ -8,8 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace KeyViewer.Views
-{
+namespace KeyViewer.Views {
     public class MultipleKeyConfigDrawer : ModelDrawable<KeyConfig> {
         public KeyManager manager;
         public KeyConfig modelCopy;

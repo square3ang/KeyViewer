@@ -2,8 +2,7 @@
 using KeyViewer.Utils;
 using Newtonsoft.Json.Linq;
 
-namespace KeyViewer.Models
-{
+namespace KeyViewer.Models {
     public class PressRelease<T> : PressReleaseBase<T>, ICopyable<PressRelease<T>> {
         public EaseConfig PressedEase = new();
         public EaseConfig ReleasedEase = new();
@@ -60,6 +59,6 @@ namespace KeyViewer.Models
         }
 
         public static implicit operator PressRelease<T>(T value)
-            => new PressRelease<T>(value);
+            => new(value);
     }
 }

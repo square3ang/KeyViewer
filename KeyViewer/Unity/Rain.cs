@@ -3,10 +3,8 @@ using KeyViewer.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KeyViewer.Unity
-{
-    public class Rain : MonoBehaviour
-    {
+namespace KeyViewer.Unity {
+    public class Rain : MonoBehaviour {
         public bool IsAlive { get; private set; }
         public Vector2 Position;
         public Vector2 DefaultSize;
@@ -23,9 +21,9 @@ namespace KeyViewer.Unity
         private bool initialized = false;
 
         internal Image image;
-        public void Init(Key key)
-        {
-            if (initialized) return;
+        public void Init(Key key) {
+            if(initialized)
+                return;
             this.key = key;
             image = gameObject.AddComponent<Image>();
             rt = image.rectTransform;
@@ -37,33 +35,35 @@ namespace KeyViewer.Unity
             KeyViewerUtils.ApplyConfigLayout(this, objConfig.VectorConfig, DefaultSize, false);
             initialized = true;
         }
-        public void Press()
-        {
-            if (!initialized || stretching) return;
+        public void Press() {
+            if(!initialized || stretching)
+                return;
             stretching = true;
             image.sprite = key.RainImageManager.Get(out rImage);
             var color = config.ObjectConfig.Color;
-            if (colorUpdateIgnores == 0)
+            if(colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase, false);
-            else colorUpdateIgnores--;
+            else
+                colorUpdateIgnores--;
             //KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false, DefaultSize, false);
             KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, false, DefaultSize, false);
         }
-        public void Release()
-        {
-            if (!initialized || !stretching) return;
+        public void Release() {
+            if(!initialized || !stretching)
+                return;
             stretching = false;
             var color = config.ObjectConfig.Color;
-            if (colorUpdateIgnores == 0)
+            if(colorUpdateIgnores == 0)
                 KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase, false);
-            else colorUpdateIgnores--;
+            else
+                colorUpdateIgnores--;
             //Vector2 adjustedPosition = KeyViewerUtils.AdjustRainPosition(config.Direction, Position, objConfig.VectorConfig.Offset.Pressed);
             //KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false, DefaultSize, false);
             KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, false, DefaultSize, false);
         }
-        public void OnEnable()
-        {
-            if (!initialized) return;
+        public void OnEnable() {
+            if(!initialized)
+                return;
             colorUpdateIgnores = 0;
             rt.sizeDelta = DefaultSize = GetInitialSize();
             rt.anchoredPosition = GetPosition(config.Direction);
@@ -76,37 +76,29 @@ namespace KeyViewer.Unity
             //else KeyViewerUtils.ApplyRoundnessBlurLayout(image, ref config.Roundness, config.BlurConfig, config.BlurEnabled);
             KeyViewerUtils.ApplyRoundnessBlurLayout(image, ref config.Roundness, null, false);
         }
-        public void IgnoreColorUpdate()
-        {
+        public void IgnoreColorUpdate() {
             colorUpdateIgnores++;
         }
-        private void Update()
-        {
+        private void Update() {
             IsAlive = IsVisible(config.Direction);
-            if (IsAlive)
-            {
+            if(IsAlive) {
                 var toMove = Time.deltaTime * config.Speed.Get(key.Pressed);
                 var delta = GetDelta(config.Direction, toMove);
-                if (stretching)
-                {
+                if(stretching) {
                     rt.sizeDelta += delta.Abs();
                     rt.anchoredPosition += delta * 0.5f;
                     DefaultSize = rt.sizeDelta;
-                }
-                else rt.anchoredPosition += delta;
+                } else
+                    rt.anchoredPosition += delta;
                 Position = rt.localPosition;
-            }
-            else
-            {
+            } else {
                 stretching = false;
                 OnEnable();
                 gameObject.SetActive(false);
             }
         }
-        private bool IsVisible(Direction dir)
-        {
-            switch (dir)
-            {
+        private bool IsVisible(Direction dir) {
+            switch(dir) {
                 case Direction.Up:
                     return rt.anchoredPosition.y - rt.sizeDelta.y <= config.Length.Get(key.Pressed);
                 case Direction.Down:
@@ -115,14 +107,13 @@ namespace KeyViewer.Unity
                     return -rt.anchoredPosition.x - rt.sizeDelta.x <= config.Length.Get(key.Pressed);
                 case Direction.Right:
                     return rt.anchoredPosition.x - rt.sizeDelta.x <= config.Length.Get(key.Pressed);
-                default: return false;
+                default:
+                    return false;
             }
         }
-        private Vector2 GetInitialSize()
-        {
+        private Vector2 GetInitialSize() {
             Vector2 scale = objConfig.VectorConfig.Scale.Get(key.Pressed);
-            switch (config.Direction)
-            {
+            switch(config.Direction) {
                 case Direction.Up:
                 case Direction.Down:
                     return scale.x > 0 ?
@@ -133,13 +124,12 @@ namespace KeyViewer.Unity
                     return scale.y > 0 ?
                         new Vector2(0, key.Size.y * scale.y) :
                         new Vector2(0, key.Size.y);
-                default: return Vector2.zero;
+                default:
+                    return Vector2.zero;
             }
         }
-        private Vector2 GetDelta(Direction dir, float value)
-        {
-            switch (dir)
-            {
+        private Vector2 GetDelta(Direction dir, float value) {
+            switch(dir) {
                 case Direction.Up:
                     return new Vector2(0, value);
                 case Direction.Down:
@@ -148,14 +138,13 @@ namespace KeyViewer.Unity
                     return new Vector2(-value, 0);
                 case Direction.Right:
                     return new Vector2(value, 0);
-                default: return Vector2.zero;
+                default:
+                    return Vector2.zero;
             }
         }
-        private Vector2 GetPosition(Direction dir)
-        {
+        private Vector2 GetPosition(Direction dir) {
             var sizeDelta = key.RainMaskRt.sizeDelta;
-            switch (dir)
-            {
+            switch(dir) {
                 case Direction.Up:
                     return new Vector2(0, (-sizeDelta.y / 2) + config.Softness.Get(key.Pressed));
                 case Direction.Down:
@@ -164,7 +153,8 @@ namespace KeyViewer.Unity
                     return new Vector2((sizeDelta.x / 2) - config.Softness.Get(key.Pressed), 0);
                 case Direction.Right:
                     return new Vector2((-sizeDelta.x / 2) + config.Softness.Get(key.Pressed), 0);
-                default: return Vector2.zero;
+                default:
+                    return Vector2.zero;
             }
         }
     }

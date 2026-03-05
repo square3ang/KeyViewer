@@ -7,15 +7,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore.LowLevel;
 
-namespace KeyViewer.Core
-{
-    public static class FontManager
-    {
+namespace KeyViewer.Core {
+    public static class FontManager {
         static TMP_FontAsset DefaultTMPFont;
         static Font DefaultFont;
         static bool initialized;
         static FontData defaultFont;
-        static Dictionary<string, FontData> Fonts = new Dictionary<string, FontData>();
+        static Dictionary<string, FontData> Fonts = new();
         public static bool Initialized => initialized;
         public static string[] OSFonts { get; private set; }
         public static string[] OSFontPaths { get; private set; }
@@ -23,48 +21,38 @@ namespace KeyViewer.Core
         public static ReadOnlyCollection<Font> FallbackFonts { get; private set; }
         public static ReadOnlyCollection<TMP_FontAsset> FallbackTMPFonts { get; private set; }
         public static FontData GetFont(string name) => TryGetFont(name, out FontData font) ? font : defaultFont;
-        public static bool TryGetFont(string name, out FontData font)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
+        public static bool TryGetFont(string name, out FontData font) {
+            if(string.IsNullOrEmpty(name)) {
                 font = defaultFont;
                 return false;
             }
-            if (name == "Default")
-            {
+            if(name == "Default") {
                 font = defaultFont;
                 return true;
             }
             name = name.Replace("{ModDir}", Main.Mod.Path);
-            if (Fonts.TryGetValue(name, out FontData data))
-            {
+            if(Fonts.TryGetValue(name, out FontData data)) {
                 font = data;
                 return true;
-            }
-            else
-            {
-                if (File.Exists(name))
-                {
+            } else {
+                if(File.Exists(name)) {
                     FontData newData = defaultFont;
-                    Font newFont = new Font(name);
+                    Font newFont = new(name);
                     TMP_FontAsset newTMPFont = TMP_FontAsset.CreateFontAsset(newFont);
-                    if (newTMPFont)
+                    if(newTMPFont)
                         newTMPFont.fallbackFontAssetTable = FallbackTMPFonts.ToList();
                     newData.font = newFont;
                     newData.fontTMP = newTMPFont ?? defaultFont.fontTMP;
                     Fonts.Add(name, newData);
                     font = newData;
                     return true;
-                }
-                else
-                {
+                } else {
                     int index = Array.IndexOf(OSFonts, name);
-                    if (index != -1)
-                    {
+                    if(index != -1) {
                         FontData newData = defaultFont;
                         Font newFont = Font.CreateDynamicFontFromOSFont(name, defaultFont.font.fontSize);
                         TMP_FontAsset newTMPFont = TMP_FontAsset.CreateFontAsset(new Font(OSFontPaths[index]));
-                        if (newTMPFont)
+                        if(newTMPFont)
                             newTMPFont.fallbackFontAssetTable = FallbackTMPFonts.ToList();
                         newData.font = newFont;
                         newData.fontTMP = newTMPFont ?? defaultFont.fontTMP;
@@ -77,10 +65,8 @@ namespace KeyViewer.Core
                 return false;
             }
         }
-        public static void Initialize()
-        {
-            if (!initialized)
-            {
+        public static void Initialize() {
+            if(!initialized) {
                 DefaultFont = RDString.GetFontDataForLanguage(SystemLanguage.English).font;
                 DefaultTMPFont = TMP_FontAsset.CreateFontAsset(DefaultFont, 100, 10, GlyphRenderMode.SDFAA, 1024, 1024);
                 FallbackFontDatas = RDString.AvailableLanguages.Select(RDString.GetFontDataForLanguage).ToList().AsReadOnly();
@@ -99,8 +85,7 @@ namespace KeyViewer.Core
                 initialized = true;
             }
         }
-        public static void Release()
-        {
+        public static void Release() {
             DefaultFont = null;
             DefaultTMPFont = null;
             FallbackFontDatas = null;

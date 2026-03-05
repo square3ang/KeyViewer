@@ -8,7 +8,7 @@ using UnityEngine;
 namespace RapidGUI {
     public static partial class RGUI {
         static int popupControlId;
-        static readonly PopupWindow popupWindow = new PopupWindow();
+        static readonly PopupWindow popupWindow = new();
 
         public static string SelectionPopup(string current, string[] displayOptions) {
             var idx = Array.IndexOf(displayOptions, current);
@@ -203,7 +203,7 @@ namespace RapidGUI {
 
             static readonly int PopupWindowId = "Popup".GetHashCode();
 
-            public Rect GetWindowRect() => new Rect(pos, size);
+            public Rect GetWindowRect() => new(pos, size);
 
             public void DoGUIWindow() {
                 var npopup = new GUIStyle(RGUIStyle.popup);
@@ -215,8 +215,7 @@ namespace RapidGUI {
                 wrect.y -= 100;
                 wrect.width += 2000;
                 wrect.height += 200;
-                GUI.ModalWindow(PopupWindowId, wrect, (id) =>
-                {
+                GUI.ModalWindow(PopupWindowId, wrect, (id) => {
                     var rc = new Rect(new Vector2(1000, 100), GetWindowRect().size);
                     GUI.Box(rc, "", RGUIStyle.popup);
                     showTooltip = false;

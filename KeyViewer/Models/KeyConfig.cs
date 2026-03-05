@@ -4,10 +4,8 @@ using KeyViewer.Utils;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace KeyViewer.Models
-{
-    public class KeyConfig : IModel, ICopyable<KeyConfig>
-    {
+namespace KeyViewer.Models {
+    public class KeyConfig : IModel, ICopyable<KeyConfig> {
         public int Count = 0;
         public KeyCode Code = KeyCode.None;
         public string DummyName = null;
@@ -22,27 +20,26 @@ namespace KeyViewer.Models
         public float TextFontSize = 75;
         public float CountTextFontSize = 50;
 
-        public PressReleaseBase<string> Text = new PressReleaseBase<string>(null);
-        public PressReleaseBase<string> CountText = new PressReleaseBase<string>(null);
-        public PressReleaseBase<string> Background = new PressReleaseBase<string>(null);
-        public PressReleaseBase<string> Outline = new PressReleaseBase<string>(null);
+        public PressReleaseBase<string> Text = new(null);
+        public PressReleaseBase<string> CountText = new(null);
+        public PressReleaseBase<string> Background = new(null);
+        public PressReleaseBase<string> Outline = new(null);
 
-        public ObjectConfig TextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
-        public ObjectConfig CountTextConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
-        public ObjectConfig BackgroundConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.black.WithAlpha(0.4f));
-        public ObjectConfig OutlineConfig = new ObjectConfig(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.white);
+        public ObjectConfig TextConfig = new(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
+        public ObjectConfig CountTextConfig = new(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.black, Color.white);
+        public ObjectConfig BackgroundConfig = new(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.black.WithAlpha(0.4f));
+        public ObjectConfig OutlineConfig = new(new PressRelease<Vector2>(new Vector2(0.9f, 0.9f), Vector2.one).SetEase(new EaseConfig(Ease.OutQuad, 0.1f)), Color.white, Color.white);
         public float BackgroundRoundness = 0f;
         public float OutlineRoundness = 0f;
-        public BlurConfig BackgroundBlurConfig = new BlurConfig();
+        public BlurConfig BackgroundBlurConfig = new();
 
-        public VectorConfig VectorConfig = new VectorConfig();
+        public VectorConfig VectorConfig = new();
 
         public bool RainEnabled = false;
-        public RainConfig Rain = new RainConfig();
+        public RainConfig Rain = new();
 
-        public KeyConfig Copy()
-        {
-            KeyConfig newConfig = new KeyConfig();
+        public KeyConfig Copy() {
+            KeyConfig newConfig = new();
 
             newConfig.Count = Count;
             newConfig.Code = Code;
@@ -78,8 +75,7 @@ namespace KeyViewer.Models
             newConfig.Rain = Rain.Copy();
             return newConfig;
         }
-        public JToken Serialize()
-        {
+        public JToken Serialize() {
             var node = new JObject();
             node[nameof(Count)] = Count;
             node[nameof(Code)] = Code.ToString();
@@ -145,8 +141,7 @@ namespace KeyViewer.Models
 
             return node;
         }
-        public void Deserialize(JToken node)
-        {
+        public void Deserialize(JToken node) {
             var defaultSettings = new KeyConfig();
 
             Count = node[nameof(Count)]?.Value<int>() ?? defaultSettings.Count;

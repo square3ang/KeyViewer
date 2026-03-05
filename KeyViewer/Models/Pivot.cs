@@ -1,5 +1,4 @@
-﻿namespace KeyViewer.Models
-{
+﻿namespace KeyViewer.Models {
     [System.Flags]
     public enum Pivot {
         None = 0,

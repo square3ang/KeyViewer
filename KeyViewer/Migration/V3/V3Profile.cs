@@ -1,18 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace KeyViewer.Migration.V3
-{
+namespace KeyViewer.Migration.V3 {
     [XmlRoot("Profile")]
-    public class V3Profile
-    {
+    public class V3Profile {
         public string Name = "Default Profile";
         [XmlElement("Config")]
-        public Key_Config GlobalConfig = new Key_Config();
+        public Key_Config GlobalConfig = new();
         [XmlArrayItem("Group")]
-        public List<Group> KeyGroups = new List<Group>();
+        public List<Group> KeyGroups = new();
         [XmlArrayItem("Config")]
-        public List<Key_Config> ActiveKeys = new List<Key_Config>();
+        public List<Key_Config> ActiveKeys = new();
         public bool MakeBarSpecialKeys = true;
         public bool IgnoreSkippedKeys;
         public bool ViewerOnlyGameplay;

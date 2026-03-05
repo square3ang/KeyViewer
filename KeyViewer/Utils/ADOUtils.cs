@@ -1,14 +1,10 @@
 ﻿using UnityEngine.Events;
 
-namespace KeyViewer.Utils
-{
-    public static class ADOUtils
-    {
+namespace KeyViewer.Utils {
+    public static class ADOUtils {
         static ErrorCanvas overlayerErrorCanvas;
-        public static void ShowError(ErrorCanvasContext ecc)
-        {
-            if (overlayerErrorCanvas == null)
-            {
+        public static void ShowError(ErrorCanvasContext ecc) {
+            if(overlayerErrorCanvas == null) {
                 var ecObject = UnityEngine.Object.Instantiate(RDConstants.data.prefab_errorCanvas);
                 var ec = ecObject.GetComponent<ErrorCanvas>();
                 UnityEngine.Object.DontDestroyOnLoad(ecObject);
@@ -19,15 +15,15 @@ namespace KeyViewer.Utils
             overlayerErrorCanvas.btnSubmit.onClick.RemoveAllListeners();
             overlayerErrorCanvas.btnIgnore.onClick.RemoveAllListeners();
             overlayerErrorCanvas.btnBack.onClick.RemoveAllListeners();
-            if (ecc.supportBtnCallback != null)
+            if(ecc.supportBtnCallback != null)
                 overlayerErrorCanvas.btnSupport.onClick.AddListener(ecc.supportBtnCallback);
-            if (ecc.logBtnCallback != null)
+            if(ecc.logBtnCallback != null)
                 overlayerErrorCanvas.btnLog.onClick.AddListener(ecc.logBtnCallback);
-            if (ecc.submitBtnCallback != null)
+            if(ecc.submitBtnCallback != null)
                 overlayerErrorCanvas.btnSubmit.onClick.AddListener(ecc.submitBtnCallback);
-            if (ecc.ignoreBtnCallback != null)
+            if(ecc.ignoreBtnCallback != null)
                 overlayerErrorCanvas.btnIgnore.onClick.AddListener(ecc.ignoreBtnCallback);
-            if (ecc.goBackBtnCallback != null)
+            if(ecc.goBackBtnCallback != null)
                 overlayerErrorCanvas.btnBack.onClick.AddListener(ecc.goBackBtnCallback);
             overlayerErrorCanvas.btnSupport.gameObject.SetActive(ecc.supportBtnCallback != null);
             overlayerErrorCanvas.btnLog.gameObject.SetActive(ecc.logBtnCallback != null);
@@ -44,13 +40,11 @@ namespace KeyViewer.Utils
             overlayerErrorCanvas.txtErrorMessage.text = ecc.errorMessage;
             overlayerErrorCanvas.gameObject.SetActive(true);
         }
-        public static void HideError(ErrorCanvasContext ecc)
-        {
+        public static void HideError(ErrorCanvasContext ecc) {
             overlayerErrorCanvas.gameObject.SetActive(false);
         }
     }
-    public class ErrorCanvasContext
-    {
+    public class ErrorCanvasContext {
         /// <summary>
         /// StackTrace Or Message?
         /// </summary>

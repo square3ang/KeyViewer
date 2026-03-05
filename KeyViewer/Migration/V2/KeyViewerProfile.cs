@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace KeyViewer.Migration.V2
-{
-    public class KeyViewerProfile
-    {
+namespace KeyViewer.Migration.V2 {
+    public class KeyViewerProfile {
         public string Name { get; set; }
         public List<KeyCode> ActiveKeys { get; set; } = new List<KeyCode>();
         public bool ViewerOnlyGameplay { get; set; }
@@ -19,8 +17,7 @@ namespace KeyViewer.Migration.V2
         public Color ReleasedBackgroundColor;
         public Color PressedTextColor;
         public Color ReleasedTextColor;
-        public KeyViewerProfile()
-        {
+        public KeyViewerProfile() {
             this.PressedOutlineColor = Color.white;
             this.ReleasedOutlineColor = Color.white;
             this.PressedBackgroundColor = Color.white;

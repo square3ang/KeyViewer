@@ -4,12 +4,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 
-namespace KeyViewer.Models
-{
-    public class FileReference : IModel, ICopyable<FileReference>
-    {
-        public enum Type
-        {
+namespace KeyViewer.Models {
+    public class FileReference : IModel, ICopyable<FileReference> {
+        public enum Type {
             Font,
             Image,
         }
@@ -17,8 +14,7 @@ namespace KeyViewer.Models
         public string From;
         public string Name;
         public byte[] Raw;
-        public JToken Serialize()
-        {
+        public JToken Serialize() {
             var node = new JObject();
             node[nameof(ReferenceType)] = ReferenceType.ToString();
             node[nameof(From)] = From;
@@ -44,8 +40,7 @@ namespace KeyViewer.Models
                 Raw = Convert.FromBase64String(rawNode.Value<string>()).Decompress();
             }
         }
-        public FileReference Copy()
-        {
+        public FileReference Copy() {
             var newRef = new FileReference();
             newRef.ReferenceType = ReferenceType;
             newRef.From = From;

@@ -1,25 +1,19 @@
 ﻿using KeyViewer.Core.Interfaces;
-using KeyViewer.Utils;
 using Newtonsoft.Json.Linq;
 
-namespace KeyViewer.Models
-{
-    public struct ActiveProfile : IModel, ICopyable<ActiveProfile>
-    {
-        public ActiveProfile(string name, bool active)
-        {
+namespace KeyViewer.Models {
+    public struct ActiveProfile : IModel, ICopyable<ActiveProfile> {
+        public ActiveProfile(string name, bool active) {
             Name = name;
             Active = active;
         }
-        public ActiveProfile(string name, bool active, string key)
-        {
+        public ActiveProfile(string name, bool active, string key) {
             Name = name;
             Active = active;
         }
         public string Name = "None";
         public bool Active = false;
-        public ActiveProfile Copy()
-        {
+        public ActiveProfile Copy() {
             var profile = new ActiveProfile();
             profile.Name = Name;
             profile.Active = Active;

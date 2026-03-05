@@ -5,8 +5,7 @@ using RapidGUI;
 using System;
 using UnityEngine;
 
-namespace KeyViewer.Core
-{
+namespace KeyViewer.Core {
     public delegate bool CustomDrawer<T>(T t);
     public delegate bool CustomDrawerRef<T>(ref T t);
     public static class Drawer {
@@ -100,7 +99,7 @@ namespace KeyViewer.Core
 
             return prev != value;
         }
-        
+
         public static bool DrawEase(ref Ease ease) {
             string[] names = Enum.GetNames(typeof(Ease));
             int current = (int)ease;
@@ -260,7 +259,7 @@ namespace KeyViewer.Core
             if(GUILayout.Button(Icon_AnchorVerticalStretchRight, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.VerticalStretchRight; changed = true; }
             GUILayout.Space(8);
             GUI.color = anchor == Anchor.FullStretch ? Color.cyan : Color.white;
-            if(GUILayout.Button(Icon_AnchorFullStretch, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.FullStretch; changed = true;  }
+            if(GUILayout.Button(Icon_AnchorFullStretch, nopadButton, GUILayout.Width(26), GUILayout.Height(26))) { anchor = Anchor.FullStretch; changed = true; }
             GUILayout.EndHorizontal();
 
             GUI.color = old;
@@ -317,7 +316,7 @@ namespace KeyViewer.Core
                 Vector2 mousePosition = Event.current.mousePosition;
 
                 Vector2 textSize = GUI.skin.label.CalcSize(new GUIContent(text));
-                Rect labelPosition = new Rect(mousePosition.x, mousePosition.y - 40, 0, 0);
+                Rect labelPosition = new(mousePosition.x, mousePosition.y - 40, 0, 0);
 
                 if(!ignoreWidth) {
                     var windowwidth = ((Rect)AccessTools.Field(typeof(UnityModManagerNet.UnityModManager.UI), "mWindowRect")
@@ -427,7 +426,7 @@ namespace KeyViewer.Core
         public static Texture2D Icon_EaseInBounce;
         public static Texture2D Icon_EaseOutBounce;
         public static Texture2D Icon_EaseInOutBounce;
-    
+
         public static void InitializeImages() {
             if(isImageInited) {
                 return;
@@ -551,7 +550,7 @@ namespace KeyViewer.Core
         public static Texture2D DoubleTexture(Texture2D src) {
             int w = src.width * 2;
             int h = src.height * 2;
-            Texture2D dst = new Texture2D(w, h, src.format, false);
+            Texture2D dst = new(w, h, src.format, false);
 
             dst.filterMode = FilterMode.Point;
             dst.wrapMode = TextureWrapMode.Clamp;
@@ -570,7 +569,7 @@ namespace KeyViewer.Core
             int w = tex.width;
             int h = tex.height;
 
-            Texture2D rotTex = new Texture2D(h, w, tex.format, false);
+            Texture2D rotTex = new(h, w, tex.format, false);
             Color[] original = tex.GetPixels();
             Color[] rotated = new Color[original.Length];
 
@@ -589,7 +588,7 @@ namespace KeyViewer.Core
             int w = tex.width;
             int h = tex.height;
 
-            Texture2D rotTex = new Texture2D(w, h, tex.format, false);
+            Texture2D rotTex = new(w, h, tex.format, false);
             Color[] original = tex.GetPixels();
             Color[] rotated = new Color[original.Length];
 
@@ -603,7 +602,7 @@ namespace KeyViewer.Core
         }
 
         public static Texture2D CreateTextureFromByte(byte[] bytes) {
-            Texture2D texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            Texture2D texture = new(1, 1, TextureFormat.RGBA32, false);
             texture.LoadImage(bytes);
             return texture;
         }

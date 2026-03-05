@@ -18,19 +18,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
 using static UnityModManagerNet.UnityModManager.ModEntry;
 using Object = UnityEngine.Object;
 
-namespace KeyViewer
-{
-    public static class Main
-    {
+namespace KeyViewer {
+    public static class Main {
         public static bool IsEnabled { get; private set; }
         public static bool IsPlaying { get; private set; }
         public static Translator Lang { get; internal set; }
@@ -46,8 +42,7 @@ namespace KeyViewer
         public static event System.Action OnManagersInitialized = delegate { };
         public static bool IsWindows { get; private set; }
         public static string ProfilePath;
-        public static void Load(ModEntry modEntry)
-        {
+        public static void Load(ModEntry modEntry) {
             Mod = modEntry;
             ProfilePath = Path.Combine(Mod.Path, "profiles");
             Logger = modEntry.Logger;
@@ -65,10 +60,8 @@ namespace KeyViewer
             // Temporary fix
             // IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         }
-        public static bool OnToggle(ModEntry modEntry, bool toggle)
-        {
-            if (toggle)
-            {
+        public static bool OnToggle(ModEntry modEntry, bool toggle) {
+            if(toggle) {
                 // Temporary fix
                 // WinInput.Initialize();
                 Tag.InitializeWrapperAssembly();
@@ -89,7 +82,7 @@ namespace KeyViewer
                 }
 
                 var profileFiles = Directory.GetFiles(ProfilePath, "*.json");
-                List<string> notExistProfiles = new List<string>();
+                List<string> notExistProfiles = new();
 
                 foreach(var file in profileFiles) {
                     try {
@@ -137,9 +130,7 @@ namespace KeyViewer
 
                 ListeningDrawer = null;
                 IsEnabled = true;
-            }
-            else
-            {
+            } else {
                 IsEnabled = false;
                 ReleaseManagers();
                 ToDeleteFiles = null;
@@ -156,55 +147,46 @@ namespace KeyViewer
             }
             return true;
         }
-        public static void OnUpdate(ModEntry modEntry, float deltaTime)
-        {
-            if (scrController.instance && scrConductor.instance)
+        public static void OnUpdate(ModEntry modEntry, float deltaTime) {
+            if(scrController.instance && scrConductor.instance)
                 IsPlaying = !scrController.instance.paused && scrConductor.instance.isGameWorld;
-            if (ListeningDrawer != null)
-                foreach (var code in EnumHelper<KeyCode>.GetValues())
-                    if (Input.GetKeyDown(code))
+            if(ListeningDrawer != null)
+                foreach(var code in EnumHelper<KeyCode>.GetValues())
+                    if(Input.GetKeyDown(code))
                         ListeningDrawer.OnKeyDown(code);
-            foreach (var manager in Managers.Values)
-            {
+            foreach(var manager in Managers.Values) {
                 bool showViewer = true;
-                if (manager.profile.ViewOnlyGamePlay)
+                if(manager.profile.ViewOnlyGamePlay)
                     showViewer = IsPlaying;
-                if (showViewer != manager.gameObject.activeSelf)
+                if(showViewer != manager.gameObject.activeSelf)
                     manager.gameObject.SetActive(showViewer);
             }
         }
-        public static void OnGUI(ModEntry modEntry)
-        {
+        public static void OnGUI(ModEntry modEntry) {
             GUI.Draw();
         }
-        public static void OnSaveGUI(ModEntry modEntry)
-        {
+        public static void OnSaveGUI(ModEntry modEntry) {
             File.WriteAllText(Constants.SettingsPath, Settings.Serialize().ToString());
-            foreach (var (name, manager) in Managers)
-            {
+            foreach(var (name, manager) in Managers) {
                 File.WriteAllText(Path.Combine(ProfilePath, $"{name}.json"), manager.profile.Serialize().ToString());
             }
-            foreach (var path in ToDeleteFiles)
+            foreach(var path in ToDeleteFiles)
                 File.Delete(path);
         }
-        public static void OnShowGUI(ModEntry modEntry)
-        {
+        public static void OnShowGUI(ModEntry modEntry) {
             BlockInput = true;
             GUI.Flush();
             ListeningDrawer = null;
         }
-        public static void OnHideGUI(ModEntry modEntry)
-        {
+        public static void OnHideGUI(ModEntry modEntry) {
             GUI.Flush();
             ListeningDrawer = null;
             BlockInput = false;
         }
-        public static void OnLateUpdate(ModEntry modEntry, float deltaTime)
-        {
+        public static void OnLateUpdate(ModEntry modEntry, float deltaTime) {
             WinInput.UpdatePrevStates();
         }
-        public static void OnLanguageInitialize()
-        {
+        public static void OnLanguageInitialize() {
             string[] translatorLogs = Lang.Logs;
             if(translatorLogs != null && translatorLogs.Length > 0) {
                 foreach(var log in translatorLogs) {
@@ -212,11 +194,9 @@ namespace KeyViewer
                 }
             }
         }
-        public static bool AddManager(ActiveProfile profile, bool forceInit = false)
-        {
+        public static bool AddManager(ActiveProfile profile, bool forceInit = false) {
             var profilePath = Path.Combine(ProfilePath, $"{profile.Name}.json");
-            if (File.Exists(profilePath))
-            {
+            if(File.Exists(profilePath)) {
                 if(profile.Active) {
                     var profileJson = JToken.Parse(File.ReadAllText(profilePath));
                     var p = ProfileImporter.Import(profileJson);
@@ -237,17 +217,14 @@ namespace KeyViewer
             }
             return false;
         }
-        public static void RemoveManager(ActiveProfile profile)
-        {
-            if (Managers.TryGetValue(profile.Name, out var manager))
-            {
+        public static void RemoveManager(ActiveProfile profile) {
+            if(Managers.TryGetValue(profile.Name, out var manager)) {
                 Object.Destroy(manager.gameObject);
                 Managers.Remove(profile.Name);
                 Logger.Log($"Released Key Manager {profile.Name}.");
             }
         }
-        public static (KeyManager manager, ActiveProfile activeProfile) CreateManagerImmediate(string name, Profile p, string key = null)
-        {
+        public static (KeyManager manager, ActiveProfile activeProfile) CreateManagerImmediate(string name, Profile p, string key = null) {
             var profile = new ActiveProfile(name, true, key);
             var manager = KeyManager.CreateManager(profile.Name, p);
             manager.Init();
@@ -256,14 +233,11 @@ namespace KeyViewer
             Logger.Log($"Initialized Key Manager {profile.Name}.");
             return (manager, profile);
         }
-        public static IEnumerator InitializeManagersCo()
-        {
-            if (!AssetManager.Initialized)
+        public static IEnumerator InitializeManagersCo() {
+            if(!AssetManager.Initialized)
                 yield return new WaitUntil(() => !AssetManager.Initialized);
-            foreach (var (name, manager) in Managers)
-            {
-                var elapsed = MiscUtils.MeasureTime(() =>
-                {
+            foreach(var (name, manager) in Managers) {
+                var elapsed = MiscUtils.MeasureTime(() => {
                     manager.Init();
                     manager.UpdateKeys();
                 });
@@ -273,43 +247,35 @@ namespace KeyViewer
             OnManagersInitialized();
             yield break;
         }
-        public static void ReleaseManagers()
-        {
-            foreach (var (name, manager) in Managers)
-            {
+        public static void ReleaseManagers() {
+            foreach(var (name, manager) in Managers) {
                 Object.Destroy(manager.gameObject);
                 Logger.Log($"Released Key Manager {name}.");
             }
             Managers = null;
         }
-        public static void ResetKeys()
-        {
-            foreach (var manager in Managers.Values)
-            {
-                foreach (var key in manager.keys)
-                {
-                    if (!key) continue;
+        public static void ResetKeys() {
+            foreach(var manager in Managers.Values) {
+                foreach(var key in manager.keys) {
+                    if(!key)
+                        continue;
                     key.Pressed = false;
                     key.ResetRains();
                 }
             }
         }
-        public static void MigrateFromV3Xml(string path)
-        {
+        public static void MigrateFromV3Xml(string path) {
             XmlSerializer serializer;
-            try
-            {
+            try {
                 serializer = new XmlSerializer(typeof(V3Settings), GetXAO(true));
                 var v3s = serializer.Deserialize(File.OpenRead(path)) as V3Settings;
                 var newSettings = V3Migrator.Migrate(v3s, out var profilesNode);
-                foreach (var (name, manager) in Managers)
-                {
+                foreach(var (name, manager) in Managers) {
                     Object.Destroy(manager.gameObject);
                     Logger.Log($"Released Key Manager {name}.");
                 }
                 Managers.Clear();
-                for (int i = 0; i < newSettings.ActiveProfiles.Count; i++)
-                {
+                for(int i = 0; i < newSettings.ActiveProfiles.Count; i++) {
                     var profile = newSettings.ActiveProfiles[i];
                     File.WriteAllText(Path.Combine(ProfilePath, $"{profile.Name}.json"), profilesNode[i].ToString());
                     AddManager(profile, true);
@@ -317,11 +283,8 @@ namespace KeyViewer
                 GUI.Flush();
                 GUI.Init(new SettingsDrawer(Settings = newSettings));
                 Logger.Log($"Successfully Migrated Settings Xml '{path}'");
-            }
-            catch (System.Exception e)
-            {
-                try
-                {
+            } catch(System.Exception e) {
+                try {
                     serializer = new XmlSerializer(typeof(V3Profile), GetXAO(false));
                     var v3p = serializer.Deserialize(File.OpenRead(path)) as V3Profile;
                     var profile = V3Migrator.MigrateProfile(v3p);
@@ -330,33 +293,26 @@ namespace KeyViewer
                     Settings.ActiveProfiles.Add(activeProfile);
                     AddManager(activeProfile, true);
                     Logger.Log($"Successfully Migrated Profile Xml '{path}'");
-                }
-                catch (System.Exception ee) { Logger.Log($"Failed To Migrate Xml..\n{e}\n\n{ee}"); }
+                } catch(System.Exception ee) { Logger.Log($"Failed To Migrate Xml..\n{e}\n\n{ee}"); }
             }
         }
-        public static V3Settings ReadV3Settings(string path)
-        {
+        public static V3Settings ReadV3Settings(string path) {
             var serializer = new XmlSerializer(typeof(V3Settings), GetXAO(true));
             return serializer.Deserialize(File.OpenRead(path)) as V3Settings;
         }
-        public static V3Profile ReadV3Profile(string path)
-        {
+        public static V3Profile ReadV3Profile(string path) {
             var serializer = new XmlSerializer(typeof(V3Profile), GetXAO(true));
             return serializer.Deserialize(File.OpenRead(path)) as V3Profile;
         }
-        private static XmlAttributeOverrides GetXAO(bool settings)
-        {
-            XmlAttributeOverrides xao = new XmlAttributeOverrides();
+        private static XmlAttributeOverrides GetXAO(bool settings) {
+            XmlAttributeOverrides xao = new();
 
-            if (settings)
-            {
-                XmlAttributes settingsAttr = new XmlAttributes();
+            if(settings) {
+                XmlAttributes settingsAttr = new();
                 settingsAttr.XmlRoot = new XmlRootAttribute("Settings");
                 xao.Add(typeof(V3Settings), settingsAttr);
-            }
-            else
-            {
-                XmlAttributes profileAttr = new XmlAttributes();
+            } else {
+                XmlAttributes profileAttr = new();
                 profileAttr.XmlRoot = new XmlRootAttribute("Profile");
                 xao.Add(typeof(V3Profile), profileAttr);
             }

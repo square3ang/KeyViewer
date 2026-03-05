@@ -2,22 +2,19 @@
 using System.IO;
 using UnityEngine;
 
-namespace KeyViewer.Core
-{
-    public static class AssetManager
-    {
+namespace KeyViewer.Core {
+    public static class AssetManager {
         public static bool Initialized { get; private set; }
         public static Sprite Background { get; private set; }
         public static Sprite Outline { get; private set; }
         public static Shader RoundedCorners { get; private set; }
         public static Shader Blur { get; private set; }
         private static Dictionary<string, Sprite> others;
-        public static void Initialize()
-        {
-            if (Initialized) return;
+        public static void Initialize() {
+            if(Initialized)
+                return;
             var request = AssetBundle.LoadFromFileAsync(Path.Combine(Main.Mod.Path, "KeyViewer.assets"));
-            request.completed += o =>
-            {
+            request.completed += o => {
                 var assets = request.assetBundle;
                 Background = assets.LoadAsset<Sprite>("Assets/Images/KeyBackground.png");
                 Outline = assets.LoadAsset<Sprite>("Assets/Images/KeyOutline.png");
@@ -28,27 +25,29 @@ namespace KeyViewer.Core
                 Initialized = true;
             };
         }
-        public static void Release()
-        {
-            if (!Initialized) return;
+        public static void Release() {
+            if(!Initialized)
+                return;
             Object.Destroy(Background);
             Object.Destroy(Outline);
             Object.Destroy(RoundedCorners);
             Object.Destroy(Blur);
-            foreach (var spr in others.Values)
+            foreach(var spr in others.Values)
                 Object.Destroy(spr);
             Background = null;
             Outline = null;
             others = null;
             Initialized = false;
         }
-        public static Sprite Get(string path, Sprite defaultValue = null)
-        {
+        public static Sprite Get(string path, Sprite defaultValue = null) {
             path = path?.Replace("{ModDir}", Main.Mod.Path);
-            if (string.IsNullOrEmpty(path)) return defaultValue;
-            if (others.TryGetValue(path, out var spr)) return spr;
-            if (!File.Exists(path)) return defaultValue;
-            Texture2D t = new Texture2D(1, 1);
+            if(string.IsNullOrEmpty(path))
+                return defaultValue;
+            if(others.TryGetValue(path, out var spr))
+                return spr;
+            if(!File.Exists(path))
+                return defaultValue;
+            Texture2D t = new(1, 1);
             t.LoadImage(File.ReadAllBytes(path));
             return others[path] = Sprite.Create(t, new Rect(0, 0, t.width, t.height), new Vector2(.5f, .5f));
         }

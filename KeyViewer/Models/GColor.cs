@@ -4,8 +4,7 @@ using Newtonsoft.Json.Linq;
 using TMPro;
 using UnityEngine;
 
-namespace KeyViewer.Models
-{
+namespace KeyViewer.Models {
     public struct GColor : IModel, ICopyable<GColor> {
         internal VertexGradient _color;
 
@@ -151,10 +150,10 @@ namespace KeyViewer.Models
         }
 
         public static implicit operator Color(GColor color) => color.topLeft;
-        public static implicit operator GColor(Color color) => new GColor(color);
+        public static implicit operator GColor(Color color) => new(color);
 
         public static implicit operator VertexGradient(GColor color) => color.gradientEnabled ? new VertexGradient(color.topLeft, color.topRight, color.bottomLeft, color.bottomRight) : new VertexGradient(color);
-        public static implicit operator GColor(VertexGradient color) => new GColor(color);
+        public static implicit operator GColor(VertexGradient color) => new(color);
 
         public static GColor operator +(GColor a, GColor b) {
             return new VertexGradient(

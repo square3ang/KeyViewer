@@ -3,19 +3,16 @@ using KeyViewer.Utils;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace KeyViewer.Models
-{
-    public class VectorConfig : IModel, ICopyable<VectorConfig>
-    {
+namespace KeyViewer.Models {
+    public class VectorConfig : IModel, ICopyable<VectorConfig> {
         public PressRelease<Vector3> Rotation = Vector3.zero;
         public PressRelease<Vector2> Offset = Vector2.zero;
         public PressRelease<Vector2> Scale = Vector2.one;
         public Pivot Pivot = Pivot.MiddleCenter;
         public Anchor Anchor = Anchor.MiddleCenter;
 
-        public VectorConfig Copy()
-        {
-            VectorConfig newRos = new VectorConfig();
+        public VectorConfig Copy() {
+            VectorConfig newRos = new();
             newRos.Rotation = Rotation.Copy();
             newRos.Offset = Offset.Copy();
             newRos.Scale = Scale.Copy();
@@ -23,8 +20,7 @@ namespace KeyViewer.Models
             newRos.Anchor = Anchor;
             return newRos;
         }
-        public JToken Serialize()
-        {
+        public JToken Serialize() {
             var node = new JObject();
             if(Rotation.Pressed != Vector3.zero && Rotation.Released != Vector3.zero) {
                 node[nameof(Rotation)] = Rotation.Serialize();
@@ -43,8 +39,7 @@ namespace KeyViewer.Models
             }
             return node;
         }
-        public void Deserialize(JToken node)
-        {
+        public void Deserialize(JToken node) {
             var defaultSettings = new VectorConfig();
 
             JToken rotationRaw = node[nameof(Rotation)];

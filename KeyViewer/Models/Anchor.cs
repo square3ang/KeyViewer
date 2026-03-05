@@ -1,7 +1,6 @@
 ﻿using System;
 
-namespace KeyViewer.Models
-{
+namespace KeyViewer.Models {
     [Flags]
     public enum Anchor {
         None = 0,

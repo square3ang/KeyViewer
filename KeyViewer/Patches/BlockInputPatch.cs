@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KeyViewer.Patches
-{
+namespace KeyViewer.Patches {
     [HarmonyPatch(typeof(scrController), "CountValidKeysPressed")]
-    public static class BlockInputPatch
-    {
-        public static readonly List<KeyCode> AlwaysBoundKeys = new List<KeyCode>()
+    public static class BlockInputPatch {
+        public static readonly List<KeyCode> AlwaysBoundKeys = new()
         {
             KeyCode.Mouse0,
             KeyCode.Mouse1,

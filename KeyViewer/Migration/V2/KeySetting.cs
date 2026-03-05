@@ -1,7 +1,5 @@
-﻿namespace KeyViewer.Migration.V2
-{
-    public class KeySetting
-    {
+﻿namespace KeyViewer.Migration.V2 {
+    public class KeySetting {
         public bool TextResize;
         public bool CTextResize;
         public int TextF;

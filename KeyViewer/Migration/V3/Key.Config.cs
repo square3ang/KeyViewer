@@ -3,12 +3,10 @@ using System.Xml.Serialization;
 using TMPro;
 using UnityEngine;
 
-namespace KeyViewer.Migration.V3
-{
+namespace KeyViewer.Migration.V3 {
     [XmlRoot("Config")]
-    public class Key_Config
-    {
-        public KeyRain_Config RainConfig = new KeyRain_Config();
+    public class Key_Config {
+        public KeyRain_Config RainConfig = new();
         public bool RainEnabled = false;
         public string Font = "Default";
         public KeyCode Code = KeyCode.None;
@@ -39,20 +37,20 @@ namespace KeyViewer.Migration.V3
         private Color releasedOutlineColor = Color.white;
         private Color pressedBackgroundColor = Color.white;
         private Color releasedBackgroundColor = Color.black.WithAlpha(0.4f);
-        private Color tooEarlyColor = new Color(1.000f, 0.000f, 0.000f, 1.000f);
-        private Color veryEarlyColor = new Color(1.000f, 0.436f, 0.306f, 1.000f);
-        private Color earlyPerfectColor = new Color(0.627f, 1.000f, 0.306f, 1.000f);
-        private Color perfectColor = new Color(0.376f, 1.000f, 0.307f, 1.000f);
-        private Color latePerfectColor = new Color(0.627f, 1.000f, 0.306f, 1.000f);
-        private Color veryLateColor = new Color(1.000f, 0.435f, 0.306f, 1.000f);
-        private Color tooLateColor = new Color(1.000f, 0.000f, 0.000f, 1.000f);
-        private Color multipressColor = new Color(0.000f, 1.000f, 0.930f, 1.000f);
-        private Color failMissColor = new Color(0.851f, 0.346f, 1.000f, 1.000f);
-        private Color failOverloadColor = new Color(0.851f, 0.346f, 1.000f, 1.000f);
-        private VertexGradient pressedTextColor = new VertexGradient(Color.black);
-        private VertexGradient releasedTextColor = new VertexGradient(Color.white);
-        private VertexGradient pressedCountTextColor = new VertexGradient(Color.black);
-        private VertexGradient releasedCountTextColor = new VertexGradient(Color.white);
+        private Color tooEarlyColor = new(1.000f, 0.000f, 0.000f, 1.000f);
+        private Color veryEarlyColor = new(1.000f, 0.436f, 0.306f, 1.000f);
+        private Color earlyPerfectColor = new(0.627f, 1.000f, 0.306f, 1.000f);
+        private Color perfectColor = new(0.376f, 1.000f, 0.307f, 1.000f);
+        private Color latePerfectColor = new(0.627f, 1.000f, 0.306f, 1.000f);
+        private Color veryLateColor = new(1.000f, 0.435f, 0.306f, 1.000f);
+        private Color tooLateColor = new(1.000f, 0.000f, 0.000f, 1.000f);
+        private Color multipressColor = new(0.000f, 1.000f, 0.930f, 1.000f);
+        private Color failMissColor = new(0.851f, 0.346f, 1.000f, 1.000f);
+        private Color failOverloadColor = new(0.851f, 0.346f, 1.000f, 1.000f);
+        private VertexGradient pressedTextColor = new(Color.black);
+        private VertexGradient releasedTextColor = new(Color.white);
+        private VertexGradient pressedCountTextColor = new(Color.black);
+        private VertexGradient releasedCountTextColor = new(Color.white);
 
         [XmlIgnore]
         public string PressedOutlineColorHex;
@@ -73,67 +71,53 @@ namespace KeyViewer.Migration.V3
         [XmlIgnore]
         public string[] HitMarginColorHex = new string[10];
 
-        public float OffsetX
-        {
-            get
-            {
-                if (RelativeOffsetApplied)
+        public float OffsetX {
+            get {
+                if(RelativeOffsetApplied)
                     return offsetX + RelativeOffsetX;
                 return offsetX;
             }
             set => offsetX = value;
         }
-        public float OffsetY
-        {
-            get
-            {
-                if (RelativeOffsetApplied)
+        public float OffsetY {
+            get {
+                if(RelativeOffsetApplied)
                     return offsetY + RelativeOffsetY;
                 return offsetY;
             }
             set => offsetY = value;
         }
-        public Color PressedOutlineColor
-        {
+        public Color PressedOutlineColor {
             get => pressedOutlineColor;
-            set
-            {
+            set {
                 pressedOutlineColor = value;
                 PressedOutlineColorHex = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color ReleasedOutlineColor
-        {
+        public Color ReleasedOutlineColor {
             get => releasedOutlineColor;
-            set
-            {
+            set {
                 releasedOutlineColor = value;
                 ReleasedOutlineColorHex = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color PressedBackgroundColor
-        {
+        public Color PressedBackgroundColor {
             get => pressedBackgroundColor;
-            set
-            {
+            set {
                 pressedBackgroundColor = value;
                 PressedBackgroundColorHex = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color ReleasedBackgroundColor
-        {
+        public Color ReleasedBackgroundColor {
             get => releasedBackgroundColor;
-            set
-            {
+            set {
                 releasedBackgroundColor = value;
                 ReleasedBackgroundColorHex = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public VertexGradient PressedTextColor
-        {
+        public VertexGradient PressedTextColor {
             get => pressedTextColor;
-            set
-            {
+            set {
                 pressedTextColor = value;
                 PressedTextColorHex[0] = ColorUtility.ToHtmlStringRGBA(value.topLeft);
                 PressedTextColorHex[1] = ColorUtility.ToHtmlStringRGBA(value.topRight);
@@ -141,11 +125,9 @@ namespace KeyViewer.Migration.V3
                 PressedTextColorHex[3] = ColorUtility.ToHtmlStringRGBA(value.bottomRight);
             }
         }
-        public VertexGradient ReleasedTextColor
-        {
+        public VertexGradient ReleasedTextColor {
             get => releasedTextColor;
-            set
-            {
+            set {
                 releasedTextColor = value;
                 ReleasedTextColorHex[0] = ColorUtility.ToHtmlStringRGBA(value.topLeft);
                 ReleasedTextColorHex[1] = ColorUtility.ToHtmlStringRGBA(value.topRight);
@@ -153,11 +135,9 @@ namespace KeyViewer.Migration.V3
                 ReleasedTextColorHex[3] = ColorUtility.ToHtmlStringRGBA(value.bottomRight);
             }
         }
-        public VertexGradient PressedCountTextColor
-        {
+        public VertexGradient PressedCountTextColor {
             get => pressedCountTextColor;
-            set
-            {
+            set {
                 pressedCountTextColor = value;
                 PressedCountTextColorHex[0] = ColorUtility.ToHtmlStringRGBA(value.topLeft);
                 PressedCountTextColorHex[1] = ColorUtility.ToHtmlStringRGBA(value.topRight);
@@ -165,11 +145,9 @@ namespace KeyViewer.Migration.V3
                 PressedCountTextColorHex[3] = ColorUtility.ToHtmlStringRGBA(value.bottomRight);
             }
         }
-        public VertexGradient ReleasedCountTextColor
-        {
+        public VertexGradient ReleasedCountTextColor {
             get => releasedCountTextColor;
-            set
-            {
+            set {
                 releasedCountTextColor = value;
                 ReleasedCountTextColorHex[0] = ColorUtility.ToHtmlStringRGBA(value.topLeft);
                 ReleasedCountTextColorHex[1] = ColorUtility.ToHtmlStringRGBA(value.topRight);
@@ -177,93 +155,73 @@ namespace KeyViewer.Migration.V3
                 ReleasedCountTextColorHex[3] = ColorUtility.ToHtmlStringRGBA(value.bottomRight);
             }
         }
-        public Color TooEarlyColor
-        {
+        public Color TooEarlyColor {
             get => tooEarlyColor;
-            set
-            {
+            set {
                 tooEarlyColor = value;
                 HitMarginColorHex[0] = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color VeryEarlyColor
-        {
+        public Color VeryEarlyColor {
             get => veryEarlyColor;
-            set
-            {
+            set {
                 veryEarlyColor = value;
                 HitMarginColorHex[1] = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color EarlyPerfectColor
-        {
+        public Color EarlyPerfectColor {
             get => earlyPerfectColor;
-            set
-            {
+            set {
                 earlyPerfectColor = value;
                 HitMarginColorHex[2] = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color PerfectColor
-        {
+        public Color PerfectColor {
             get => perfectColor;
-            set
-            {
+            set {
                 perfectColor = value;
                 HitMarginColorHex[3] = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color LatePerfectColor
-        {
+        public Color LatePerfectColor {
             get => latePerfectColor;
-            set
-            {
+            set {
                 latePerfectColor = value;
                 HitMarginColorHex[4] = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color VeryLateColor
-        {
+        public Color VeryLateColor {
             get => veryLateColor;
-            set
-            {
+            set {
                 veryLateColor = value;
                 HitMarginColorHex[5] = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color TooLateColor
-        {
+        public Color TooLateColor {
             get => tooLateColor;
-            set
-            {
+            set {
                 tooLateColor = value;
                 HitMarginColorHex[6] = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color MultipressColor
-        {
+        public Color MultipressColor {
             get => multipressColor;
-            set
-            {
+            set {
                 multipressColor = value;
                 HitMarginColorHex[7] = ColorUtility.ToHtmlStringRGBA(value);
             }
         }
-        public Color FailMissColor
-        {
+        public Color FailMissColor {
             get => failMissColor;
-            set
-            {
+            set {
                 failMissColor = value;
                 HitMarginColorHex[8] = ColorUtility.ToHtmlStringRGBA(value);
 
             }
         }
-        public Color FailOverloadColor
-        {
+        public Color FailOverloadColor {
             get => failOverloadColor;
-            set
-            {
+            set {
                 failOverloadColor = value;
                 HitMarginColorHex[9] = ColorUtility.ToHtmlStringRGBA(value);
             }

@@ -9,10 +9,8 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace KeyViewer.Views
-{
-    public class SettingsDrawer : ModelDrawable<Settings>
-    {
+namespace KeyViewer.Views {
+    public class SettingsDrawer : ModelDrawable<Settings> {
         public SettingsDrawer(Settings settings) : base(settings, Main.Lang.Get("SETTINGS", "Settings")) { }
 
         private bool isOpenedExtraMenu = false;
@@ -44,8 +42,7 @@ namespace KeyViewer.Views
 
         private static HashSet<string> destroyConfirm;
 
-        public override void Draw()
-        {
+        public override void Draw() {
             bool reaction = false;
 
             if(Main.Lang.IsLoading) {
@@ -118,13 +115,13 @@ namespace KeyViewer.Views
                 try {
                     if(Drawer.Button(Main.Lang.Get("RELOADLANG", "Reload Language Pack"), GUILayout.Width(320))) {
                         reaction = true;
-                        reloadLang = true; 
+                        reloadLang = true;
                     }
                 } catch {
                 } finally {
                     GUILayout.EndHorizontal();
                 }
-                
+
                 if(reloadLang) {
                     _ = Task.Run(async () => {
                         await Main.Lang.Load(Path.Combine(Main.Mod.Path, "lang"));
@@ -151,7 +148,7 @@ namespace KeyViewer.Views
                 reaction = true;
                 var profiles = StandaloneFileBrowser.OpenFilePanel(Main.Lang.Get("SETTINGS_SELECT_PROFILE", "Select Profile"), Main.ProfilePath, new[] { new ExtensionFilter("V4", "json"), new ExtensionFilter("V3", "xml"), }, true);
                 foreach(var profile in profiles) {
-                    FileInfo file = new FileInfo(profile);
+                    FileInfo file = new(profile);
                     if(file.Extension == ".json") {
                         if(!File.Exists(Path.Combine(Main.ProfilePath, file.Name)))
                             file.CopyTo(Path.Combine(Main.ProfilePath, file.Name));
@@ -166,7 +163,7 @@ namespace KeyViewer.Views
                 reaction = true;
                 var profile = new ActiveProfile(GetNewProfileName(), true);
                 model.ActiveProfiles.Add(profile);
-                Profile newProfile = new Profile();
+                Profile newProfile = new();
                 File.WriteAllText(Path.Combine(Main.ProfilePath, $"{profile.Name}.json"), newProfile.Serialize().ToString());
                 Main.AddManager(profile, true);
             }
@@ -177,8 +174,7 @@ namespace KeyViewer.Views
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
-            for (int i = 0; i < model.ActiveProfiles.Count; i++)
-            {
+            for(int i = 0; i < model.ActiveProfiles.Count; i++) {
                 GUILayout.BeginHorizontal();
                 var profile = model.ActiveProfiles[i];
                 bool profileActiveDiff = Drawer.DrawOnlyBool(ref profile.Active);

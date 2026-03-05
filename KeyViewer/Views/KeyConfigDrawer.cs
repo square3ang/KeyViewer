@@ -9,11 +9,9 @@ using UnityEngine;
 
 namespace KeyViewer.Views;
 
-public class KeyConfigDrawer : ModelDrawable<KeyConfig>
-{
+public class KeyConfigDrawer : ModelDrawable<KeyConfig> {
     public KeyManager manager;
-    public KeyConfigDrawer(KeyManager manager, KeyConfig config) : base(config, string.Format(Main.Lang.Get("KEYCONFIG", "{0} Key Config"), config.DummyName == null ? config.Code : config.DummyName))
-    {
+    public KeyConfigDrawer(KeyManager manager, KeyConfig config) : base(config, string.Format(Main.Lang.Get("KEYCONFIG", "{0} Key Config"), config.DummyName == null ? config.Code : config.DummyName)) {
         this.manager = manager;
     }
 
@@ -23,8 +21,7 @@ public class KeyConfigDrawer : ModelDrawable<KeyConfig>
 
     public static bool IsOpenBoolSettings = false;
 
-    public override void Draw()
-    {
+    public override void Draw() {
         NeoDrawer.StaticInstance.FieldResetId();
 
         if(model.DummyName != null) {
@@ -82,7 +79,7 @@ public class KeyConfigDrawer : ModelDrawable<KeyConfig>
             changed |= Drawer.DrawBool(Main.Lang.Get("UPDATE_TEXT_ALWAYS", "Update Text Always"), ref model.UpdateTextAlways);
             changed |= Drawer.DrawBool(Main.Lang.Get("DISABLE_SORTING", "Disable Sorting"), ref model.DisableSorting);
             changed |= Drawer.DrawBool(Main.Lang.Get("DO_NOT_SCALE_TEXT", "Do Not Scale Text"), ref model.DoNotScaleText);
-            
+
         }
         changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("TEXT_FONT_SIZE", "Text Font Size"), ref model.TextFontSize, 0, 300, 300);
         changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("COUNT_TEXT_FONT_SIZE", "Count Text Font Size"), ref model.CountTextFontSize, 0, 300, 300);
@@ -127,7 +124,7 @@ public class KeyConfigDrawer : ModelDrawable<KeyConfig>
         GUILayout.Label($"<b>{Main.Lang.Get("VECTOR", "Vector")}</b>");
         changed |= NeoDrawer.StaticInstance.DrawVectorConfig(model.VectorConfig);
 
-        if (changed) {
+        if(changed) {
             if(!prevBgBlurEnabled && model.BackgroundBlurEnabled) {
                 KeyViewerUtils.ApplyBlurColorConfig(model);
             }

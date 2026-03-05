@@ -1,5 +1,4 @@
 ﻿using KeyViewer.Core.Interfaces;
-using KeyViewer.Utils;
 using Newtonsoft.Json.Linq;
 
 namespace KeyViewer.Models {

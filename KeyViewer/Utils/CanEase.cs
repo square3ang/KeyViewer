@@ -1,13 +1,10 @@
 ﻿using KeyViewer.Models;
 using System;
 
-namespace KeyViewer.Utils
-{
-    public static class CanEase<T>
-    {
+namespace KeyViewer.Utils {
+    public static class CanEase<T> {
         public static readonly bool Value;
-        static CanEase()
-        {
+        static CanEase() {
             Type t = typeof(T);
             Value =
                 t == ModelUtils.quat_t ||

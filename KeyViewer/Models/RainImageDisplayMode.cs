@@ -1,7 +1,5 @@
-﻿namespace KeyViewer.Models
-{
-    public enum RainImageDisplayMode
-    {
+﻿namespace KeyViewer.Models {
+    public enum RainImageDisplayMode {
         Sequential,
         Random
     }

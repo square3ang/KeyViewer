@@ -4,20 +4,17 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KeyViewer.Models
-{
-    public class Profile : IModel, ICopyable<Profile>
-    {
-        public List<KeyConfig> Keys = new List<KeyConfig>();
+namespace KeyViewer.Models {
+    public class Profile : IModel, ICopyable<Profile> {
+        public List<KeyConfig> Keys = new();
         public bool ViewOnlyGamePlay = false;
         public bool LimitNotRegisteredKeys = false;
         public bool ResetOnStart = false;
         public float KeySpacing = 10f;
-        public VectorConfig VectorConfig = new VectorConfig();
+        public VectorConfig VectorConfig = new();
         public int KPSUpdateRate = 1000;
-        public Profile Copy()
-        {
-            Profile newProfile = new Profile();
+        public Profile Copy() {
+            Profile newProfile = new();
             newProfile.Keys = Keys.Select(k => k.Copy()).ToList();
             newProfile.ViewOnlyGamePlay = ViewOnlyGamePlay;
             newProfile.LimitNotRegisteredKeys = LimitNotRegisteredKeys;
@@ -27,8 +24,7 @@ namespace KeyViewer.Models
             newProfile.KPSUpdateRate = KPSUpdateRate;
             return newProfile;
         }
-        public JToken Serialize()
-        {
+        public JToken Serialize() {
             var node = new JObject();
             node[nameof(Keys)] = ModelUtils.WrapCollection(Keys);
             node[nameof(ViewOnlyGamePlay)] = ViewOnlyGamePlay;
@@ -39,8 +35,7 @@ namespace KeyViewer.Models
             node[nameof(KPSUpdateRate)] = KPSUpdateRate;
             return node;
         }
-        public void Deserialize(JToken node)
-        {
+        public void Deserialize(JToken node) {
             var defaultSettings = new Profile();
 
             Keys = ModelUtils.UnwrapList<KeyConfig>(node[nameof(Keys)]);

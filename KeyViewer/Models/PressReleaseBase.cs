@@ -1,11 +1,6 @@
 ﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KeyViewer.Models {
     public class PressReleaseBase<T> : IModel, ICopyable<PressReleaseBase<T>> {
@@ -63,6 +58,6 @@ namespace KeyViewer.Models {
             }
         }
         public bool IsSame => Equals(Pressed, Released);
-        public static implicit operator PressReleaseBase<T>(T value) => new PressReleaseBase<T>(value);
+        public static implicit operator PressReleaseBase<T>(T value) => new(value);
     }
 }

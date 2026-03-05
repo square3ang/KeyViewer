@@ -1,18 +1,14 @@
 ﻿using KeyViewer.Core.Interfaces;
-using KeyViewer.Utils;
 using Newtonsoft.Json.Linq;
 
-namespace KeyViewer.Models
-{
-    public class RainImage : IModel, ICopyable<RainImage>
-    {
+namespace KeyViewer.Models {
+    public class RainImage : IModel, ICopyable<RainImage> {
         public int Count = 0;
         public string Image = null;
         public float Roundness = 0f;
         //public bool BlurEnabled = false;
         //public BlurConfig BlurConfig = new BlurConfig();
-        public RainImage Copy()
-        {
+        public RainImage Copy() {
             var image = new RainImage();
             image.Count = Count;
             image.Image = Image;
@@ -21,8 +17,7 @@ namespace KeyViewer.Models
             //image.BlurConfig = BlurConfig.Copy();
             return image;
         }
-        public JToken Serialize()
-        {
+        public JToken Serialize() {
             var node = new JObject();
             node[nameof(Count)] = Count;
             node[nameof(Image)] = Image;
@@ -31,8 +26,7 @@ namespace KeyViewer.Models
             //node[nameof(BlurConfig)] = BlurConfig.Serialize();
             return node;
         }
-        public void Deserialize(JToken node)
-        {
+        public void Deserialize(JToken node) {
             var defaultSetttings = new RainImage();
 
             Count = node[nameof(Count)]?.Value<int>() ?? defaultSetttings.Count;

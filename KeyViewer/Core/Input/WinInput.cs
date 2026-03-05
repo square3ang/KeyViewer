@@ -1,8 +1,6 @@
 ﻿#pragma warning disable IDE0079
 #pragma warning disable IDE1006
 using KeyViewer.Utils;
-using Newtonsoft.Json.Linq;
-using OggVorbisEncoder.Setup;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,11 +8,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace KeyViewer.Core.Input
-{
+namespace KeyViewer.Core.Input {
     [StructLayout(LayoutKind.Sequential)]
-    public struct MOUSEINPUT
-    {
+    public struct MOUSEINPUT {
         public int X;
         public int Y;
         public uint MouseData;
@@ -23,8 +19,7 @@ namespace KeyViewer.Core.Input
         public IntPtr ExtraInfo;
     }
     [StructLayout(LayoutKind.Sequential)]
-    public struct KEYBDINPUT
-    {
+    public struct KEYBDINPUT {
         public ushort Vk;
         public ushort Scan;
         public uint Flags;
@@ -32,15 +27,13 @@ namespace KeyViewer.Core.Input
         public IntPtr ExtraInfo;
     }
     [StructLayout(LayoutKind.Sequential)]
-    public struct HARDWAREINPUT
-    {
+    public struct HARDWAREINPUT {
         public uint Msg;
         public ushort ParamL;
         public ushort ParamH;
     }
     [StructLayout(LayoutKind.Explicit)]
-    public struct MOUSEKEYBDHARDWAREINPUT
-    {
+    public struct MOUSEKEYBDHARDWAREINPUT {
         [FieldOffset(0)]
         public HARDWAREINPUT Hardware;
         [FieldOffset(0)]
@@ -49,24 +42,21 @@ namespace KeyViewer.Core.Input
         public MOUSEINPUT Mouse;
     }
     [StructLayout(LayoutKind.Sequential)]
-    public struct INPUT
-    {
+    public struct INPUT {
         public uint Type;
         public MOUSEKEYBDHARDWAREINPUT Data;
     }
     public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-    public static class WinInput
-    {
+    public static class WinInput {
         private static bool firstInit = true;
         private static HHook hInstance;
         private static int[] mappings;
         private static Dictionary<int, bool> states;
         private static Dictionary<int, bool> prevStates;
-        public static void Initialize()
-        {
-            if (!Main.IsWindows) return;
-            if (firstInit)
-            {
+        public static void Initialize() {
+            if(!Main.IsWindows)
+                return;
+            if(firstInit) {
                 Application.quitting += Release;
                 firstInit = false;
             }
@@ -77,24 +67,23 @@ namespace KeyViewer.Core.Input
             SetMapping(KeyCode.RightAlt, 21); // Right Alt
             SetMapping(KeyCode.RightControl, 25); // Right Control
 
-            hInstance = KBDHooker.HookThis((nCode, wParam, lParam) =>
-            {
+            hInstance = KBDHooker.HookThis((nCode, wParam, lParam) => {
                 bool isDown = ((int)wParam - 256) == 0;
                 WinKeyCode code = KBDHooker.GetKeyCode(lParam);
 
-                for (int i = 0; i < mappings.Length; i++)
-                {
+                for(int i = 0; i < mappings.Length; i++) {
                     int m = mappings[i];
-                    if (m < 0 || m != (int)code) continue;
+                    if(m < 0 || m != (int)code)
+                        continue;
                     states[m] = isDown;
                 }
 
                 return KBDHooker.CallNextHookEx(hInstance, nCode, wParam, lParam);
             });
         }
-        public static void Release()
-        {
-            if (hInstance == null) return;
+        public static void Release() {
+            if(hInstance == null)
+                return;
             mappings = null;
             states = null;
             prevStates = null;
@@ -103,61 +92,57 @@ namespace KeyViewer.Core.Input
         }
 
         public static bool HasMapping(KeyCode mapping) => TryGetState(mapping, out _);
-        public static void SetMapping(KeyCode code, int winKeyCode)
-        {
+        public static void SetMapping(KeyCode code, int winKeyCode) {
             mappings[(int)code] = winKeyCode;
             states[winKeyCode] = false;
         }
-        public static bool GetState(KeyCode mapping)
-        {
+        public static bool GetState(KeyCode mapping) {
             int m = mappings[(int)mapping];
-            if (m < 0) return false;
+            if(m < 0)
+                return false;
             return states[m];
         }
-        public static IEnumerable<KeyCode> GetMappings()
-        {
-            for (int i = 0; i < mappings.Length; i++)
-                if (mappings[i] >= 0)
+        public static IEnumerable<KeyCode> GetMappings() {
+            for(int i = 0; i < mappings.Length; i++)
+                if(mappings[i] >= 0)
                     yield return (KeyCode)i;
         }
-        public static bool TryGetState(KeyCode mapping, out bool state)
-        { 
+        public static bool TryGetState(KeyCode mapping, out bool state) {
             state = false;
             int m = mappings[(int)mapping];
-            if (m < 0) return false;
+            if(m < 0)
+                return false;
             state = states[m];
             return state;
         }
 
-        public static bool Is(KeyCode mapping)
-        {
+        public static bool Is(KeyCode mapping) {
             int m = mappings[(int)mapping];
-            if (m < 0 || !prevStates.TryGetValue(m, out bool value)) return false;
+            if(m < 0 || !prevStates.TryGetValue(m, out bool value))
+                return false;
             return value;
         }
-        public static bool IsUp(KeyCode mapping)
-        {
+        public static bool IsUp(KeyCode mapping) {
             int m = mappings[(int)mapping];
-            if (m < 0 || !prevStates.TryGetValue(m, out bool value)) return true;
+            if(m < 0 || !prevStates.TryGetValue(m, out bool value))
+                return true;
             return value && !states[m];
         }
-        public static bool IsDown(KeyCode mapping)
-        {
+        public static bool IsDown(KeyCode mapping) {
             int m = mappings[(int)mapping];
-            if (m < 0 || !prevStates.TryGetValue(m, out bool value)) return false;
+            if(m < 0 || !prevStates.TryGetValue(m, out bool value))
+                return false;
             return !value && states[m];
         }
-        public static void UpdatePrevStates()
-        {
-            if (!Main.IsWindows) return;
-            foreach (var m in states.Keys)
+        public static void UpdatePrevStates() {
+            if(!Main.IsWindows)
+                return;
+            foreach(var m in states.Keys)
                 prevStates[m] = states[m];
         }
 
-        static WinInput()
-        {
-            INPUT input = new INPUT
-            {
+        static WinInput() {
+            INPUT input = new() {
                 Type = 1
             };
             input.Data.Keyboard = new KEYBDINPUT();
@@ -167,8 +152,7 @@ namespace KeyViewer.Core.Input
             input.Data.Keyboard.ExtraInfo = IntPtr.Zero;
             DOWN = new INPUT[] { input };
 
-            INPUT input2 = new INPUT
-            {
+            INPUT input2 = new() {
                 Type = 1
             };
             input2.Data.Keyboard = new KEYBDINPUT();
@@ -178,8 +162,7 @@ namespace KeyViewer.Core.Input
             input2.Data.Keyboard.ExtraInfo = IntPtr.Zero;
             UP = new INPUT[] { input2 };
 
-            INPUT input3 = new INPUT
-            {
+            INPUT input3 = new() {
                 Type = 1
             };
             input3.Data.Keyboard = new KEYBDINPUT();
@@ -193,11 +176,10 @@ namespace KeyViewer.Core.Input
         static readonly INPUT[] DOWN;
         static readonly INPUT[] UP;
         static readonly INPUT[] PRESS;
-        public static void SendKeyPress(this WinKeyCode keyCode)
-        {
+        public static void SendKeyPress(this WinKeyCode keyCode) {
             PRESS[0].Data.Keyboard.Vk = (ushort)keyCode;
             PRESS[1].Data.Keyboard.Vk = (ushort)keyCode;
-            if (Extern.SendInput(2, PRESS, Marshal.SizeOf(typeof(INPUT))) == 0)
+            if(Extern.SendInput(2, PRESS, Marshal.SizeOf(typeof(INPUT))) == 0)
                 throw new Exception();
         }
 
@@ -205,10 +187,9 @@ namespace KeyViewer.Core.Input
         /// Send a key down and hold it down until sendkeyup method is called
         /// </summary>
         /// <param name="keyCode"></param>
-        public static void SendKeyDown(this WinKeyCode keyCode)
-        {
+        public static void SendKeyDown(this WinKeyCode keyCode) {
             DOWN[0].Data.Keyboard.Vk = (ushort)keyCode;
-            if (Extern.SendInput(1, DOWN, Marshal.SizeOf(typeof(INPUT))) == 0)
+            if(Extern.SendInput(1, DOWN, Marshal.SizeOf(typeof(INPUT))) == 0)
                 throw new Exception();
         }
 
@@ -216,10 +197,9 @@ namespace KeyViewer.Core.Input
         /// Release a key that is being hold down
         /// </summary>
         /// <param name="keyCode"></param>
-        public static void SendKeyUp(this WinKeyCode keyCode)
-        {
+        public static void SendKeyUp(this WinKeyCode keyCode) {
             UP[0].Data.Keyboard.Vk = (ushort)keyCode;
-            if (Extern.SendInput(1, UP, Marshal.SizeOf(typeof(INPUT))) == 0)
+            if(Extern.SendInput(1, UP, Marshal.SizeOf(typeof(INPUT))) == 0)
                 throw new Exception();
 
         }
@@ -227,15 +207,13 @@ namespace KeyViewer.Core.Input
     /// <summary>
     /// Hook Instance
     /// </summary>
-    public class HHook
-    {
+    public class HHook {
         IntPtr ptr;
         public HHook(IntPtr ptr) => this.ptr = ptr;
-        public static explicit operator HHook(IntPtr ptr) => new HHook(ptr);
+        public static explicit operator HHook(IntPtr ptr) => new(ptr);
         public static implicit operator IntPtr(HHook ptr) => ptr.ptr;
     }
-    public static class KBDHooker
-    {
+    public static class KBDHooker {
         /// <summary>
         /// KeyCode를 반환합니다. (lParam)
         /// </summary>
@@ -299,8 +277,7 @@ namespace KeyViewer.Core.Input
         /// <returns></returns>
         public static bool UnHook(this HHook HHOOK) => Extern.UnhookWindowsHookEx(HHOOK);
     }
-    public enum WinKeyCode : ushort
-    {
+    public enum WinKeyCode : ushort {
         RALT = 21,
         RCTRL = 25,
 
@@ -920,10 +897,8 @@ namespace KeyViewer.Core.Input
         UP = 0x26,
 
     }
-    public static class Extern
-    {
-        public enum HookType : int
-        {
+    public static class Extern {
+        public enum HookType : int {
             WH_JOURNALRECORD = 0,
             WH_JOURNALPLAYBACK = 1,
             WH_KEYBOARD = 2,

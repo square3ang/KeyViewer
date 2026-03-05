@@ -2,16 +2,13 @@
 using Newtonsoft.Json.Linq;
 using System;
 
-namespace KeyViewer.Models
-{
-    public class Metadata : IModel, ICopyable<Metadata>
-    {
+namespace KeyViewer.Models {
+    public class Metadata : IModel, ICopyable<Metadata> {
         public string Name = null;
         public string Author = null;
         public string Description = null;
         public long CreationTick = DateTime.Now.Ticks;
-        public Metadata Copy()
-        {
+        public Metadata Copy() {
             var data = new Metadata();
             data.Name = Name;
             data.Author = Author;
@@ -19,8 +16,7 @@ namespace KeyViewer.Models
             data.CreationTick = CreationTick;
             return data;
         }
-        public JToken Serialize()
-        {
+        public JToken Serialize() {
             var node = new JObject();
             node[nameof(Name)] = Name;
             node[nameof(Author)] = Author;
@@ -28,8 +24,7 @@ namespace KeyViewer.Models
             node[nameof(CreationTick)] = CreationTick;
             return node;
         }
-        public void Deserialize(JToken node)
-        {
+        public void Deserialize(JToken node) {
             var defaultSettings = new Metadata();
 
             Name = node[nameof(Name)]?.Value<string>() ?? defaultSettings.Name;
