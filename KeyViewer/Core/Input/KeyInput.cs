@@ -10,20 +10,28 @@ namespace KeyViewer.Core.Input {
         public static bool Control => GetKey(KeyCode.LeftControl) || GetKey(KeyCode.RightControl);
         public static bool Alt => GetKey(KeyCode.LeftAlt) || GetKey(KeyCode.RightAlt);
         public static bool GetKey(KeyCode code) {
-            if(Main.IsWindows && WinInput.TryGetState(code, out bool state))
+            if(Main.IsWindows && WinInput.TryGetState(code, out bool state)) {
                 return state;
-            if(AsyncAvailable)
+            }
+
+            if(AsyncAvailable) {
                 return AsyncInputCompat.GetKey(code);
+            }
+
             return SyncInput.GetKey(code);
         }
         public static bool GetKeyUp(KeyCode code) {
-            if(AsyncAvailable)
+            if(AsyncAvailable) {
                 return AsyncInputCompat.GetKeyUp(code);
+            }
+
             return SyncInput.GetKeyUp(code);
         }
         public static bool GetKeyDown(KeyCode code) {
-            if(AsyncAvailable)
+            if(AsyncAvailable) {
                 return AsyncInputCompat.GetKeyDown(code);
+            }
+
             return SyncInput.GetKeyDown(code);
         }
     }

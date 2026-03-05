@@ -116,10 +116,12 @@ namespace KeyViewer.Core {
             string prev = value;
             GUILayout.BeginHorizontal();
             GUILayout.Label(label);
-            if(!textArea)
+            if(!textArea) {
                 value = GUILayout.TextField(value, myTextField);
-            else
+            } else {
                 value = GUILayout.TextArea(value, myTextField);
+            }
+
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             return prev != value;
@@ -143,8 +145,10 @@ namespace KeyViewer.Core {
             var c = selected != news;
 
             selected = news;
-            if(label != "")
+            if(label != "") {
                 GUILayout.EndHorizontal();
+            }
+
             return c;
         }
 
@@ -159,8 +163,10 @@ namespace KeyViewer.Core {
             var c = selected != news;
 
             selected = news;
-            if(label != "")
+            if(label != "") {
                 GUILayout.EndHorizontal();
+            }
+
             return c;
         }
 

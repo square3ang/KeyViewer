@@ -58,14 +58,20 @@ namespace KeyViewer.Core.TextReplacing {
             Name = name;
         }
         public Tag SetGetter(MethodInfo method, object target = null) {
-            if(Getter != null)
+            if(Getter != null) {
                 return null;
-            if(method == null)
+            }
+
+            if(method == null) {
                 throw new ArgumentNullException(nameof(method));
+            }
+
             if(method.ReturnType != typeof(string)) {
                 var rtc = StringConverter.GetFromConverter(method.ReturnType);
-                if(rtc == null)
+                if(rtc == null) {
                     throw new NotSupportedException($"{method.ReturnType} Is Not Supported Return Type!");
+                }
+
                 ReturnConverter = rtc;
             }
             GetterOriginalTarget = target;
@@ -73,10 +79,13 @@ namespace KeyViewer.Core.TextReplacing {
             var argConverter = new MethodInfo[parameters.Length];
             for(int i = 0; i < parameters.Length; i++) {
                 var param = parameters[i];
-                if(param.ParameterType == typeof(string))
+                if(param.ParameterType == typeof(string)) {
                     continue;
-                if((argConverter[i] = StringConverter.GetToConverter(param.ParameterType)) == null)
+                }
+
+                if((argConverter[i] = StringConverter.GetToConverter(param.ParameterType)) == null) {
                     throw new NotSupportedException($"{param.ParameterType} Is Not Supported Parameter Type!");
+                }
             }
             ArgumentConverter = argConverter;
             GetterOriginal = method;
@@ -89,15 +98,21 @@ namespace KeyViewer.Core.TextReplacing {
             return this;
         }
         public Tag SetGetter(Delegate del) {
-            if(Getter != null)
+            if(Getter != null) {
                 return null;
+            }
+
             var method = del.Method;
-            if(method == null)
+            if(method == null) {
                 throw new ArgumentNullException(nameof(method));
+            }
+
             if(method.ReturnType != typeof(string)) {
                 var rtc = StringConverter.GetFromConverter(method.ReturnType);
-                if(rtc == null)
+                if(rtc == null) {
                     throw new NotSupportedException($"{method.ReturnType} Is Not Supported Return Type!");
+                }
+
                 ReturnConverter = rtc;
             }
             GetterOriginalTarget = del;
@@ -105,10 +120,13 @@ namespace KeyViewer.Core.TextReplacing {
             var argConverter = new MethodInfo[parameters.Length];
             for(int i = 0; i < parameters.Length; i++) {
                 var param = parameters[i];
-                if(param.ParameterType == typeof(string))
+                if(param.ParameterType == typeof(string)) {
                     continue;
-                if((argConverter[i] = StringConverter.GetToConverter(param.ParameterType)) == null)
+                }
+
+                if((argConverter[i] = StringConverter.GetToConverter(param.ParameterType)) == null) {
                     throw new NotSupportedException($"{param.ParameterType} Is Not Supported Parameter Type!");
+                }
             }
             ArgumentConverter = argConverter;
             GetterOriginal = del.GetType().GetMethod("Invoke");
@@ -126,8 +144,10 @@ namespace KeyViewer.Core.TextReplacing {
         static bool wrapperInitialized = false;
         MethodInfo WrapMethodToGetter(out Delegate del) {
             del = GetterDelegate;
-            if(Getter != null)
+            if(Getter != null) {
                 return Getter;
+            }
+
             string methodName, targetFieldName;
             TypeBuilder t = TagWrapperModule.DefineType($"{Name}_WrapperType${uniqueId++}", TypeAttributes.Public);
             ParameterInfo[] parameters = GetterOriginal.GetParameters();
@@ -135,19 +155,25 @@ namespace KeyViewer.Core.TextReplacing {
             MethodBuilder m = t.DefineMethod(methodName = $"{Name}_WrapperMethod", MethodAttributes.Public | MethodAttributes.Static, typeof(string), parameterTypes);
             FieldBuilder targetField = t.DefineField(targetFieldName = "Target", GetterOriginal.DeclaringType, FieldAttributes.Public | FieldAttributes.Static);
             ILGenerator il = m.GetILGenerator();
-            if(!GetterOriginal.IsStatic)
+            if(!GetterOriginal.IsStatic) {
                 il.Emit(OpCodes.Ldsfld, targetField);
+            }
+
             for(int i = 0; i < ArgumentConverter.Length; i++) {
                 var converter = ArgumentConverter[i];
                 m.DefineParameter(i + 1, ParameterAttributes.None, parameters[i].Name);
                 il.Emit(OpCodes.Ldarg, i);
-                if(converter == null)
+                if(converter == null) {
                     continue;
+                }
+
                 il.Emit(OpCodes.Call, converter);
             }
             il.Emit(OpCodes.Call, GetterOriginal);
-            if(ReturnConverter != null)
+            if(ReturnConverter != null) {
                 il.Emit(OpCodes.Call, ReturnConverter);
+            }
+
             il.Emit(OpCodes.Ret);
             var resultT = t.CreateType();
             (GetterOriginalTargetField = resultT.GetField(targetFieldName)).SetValue(null, GetterOriginalTarget);
@@ -178,8 +204,10 @@ namespace KeyViewer.Core.TextReplacing {
             return t.GetMethod($"{name}_Delegate_WrapperMethod");
         }
         public static void InitializeWrapperAssembly() {
-            if(wrapperInitialized)
+            if(wrapperInitialized) {
                 return;
+            }
+
             uniqueId = 0;
             wrapperInitialized = true;
             TagWrapperAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("KeyViewer.TagWrapper"), AssemblyBuilderAccess.RunAndCollect);

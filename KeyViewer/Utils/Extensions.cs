@@ -16,11 +16,14 @@ namespace KeyViewer.Utils {
         public static string Stringify(this byte[] array) {
             StringBuilder buffer = new();
             int length = array.Length;
-            for(int i = 0; i < length; i++)
-                if(i + 1 < length)
+            for(int i = 0; i < length; i++) {
+                if(i + 1 < length) {
                     buffer.Append((char)(array[i] << 8 | array[++i]));
-                else
+                } else {
                     buffer.Append((char)(array[i] << 8));
+                }
+            }
+
             return buffer.ToString();
         }
         public static byte[] ToBytes(this string str) {
@@ -32,8 +35,9 @@ namespace KeyViewer.Utils {
             for(int i = 0; i < length; i += 2) {
                 char c = chars[i / 2];
                 buffer[i] = (byte)(c >> 8);
-                if(i + 1 < length)
+                if(i + 1 < length) {
                     buffer[i + 1] = (byte)(c & 0xff);
+                }
             }
             return buffer;
         }
@@ -51,8 +55,10 @@ namespace KeyViewer.Utils {
         public static int GetUnique<T>(this T obj) where T : class => (int)GetAddress(ref obj);
         public static int GetUnique<T>(this ref T obj) where T : struct => (int)GetAddress(ref obj);
         public static bool IfTrue(this bool b, Action a) {
-            if(b)
+            if(b) {
                 a();
+            }
+
             return b;
         }
 
@@ -170,16 +176,20 @@ namespace KeyViewer.Utils {
         }
         public static byte[] Compress(this byte[] data) {
             using(MemoryStream output = new()) {
-                using(DeflateStream dstream = new(output, CompressionLevel.Optimal))
+                using(DeflateStream dstream = new(output, CompressionLevel.Optimal)) {
                     dstream.Write(data, 0, data.Length);
+                }
+
                 return output.ToArray();
             }
         }
         public static byte[] Decompress(this byte[] data) {
             using(MemoryStream output = new()) {
                 using(MemoryStream input = new(data))
-                using(DeflateStream dstream = new(input, CompressionMode.Decompress))
+                using(DeflateStream dstream = new(input, CompressionMode.Decompress)) {
                     dstream.CopyTo(output);
+                }
+
                 return output.ToArray();
             }
         }

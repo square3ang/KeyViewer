@@ -148,18 +148,27 @@ namespace KeyViewer {
             return true;
         }
         public static void OnUpdate(ModEntry modEntry, float deltaTime) {
-            if(scrController.instance && scrConductor.instance)
+            if(scrController.instance && scrConductor.instance) {
                 IsPlaying = !scrController.instance.paused && scrConductor.instance.isGameWorld;
-            if(ListeningDrawer != null)
-                foreach(var code in EnumHelper<KeyCode>.GetValues())
-                    if(Input.GetKeyDown(code))
+            }
+
+            if(ListeningDrawer != null) {
+                foreach(var code in EnumHelper<KeyCode>.GetValues()) {
+                    if(Input.GetKeyDown(code)) {
                         ListeningDrawer.OnKeyDown(code);
+                    }
+                }
+            }
+
             foreach(var manager in Managers.Values) {
                 bool showViewer = true;
-                if(manager.profile.ViewOnlyGamePlay)
+                if(manager.profile.ViewOnlyGamePlay) {
                     showViewer = IsPlaying;
-                if(showViewer != manager.gameObject.activeSelf)
+                }
+
+                if(showViewer != manager.gameObject.activeSelf) {
                     manager.gameObject.SetActive(showViewer);
+                }
             }
         }
         public static void OnGUI(ModEntry modEntry) {
@@ -170,8 +179,9 @@ namespace KeyViewer {
             foreach(var (name, manager) in Managers) {
                 File.WriteAllText(Path.Combine(ProfilePath, $"{name}.json"), manager.profile.Serialize().ToString());
             }
-            foreach(var path in ToDeleteFiles)
+            foreach(var path in ToDeleteFiles) {
                 File.Delete(path);
+            }
         }
         public static void OnShowGUI(ModEntry modEntry) {
             BlockInput = true;
@@ -234,8 +244,10 @@ namespace KeyViewer {
             return (manager, profile);
         }
         public static IEnumerator InitializeManagersCo() {
-            if(!AssetManager.Initialized)
+            if(!AssetManager.Initialized) {
                 yield return new WaitUntil(() => !AssetManager.Initialized);
+            }
+
             foreach(var (name, manager) in Managers) {
                 var elapsed = MiscUtils.MeasureTime(() => {
                     manager.Init();
@@ -257,8 +269,10 @@ namespace KeyViewer {
         public static void ResetKeys() {
             foreach(var manager in Managers.Values) {
                 foreach(var key in manager.keys) {
-                    if(!key)
+                    if(!key) {
                         continue;
+                    }
+
                     key.Pressed = false;
                     key.ResetRains();
                 }

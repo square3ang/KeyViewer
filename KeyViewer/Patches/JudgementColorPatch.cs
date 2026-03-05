@@ -12,35 +12,48 @@ namespace KeyViewer.Patches {
         static bool initialized = false;
         static HashSet<Key> keys = new();
         public static void Initialize() {
-            if(initialized)
+            if(initialized) {
                 return;
+            }
+
             SkyHookManager.KeyUpdated.AddListener(HookEvent);
             initialized = true;
         }
         public static void Release() {
-            if(!initialized)
+            if(!initialized) {
                 return;
+            }
+
             SkyHookManager.KeyUpdated.RemoveListener(HookEvent);
             initialized = false;
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrController), "ValidInputWasTriggered")]
         public static void SyncInput_StackPushPatch(scrController __instance) {
-            if(!initialized)
+            if(!initialized) {
                 return;
-            if(AsyncInputManager.isActive)
+            }
+
+            if(AsyncInputManager.isActive) {
                 return;
-            foreach(var manager in Main.Managers.Values)
-                foreach(var key in manager.keys)
-                    if(Input.GetKeyDown(key.Config.Code))
+            }
+
+            foreach(var manager in Main.Managers.Values) {
+                foreach(var key in manager.keys) {
+                    if(Input.GetKeyDown(key.Config.Code)) {
                         keys.Add(key);
+                    }
+                }
+            }
         }
         static States prevState = States.None;
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrController), "Update")]
         public static void StackFlushPatch(scrController __instance) {
-            if(!initialized)
+            if(!initialized) {
                 return;
+            }
+
             var state = __instance.state;
             if(state != prevState) {
                 keys.Clear();
@@ -52,20 +65,27 @@ namespace KeyViewer.Patches {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrController), "Awake_Rewind")]
         public static void StackFlushPatch2(scrController __instance) {
-            if(!initialized)
+            if(!initialized) {
                 return;
+            }
+
             AsyncInputManager.ClearKeys();
             Main.ResetKeys();
-            foreach(var manager in Main.Managers.Values)
-                if(manager.profile.ResetOnStart)
-                    foreach(var key in manager.keys)
+            foreach(var manager in Main.Managers.Values) {
+                if(manager.profile.ResetOnStart) {
+                    foreach(var key in manager.keys) {
                         key.Config.Count = 0;
+                    }
+                }
+            }
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrMistakesManager), "AddHit")]
         public static void AddHitPatch(HitMargin hit) {
-            if(!initialized)
+            if(!initialized) {
                 return;
+            }
+
             foreach(var key in keys) {
                 var textConfig = key.Config.TextConfig;
                 if(textConfig.ChangeColorWithJudge) {
@@ -115,16 +135,23 @@ namespace KeyViewer.Patches {
         }
         private static void HookEvent(SkyHookEvent she) {
             try {
-                if(!AsyncInputManager.isActive)
+                if(!AsyncInputManager.isActive) {
                     return;
-                if(she.Type == SkyHook.EventType.KeyReleased)
+                }
+
+                if(she.Type == SkyHook.EventType.KeyReleased) {
                     return;
+                }
+
                 if(Main.IsEnabled && (scrController.instance?.gameworld ?? false)) {
                     var code = AsyncInputCompat.Convert(she.Label);
-                    foreach(var manager in Main.Managers.Values)
-                        foreach(var key in manager.keys)
-                            if(key.Config.Code == code)
+                    foreach(var manager in Main.Managers.Values) {
+                        foreach(var key in manager.keys) {
+                            if(key.Config.Code == code) {
                                 keys.Add(key);
+                            }
+                        }
+                    }
                 }
             } catch { }
         }

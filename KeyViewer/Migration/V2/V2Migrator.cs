@@ -15,19 +15,24 @@ namespace KeyViewer.Migration.V2 {
         public Dictionary<KeyCode, KeySetting> KeySettings;
         public KeyViewerSettings Settings;
         public V2Migrator(string keyCountsPath, string keySettingsPath, string settingsPath) {
-            if(!string.IsNullOrWhiteSpace(keyCountsPath))
+            if(!string.IsNullOrWhiteSpace(keyCountsPath)) {
                 KeyCounts = JsonConvert.DeserializeObject<Dictionary<KeyCode, int>>(File.ReadAllText(keyCountsPath));
-            else
+            } else {
                 KeyCounts = new Dictionary<KeyCode, int>();
-            if(!string.IsNullOrWhiteSpace(keySettingsPath))
+            }
+
+            if(!string.IsNullOrWhiteSpace(keySettingsPath)) {
                 KeySettings = JsonConvert.DeserializeObject<Dictionary<KeyCode, KeySetting>>(File.ReadAllText(keySettingsPath));
-            else
+            } else {
                 KeySettings = new Dictionary<KeyCode, KeySetting>();
+            }
+
             if(!string.IsNullOrWhiteSpace(settingsPath)) {
                 XmlSerializer serializer = new(typeof(KeyViewerSettings));
                 Settings = (KeyViewerSettings)serializer.Deserialize(File.Open(settingsPath, FileMode.Open));
-            } else
+            } else {
                 throw new InvalidOperationException("Settings Path Cannot Be Null!");
+            }
         }
         public V3Settings Migrate() {
             List<V3Profile> profiles = new();
@@ -63,8 +68,10 @@ namespace KeyViewer.Migration.V2 {
         }
         void MigrateProfile(KeyViewerProfile pf, List<Key_Config> keyConfs) {
             foreach(var conf in keyConfs) {
-                if(KeyCounts.TryGetValue(conf.Code, out int count))
+                if(KeyCounts.TryGetValue(conf.Code, out int count)) {
                     conf.Count = (uint)count;
+                }
+
                 if(KeySettings.TryGetValue(conf.SpecialType switch {
                     SpecialKeyType.KPS => KeyCode.None,
                     SpecialKeyType.Total => KeyCode.Joystick1Button0,

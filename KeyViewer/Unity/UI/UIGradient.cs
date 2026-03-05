@@ -13,8 +13,10 @@ namespace KeyViewer.Unity.UI {
             if(enabled) {
                 Rect rect = graphic.rectTransform.rect;
                 Vector2 dir = GradientUtils.RotationDir(angle);
-                if(!ignoreRatio)
+                if(!ignoreRatio) {
                     dir = GradientUtils.CompensateAspectRatio(rect, dir);
+                }
+
                 Matrix2x3 localPositionMatrix = GradientUtils.LocalPositionMatrix(rect, dir);
                 UIVertex vertex = default;
                 for(int i = 0; i < vh.currentVertCount; i++) {

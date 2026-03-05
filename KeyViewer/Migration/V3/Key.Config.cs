@@ -73,16 +73,20 @@ namespace KeyViewer.Migration.V3 {
 
         public float OffsetX {
             get {
-                if(RelativeOffsetApplied)
+                if(RelativeOffsetApplied) {
                     return offsetX + RelativeOffsetX;
+                }
+
                 return offsetX;
             }
             set => offsetX = value;
         }
         public float OffsetY {
             get {
-                if(RelativeOffsetApplied)
+                if(RelativeOffsetApplied) {
                     return offsetY + RelativeOffsetY;
+                }
+
                 return offsetY;
             }
             set => offsetY = value;

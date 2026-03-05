@@ -11,8 +11,10 @@ namespace KeyViewer.Core {
         public static Shader Blur { get; private set; }
         private static Dictionary<string, Sprite> others;
         public static void Initialize() {
-            if(Initialized)
+            if(Initialized) {
                 return;
+            }
+
             var request = AssetBundle.LoadFromFileAsync(Path.Combine(Main.Mod.Path, "KeyViewer.assets"));
             request.completed += o => {
                 var assets = request.assetBundle;
@@ -26,14 +28,18 @@ namespace KeyViewer.Core {
             };
         }
         public static void Release() {
-            if(!Initialized)
+            if(!Initialized) {
                 return;
+            }
+
             Object.Destroy(Background);
             Object.Destroy(Outline);
             Object.Destroy(RoundedCorners);
             Object.Destroy(Blur);
-            foreach(var spr in others.Values)
+            foreach(var spr in others.Values) {
                 Object.Destroy(spr);
+            }
+
             Background = null;
             Outline = null;
             others = null;
@@ -41,12 +47,18 @@ namespace KeyViewer.Core {
         }
         public static Sprite Get(string path, Sprite defaultValue = null) {
             path = path?.Replace("{ModDir}", Main.Mod.Path);
-            if(string.IsNullOrEmpty(path))
+            if(string.IsNullOrEmpty(path)) {
                 return defaultValue;
-            if(others.TryGetValue(path, out var spr))
+            }
+
+            if(others.TryGetValue(path, out var spr)) {
                 return spr;
-            if(!File.Exists(path))
+            }
+
+            if(!File.Exists(path)) {
                 return defaultValue;
+            }
+
             Texture2D t = new(1, 1);
             t.LoadImage(File.ReadAllBytes(path));
             return others[path] = Sprite.Create(t, new Rect(0, 0, t.width, t.height), new Vector2(.5f, .5f));

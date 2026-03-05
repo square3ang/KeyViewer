@@ -10,8 +10,10 @@ namespace KeyViewer.Migration.V3 {
             var v4Settings = new Models.Settings();
             v4Settings.ActiveProfiles.AddRange(settings.Profiles.Select(p => new Models.ActiveProfile(p.Name, true)));
             profiles = new List<JObject>();
-            foreach(var profile in settings.Profiles)
+            foreach(var profile in settings.Profiles) {
                 profiles.Add((JObject)MigrateProfile(profile).Serialize());
+            }
+
             return v4Settings;
         }
         public static Models.Profile MigrateProfile(V3Profile profile) {
@@ -27,23 +29,28 @@ namespace KeyViewer.Migration.V3 {
             List<Models.KeyConfig> specialKeys = new();
             float x = 0, dummyX = 0;
             foreach(var key in profile.ActiveKeys) {
-                if(key.SpecialType != SpecialKeyType.None)
+                if(key.SpecialType != SpecialKeyType.None) {
                     specialV3Keys.Add(key);
-                else
+                } else {
                     v4Profile.Keys.Add(MigrateKey(key, profile.ShowKeyPressTotal, profile.AnimateKeys, ref x));
+                }
             }
             foreach(var key in specialV3Keys) {
                 Models.KeyConfig v4Key;
-                if(profile.MakeBarSpecialKeys)
+                if(profile.MakeBarSpecialKeys) {
                     v4Key = MigrateKey(key, profile.ShowKeyPressTotal, profile.AnimateKeys, ref dummyX);
-                else
+                } else {
                     v4Key = MigrateKey(key, profile.ShowKeyPressTotal, profile.AnimateKeys, ref x);
+                }
+
                 v4Key.UpdateTextAlways = true;
                 specialKeys.Add(v4Key);
                 v4Profile.Keys.Add(v4Key);
             }
-            if(profile.MakeBarSpecialKeys)
+            if(profile.MakeBarSpecialKeys) {
                 MakeBar(specialKeys, specialV3Keys, profile.AnimateKeys, x);
+            }
+
             return v4Profile;
         }
         private static Models.KeyConfig MigrateKey(Key_Config keyConfig, bool showCountText, bool animateKeys, ref float x) {
@@ -52,16 +59,19 @@ namespace KeyViewer.Migration.V3 {
             v4Config.Code = keyConfig.Code;
             v4Config.Font = keyConfig.Font;
             v4Config.EnableCountText = showCountText;
-            if(keyConfig.SpecialType != SpecialKeyType.None)
+            if(keyConfig.SpecialType != SpecialKeyType.None) {
                 v4Config.DummyName = keyConfig.SpecialType.ToString();
+            }
+
             v4Config.DoNotScaleText = true;
             v4Config.DisableSorting = true;
             v4Config.Count = (int)keyConfig.Count;
             if(isSpecial) {
-                if(keyConfig.SpecialType == SpecialKeyType.KPS)
+                if(keyConfig.SpecialType == SpecialKeyType.KPS) {
                     v4Config.CountText = "{CurKPS}";
-                else
+                } else {
                     v4Config.CountText = "{Count}";
+                }
             }
             v4Config.Text = keyConfig.KeyTitle?.Replace("\\", "\\\\");
             if(keyConfig.RainEnabled) {

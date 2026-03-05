@@ -27,8 +27,10 @@ namespace KeyViewer.Unity {
         internal bool prevPressed;
         internal bool initialized;
         public void Init() {
-            if(initialized)
+            if(initialized) {
                 return;
+            }
+
             kpsCalc = new KPSCalculator(profile);
             kpsCalc.Start();
             Canvas canvas = gameObject.AddComponent<Canvas>();
@@ -38,45 +40,67 @@ namespace KeyViewer.Unity {
             scaler.referenceResolution = new Vector2(1280, 720);
             keys = new List<Key>();
             CurKPSTag = new Tag("CurKPS").SetGetter(new Func<string, int>(name => {
-                if(string.IsNullOrEmpty(name))
+                if(string.IsNullOrEmpty(name)) {
                     return kpsCalc.Kps;
+                }
+
                 Key key = keys.Find(k => KeyViewerUtils.KeyName(k.Config) == name);
-                if(key == null)
+                if(key == null) {
                     return -1;
-                if(!key.KpsCalc.Running)
+                }
+
+                if(!key.KpsCalc.Running) {
                     return 0;
+                }
+
                 return key.KpsCalc.Kps;
             }));
             MaxKPSTag = new Tag("MaxKPS").SetGetter(new Func<string, int>(name => {
-                if(string.IsNullOrEmpty(name))
+                if(string.IsNullOrEmpty(name)) {
                     return kpsCalc.Max;
+                }
+
                 Key key = keys.Find(k => KeyViewerUtils.KeyName(k.Config) == name);
-                if(key == null)
+                if(key == null) {
                     return -1;
-                if(!key.KpsCalc.Running)
+                }
+
+                if(!key.KpsCalc.Running) {
                     return 0;
+                }
+
                 return key.KpsCalc.Max;
             }));
             AvgKPSTag = new Tag("AvgKPS").SetGetter(new Func<string, double>(name => {
-                if(string.IsNullOrEmpty(name))
+                if(string.IsNullOrEmpty(name)) {
                     return kpsCalc.Average;
+                }
+
                 Key key = keys.Find(k => KeyViewerUtils.KeyName(k.Config) == name);
-                if(key == null)
+                if(key == null) {
                     return -1;
-                if(!key.KpsCalc.Running)
+                }
+
+                if(!key.KpsCalc.Running) {
                     return 0;
+                }
+
                 return key.KpsCalc.Average;
             }));
             CountTag = new Tag("Count").SetGetter(new Func<string, int>(name => {
                 if(string.IsNullOrEmpty(name)) {
                     int total = 0;
-                    foreach(var k in keys)
+                    foreach(var k in keys) {
                         total += k.Config.Count;
+                    }
+
                     return total;
                 }
                 Key key = keys.Find(k => KeyViewerUtils.KeyName(k.Config) == name);
-                if(key == null)
+                if(key == null) {
                     return -1;
+                }
+
                 return key.Config.Count;
             }));
             AllTags = new List<Tag> { CurKPSTag, MaxKPSTag, AvgKPSTag, CountTag };
@@ -86,23 +110,31 @@ namespace KeyViewer.Unity {
             get => keys.Find(k => KeyViewerUtils.KeyName(k.Config) == keyName);
             set {
                 int index = keys.FindIndex(k => KeyViewerUtils.KeyName(k.Config) == keyName);
-                if(index < 0)
+                if(index < 0) {
                     return;
+                }
+
                 keys[index] = value;
             }
         }
         private void Update() {
-            if(!initialized)
+            if(!initialized) {
                 return;
+            }
+
             var pressed = keys.Any(k => k.Pressed);
-            if(prevPressed == pressed)
+            if(prevPressed == pressed) {
                 return;
+            }
+
             prevPressed = pressed;
             KeyViewerUtils.ApplyVectorConfig(keysRt, profile.VectorConfig, pressed, 0, false, defaultSize);
         }
         public void UpdateKeys() {
-            if(keysCanvas)
+            if(keysCanvas) {
                 Destroy(keysCanvas.gameObject);
+            }
+
             GameObject keysObject = new("Keys Canvas");
             keysObject.transform.SetParent(transform);
             keysCanvas = keysObject.AddComponent<Canvas>();
@@ -132,7 +164,7 @@ namespace KeyViewer.Unity {
 
             bool first = true;
             float totalX = 0;
-            foreach(Key k in keys)
+            foreach(Key k in keys) {
                 if(!k.Config.DisableSorting) {
                     var releasedScale = k.Config.VectorConfig.Scale.Released;
                     if(first) {
@@ -141,6 +173,8 @@ namespace KeyViewer.Unity {
                     }
                     totalX += releasedScale.x * 100 + profile.KeySpacing;
                 }
+            }
+
             Vector2 size = new(totalX - profile.KeySpacing, keyHeight);
             centerOffset = KeyViewerUtils.GetPivot(profile.VectorConfig.Pivot) * size;
 
@@ -148,8 +182,10 @@ namespace KeyViewer.Unity {
             keys.ForEach(k => k.UpdateLayout(ref x));
         }
         public static KeyManager CreateManager(string name, Profile profile) {
-            if(profile == null)
+            if(profile == null) {
                 return null;
+            }
+
             GameObject manager = new($"KeyViewer {name} Profile");
             DontDestroyOnLoad(manager);
             var km = manager.AddComponent<KeyManager>();

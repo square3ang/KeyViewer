@@ -60,10 +60,11 @@ namespace KeyViewer.Views {
                 if(model.DummyName == null) {
                     if(Drawer.DrawBool(Main.Lang.Get("KEYCONFIG_ENABLE_KPS_METER", "Enable KPS Meter"), ref model.EnableKPSMeter)) {
                         changed = true;
-                        if(model.EnableKPSMeter)
+                        if(model.EnableKPSMeter) {
                             KPSCalculator.Sync(manager.keys.Select(k => k.Config.EnableKPSMeter ? k.KpsCalc : null).Where(c => c != null));
-                        else
+                        } else {
                             manager[model.Code.ToString()].KpsCalc.Stop();
+                        }
                     }
                 }
                 changed |= Drawer.DrawBool(FormatText(Main.Lang.Get("KEYCONFIG_UPDATE_TEXT_ALWAYS", "Update Text Always"), "UpdateTextAlways"), ref model.UpdateTextAlways).IfTrue(() => Set("UpdateTextAlways"));
@@ -124,8 +125,9 @@ namespace KeyViewer.Views {
             changed |= NeoDrawer.StaticInstance.DrawVectorConfig(model.VectorConfig).IfTrue(() => SetVectorConfig("VectorConfig"));
 
             if(changed) {
-                if(!prevBgBlurEnabled && model.BackgroundBlurEnabled)
+                if(!prevBgBlurEnabled && model.BackgroundBlurEnabled) {
                     KeyViewerUtils.ApplyBlurColorConfig(model);
+                }
 
                 manager.UpdateLayout();
             }
@@ -175,8 +177,10 @@ namespace KeyViewer.Views {
         }
 
         string FormatText(string text, string fieldName, params object[] args) {
-            if(!KeyViewerUtils.IsEquals(targets, fieldName))
+            if(!KeyViewerUtils.IsEquals(targets, fieldName)) {
                 text += " <color=cyan>(Diff!)</color>";
+            }
+
             return text;
         }
     }

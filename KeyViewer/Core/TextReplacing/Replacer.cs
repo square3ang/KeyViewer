@@ -31,14 +31,19 @@ namespace KeyViewer.Core.TextReplacing {
             }
         }
         public string Replace() {
-            if(!compiled)
-                if(!Compile())
+            if(!compiled) {
+                if(!Compile()) {
                     return null;
+                }
+            }
+
             return compiledMethod();
         }
         public bool Compile() {
-            if(compiled)
+            if(compiled) {
                 return true;
+            }
+
             try {
                 DynamicMethod dm = new(string.Empty, typeof(string), Type.EmptyTypes, typeof(Replacer), true);
                 ILGenerator il = dm.GetILGenerator();
@@ -50,8 +55,10 @@ namespace KeyViewer.Core.TextReplacing {
                         pt.tag.ReferencedCount++;
                         References.Add(pt.tag);
                         parsed.Emit(il);
-                    } else
+                    } else {
                         parsed.Emit(il);
+                    }
+
                     il.Emit(OpCodes.Call, StrBuilder_Append);
                 }
                 il.Emit(OpCodes.Call, StrBuilder_ToString);
@@ -89,8 +96,10 @@ namespace KeyViewer.Core.TextReplacing {
             var invalid = lex.FindIndex(t => t.afterInvalid);
             if(invalid >= 0) {
                 StringBuilder values = new();
-                for(int i = invalid; i < lex.Count; i++)
+                for(int i = invalid; i < lex.Count; i++) {
                     values.Append(lex[i].value);
+                }
+
                 lex.RemoveRange(invalid, lex.Count - invalid);
                 lex.Add(new Token(TokenType.Identifier, values.ToString()));
             }
@@ -110,10 +119,14 @@ namespace KeyViewer.Core.TextReplacing {
                 }
                 switch(c) {
                     case '{':
-                        if(tagStarted || colonActivated)
+                        if(tagStarted || colonActivated) {
                             goto default;
-                        if(sb.Length > 0)
+                        }
+
+                        if(sb.Length > 0) {
                             yield return new Token(TokenType.Identifier, sb.ToString());
+                        }
+
                         sb.Clear();
                         if(i + 1 < source.Length && source[i + 1] == '{') {
                             sb.Append(c);
@@ -126,10 +139,14 @@ namespace KeyViewer.Core.TextReplacing {
                         tagStarted = true;
                         break;
                     case '}':
-                        if(!tagStarted)
+                        if(!tagStarted) {
                             goto default;
-                        if(sb.Length > 0)
+                        }
+
+                        if(sb.Length > 0) {
                             yield return new Token(TokenType.Identifier, sb.ToString());
+                        }
+
                         sb.Clear();
                         yield return new Token(TokenType.TagEnd, c.ToString());
                         lastTagToken.Pop().afterInvalid = false;
@@ -137,41 +154,59 @@ namespace KeyViewer.Core.TextReplacing {
                         argDepth = 0;
                         break;
                     case '(':
-                        if(!tagStarted || argDepth++ > 0 || colonActivated)
+                        if(!tagStarted || argDepth++ > 0 || colonActivated) {
                             goto default;
-                        if(sb.Length > 0)
+                        }
+
+                        if(sb.Length > 0) {
                             yield return new Token(TokenType.Identifier, sb.ToString());
+                        }
+
                         sb.Clear();
                         yield return new Token(TokenType.ArgStart, c.ToString());
                         break;
                     case ')':
-                        if(!tagStarted || --argDepth > 0 || colonActivated)
+                        if(!tagStarted || --argDepth > 0 || colonActivated) {
                             goto default;
-                        if(sb.Length > 0)
+                        }
+
+                        if(sb.Length > 0) {
                             yield return new Token(TokenType.Identifier, sb.ToString());
+                        }
+
                         sb.Clear();
                         yield return new Token(TokenType.ArgEnd, c.ToString());
                         break;
                     case ':':
-                        if(!tagStarted || argDepth > 0 || colonActivated)
+                        if(!tagStarted || argDepth > 0 || colonActivated) {
                             goto default;
-                        if(sb.Length > 0)
+                        }
+
+                        if(sb.Length > 0) {
                             yield return new Token(TokenType.Identifier, sb.ToString());
+                        }
+
                         sb.Clear();
                         yield return new Token(TokenType.Colon, c.ToString());
                         colonActivated = true;
                         break;
                     case ',':
-                        if(!tagStarted || colonActivated)
+                        if(!tagStarted || colonActivated) {
                             goto default;
-                        if(sb.Length > 0)
+                        }
+
+                        if(sb.Length > 0) {
                             yield return new Token(TokenType.Identifier, sb.ToString());
+                        }
+
                         sb.Clear();
                         if(argDepth > 0) {
                             yield return new Token(TokenType.Comma, c.ToString());
                             break;
-                        } else
+                        } else {
                             goto default;
+                        }
+
                     case '\\':
                         escaping = true;
                         break;
@@ -180,8 +215,9 @@ namespace KeyViewer.Core.TextReplacing {
                         break;
                 }
             }
-            if(sb.Length > 0)
+            if(sb.Length > 0) {
                 yield return new Token(TokenType.Identifier, sb.ToString());
+            }
         }
         interface IParsed {
             void Emit(ILGenerator il);
@@ -204,10 +240,11 @@ namespace KeyViewer.Core.TextReplacing {
             }
             void IParsed.Emit(ILGenerator il) {
                 for(int i = 0; i < tag.ArgumentCount; i++) {
-                    if(args.Count - 1 < i)
+                    if(args.Count - 1 < i) {
                         il.Emit(OpCodes.Ldstr, tag.GetterOriginal.GetParameters()[i].DefaultValue?.ToString() ?? string.Empty);
-                    else
+                    } else {
                         il.Emit(OpCodes.Ldstr, args[i]);
+                    }
                 }
                 il.Emit(OpCodes.Call, tag.Getter);
             }
@@ -243,17 +280,20 @@ namespace KeyViewer.Core.TextReplacing {
                         if(t.type == TokenType.ArgStart || t.type == TokenType.Colon) {
                             while(queue.Count > 0 && t.type != TokenType.ArgEnd && t.type != TokenType.TagEnd) {
                                 t = queue.Dequeue();
-                                if(t.type == TokenType.Identifier)
+                                if(t.type == TokenType.Identifier) {
                                     arguments.Add(t.value);
+                                }
                             }
                         }
                     }
-                    if(tagNotFound)
+                    if(tagNotFound) {
                         yield return new ParsedString(sb.ToString());
-                    else
+                    } else {
                         yield return new ParsedTag(found, arguments);
-                } else
+                    }
+                } else {
                     yield return new ParsedString(t.value);
+                }
             }
         }
         public static readonly ConstructorInfo StrBuilder_Ctor = typeof(StringBuilder).GetConstructor(Type.EmptyTypes);

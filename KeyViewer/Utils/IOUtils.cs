@@ -13,8 +13,9 @@ namespace KeyViewer.Utils {
                 using(ZipArchive zipArchive = new(ms, ZipArchiveMode.Update, false, Encoding.UTF8)) {
                     foreach(var rFile in rFiles) {
                         var entry = zipArchive.CreateEntry(rFile.Name);
-                        using(Stream entryStream = entry.Open())
+                        using(Stream entryStream = entry.Open()) {
                             entryStream.Write(rFile.Data, 0, rFile.Data.Length);
+                        }
                     }
                 }
                 return ms.ToArray();
@@ -23,8 +24,10 @@ namespace KeyViewer.Utils {
         public static byte[] ZipFiles(params string[] files) {
             using(MemoryStream ms = new())
             using(ZipArchive zipArchive = new(ms, ZipArchiveMode.Update, false, Encoding.UTF8)) {
-                foreach(string file in files)
+                foreach(string file in files) {
                     zipArchive.CreateEntryFromFile(file, Path.GetFileName(file));
+                }
+
                 return ms.ToArray();
             }
         }
@@ -43,15 +46,19 @@ namespace KeyViewer.Utils {
             return files;
         }
         public static void Unzip(string zipFile, string destDir) {
-            if(!Directory.Exists(destDir))
+            if(!Directory.Exists(destDir)) {
                 Directory.CreateDirectory(destDir);
+            }
+
             ZipFile.ExtractToDirectory(zipFile, destDir);
         }
         static Dictionary<string, FileReference> refCache = new();
         public static FileReference GetReference(string path, FileReference.Type referenceType) {
             var target = path.Replace("{ModDir}", Main.Mod.Path);
-            if(refCache.TryGetValue(target, out var reference))
+            if(refCache.TryGetValue(target, out var reference)) {
                 return reference;
+            }
+
             var @ref = new FileReference();
             @ref.From = target;
             @ref.Name = Path.GetFileName(target);

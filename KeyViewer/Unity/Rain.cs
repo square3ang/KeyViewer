@@ -22,8 +22,10 @@ namespace KeyViewer.Unity {
 
         internal Image image;
         public void Init(Key key) {
-            if(initialized)
+            if(initialized) {
                 return;
+            }
+
             this.key = key;
             image = gameObject.AddComponent<Image>();
             rt = image.rectTransform;
@@ -36,34 +38,42 @@ namespace KeyViewer.Unity {
             initialized = true;
         }
         public void Press() {
-            if(!initialized || stretching)
+            if(!initialized || stretching) {
                 return;
+            }
+
             stretching = true;
             image.sprite = key.RainImageManager.Get(out rImage);
             var color = config.ObjectConfig.Color;
-            if(colorUpdateIgnores == 0)
+            if(colorUpdateIgnores == 0) {
                 KeyViewerUtils.ApplyColor(image, color.Released, color.Pressed, color.PressedEase, false);
-            else
+            } else {
                 colorUpdateIgnores--;
+            }
             //KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, Position, false, DefaultSize, false);
             KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, true, false, DefaultSize, false);
         }
         public void Release() {
-            if(!initialized || !stretching)
+            if(!initialized || !stretching) {
                 return;
+            }
+
             stretching = false;
             var color = config.ObjectConfig.Color;
-            if(colorUpdateIgnores == 0)
+            if(colorUpdateIgnores == 0) {
                 KeyViewerUtils.ApplyColor(image, color.Pressed, color.Released, color.ReleasedEase, false);
-            else
+            } else {
                 colorUpdateIgnores--;
+            }
             //Vector2 adjustedPosition = KeyViewerUtils.AdjustRainPosition(config.Direction, Position, objConfig.VectorConfig.Offset.Pressed);
             //KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, adjustedPosition, false, DefaultSize, false);
             KeyViewerUtils.ApplyVectorConfig(rt, objConfig.VectorConfig, false, false, DefaultSize, false);
         }
         public void OnEnable() {
-            if(!initialized)
+            if(!initialized) {
                 return;
+            }
+
             colorUpdateIgnores = 0;
             rt.sizeDelta = DefaultSize = GetInitialSize();
             rt.anchoredPosition = GetPosition(config.Direction);
@@ -88,8 +98,10 @@ namespace KeyViewer.Unity {
                     rt.sizeDelta += delta.Abs();
                     rt.anchoredPosition += delta * 0.5f;
                     DefaultSize = rt.sizeDelta;
-                } else
+                } else {
                     rt.anchoredPosition += delta;
+                }
+
                 Position = rt.localPosition;
             } else {
                 stretching = false;

@@ -36,40 +36,48 @@ namespace KeyViewer.Utils {
             var k = key.transform;
             var origin = k.position;
             Vector3 offset = key.Size * pivot;
-            foreach(Transform child in k)
+            foreach(Transform child in k) {
                 child.position += offset;
+            }
+
             k.position = origin;
             return offset;
         }
         public static void ApplyColorLayout(Image image, GColor color, bool blurEnabled) {
             UICornersGradient grad = image.GetComponent<UICornersGradient>();
             if(blurEnabled) {
-                if(grad)
+                if(grad) {
                     Object.Destroy(grad);
+                }
+
                 image.material.SetColor(Blur_TintColor, color);
                 return;
             }
             if(color.gradientEnabled) {
                 image.color = Color.white;
-                if(!grad)
+                if(!grad) {
                     grad = image.gameObject.AddComponent<UICornersGradient>();
+                }
+
                 grad.topLeft = color.topLeft;
                 grad.topRight = color.topRight;
                 grad.bottomLeft = color.bottomLeft;
                 grad.bottomRight = color.bottomRight;
                 image.SetVerticesDirty();
             } else {
-                if(grad)
+                if(grad) {
                     Object.Destroy(grad);
-                else
+                } else {
                     image.color = color;
+                }
             }
         }
         public static void ApplyColorLayout(TextMeshProUGUI text, GColor color) {
-            if(color.gradientEnabled)
+            if(color.gradientEnabled) {
                 text.colorGradient = color;
-            else
+            } else {
                 text.colorGradient = new VertexGradient(color);
+            }
         }
         public static void ApplyConfigLayout(Image image, ObjectConfig config, Vector2 sizeDelta, bool blurEnabled) {
             ApplyColorLayout(image, config.Color.Released, blurEnabled);
@@ -89,10 +97,11 @@ namespace KeyViewer.Utils {
             var rt = r.rt;
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             rt.localPosition = vConfig.Offset.Released + r.Position;
-            if(scaleSizeDelta)
+            if(scaleSizeDelta) {
                 rt.sizeDelta = sizeDelta * vConfig.Scale.Released;
-            else
+            } else {
                 rt.localScale = vConfig.Scale.Released;
+            }
         }
         public static void ApplyConfigLayout(TextMeshProUGUI text, ObjectConfig config, float heightOffset, bool fixScale) {
             ApplyColorLayout(text, config.Color.Released);
@@ -101,8 +110,10 @@ namespace KeyViewer.Utils {
             rt.localRotation = Quaternion.Euler(vConfig.Rotation.Released);
             rt.localPosition = vConfig.Offset.Released.WithRelativeY(heightOffset);
             Vector3 scale = vConfig.Scale.Released;
-            if(fixScale)
+            if(fixScale) {
                 scale = FixedScale(rt.parent.localScale, scale);
+            }
+
             rt.localScale = scale;
         }
         public static void ApplyColor(Image image, GColor from, GColor to, EaseConfig easeConfig, bool blurEnabled) {
@@ -113,8 +124,10 @@ namespace KeyViewer.Utils {
             }
             UICornersGradient grad = image.GetComponent<UICornersGradient>();
             if(blurEnabled) {
-                if(grad)
+                if(grad) {
                     Object.Destroy(grad);
+                }
+
                 Material mat = image.material;
                 DOVirtual.Float(0, 1, easeConfig.Duration, f => {
                     mat.SetColor(Blur_TintColor, EasedColor(from, to, f));
@@ -123,8 +136,10 @@ namespace KeyViewer.Utils {
             var gradEnabled = from.gradientEnabled || to.gradientEnabled;
             if(gradEnabled) {
                 image.color = Color.white;
-                if(!grad)
+                if(!grad) {
                     grad = image.gameObject.AddComponent<UICornersGradient>();
+                }
+
                 var fromGrad = from.gradientEnabled ? from._color : new VertexGradient(from);
                 var toGrad = to.gradientEnabled ? to._color : new VertexGradient(to);
                 DOVirtual.Float(0, 1, easeConfig.Duration, f => {
@@ -135,10 +150,11 @@ namespace KeyViewer.Utils {
                     image.SetVerticesDirty();
                 }).SetEase(easeConfig.Ease).SetAutoKill(false).SetTarget(image);
             } else {
-                if(grad)
+                if(grad) {
                     Object.Destroy(grad);
-                else
+                } else {
                     image.DOColor(to, easeConfig.Duration).SetEase(easeConfig.Ease).SetAutoKill(false);
+                }
             }
         }
         public static void ApplyColor(TextMeshProUGUI text, GColor from, GColor to, EaseConfig easeConfig) {
@@ -176,28 +192,31 @@ namespace KeyViewer.Utils {
             DOTween.Kill(t, true);
 
             var rEase = vConfig.Rotation.GetEase(pressed);
-            if(rEase.IsValid)
+            if(rEase.IsValid) {
                 t.DOLocalRotate(vConfig.Rotation.Get(pressed), rEase.Duration)
                 .SetEase(rEase.Ease)
                 .SetAutoKill(false);
-            else
+            } else {
                 t.localRotation = Quaternion.Euler(vConfig.Rotation.Get(pressed));
+            }
 
             var oEase = vConfig.Offset.GetEase(pressed);
-            if(oEase.IsValid)
+            if(oEase.IsValid) {
                 t.DOLocalMove(vConfig.Offset.Get(pressed) + k.Position, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else
+            } else {
                 t.localPosition = vConfig.Offset.Get(pressed) + k.Position;
+            }
 
             var sEase = vConfig.Scale.GetEase(pressed);
-            if(sEase.IsValid)
+            if(sEase.IsValid) {
                 t.DOScale(vConfig.Scale.Get(pressed), sEase.Duration)
                 .SetEase(sEase.Ease)
                 .SetAutoKill(false);
-            else
+            } else {
                 t.localScale = vConfig.Scale.Get(pressed);
+            }
         }
         public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, float heightOffset, bool fixScale, Vector2 sizeDelta, bool scaleSizeDelta = true) {
             ApplyVectorConfig(rt, vConfig, pressed, new Vector2(0, heightOffset), fixScale, sizeDelta, scaleSizeDelta);
@@ -206,82 +225,94 @@ namespace KeyViewer.Utils {
             DOTween.Kill(rt, true);
 
             var rEase = vConfig.Rotation.GetEase(pressed);
-            if(rEase.IsValid)
+            if(rEase.IsValid) {
                 rt.DOLocalRotate(vConfig.Rotation.Get(pressed), rEase.Duration)
                 .SetEase(rEase.Ease)
                 .SetAutoKill(false);
-            else
+            } else {
                 rt.localRotation = Quaternion.Euler(vConfig.Rotation.Get(pressed));
+            }
 
             var oEase = vConfig.Offset.GetEase(pressed);
-            if(oEase.IsValid)
+            if(oEase.IsValid) {
                 rt.DOLocalMove(vConfig.Offset.Get(pressed) + offset, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else
+            } else {
                 rt.localPosition = vConfig.Offset.Get(pressed) + offset;
+            }
 
             Vector3 scale = vConfig.Scale.Get(pressed);
-            if(fixScale)
+            if(fixScale) {
                 scale = FixedScale(rt.parent.localScale, scale);
+            }
+
             var sEase = vConfig.Scale.GetEase(pressed);
             if(scaleSizeDelta) {
-                if(sEase.IsValid)
+                if(sEase.IsValid) {
                     rt.DOSizeDelta(sizeDelta * scale, sEase.Duration)
                     .SetEase(sEase.Ease)
                     .SetAutoKill(false);
-                else
+                } else {
                     rt.sizeDelta = sizeDelta * scale;
+                }
             } else {
-                if(sEase.IsValid)
+                if(sEase.IsValid) {
                     rt.DOScale(scale, sEase.Duration)
                     .SetEase(sEase.Ease)
                     .SetAutoKill(false);
-                else
+                } else {
                     rt.localScale = scale;
+                }
             }
         }
         public static void ApplyVectorConfig(RectTransform rt, VectorConfig vConfig, bool pressed, bool fixScale, Vector2 sizeDelta, bool scaleSizeDelta = true) {
             DOTween.Kill(rt, true);
 
             var rEase = vConfig.Rotation.GetEase(pressed);
-            if(rEase.IsValid)
+            if(rEase.IsValid) {
                 rt.DOLocalRotate(vConfig.Rotation.Get(pressed), rEase.Duration)
                 .SetEase(rEase.Ease)
                 .SetAutoKill(false);
-            else
+            } else {
                 rt.localRotation = Quaternion.Euler(vConfig.Rotation.Get(pressed));
+            }
 
             Vector3 scale = vConfig.Scale.Get(pressed);
-            if(fixScale)
+            if(fixScale) {
                 scale = FixedScale(rt.parent.localScale, scale);
+            }
+
             var sEase = vConfig.Scale.GetEase(pressed);
             if(scaleSizeDelta) {
-                if(sEase.IsValid)
+                if(sEase.IsValid) {
                     rt.DOSizeDelta(sizeDelta * scale, sEase.Duration)
                     .SetEase(sEase.Ease)
                     .SetAutoKill(false);
-                else
+                } else {
                     rt.sizeDelta = sizeDelta * scale;
+                }
             } else {
-                if(sEase.IsValid)
+                if(sEase.IsValid) {
                     rt.DOScale(scale, sEase.Duration)
                     .SetEase(sEase.Ease)
                     .SetAutoKill(false);
-                else
+                } else {
                     rt.localScale = scale;
+                }
             }
         }
         public static void ApplyVectorConfigForRainMaskOnly(RectTransform rt, VectorConfig vConfig, bool pressed, Vector2 offset) {
             DOTween.Kill(rt, true);
 
             var oEase = vConfig.Offset.GetEase(pressed);
-            if(oEase.IsValid)
+            if(oEase.IsValid) {
                 rt.DOMove(vConfig.Offset.Get(pressed) + offset, oEase.Duration)
                 .SetEase(oEase.Ease)
                 .SetAutoKill(false);
-            else
+            } else {
                 rt.position = vConfig.Offset.Get(pressed) + offset;
+            }
         }
         public static void SetMaskAnchor(RectTransform rt, Direction dir, Pivot pivot = Pivot.MiddleCenter, Anchor anchor = Anchor.MiddleCenter) {
             switch(dir) {
@@ -306,10 +337,13 @@ namespace KeyViewer.Utils {
                     rt.anchorMax = new Vector2(1, 0.5f);
                     break;
             }
-            if(pivot != Pivot.MiddleCenter)
+            if(pivot != Pivot.MiddleCenter) {
                 rt.pivot = GetPivot(pivot);
-            if(anchor != Anchor.MiddleCenter)
+            }
+
+            if(anchor != Anchor.MiddleCenter) {
                 rt.SetAnchor(anchor);
+            }
         }
         public static Vector3 FixedScale(Vector3 parentScale, Vector3 fixedScale) {
             return new Vector3(fixedScale.x / parentScale.x, fixedScale.y / parentScale.y, fixedScale.z == 0 ? 0 : fixedScale.z / parentScale.z);
@@ -354,11 +388,13 @@ namespace KeyViewer.Utils {
         public static Vector2 GetSize(Profile profile) {
             float keyHeight = profile.Keys.Any(k => k.EnableCountText) ? 150 : 100;
             float totalX = 0;
-            foreach(var k in profile.Keys)
+            foreach(var k in profile.Keys) {
                 if(!k.DisableSorting) {
                     var releasedScale = k.VectorConfig.Scale.Released;
                     totalX += releasedScale.x * 100 + profile.KeySpacing;
                 }
+            }
+
             return new Vector2(totalX - profile.KeySpacing - 5, keyHeight);
         }
         public static void MakeBar(Profile profile, List<KeyConfig> keys) {
@@ -385,10 +421,11 @@ namespace KeyViewer.Utils {
                 float heightOffset = size.y / 8f;
                 config.TextConfig.VectorConfig.Offset.Set(newBgOlOffset.WithRelativeY(-heightOffset));
                 config.CountTextConfig.VectorConfig.Offset.Set(newBgOlOffset.WithRelativeY(heightOffset));
-                if(config.Rain.Direction == Direction.Up || config.Rain.Direction == Direction.Down)
+                if(config.Rain.Direction == Direction.Up || config.Rain.Direction == Direction.Down) {
                     config.Rain.ObjectConfig.VectorConfig.Scale.Set(new Vector2(newScale.x, 1));
-                else
+                } else {
                     config.Rain.ObjectConfig.VectorConfig.Scale.Set(new Vector2(1, newScale.y));
+                }
             }
         }
         public static void ApplyRoundnessBlurLayout(Image image, ref float roundness, BlurConfig config, bool blurEnabled) {
@@ -396,26 +433,33 @@ namespace KeyViewer.Utils {
             RoundedCorners rounder = image.GetComponent<RoundedCorners>();
             if(blurEnabled) {
                 roundness = 0;
-                if(rounder)
+                if(rounder) {
                     Object.Destroy(rounder);
+                }
+
                 Material mat = image.material = new Material(AssetManager.Blur);
                 mat.SetFloat(Blur_Size, config.Spacing);
                 mat.SetFloat(Blur_Vibrancy, config.Vibrancy);
                 mat.SetColor(Blur_TintColor, image.color);
             } else {
                 if(roundness > 0) {
-                    if(!rounder)
+                    if(!rounder) {
                         rounder = image.gameObject.AddComponent<RoundedCorners>();
+                    }
+
                     rounder.radius = roundness * 90;
                     rounder.Validate();
                     rounder.Refresh();
-                } else if(rounder != null)
+                } else if(rounder != null) {
                     Object.Destroy(rounder);
+                }
             }
         }
         public static void ApplyBlurColorConfig(KeyConfig config) {
-            if(!config.BackgroundBlurEnabled)
+            if(!config.BackgroundBlurEnabled) {
                 return;
+            }
+
             Color pressed = config.BackgroundConfig.Color.Pressed;
             Color released = config.BackgroundConfig.Color.Released;
             config.BackgroundConfig.Color.Set(pressed.WithAlpha(0f), released.WithAlpha(0.2f));
@@ -433,8 +477,10 @@ namespace KeyViewer.Utils {
             var insts = instances is List<T> list ? list : instances.ToList();
             var instCopys = instanceCopys is List<T> list2 ? list2 : instanceCopys.ToList();
             if(originalVal == null) {
-                for(int i = 0; i < insts.Count; i++)
+                for(int i = 0; i < insts.Count; i++) {
                     field.SetValue(insts[i], originalVal);
+                }
+
                 return;
             }
             var fromCriterion = field.GetValue(originalCopy);
@@ -442,10 +488,11 @@ namespace KeyViewer.Utils {
             var setRelative = CanRelativeOperation(valType);
             for(int i = 0; i < insts.Count; i++) {
                 var toCriterion = field.GetValue(instCopys[i]);
-                if(setRelative && relative(insts[i], relativeIterationRef != null ? relativeIterationRef[i] : null, valType))
+                if(setRelative && relative(insts[i], relativeIterationRef != null ? relativeIterationRef[i] : null, valType)) {
                     field.SetValue(insts[i], RelativeOperation(fromCriterion, originalVal, toCriterion));
-                else
+                } else {
                     field.SetValue(insts[i], originalVal);
+                }
             }
         }
         public static bool IsEquals<T>(IEnumerable<T> instances, string fieldName) {
@@ -466,8 +513,10 @@ namespace KeyViewer.Utils {
             return equals;
         }
         public static bool IsEquals(IEnumerable<object> objects) {
-            if(!objects?.Any() ?? true)
+            if(!objects?.Any() ?? true) {
                 return false;
+            }
+
             object first = objects.First();
             return objects.All(o => Equals(o, first));
         }
@@ -491,38 +540,70 @@ namespace KeyViewer.Utils {
                 t == typeof(decimal);
         }
         public static object RelativeOperation(object fromCriterion, object obj, object toCriterion) {
-            if(obj is float)
+            if(obj is float) {
                 return (float)toCriterion + ((float)obj - (float)fromCriterion);
-            if(obj is int)
+            }
+
+            if(obj is int) {
                 return (int)toCriterion + ((int)obj - (int)fromCriterion);
-            if(obj is Vector2)
+            }
+
+            if(obj is Vector2) {
                 return (Vector2)toCriterion + ((Vector2)obj - (Vector2)fromCriterion);
-            if(obj is Vector3)
+            }
+
+            if(obj is Vector3) {
                 return (Vector3)toCriterion + ((Vector3)obj - (Vector3)fromCriterion);
-            if(obj is Vector4)
+            }
+
+            if(obj is Vector4) {
                 return (Vector4)toCriterion + ((Vector4)obj - (Vector4)fromCriterion);
-            if(obj is Color)
+            }
+
+            if(obj is Color) {
                 return (Color)toCriterion + ((Color)obj - (Color)fromCriterion);
-            if(obj is GColor)
+            }
+
+            if(obj is GColor) {
                 return (GColor)toCriterion + ((GColor)obj - (GColor)fromCriterion);
-            if(obj is sbyte)
+            }
+
+            if(obj is sbyte) {
                 return (sbyte)toCriterion + ((sbyte)obj - (sbyte)fromCriterion);
-            if(obj is byte)
+            }
+
+            if(obj is byte) {
                 return (byte)toCriterion + ((byte)obj - (byte)fromCriterion);
-            if(obj is short)
+            }
+
+            if(obj is short) {
                 return (short)toCriterion + ((short)obj - (short)fromCriterion);
-            if(obj is ushort)
+            }
+
+            if(obj is ushort) {
                 return (ushort)toCriterion + ((ushort)obj - (ushort)fromCriterion);
-            if(obj is uint)
+            }
+
+            if(obj is uint) {
                 return (uint)toCriterion + ((uint)obj - (uint)fromCriterion);
-            if(obj is long)
+            }
+
+            if(obj is long) {
                 return (long)toCriterion + ((long)obj - (long)fromCriterion);
-            if(obj is ulong)
+            }
+
+            if(obj is ulong) {
                 return (ulong)toCriterion + ((ulong)obj - (ulong)fromCriterion);
-            if(obj is double)
+            }
+
+            if(obj is double) {
                 return (double)toCriterion + ((double)obj - (double)fromCriterion);
-            if(obj is decimal)
+            }
+
+            if(obj is decimal) {
                 return (decimal)toCriterion + ((decimal)obj - (decimal)fromCriterion);
+            }
+
             return obj;
         }
         public static bool IsVectorType(System.Type t) => t.Name.StartsWith("Vector");

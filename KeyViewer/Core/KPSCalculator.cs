@@ -58,8 +58,10 @@ namespace KeyViewer.Core {
                             int temp = pressCount;
                             pressCount = 0;
                             int kps = temp;
-                            foreach(int i in timePoints)
+                            foreach(int i in timePoints) {
                                 kps += i;
+                            }
+
                             Max = Math.Max(kps, Max);
                             if(kps != 0) {
                                 Average = (Average * n + kps) / (n + 1.0);
@@ -68,8 +70,10 @@ namespace KeyViewer.Core {
                             }
                             prev = kps;
                             timePoints.AddFirst(temp);
-                            if(timePoints.Count >= 1000 / profile.KPSUpdateRate)
+                            if(timePoints.Count >= 1000 / profile.KPSUpdateRate) {
                                 timePoints.RemoveLast();
+                            }
+
                             Kps = kps;
                             watch.Restart();
                             Thread.Sleep(Math.Max(profile.KPSUpdateRate - 1, 0));

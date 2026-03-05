@@ -27,8 +27,10 @@ namespace KeyViewer.Utils {
         }
         public static Delegate CreateDelegateAuto(this MethodInfo method) {
             var prms = method.GetParameters().Select(p => p.ParameterType);
-            if(method.ReturnType != typeof(void))
+            if(method.ReturnType != typeof(void)) {
                 return method.CreateDelegate(Expression.GetFuncType(prms.Append(method.ReturnType).ToArray()));
+            }
+
             return method.CreateDelegate(Expression.GetActionType(prms.ToArray()));
         }
         public static void ExecuteSafe(Action exec, out Exception ex) {

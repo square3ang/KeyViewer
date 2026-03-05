@@ -23,14 +23,19 @@ namespace KeyViewer.Core {
             index = count = 0;
             sprites = new List<Sprite>();
             if(config.RainImages.Count > 0) {
-                foreach(RainImage image in config.RainImages)
-                    for(int i = 0; i < image.Count; i++)
+                foreach(RainImage image in config.RainImages) {
+                    for(int i = 0; i < image.Count; i++) {
                         sprites.Add(AssetManager.Get(image.Image));
+                    }
+                }
+
                 count = sprites.Count;
                 if(config.ImageDisplayMode == RainImageDisplayMode.Random) {
                     int[] indexes = new int[count];
-                    for(int i = 0; i < count; indexes[i++] = (int)(count * URandom.value))
+                    for(int i = 0; i < count; indexes[i++] = (int)(count * URandom.value)) {
                         ;
+                    }
+
                     for(int i = 0; i < count; i++) {
                         int target = indexes[i];
 
@@ -43,8 +48,10 @@ namespace KeyViewer.Core {
         }
         int Index {
             get {
-                if(index < sprites.Count)
+                if(index < sprites.Count) {
                     return index++;
+                }
+
                 index = 1;
                 return 0;
             }

@@ -150,13 +150,16 @@ namespace KeyViewer.Views {
                 foreach(var profile in profiles) {
                     FileInfo file = new(profile);
                     if(file.Extension == ".json") {
-                        if(!File.Exists(Path.Combine(Main.ProfilePath, file.Name)))
+                        if(!File.Exists(Path.Combine(Main.ProfilePath, file.Name))) {
                             file.CopyTo(Path.Combine(Main.ProfilePath, file.Name));
+                        }
+
                         var activeProfile = new ActiveProfile(Path.GetFileNameWithoutExtension(file.FullName), true);
                         model.ActiveProfiles.Add(activeProfile);
                         Main.AddManager(activeProfile, true);
-                    } else if(file.Extension == ".xml")
+                    } else if(file.Extension == ".xml") {
                         Main.MigrateFromV3Xml(file.FullName);
+                    }
                 }
             }
             if(Drawer.Button(Main.Lang.Get("SETTINGS_CREATE_PROFILE", "Create New Profile"))) {
@@ -179,10 +182,14 @@ namespace KeyViewer.Views {
                 var profile = model.ActiveProfiles[i];
                 bool profileActiveDiff = Drawer.DrawOnlyBool(ref profile.Active);
                 if(profileActiveDiff) {
-                    if(profile.Active && !Main.Managers.TryGetValue(profile.Name, out _))
+                    if(profile.Active && !Main.Managers.TryGetValue(profile.Name, out _)) {
                         Main.AddManager(profile, true);
-                    if(!profile.Active && Main.Managers.TryGetValue(profile.Name, out var m))
+                    }
+
+                    if(!profile.Active && Main.Managers.TryGetValue(profile.Name, out var m)) {
                         Main.RemoveManager(profile);
+                    }
+
                     model.ActiveProfiles[i] = profile;
                 }
                 GUI.color = profile.Active ? new Color(0.8f, 0.8f, 1f) : Color.gray;

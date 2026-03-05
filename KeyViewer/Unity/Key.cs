@@ -38,8 +38,10 @@ namespace KeyViewer.Unity {
         internal EnsurePool<Rain> rainPool;
 
         public void Init(KeyManager manager, KeyConfig config) {
-            if(initialized)
+            if(initialized) {
                 return;
+            }
+
             Manager = manager;
             Config = config;
             textReplacerP = new Replacer(manager.AllTags);
@@ -69,8 +71,9 @@ namespace KeyViewer.Unity {
                 rainObj.SetActive(false);
                 return rain;
             }, kr => !kr.IsAlive, kr => kr.gameObject.SetActive(true), r => Destroy(r.gameObject));
-            if(Config.RainEnabled)
+            if(Config.RainEnabled) {
                 rainPool.Fill(Config.Rain.PoolSize);
+            }
 
             ObjectConfig bgConfig = config.BackgroundConfig;
             GameObject bgObj = new("Background");
@@ -112,8 +115,9 @@ namespace KeyViewer.Unity {
             KeyViewerUtils.ApplyColorLayout(CountText, cTextConfig.Color.Released);
             CountText.alignment = TextAlignmentOptions.Midline;
 
-            if(config.EnableKPSMeter)
+            if(config.EnableKPSMeter) {
                 KpsCalc.Start();
+            }
 
             initialized = true;
         }
@@ -195,13 +199,17 @@ namespace KeyViewer.Unity {
             RainUpdate();
             rainContainer.SetActive(Config.RainEnabled);
 
-            if(!Config.DisableSorting)
+            if(!Config.DisableSorting) {
                 x += keyWidth + Manager.profile.KeySpacing;
+            }
+
             ReplaceText();
         }
         public void ResetRains() {
-            if(!Config.RainEnabled)
+            if(!Config.RainEnabled) {
                 return;
+            }
+
             rainPool.ForEach(r => {
                 r.Release();
                 r.OnEnable();
@@ -288,32 +296,48 @@ namespace KeyViewer.Unity {
 
         #region Update
         private void Update() {
-            if(!initialized)
+            if(!initialized) {
                 return;
-            if(Config.UpdateTextAlways)
+            }
+
+            if(Config.UpdateTextAlways) {
                 ReplaceText();
-            if(!string.IsNullOrEmpty(Config.DummyName))
+            }
+
+            if(!string.IsNullOrEmpty(Config.DummyName)) {
                 return;
-            if(InputAPI.Active)
+            }
+
+            if(InputAPI.Active) {
                 Pressed = InputAPI.APIFlags.TryGetValue(Config.Code, out var p) ? p : false;
-            else
+            } else {
                 Pressed = KeyInput.GetKey(Config.Code);
+            }
             /*for (int i = 0; i < Config.Codes.Length; i++)
-                Pressed |= KeyInput.GetKey(Config.Codes[i]);*/
-            if(prevPressed == Pressed)
+   Pressed |= KeyInput.GetKey(Config.Codes[i]);*/
+            if(prevPressed == Pressed) {
                 return;
+            }
+
             prevPressed = Pressed;
             if(Pressed) {
-                if(InputAPI.EventActive)
+                if(InputAPI.EventActive) {
                     InputAPI.KeyPress(this);
+                }
+
                 Config.Count++;
-                if(Config.EnableKPSMeter)
+                if(Config.EnableKPSMeter) {
                     KpsCalc.Press();
+                }
+
                 Manager.kpsCalc.Press();
-            } else if(InputAPI.EventActive)
+            } else if(InputAPI.EventActive) {
                 InputAPI.KeyRelease(this);
-            if(!Config.UpdateTextAlways)
+            }
+
+            if(!Config.UpdateTextAlways) {
                 ReplaceText();
+            }
 
             RainUpdate();
             ApplyColor();
@@ -324,43 +348,50 @@ namespace KeyViewer.Unity {
             if(string.IsNullOrEmpty(Config.DummyName)) {
                 if(Pressed) {
                     Text.text = textReplacerP.Replace();
-                    if(Config.EnableCountText)
+                    if(Config.EnableCountText) {
                         CountText.text = countTextReplacerP.Replace();
+                    }
                 } else {
                     Text.text = textReplacerR.Replace();
-                    if(Config.EnableCountText)
+                    if(Config.EnableCountText) {
                         CountText.text = countTextReplacerR.Replace();
+                    }
                 }
             } else {
                 Text.text = textReplacerR.Replace();
-                if(Config.EnableCountText)
+                if(Config.EnableCountText) {
                     CountText.text = countTextReplacerR.Replace();
+                }
             }
         }
         private void ApplyColor() {
             if(colorUpdateIgnores[(int)Element.Text] == 0) {
                 var textColor = Config.TextConfig.Color;
                 KeyViewerUtils.ApplyColor(Text, textColor.Get(!Pressed), textColor.Get(Pressed), textColor.GetEase(Pressed));
-            } else
+            } else {
                 colorUpdateIgnores[(int)Element.Text]--;
+            }
 
             if(colorUpdateIgnores[(int)Element.CountText] == 0) {
                 var countTextColor = Config.CountTextConfig.Color;
                 KeyViewerUtils.ApplyColor(CountText, countTextColor.Get(!Pressed), countTextColor.Get(Pressed), countTextColor.GetEase(Pressed));
-            } else
+            } else {
                 colorUpdateIgnores[(int)Element.CountText]--;
+            }
 
             if(colorUpdateIgnores[(int)Element.Background] == 0) {
                 var bgColor = Config.BackgroundConfig.Color;
                 KeyViewerUtils.ApplyColor(Background, bgColor.Get(!Pressed), bgColor.Get(Pressed), bgColor.GetEase(Pressed), Config.BackgroundBlurEnabled);
-            } else
+            } else {
                 colorUpdateIgnores[(int)Element.Background]--;
+            }
 
             if(colorUpdateIgnores[(int)Element.Outline] == 0) {
                 var olColor = Config.OutlineConfig.Color;
                 KeyViewerUtils.ApplyColor(Outline, olColor.Get(!Pressed), olColor.Get(Pressed), olColor.GetEase(Pressed), false);
-            } else
+            } else {
                 colorUpdateIgnores[(int)Element.Outline]--;
+            }
         }
         private void ApplySprite() {
             Background.sprite = AssetManager.Get(Config.Background.Get(Pressed), AssetManager.Background);
@@ -375,8 +406,10 @@ namespace KeyViewer.Unity {
             KeyViewerUtils.ApplyVectorConfig(Outline.rectTransform, Config.OutlineConfig.VectorConfig, Pressed, 0, false, DefaultSize);
         }
         private void RainUpdate() {
-            if(!Config.RainEnabled)
+            if(!Config.RainEnabled) {
                 return;
+            }
+
             var rainConfig = Config.Rain;
             rainMask.softness = GetSoftness(rainConfig.Direction);
             RainMaskRt.sizeDelta = GetSizeDelta(rainConfig.Direction);
@@ -385,8 +418,9 @@ namespace KeyViewer.Unity {
             if(Pressed) {
                 rain = rainPool.Get();
                 rain.Press();
-            } else
+            } else {
                 rain?.Release();
+            }
         }
         #endregion
 

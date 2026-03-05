@@ -31,17 +31,23 @@ namespace KeyViewer.Views {
             changed |= NeoDrawer.StaticInstance.DrawInt32(Main.Lang.Get("PROFILE_KPS_UPDATE_RATE", "KPS Update Rate"), ref model.KPSUpdateRate);
             changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("PROFILE_KEY_SPACING", "Key Spacing"), ref model.KeySpacing, 0, 100, 300f);
             changed |= NeoDrawer.StaticInstance.DrawVectorConfig(model.VectorConfig);
-            if(changed)
+            if(changed) {
                 manager.UpdateLayout();
+            }
+
             NeoDrawer.StaticInstance.UpdateFocused();
         }
         public override void OnKeyDown(KeyCode code) {
-            if(code == KeyCode.Mouse0)
+            if(code == KeyCode.Mouse0) {
                 return;
-            if(model.Keys.Any(kc => kc.Code == code))
+            }
+
+            if(model.Keys.Any(kc => kc.Code == code)) {
                 model.Keys.RemoveAll(kc => kc.Code == code);
-            else
+            } else {
                 model.Keys.Add(new KeyConfig() { Code = code });
+            }
+
             manager.UpdateKeys();
         }
         private void DrawKeyConfigGUI() {
@@ -49,8 +55,9 @@ namespace KeyViewer.Views {
             {
                 GUILayout.Label(Main.Lang.Get("PROFILE_REGISTERED_KEYS", "Registered Keys"));
                 if(model.Keys.Any(k => !selectedKeys.Contains(k))) {
-                    if(Drawer.Button(Main.Lang.Get("PROFILE_SELECT_ALL_KEYS", "Select All Keys")))
+                    if(Drawer.Button(Main.Lang.Get("PROFILE_SELECT_ALL_KEYS", "Select All Keys"))) {
                         model.Keys.ForEach(k => selectedKeys.Add(k));
+                    }
                 } else {
                     if(Drawer.Button(Main.Lang.Get("PROFILE_DESELECT_ALL_KEYS", "Deselect All Keys"))) {
                         selectedKeys.Clear();
@@ -72,27 +79,30 @@ namespace KeyViewer.Views {
                             var str = key.DummyName != null ? key.DummyName : key.Code.ToString();
 
                             // ㅄ같은 비동기 때문에 예외조건 추가
-                            if(key.Code == KeyCode.Menu)
+                            if(key.Code == KeyCode.Menu) {
                                 str = "RightAlt";
+                            }
 
                             var selected = selectedKeys.Contains(key);
-                            if(criterion == key)
+                            if(criterion == key) {
                                 str = $"<color=yellow>{str}</color>";
-                            else if(selected)
+                            } else if(selected) {
                                 str = $"<color=cyan>{str}</color>";
+                            }
+
                             if(Drawer.Button(str)) {
                                 if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) {
                                     if(!selectedKeys.Add(key)) {
-                                        if(criterion != key)
+                                        if(criterion != key) {
                                             criterion = key;
-                                        else {
+                                        } else {
                                             selectedKeys.Remove(key);
                                             criterion = null;
                                         }
                                     }
-                                } else if(configMode)
+                                } else if(configMode) {
                                     Main.GUI.Push(new KeyConfigDrawer(manager, key));
-                                else {
+                                } else {
                                     model.Keys.RemoveAt(i);
                                     manager.UpdateKeys();
                                 }
@@ -109,15 +119,19 @@ namespace KeyViewer.Views {
                 GUILayout.BeginHorizontal();
                 {
                     if(Drawer.Button(!listening ? Main.Lang.Get("PROFILE_START_KEY_REGISTERING", "Start Key Register") : Main.Lang.Get("PROFILE_STOP_KEY_REGISTERING", "Stop Key Register"))) {
-                        if(Main.ListeningDrawer != null)
+                        if(Main.ListeningDrawer != null) {
                             Main.ListeningDrawer = null;
-                        else
+                        } else {
                             Main.ListeningDrawer = this;
+                        }
+
                         listening = Main.ListeningDrawer != null;
                     }
                     GUILayout.Space(10);
-                    if(Drawer.Button(!configMode ? string.Format(Main.Lang.Get("MISC_ENABLE", "Enable {0}"), Main.Lang.Get("PROFILE_CONFIGURATION_MODE", "Configuration Mode")) : string.Format(Main.Lang.Get("MISC_DISABLE", "Disable {0}"), Main.Lang.Get("PROFILE_CONFIGURATION_MODE", "Configuration Mode"))))
+                    if(Drawer.Button(!configMode ? string.Format(Main.Lang.Get("MISC_ENABLE", "Enable {0}"), Main.Lang.Get("PROFILE_CONFIGURATION_MODE", "Configuration Mode")) : string.Format(Main.Lang.Get("MISC_DISABLE", "Disable {0}"), Main.Lang.Get("PROFILE_CONFIGURATION_MODE", "Configuration Mode")))) {
                         configMode = !configMode;
+                    }
+
                     GUILayout.Space(10);
                     if(Drawer.Button(Main.Lang.Get("PROFILE_CREATE_DUMMY_KEY", "Create Dummy Key"))) {
                         var dummy = new KeyConfig() { DummyName = string.Format(Main.Lang.Get("PROFILE_DUMMY_NAME", "Dummy {0}"), dummyNumber++) };

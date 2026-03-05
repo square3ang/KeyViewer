@@ -54,8 +54,10 @@ namespace KeyViewer.Core.Input {
         private static Dictionary<int, bool> states;
         private static Dictionary<int, bool> prevStates;
         public static void Initialize() {
-            if(!Main.IsWindows)
+            if(!Main.IsWindows) {
                 return;
+            }
+
             if(firstInit) {
                 Application.quitting += Release;
                 firstInit = false;
@@ -73,8 +75,10 @@ namespace KeyViewer.Core.Input {
 
                 for(int i = 0; i < mappings.Length; i++) {
                     int m = mappings[i];
-                    if(m < 0 || m != (int)code)
+                    if(m < 0 || m != (int)code) {
                         continue;
+                    }
+
                     states[m] = isDown;
                 }
 
@@ -82,8 +86,10 @@ namespace KeyViewer.Core.Input {
             });
         }
         public static void Release() {
-            if(hInstance == null)
+            if(hInstance == null) {
                 return;
+            }
+
             mappings = null;
             states = null;
             prevStates = null;
@@ -98,47 +104,62 @@ namespace KeyViewer.Core.Input {
         }
         public static bool GetState(KeyCode mapping) {
             int m = mappings[(int)mapping];
-            if(m < 0)
+            if(m < 0) {
                 return false;
+            }
+
             return states[m];
         }
         public static IEnumerable<KeyCode> GetMappings() {
-            for(int i = 0; i < mappings.Length; i++)
-                if(mappings[i] >= 0)
+            for(int i = 0; i < mappings.Length; i++) {
+                if(mappings[i] >= 0) {
                     yield return (KeyCode)i;
+                }
+            }
         }
         public static bool TryGetState(KeyCode mapping, out bool state) {
             state = false;
             int m = mappings[(int)mapping];
-            if(m < 0)
+            if(m < 0) {
                 return false;
+            }
+
             state = states[m];
             return state;
         }
 
         public static bool Is(KeyCode mapping) {
             int m = mappings[(int)mapping];
-            if(m < 0 || !prevStates.TryGetValue(m, out bool value))
+            if(m < 0 || !prevStates.TryGetValue(m, out bool value)) {
                 return false;
+            }
+
             return value;
         }
         public static bool IsUp(KeyCode mapping) {
             int m = mappings[(int)mapping];
-            if(m < 0 || !prevStates.TryGetValue(m, out bool value))
+            if(m < 0 || !prevStates.TryGetValue(m, out bool value)) {
                 return true;
+            }
+
             return value && !states[m];
         }
         public static bool IsDown(KeyCode mapping) {
             int m = mappings[(int)mapping];
-            if(m < 0 || !prevStates.TryGetValue(m, out bool value))
+            if(m < 0 || !prevStates.TryGetValue(m, out bool value)) {
                 return false;
+            }
+
             return !value && states[m];
         }
         public static void UpdatePrevStates() {
-            if(!Main.IsWindows)
+            if(!Main.IsWindows) {
                 return;
-            foreach(var m in states.Keys)
+            }
+
+            foreach(var m in states.Keys) {
                 prevStates[m] = states[m];
+            }
         }
 
         static WinInput() {
@@ -179,8 +200,9 @@ namespace KeyViewer.Core.Input {
         public static void SendKeyPress(this WinKeyCode keyCode) {
             PRESS[0].Data.Keyboard.Vk = (ushort)keyCode;
             PRESS[1].Data.Keyboard.Vk = (ushort)keyCode;
-            if(Extern.SendInput(2, PRESS, Marshal.SizeOf(typeof(INPUT))) == 0)
+            if(Extern.SendInput(2, PRESS, Marshal.SizeOf(typeof(INPUT))) == 0) {
                 throw new Exception();
+            }
         }
 
         /// <summary>
@@ -189,8 +211,9 @@ namespace KeyViewer.Core.Input {
         /// <param name="keyCode"></param>
         public static void SendKeyDown(this WinKeyCode keyCode) {
             DOWN[0].Data.Keyboard.Vk = (ushort)keyCode;
-            if(Extern.SendInput(1, DOWN, Marshal.SizeOf(typeof(INPUT))) == 0)
+            if(Extern.SendInput(1, DOWN, Marshal.SizeOf(typeof(INPUT))) == 0) {
                 throw new Exception();
+            }
         }
 
         /// <summary>
@@ -199,9 +222,9 @@ namespace KeyViewer.Core.Input {
         /// <param name="keyCode"></param>
         public static void SendKeyUp(this WinKeyCode keyCode) {
             UP[0].Data.Keyboard.Vk = (ushort)keyCode;
-            if(Extern.SendInput(1, UP, Marshal.SizeOf(typeof(INPUT))) == 0)
+            if(Extern.SendInput(1, UP, Marshal.SizeOf(typeof(INPUT))) == 0) {
                 throw new Exception();
-
+            }
         }
     }
     /// <summary>
