@@ -17,6 +17,9 @@ public class KeyConfigDrawer : ModelDrawable<KeyConfig> {
 
     public static bool IsOpenBoolSettings = false;
 
+    private static readonly KeyCode[] KeyCodeValues = [.. Enum.GetValues(typeof(KeyCode)).Cast<KeyCode>().OrderBy(k => (int)k)];
+    private static readonly string[] KeyCodeNames = [.. KeyCodeValues.Select(k => k.ToString())];
+
     public override void Draw() {
         NeoDrawer.StaticInstance.FieldResetId();
 
@@ -27,14 +30,10 @@ public class KeyConfigDrawer : ModelDrawable<KeyConfig> {
         } else {
             GUILayout.BeginHorizontal();
             {
-                int current = (int)model.Code;
-                bool result = Drawer.SelectionPopup(
-                    ref current,
-                    Enum.GetNames(typeof(KeyCode)),
-                    $"{Main.Lang.Get("KEY_CODE", "Key Code")}{(model.Code == KeyCode.Menu ? $" ({Main.Lang.Get("FAKE", "Fake")})" : "")}"
-                );
+                int current = Array.IndexOf(KeyCodeValues, model.Code);
+                bool result = Drawer.SelectionPopup(ref current, KeyCodeNames, $"{Main.Lang.Get("KEY_CODE", "Key Code")}");
                 if(result) {
-                    model.Code = (KeyCode)current;
+                    model.Code = KeyCodeValues[current]; 
                 }
             }
             GUILayout.FlexibleSpace();
