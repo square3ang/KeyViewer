@@ -16,7 +16,7 @@ public class EaseConfig : IModel, ICopyable<EaseConfig> {
     }
     public Ease Ease = Ease.Unset;
     public float Duration = 0;
-    public bool IsValid => Ease != Ease.Unset && Duration > 0f;
+    public bool IsValid => Ease != Ease.Unset;
     public EaseConfig Copy() {
         var config = new EaseConfig {
             Ease = Ease,
