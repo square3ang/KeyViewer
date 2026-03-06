@@ -6,7 +6,6 @@ using KeyViewer.Core.TextReplacing;
 using KeyViewer.Core.Translation;
 using KeyViewer.Migration.V3;
 using KeyViewer.Models;
-using KeyViewer.Patches;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
 using KeyViewer.Views;
@@ -35,7 +34,6 @@ public static class Main {
     public static ModLogger Logger { get; private set; }
     public static Settings Settings { get; private set; }
     public static Dictionary<string, KeyManager> Managers { get; private set; }
-    public static bool BlockInput { get; internal set; }
     public static ModelDrawable<Profile> ListeningDrawer { get; internal set; }
     public static Harmony Harmony { get; private set; }
     public static GUIController GUI { get; private set; }
@@ -68,7 +66,6 @@ public static class Main {
             Tag.InitializeWrapperAssembly();
             FontManager.Initialize();
             AssetManager.Initialize();
-            JudgementColorPatch.Initialize();
             Settings = new Settings();
             if(File.Exists(Constants.SettingsPath)) {
                 var json = JToken.Parse(File.ReadAllText(Constants.SettingsPath));
@@ -135,7 +132,6 @@ public static class Main {
             ToDeleteFiles = null;
             Harmony.UnpatchAll(Harmony.Id);
             Harmony = null;
-            JudgementColorPatch.Release();
             //AssetManager.Release();
             FontManager.Release();
             WinInput.Release();
@@ -181,14 +177,12 @@ public static class Main {
         }
     }
     public static void OnShowGUI(ModEntry modEntry) {
-        BlockInput = true;
         GUI.Flush();
         ListeningDrawer = null;
     }
     public static void OnHideGUI(ModEntry modEntry) {
         GUI.Flush();
         ListeningDrawer = null;
-        BlockInput = false;
     }
     public static void OnLateUpdate(ModEntry modEntry, float deltaTime) => WinInput.UpdatePrevStates();
     public static void OnLanguageInitialize() {

@@ -17,8 +17,6 @@ public class Key_Config {
     public bool Gradient = false;
     public bool Editing = false;
     public string KeyTitle = null;
-    public bool ChangeBgColorJudge = false;
-    public bool ChangeRainColorJudge = false;
     public float Width = 100;
     public float Height = 100;
     [XmlIgnore]

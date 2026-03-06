@@ -93,7 +93,6 @@ public class V2Migrator {
                 conf.TextFontSize = keySetting.TextF;
                 conf.CountTextFontSize = keySetting.CTextF;
             }
-            conf.ChangeBgColorJudge = Settings.ColorAsJudge;
             conf.TooEarlyColor = Settings.TE;
             conf.VeryEarlyColor = Settings.VE;
             conf.EarlyPerfectColor = Settings.EP;

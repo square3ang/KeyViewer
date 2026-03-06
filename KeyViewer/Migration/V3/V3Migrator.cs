@@ -73,36 +73,6 @@ public class V3Migrator {
             v4Config.RainEnabled = true;
             v4Config.Rain = MigrateRain(keyConfig.RainConfig);
         }
-        if(keyConfig.ChangeBgColorJudge) {
-            var bgConfig = v4Config.BackgroundConfig;
-            bgConfig.ChangeColorWithJudge = true;
-            var jc = bgConfig.JudgeColors = new Models.JudgeM<Models.GColor>();
-            jc.TooEarly = keyConfig.TooEarlyColor;
-            jc.VeryEarly = keyConfig.VeryEarlyColor;
-            jc.EarlyPerfect = keyConfig.EarlyPerfectColor;
-            jc.Perfect = keyConfig.PerfectColor;
-            jc.LatePerfect = keyConfig.LatePerfectColor;
-            jc.VeryLate = keyConfig.VeryLateColor;
-            jc.TooLate = keyConfig.TooLateColor;
-            jc.Multipress = keyConfig.MultipressColor;
-            jc.FailMiss = keyConfig.FailMissColor;
-            jc.FailOverload = keyConfig.FailOverloadColor;
-        }
-        if(v4Config.RainEnabled && keyConfig.ChangeRainColorJudge) {
-            var rainConfig = v4Config.Rain;
-            rainConfig.ObjectConfig.ChangeColorWithJudge = true;
-            var jc = rainConfig.ObjectConfig.JudgeColors = new Models.JudgeM<Models.GColor>();
-            jc.TooEarly = keyConfig.TooEarlyColor;
-            jc.VeryEarly = keyConfig.VeryEarlyColor;
-            jc.EarlyPerfect = keyConfig.EarlyPerfectColor;
-            jc.Perfect = keyConfig.PerfectColor;
-            jc.LatePerfect = keyConfig.LatePerfectColor;
-            jc.VeryLate = keyConfig.VeryLateColor;
-            jc.TooLate = keyConfig.TooLateColor;
-            jc.Multipress = keyConfig.MultipressColor;
-            jc.FailMiss = keyConfig.FailMissColor;
-            jc.FailOverload = keyConfig.FailOverloadColor;
-        }
         var keyHeight = showCountText ? 150 : 100;
         double rawHeight = keyConfig.Height - 100;
         double scaleUnit = 1d / keyHeight;

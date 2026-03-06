@@ -357,7 +357,6 @@
     <Compile Include="Models\EaseConfig.cs" />
     <Compile Include="Models\FileReference.cs" />
     <Compile Include="Models\GColor.cs" />
-    <Compile Include="Models\Judge.cs" />
     <Compile Include="Models\KeyConfig.cs" />
     <Compile Include="Models\Metadata.cs" />
     <Compile Include="Models\PressRelease.cs" />
@@ -371,10 +370,6 @@
     <Compile Include="Models\RainImageDisplayMode.cs" />
     <Compile Include="Models\VectorConfig.cs" />
     <Compile Include="Models\ObjectConfig.cs" />
-    <Compile Include="Patches\AssassinationPatch.cs" />
-    <Compile Include="Patches\BlockInputPatch.cs" />
-    <Compile Include="Patches\JudgementColorPatch.cs" />
-    <Compile Include="Patches\KeyLimiterPatch.cs" />
     <Compile Include="Patches\OnResetScenePatch.cs" />
     <Compile Include="Patches\RemoveFuckingUMMDummyLogPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
