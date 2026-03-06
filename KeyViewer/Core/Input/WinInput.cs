@@ -147,15 +147,6 @@ public static class WinInput {
         return KeyCode.None;
     }
 
-    public static int KeyCodeToInt(KeyCode code) {
-        foreach(var pair in keyTable) {
-            if(pair.Key == code) {
-                return pair.Value;
-            }
-        }
-        return 0;
-    }
-
     public static List<int> KeyCodeToInts(KeyCode code) => [.. keyTable.Where(pair => pair.Key == code).Select(pair => pair.Value)];
 
     private static readonly KeyValuePair<KeyCode, int>[] keyTable = [
