@@ -1,5 +1,4 @@
-﻿using KeyViewer.API;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,8 +6,6 @@ using System.Reflection.Emit;
 using System.Text;
 
 namespace KeyViewer.Core.TextReplacing;
-
-[Comment("From Overlayer.Core.Tags.Replacer")]
 public class Replacer {
     public List<Tag> Tags { get; }
     public List<Tag> References { get; }

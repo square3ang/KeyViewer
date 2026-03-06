@@ -317,7 +317,7 @@ public class NeoDrawer {
         bool prevGe = color.gradientEnabled;
         bool ge = prevGe;
 
-        if(canEnableGradient && Drawer.DrawBool(Drawer.Icon_Gradation, Main.Lang.Get("MISC_ENABLE_GRADIENT", "Enable Gradient"), ref ge)) {
+        if(canEnableGradient && Drawer.DrawBool(Drawer.Icon_Gradation, Main.Lang.Get("ENABLE_GRADIENT", "Enable Gradient"), ref ge)) {
             color = color with { gradientEnabled = ge };
         }
 

@@ -16,7 +16,7 @@ public class MultipleRainConfigDrawer : ModelDrawable<RainConfig> {
 
     public MultipleRainConfigDrawer(KeyManager manager, List<string> targetNames, RainConfig criterion)
         : base(criterion ?? new RainConfig(),
-              string.Format(Main.Lang.Get("RAINCONFIG_RAIN_CONFIGURATION", "Key {0} Rain Configuration"),
+              string.Format(Main.Lang.Get("RAIN_CONFIGURATION", "Key {0} Rain Configuration"),
               KeyViewerUtils.AggregateComma(targetNames))) {
         this.manager = manager;
 

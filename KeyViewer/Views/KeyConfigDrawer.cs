@@ -75,7 +75,6 @@ public class KeyConfigDrawer : ModelDrawable<KeyConfig> {
             changed |= Drawer.DrawBool(Main.Lang.Get("UPDATE_TEXT_ALWAYS", "Update Text Always"), ref model.UpdateTextAlways);
             changed |= Drawer.DrawBool(Main.Lang.Get("DISABLE_SORTING", "Disable Sorting"), ref model.DisableSorting);
             changed |= Drawer.DrawBool(Main.Lang.Get("DO_NOT_SCALE_TEXT", "Do Not Scale Text"), ref model.DoNotScaleText);
-
         }
         changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("TEXT_FONT_SIZE", "Text Font Size"), ref model.TextFontSize, 0, 300, 300);
         changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("COUNT_TEXT_FONT_SIZE", "Count Text Font Size"), ref model.CountTextFontSize, 0, 300, 300);

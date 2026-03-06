@@ -1,5 +1,4 @@
-﻿using KeyViewer.API;
-using KeyViewer.Utils;
+﻿using KeyViewer.Utils;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,8 +6,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 namespace KeyViewer.Core.TextReplacing;
-
-[Comment("From Overlayer.Core.Tags.Tag")]
 public class Tag {
     public string Name { get; }
     public bool Referenced => ReferencedCount > 0;

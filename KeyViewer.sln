@@ -1,15 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32516.85
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11520.95 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyViewer", "KeyViewer\KeyViewer.csproj", "{C6FD7749-0E74-4798-AA33-69BB08DC1402}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyViewer.Scripting.Bootstrapper", "KeyViewer.Scripting.Bootstrapper\KeyViewer.Scripting.Bootstrapper.csproj", "{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyViewer.WebAPI", "KeyViewer.WebAPI\KeyViewer.WebAPI.csproj", "{1F9D7EB4-6B54-4FDF-BB52-156C46751599}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyViewer.OverlayerAdapter", "KeyViewer.OverlayerAdapter\KeyViewer.OverlayerAdapter.csproj", "{6102EFBD-13D4-4D90-B39E-713C4021AED7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +15,6 @@ Global
 		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15AF7240-ADB1-42B7-953E-894A8D0CD2EF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1F9D7EB4-6B54-4FDF-BB52-156C46751599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1F9D7EB4-6B54-4FDF-BB52-156C46751599}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F9D7EB4-6B54-4FDF-BB52-156C46751599}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1F9D7EB4-6B54-4FDF-BB52-156C46751599}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6102EFBD-13D4-4D90-B39E-713C4021AED7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6102EFBD-13D4-4D90-B39E-713C4021AED7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6102EFBD-13D4-4D90-B39E-713C4021AED7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6102EFBD-13D4-4D90-B39E-713C4021AED7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

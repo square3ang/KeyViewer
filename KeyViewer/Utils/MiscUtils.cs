@@ -1,5 +1,4 @@
-﻿using KeyViewer.API;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
@@ -8,7 +7,6 @@ using UnityEngine;
 
 namespace KeyViewer.Utils;
 
-[Comment("From Overlayer.Core.Utils.MiscUtils")]
 public static class MiscUtils {
     static MiscUtils() => loadedAsss = AppDomain.CurrentDomain.GetAssemblies();
     public static Assembly[] loadedAsss { get; private set; }
@@ -76,4 +74,6 @@ public static class MiscUtils {
         target ??= TypeByName(typemethod[0]).GetMethod(typemethod[1], (BindingFlags)15420);
         return target;
     }
+
+    public static bool IsHovering() => (Event.current.type == EventType.Repaint || Event.current.type == EventType.Layout) && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition);
 }

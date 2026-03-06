@@ -1,5 +1,4 @@
-﻿using KeyViewer.API;
-using KeyViewer.Core;
+﻿using KeyViewer.Core;
 using KeyViewer.Core.Input;
 using KeyViewer.Core.TextReplacing;
 using KeyViewer.Models;
@@ -274,6 +273,13 @@ public class Key : MonoBehaviour {
     #endregion
 
     #region Update
+    private void OnEnable() => WinInput.OnKeyDown += HandleAsyncCount;
+    private void OnDisable() => WinInput.OnKeyDown -= HandleAsyncCount;
+    private void HandleAsyncCount(int code) {
+        if(WinInput.IntToKeyCode(code) == Config.Code) {
+            Config.Count++;
+        }
+    }
     private void Update() {
         if(!initialized) {
             return;
@@ -287,27 +293,23 @@ public class Key : MonoBehaviour {
             return;
         }
 
-        Pressed = InputAPI.Active ? InputAPI.APIFlags.TryGetValue(Config.Code, out var p) && p : KeyInput.GetKey(Config.Code);
-        /*for (int i = 0; i < Config.Codes.Length; i++)
-Pressed |= KeyInput.GetKey(Config.Codes[i]);*/
+        Pressed = KeyInput.GetKey(Config.Code);
+
         if(prevPressed == Pressed) {
             return;
         }
 
         prevPressed = Pressed;
-        if(Pressed) {
-            if(InputAPI.EventActive) {
-                InputAPI.KeyPress(this);
-            }
 
-            Config.Count++;
+        if(Pressed) {
+            if(!Main.IsWindows || !Main.Settings.UseWindowsAsyncInput) {
+                Config.Count++;
+            }
             if(Config.EnableKPSMeter) {
                 KpsCalc.Press();
             }
 
             Manager.kpsCalc.Press();
-        } else if(InputAPI.EventActive) {
-            InputAPI.KeyRelease(this);
         }
 
         if(!Config.UpdateTextAlways) {

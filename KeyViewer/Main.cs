@@ -14,10 +14,12 @@ using Newtonsoft.Json.Linq;
 using Overlayer.Core;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using UnityEngine;
 using static UnityModManagerNet.UnityModManager;
@@ -41,6 +43,7 @@ public static class Main {
     public static event Action OnManagersInitialized = delegate { };
     public static bool IsWindows { get; private set; }
     public static string ProfilePath;
+    public static string Tooltip = "";
     public static void Load(ModEntry modEntry) {
         Mod = modEntry;
         ProfilePath = Path.Combine(Mod.Path, "profiles");
@@ -55,22 +58,32 @@ public static class Main {
         modEntry.OnSaveGUI = OnSaveGUI;
         modEntry.OnShowGUI = OnShowGUI;
         modEntry.OnHideGUI = OnHideGUI;
-        modEntry.OnLateUpdate += OnLateUpdate;
-        // Temporary fix
-        // IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
     }
     public static bool OnToggle(ModEntry modEntry, bool toggle) {
         if(toggle) {
-            // Temporary fix
-            // WinInput.Initialize();
-            Tag.InitializeWrapperAssembly();
-            FontManager.Initialize();
-            AssetManager.Initialize();
             Settings = new Settings();
             if(File.Exists(Constants.SettingsPath)) {
                 var json = JToken.Parse(File.ReadAllText(Constants.SettingsPath));
                 Settings.Deserialize(json);
             }
+
+            if(IsWindows && Settings.UseWindowsAsyncInput) {
+                WinInput.StartPolling(Settings.PollingRate);
+            }
+
+            WinInput.OnKeyDown += code => {
+                MainThreadDispatcher.Enqueue(() => {
+                    KeyCode k = WinInput.IntToKeyCode(code);
+                    if(k != KeyCode.None) {
+                        ListeningDrawer?.OnKeyDown(k);
+                    }
+                });
+            };
+
+            Tag.InitializeWrapperAssembly();
+            FontManager.Initialize();
+            AssetManager.Initialize();
 
             Managers = [];
             ToDeleteFiles = [];
@@ -132,9 +145,11 @@ public static class Main {
             ToDeleteFiles = null;
             Harmony.UnpatchAll(Harmony.Id);
             Harmony = null;
+            if(IsWindows) {
+                WinInput.Dispose();
+            }
             //AssetManager.Release();
             FontManager.Release();
-            WinInput.Release();
             Tag.ReleaseWrapperAssembly();
             Resources.UnloadUnusedAssets();
             Lang.Release();
@@ -142,14 +157,25 @@ public static class Main {
         }
         return true;
     }
+    public static class MainThreadDispatcher {
+        private static readonly ConcurrentQueue<Action> queue = new();
+        public static void Enqueue(Action action) {
+            queue.Enqueue(action);
+        }
+        public static void Update() {
+            while(queue.TryDequeue(out var action)) {
+                action.Invoke();
+            }
+        }
+    }
     public static void OnUpdate(ModEntry modEntry, float deltaTime) {
         if(scrController.instance && scrConductor.instance) {
             IsPlaying = !scrController.instance.paused && scrConductor.instance.isGameWorld;
         }
 
-        if(ListeningDrawer != null) {
-            foreach(var code in EnumHelper<KeyCode>.GetValues()) {
-                if(Input.GetKeyDown(code)) {
+        if(ListeningDrawer != null && (!IsWindows || !Settings.UseWindowsAsyncInput)) {
+            foreach(KeyCode code in Enum.GetValues(typeof(KeyCode))) {
+                if(KeyInput.GetKeyDown(code)) {
                     ListeningDrawer.OnKeyDown(code);
                 }
             }
@@ -165,8 +191,16 @@ public static class Main {
                 manager.gameObject.SetActive(showViewer);
             }
         }
+
+        MainThreadDispatcher.Update();
     }
-    public static void OnGUI(ModEntry modEntry) => GUI.Draw();
+    public static void OnGUI(ModEntry modEntry) {
+        GUI.Draw();
+        if(Settings.UseTooltip) {
+            Drawer.Tooltip(Tooltip);
+            Tooltip = null;
+        }
+    }
     public static void OnSaveGUI(ModEntry modEntry) {
         File.WriteAllText(Constants.SettingsPath, Settings.Serialize().ToString());
         foreach(var (name, manager) in Managers) {
@@ -184,7 +218,6 @@ public static class Main {
         GUI.Flush();
         ListeningDrawer = null;
     }
-    public static void OnLateUpdate(ModEntry modEntry, float deltaTime) => WinInput.UpdatePrevStates();
     public static void OnLanguageInitialize() {
         string[] translatorLogs = Lang.Logs;
         if(translatorLogs != null && translatorLogs.Length > 0) {

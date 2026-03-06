@@ -1,6 +1,8 @@
 ﻿using KeyViewer.Core;
+using KeyViewer.Core.Input;
 using KeyViewer.Core.Translation;
 using KeyViewer.Models;
+using KeyViewer.Utils;
 using RapidGUI;
 using SFB;
 using System;
@@ -11,9 +13,7 @@ using UnityEngine;
 
 namespace KeyViewer.Views;
 
-public class SettingsDrawer : ModelDrawable<Settings> {
-    public SettingsDrawer(Settings settings) : base(settings, Main.Lang.Get("SETTINGS", "Settings")) { }
-
+public class SettingsDrawer(Settings settings) : ModelDrawable<Settings>(settings, Main.Lang.Get("SETTINGS", "Settings")) {
     private bool isOpenedExtraMenu = false;
     private string[] languages;
     private string[] userLanguages;
@@ -138,16 +138,85 @@ public class SettingsDrawer : ModelDrawable<Settings> {
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
         if(isOpenedExtraMenu) {
-            if(Drawer.DrawBool(string.Format(Main.Lang.Get("USE_THIS", "Use {0}"), Main.Lang.Get("LEGACY_THEME", "Legacy Theme")), ref model.useLegacyTheme)) {
+            if(Drawer.DrawBool(string.Format(Main.Lang.Get("USE_THIS", "Use {0}"), Main.Lang.Get("LEGACY_THEME", "Legacy Theme")), ref model.UseLegacyTheme)) {
                 reaction = true;
-                Drawer.SetStyle(model.useLegacyTheme);
+                Drawer.SetStyle(model.UseLegacyTheme);
                 RGUIStyle.CreateStyles();
+            }
+            if(Main.IsWindows) {
+                if(Drawer.DrawBool(string.Format(Main.Lang.Get("USE_THIS", "Use {0}"), Main.Lang.Get("WIN_ASYNC_INPUT", "Windows Async Input")), ref model.UseWindowsAsyncInput)) {
+                    reaction = true;
+                    if(model.UseWindowsAsyncInput) {
+                        WinInput.StartPolling(model.PollingRate);
+                    } else {
+                        WinInput.StopPolling();
+                    }
+                }
+                if(MiscUtils.IsHovering()) {
+                    Main.Tooltip = Main.Lang.Get("WIN_ASYNC_DESC", "Uses <color=cyan>GetAsyncKeyState</color> on Windows to update key states.");
+                }
+                if(model.UseWindowsAsyncInput) {
+                    GUILayout.Label($"<b>{Main.Lang.Get("POLLINGRATE", "Polling Rate")}</b>");
+
+                    GUILayout.BeginHorizontal();
+                    Color old = GUI.color;
+
+                    PollingRate[] rates = {
+                        PollingRate.HzMonitor,
+                        PollingRate.Hz250,
+                        PollingRate.Hz500,
+                        PollingRate.Hz1000,
+                        PollingRate.Hz2000,
+                        PollingRate.Hz4000
+                    };
+
+                    foreach(var rate in rates) {
+                        Color col = old;
+
+                        if(model.PollingRate == rate) {
+                            switch(rate) {
+                                case PollingRate.HzMonitor:
+                                    col = Color.green;
+                                    break;
+                                case PollingRate.Hz250:
+                                case PollingRate.Hz500:
+                                case PollingRate.Hz1000:
+                                    col = Color.cyan;
+                                    break;
+                                case PollingRate.Hz2000:
+                                    col = Color.yellow;
+                                    break;
+                                case PollingRate.Hz4000:
+                                    col = Color.red;
+                                    break;
+                            }
+                        }
+
+                        GUI.color = col;
+
+                        if(Drawer.Button(rate.ToString(), GUILayout.Width(80f))) {
+                            reaction = true;
+                            model.PollingRate = rate;
+                            WinInput.SetPollingRate(rate);
+                        }
+                        if(MiscUtils.IsHovering()) {
+                            Main.Tooltip = rate switch {
+                                PollingRate.Hz4000 => Main.Lang.Get("POLLINGRATE_DESC_DANGER", "Extremely high polling rate.\nMay heavily increase CPU usage."),
+                                PollingRate.Hz2000 => Main.Lang.Get("POLLINGRATE_DESC_WARN", "Suitable polling rate for high-end systems.\nSome CPU load may occur."),
+                                _ => Main.Lang.Get("POLLINGRATE_DESC_NORMAL", "Acceptable polling rate for almost every hardware configuration."),
+                            };
+                        }
+                    }
+
+                    GUI.color = old;
+                    GUILayout.EndHorizontal();
+                }
             }
         }
         GUILayout.BeginHorizontal();
-        if(Drawer.Button(Main.Lang.Get("SETTINGS_IMPORT_PROFILE", "Import Profile"))) {
+        if(Drawer.Button(Main.Lang.Get("IMPORT_PROFILE", "Import Profile"))) {
             reaction = true;
-            var profiles = StandaloneFileBrowser.OpenFilePanel(Main.Lang.Get("SETTINGS_SELECT_PROFILE", "Select Profile"), Main.ProfilePath, new[] { new ExtensionFilter("V4", "json"), new ExtensionFilter("V3", "xml"), }, true);
+            var profiles = StandaloneFileBrowser.OpenFilePanel(Main.Lang.Get("SELECT_PROFILE", "Select Profile"), Main.ProfilePath, new[] { new ExtensionFilter("V4", "json"), new ExtensionFilter("V3", "xml"), }, true);
             foreach(var profile in profiles) {
                 FileInfo file = new(profile);
                 if(file.Extension == ".json") {
@@ -163,7 +232,7 @@ public class SettingsDrawer : ModelDrawable<Settings> {
                 }
             }
         }
-        if(Drawer.Button(Main.Lang.Get("SETTINGS_CREATE_PROFILE", "Create New Profile"))) {
+        if(Drawer.Button(Main.Lang.Get("CREATE_PROFILE", "Create New Profile"))) {
             reaction = true;
             var profile = new ActiveProfile(GetNewProfileName(), true);
             model.ActiveProfiles.Add(profile);
@@ -171,7 +240,7 @@ public class SettingsDrawer : ModelDrawable<Settings> {
             File.WriteAllText(Path.Combine(Main.ProfilePath, $"{profile.Name}.json"), newProfile.Serialize().ToString());
             Main.AddManager(profile, true);
         }
-        if(Drawer.Button(Main.Lang.Get("SETTINGS_OPEN_MOD_DIR", "Open Mod Directory"))) {
+        if(Drawer.Button(Main.Lang.Get("OPEN_MOD_DIR", "Open Mod Directory"))) {
             reaction = true;
             Application.OpenURL(Path.GetFullPath(Main.Mod.Path));
         }
@@ -224,7 +293,7 @@ public class SettingsDrawer : ModelDrawable<Settings> {
             GUI.color = new Color(1f, 0.8f, 1f);
             if(Drawer.Button(Main.Lang.Get("EXPORT", "Export"))) {
                 reaction = true;
-                string target = StandaloneFileBrowser.SaveFilePanel(Main.Lang.Get("SETTINGS_SELECT_PROFILE", "Select Profile"), Persistence.GetLastUsedFolder(), $"{profile.Name}.json", "json");
+                string target = StandaloneFileBrowser.SaveFilePanel(Main.Lang.Get("SELECT_PROFILE", "Select Profile"), Persistence.GetLastUsedFolder(), $"{profile.Name}.json", "json");
                 if(!string.IsNullOrWhiteSpace(target)) {
                     Profile p = Main.Managers[profile.Name].profile;
                     var node = p.Serialize();

@@ -1,5 +1,4 @@
-﻿using KeyViewer.API;
-using KeyViewer.Models;
+﻿using KeyViewer.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -7,7 +6,6 @@ using System.Text;
 
 namespace KeyViewer.Utils;
 
-[Comment("From Overlayer.Core.Utils")]
 public static class IOUtils {
     public static byte[] Zip(params RawFile[] rFiles) {
         using(MemoryStream ms = new()) {

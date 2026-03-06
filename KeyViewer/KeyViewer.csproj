@@ -311,8 +311,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API\CommentAttribute.cs" />
-    <Compile Include="API\InputAPI.cs" />
     <Compile Include="Core\AssetManager.cs" />
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Core\DllImporter.cs" />
@@ -425,7 +423,6 @@
     <Compile Include="rapidgui\RGUI\Scope\PrefixLabelIndentScope.cs" />
     <Compile Include="rapidgui\RGUI\Slider.cs" />
     <Compile Include="rapidgui\RGUI\Slider\RecursiveSlider.cs" />
-    <Compile Include="ReplayInput.cs" />
     <Compile Include="Unity\Key.cs" />
     <Compile Include="Unity\Matrix2x3.cs" />
     <Compile Include="Unity\KeyManager.cs" />

@@ -15,7 +15,7 @@ public static class Drawer {
 
         GUILayout.BeginHorizontal();
 
-        if(Main.Settings.useLegacyTheme) {
+        if(Main.Settings.UseLegacyTheme) {
             value = GUILayout.Toggle(value, "");
         } else {
             var old = GUI.backgroundColor;
@@ -47,7 +47,7 @@ public static class Drawer {
 
         GUILayout.BeginHorizontal();
 
-        if(Main.Settings.useLegacyTheme) {
+        if(Main.Settings.UseLegacyTheme) {
             value = GUILayout.Toggle(value, "");
         } else {
             var old = GUI.backgroundColor;
@@ -81,7 +81,7 @@ public static class Drawer {
     public static bool DrawOnlyBool(ref bool value) {
         bool prev = value;
 
-        if(Main.Settings.useLegacyTheme) {
+        if(Main.Settings.UseLegacyTheme) {
             value = GUILayout.Toggle(value, "");
         } else {
             var old = GUI.backgroundColor;
@@ -307,6 +307,13 @@ public static class Drawer {
 
         GUI.color = old;
         return changed;
+    }
+
+    public static void TooltipAuto(string text, bool ignoreWidth = false) {
+        Rect lastRect = GUILayoutUtility.GetLastRect();
+        if(lastRect.Contains(Event.current.mousePosition)) {
+            Tooltip(text, ignoreWidth);
+        }
     }
 
     public static void Tooltip(string text, bool ignoreWidth = false) {
@@ -665,7 +672,7 @@ public static class Drawer {
         myTextField.padding.right = 40;
         mySlider = new GUIStyle(GUI.skin.horizontalSlider);
         myThumb = new GUIStyle(GUI.skin.horizontalSliderThumb);
-        SetStyle(Main.Settings.useLegacyTheme);
+        SetStyle(Main.Settings.UseLegacyTheme);
 
         nopadButton = new GUIStyle(myButton) {
             padding = new RectOffset(0, 0, 0, 0),
