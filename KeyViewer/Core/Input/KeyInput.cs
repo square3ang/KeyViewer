@@ -16,9 +16,12 @@ public static class KeyInput {
 
     public static bool GetKey(KeyCode code) {
         if(Main.IsWindows && Main.Settings.UseWindowsAsyncInput && Application.isFocused) {
-            int vk = WinInput.KeyCodeToInt(code);
-            if(vk != 0) {
-                return WinInput.TryGetKeyState(vk, out bool state) && state;
+            var vks = WinInput.KeyCodeToInts(code);
+            if(vks.Count > 0) {
+                foreach(var vk in vks) {
+                    if(WinInput.TryGetKeyState(vk, out bool state) && state)
+                        return true;
+                }
             }
             return false;
         }

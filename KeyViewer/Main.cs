@@ -73,12 +73,12 @@ public static class Main {
             }
 
             WinInput.OnKeyDown += code => {
-                MainThreadDispatcher.Enqueue(() => {
-                    KeyCode k = WinInput.IntToKeyCode(code);
-                    if(k != KeyCode.None) {
+                KeyCode k = WinInput.IntToKeyCode(code);
+                if(k != KeyCode.None) {
+                    MainThreadDispatcher.Enqueue(() => {
                         ListeningDrawer?.OnKeyDown(k);
-                    }
-                });
+                    });
+                }
             };
 
             Tag.InitializeWrapperAssembly();

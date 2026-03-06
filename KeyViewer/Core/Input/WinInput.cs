@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using UnityEngine;
@@ -89,13 +90,13 @@ public static class WinInput {
             keyStates[vk - 1] = curr;
 
             if(curr != prev) {
-                //int vkCopy = vk;
+                int vkCopy = vk;
                 if(curr) {
                     OnKeyDown?.Invoke(vk);
-                    //Main.MainThreadDispatcher.Enqueue(() => Main.Logger.Log($"Key Down: {vkCopy:X2}"));
+                    Main.MainThreadDispatcher.Enqueue(() => Main.Logger.Log($"Key Down: {vkCopy:X2}"));
                 } else {
                     OnKeyUp?.Invoke(vk);
-                    //Main.MainThreadDispatcher.Enqueue(() => Main.Logger.Log($"Key Up: {vkCopy:X2}"));
+                    Main.MainThreadDispatcher.Enqueue(() => Main.Logger.Log($"Key Up: {vkCopy:X2}"));
                 }
             }
 
@@ -154,6 +155,8 @@ public static class WinInput {
         }
         return 0;
     }
+
+    public static List<int> KeyCodeToInts(KeyCode code) => [.. keyTable.Where(pair => pair.Key == code).Select(pair => pair.Value)];
 
     private static readonly KeyValuePair<KeyCode, int>[] keyTable = [
         new(KeyCode.Mouse0, 0x01),
