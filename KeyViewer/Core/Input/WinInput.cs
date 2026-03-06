@@ -90,13 +90,13 @@ public static class WinInput {
             keyStates[vk - 1] = curr;
 
             if(curr != prev) {
-                int vkCopy = vk;
+                //int vkCopy = vk;
                 if(curr) {
                     OnKeyDown?.Invoke(vk);
-                    Main.MainThreadDispatcher.Enqueue(() => Main.Logger.Log($"Key Down: {vkCopy:X2}"));
+                    //Main.MainThreadDispatcher.Enqueue(() => Main.Logger.Log($"Key Down: {vkCopy:X2}"));
                 } else {
                     OnKeyUp?.Invoke(vk);
-                    Main.MainThreadDispatcher.Enqueue(() => Main.Logger.Log($"Key Up: {vkCopy:X2}"));
+                    //Main.MainThreadDispatcher.Enqueue(() => Main.Logger.Log($"Key Up: {vkCopy:X2}"));
                 }
             }
 
