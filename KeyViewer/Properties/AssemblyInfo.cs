@@ -17,11 +17,9 @@ using System.Runtime.InteropServices;
 [assembly: Guid("c6fd7749-0e74-4798-aa33-69bb08dc1402")]
 
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("4.12.1")]
+[assembly: AssemblyFileVersion("4.13.0")]
 
 [assembly: NeutralResourcesLanguage("")]
 
 [assembly: InternalsVisibleTo("Overlayer")]
 [assembly: InternalsVisibleTo("Overlayer.Scripting")]
-[assembly: InternalsVisibleTo("KeyViewer.Scripting")]
-[assembly: InternalsVisibleTo("KeyViewer.OverlayerAdapter")]
