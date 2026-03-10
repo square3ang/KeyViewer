@@ -1,4 +1,5 @@
 ﻿using KeyViewer.Core;
+using KeyViewer.Core.Input;
 using KeyViewer.Models;
 using KeyViewer.Unity;
 using KeyViewer.Utils;
@@ -85,9 +86,18 @@ public class ProfileDrawer : ModelDrawable<Profile> {
                         }
 
                         if(Drawer.Button(str)) {
-                            if(configMode) {
+                            if(KeyInput.Shift) {
+                                if(!selectedKeys.Add(key)) {
+                                    if(criterion != key)
+                                        criterion = key;
+                                    else {
+                                        selectedKeys.Remove(key);
+                                        criterion = null;
+                                    }
+                                }
+                            } else if(configMode)
                                 Main.GUI.Push(new KeyConfigDrawer(manager, key));
-                            } else {
+                            else {
                                 model.Keys.RemoveAt(i);
                                 manager.UpdateKeys();
                             }
