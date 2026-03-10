@@ -273,13 +273,32 @@ public class Key : MonoBehaviour {
     #endregion
 
     #region Update
-    private void OnEnable() => WinInput.OnKeyDown += HandleAsyncCount;
-    private void OnDisable() => WinInput.OnKeyDown -= HandleAsyncCount;
+
+    private void OnEnable() {
+        WinInput.OnKeyDown += HandleAsyncCount;
+        WinInput.OnKeyUp += HandleAsyncUp;
+    }
+    private void OnDisable() {
+        WinInput.OnKeyDown -= HandleAsyncCount;
+        WinInput.OnKeyUp -= HandleAsyncUp;
+    }
+    private bool _pressed;
+
     private void HandleAsyncCount(int code) {
         if(WinInput.IntToKeyCode(code) == Config.Code) {
-            Config.Count++;
+            if(!_pressed) {
+                _pressed = true;
+                Config.Count++;
+            }
         }
     }
+
+    private void HandleAsyncUp(int code) {
+        if(WinInput.IntToKeyCode(code) == Config.Code) {
+            _pressed = false;
+        }
+    }
+
     private void Update() {
         if(!initialized) {
             return;
