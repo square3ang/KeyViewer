@@ -84,6 +84,7 @@
     "MAKE_BAR": "创建条形键",
     "MISC": "杂项",
     "MULTI_PRESS": "<color=#00FFED>多次按下</color>",
+    "OBJECT_CONFIGURATION": "Key {0} {1} Configuration",
     "OBJECTCONFIG_FROM": "{0} 对象的设置",
     "OFFSET": "偏移",
     "OFFSET_EASE": "偏移缓速",

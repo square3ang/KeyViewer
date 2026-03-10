@@ -84,6 +84,7 @@
     "MAKE_BAR": "Make Bar Key",
     "MISC": "Miscellaneous",
     "MULTI_PRESS": "<color=#00FFED>Multipress</color>",
+    "OBJECT_CONFIGURATION": "Key {0} {1} Configuration",
     "OBJECTCONFIG_FROM": "Object Config From {0}",
     "OFFSET": "Offset",
     "OFFSET_EASE": "Offset Ease",

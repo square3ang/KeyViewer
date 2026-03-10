@@ -80,40 +80,41 @@ public class MultipleKeyConfigDrawer : ModelDrawable<KeyConfig> {
         changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("BACKGROUND_IMAGE_ROUNDNESS", "Background Image Roundness"), ref model.BackgroundRoundness, 0, Constants.Rad2Deg100, 300);
         changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("OUTLINE_IMAGE_ROUNDNESS", "Outline Image Roundness"), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300);
 
-        GUILayout.Space(8f);
-
         GUILayout.BeginHorizontal();
-        GUILayout.Label($"<b>{Main.Lang.Get("TEXT", "Text")}</b>");
+        if(Drawer.Button($"<b>{Main.Lang.Get("TEXT", "Text")}</b>")) {
+            Main.GUI.Push(new MultipleObjectConfigDrawer(manager, targets.Select(KeyViewerUtils.KeyName).ToList(), model.TextConfig, k => k.TextConfig));
+        }
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
-        changed |= Drawer.DrawPressReleaseBase(model.Text).IfTrue(() => SetPR<string>("Text"));
-
+        changed |= Drawer.DrawPressReleaseBase(model.Text);
         if(model.EnableCountText) {
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"<b>{Main.Lang.Get("COUNT_TEXT", "Count Text")}</b>");
+            if(Drawer.Button($"<b>{Main.Lang.Get("COUNT_TEXT", "Count Text")}</b>")) {
+                Main.GUI.Push(new MultipleObjectConfigDrawer(manager, targets.Select(KeyViewerUtils.KeyName).ToList(), model.CountTextConfig, k => k.CountTextConfig));
+            }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            changed |= Drawer.DrawPressReleaseBase(model.CountText).IfTrue(() => SetPR<string>("CountText"));
+            changed |= Drawer.DrawPressReleaseBase(model.CountText);
         }
-
         GUILayout.BeginHorizontal();
-        GUILayout.Label($"<b>{Main.Lang.Get("BACKGROUND_IMAGE", "Background Image")}</b>");
+        if(Drawer.Button($"<b>{Main.Lang.Get("BACKGROUND_IMAGE", "Background Image")}</b>")) {
+            Main.GUI.Push(new MultipleObjectConfigDrawer(manager, targets.Select(KeyViewerUtils.KeyName).ToList(), model.BackgroundConfig, k => k.BackgroundConfig));
+        }
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
-        changed |= Drawer.DrawPressReleaseBase(model.Background).IfTrue(() => SetPR<string>("Background"));
-
+        changed |= Drawer.DrawPressReleaseBase(model.Background);
         if(model.EnableOutlineImage) {
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"<b>{Main.Lang.Get("OUTLINE_IMAGE", "Outline Image")}</b>");
+            if(Drawer.Button($"<b>{Main.Lang.Get("OUTLINE_IMAGE", "Outline Image")}</b>")) {
+                Main.GUI.Push(new MultipleObjectConfigDrawer(manager, targets.Select(KeyViewerUtils.KeyName).ToList(), model.OutlineConfig, k => k.OutlineConfig));
+            }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-            changed |= Drawer.DrawPressReleaseBase(model.Outline).IfTrue(() => SetPR<string>("Outline"));
+            changed |= Drawer.DrawPressReleaseBase(model.Outline);
         }
-
         if(model.BackgroundBlurEnabled) {
             changed |= NeoDrawer.StaticInstance.DrawBlurConfig(model.BackgroundBlurConfig).IfTrue(() => SetBlurConfig("BackgroundBlurConfig"));
         }
-
         if(model.RainEnabled) {
             GUILayout.BeginHorizontal();
             if(Drawer.Button($"<b>{Main.Lang.Get("RAIN", "Rain")}</b>")) {
@@ -122,7 +123,6 @@ public class MultipleKeyConfigDrawer : ModelDrawable<KeyConfig> {
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
         }
-
         changed |= NeoDrawer.StaticInstance.DrawVectorConfig(model.VectorConfig).IfTrue(() => SetVectorConfig("VectorConfig"));
 
         if(changed) {

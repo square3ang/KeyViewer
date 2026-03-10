@@ -84,6 +84,7 @@
     "MAKE_BAR": "막대 키 만들기",
     "MISC": "기타",
     "MULTI_PRESS": "<color=#00FFED>다중 입력!</color>",
+    "OBJECT_CONFIGURATION": "{0} 키 {1} 설정",
     "OBJECTCONFIG_FROM": "{0}의 구성",
     "OFFSET": "위치",
     "OFFSET_EASE": "위치 가감속",

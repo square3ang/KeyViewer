@@ -81,25 +81,33 @@ public class KeyConfigDrawer : ModelDrawable<KeyConfig> {
         changed |= NeoDrawer.StaticInstance.DrawSingleWithSlider(Main.Lang.Get("OUTLINE_IMAGE_ROUNDNESS", "Outline Image Roundness"), ref model.OutlineRoundness, 0, Constants.Rad2Deg100, 300);
 
         GUILayout.BeginHorizontal();
-        GUILayout.Label($"<b>{Main.Lang.Get("TEXT", "Text")}</b>");
+        if(Drawer.Button($"<b>{Main.Lang.Get("TEXT", "Text")}</b>")) {
+            Main.GUI.Push(new ObjectConfigDrawer(manager, model, model.TextConfig));
+        }
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
         changed |= Drawer.DrawPressReleaseBase(model.Text);
         if(model.EnableCountText) {
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"<b>{Main.Lang.Get("COUNT_TEXT", "Count Text")}</b>");
+            if(Drawer.Button($"<b>{Main.Lang.Get("COUNT_TEXT", "Count Text")}</b>")) {
+                Main.GUI.Push(new ObjectConfigDrawer(manager, model, model.CountTextConfig));
+            }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             changed |= Drawer.DrawPressReleaseBase(model.CountText);
         }
         GUILayout.BeginHorizontal();
-        GUILayout.Label($"<b>{Main.Lang.Get("BACKGROUND_IMAGE", "Background Image")}</b>");
+        if(Drawer.Button($"<b>{Main.Lang.Get("BACKGROUND_IMAGE", "Background Image")}</b>")) {
+            Main.GUI.Push(new ObjectConfigDrawer(manager, model, model.BackgroundConfig));
+        }
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
         changed |= Drawer.DrawPressReleaseBase(model.Background);
         if(model.EnableOutlineImage) {
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"<b>{Main.Lang.Get("OUTLINE_IMAGE", "Outline Image")}</b>");
+            if(Drawer.Button($"<b>{Main.Lang.Get("OUTLINE_IMAGE", "Outline Image")}</b>")) {
+                Main.GUI.Push(new ObjectConfigDrawer(manager, model, model.OutlineConfig));
+            }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             changed |= Drawer.DrawPressReleaseBase(model.Outline);
