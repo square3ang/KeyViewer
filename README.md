@@ -1,4 +1,4 @@
-<img src = "kvs_icon.png" width="25%" height="25%">
+<img src = "kv4.png" width="37.5%" height="37.5%">
 
 # ⌨️ KeyViewer
 KeyViewer is a mod that displays the key viewer in ADOFAI in-game.
