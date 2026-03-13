@@ -309,13 +309,13 @@ public class SettingsDrawer(Settings settings) : ModelDrawable<Settings>(setting
             if(reaction) {
                 destroyConfirm = [];
             }
+        }
 
-            if(NeedLangInit) {
-                NeedLangInit = false;
-                languages = null;
-                userLanguages = null;
-                LanguageInit();
-            }
+        if(NeedLangInit) {
+            NeedLangInit = false;
+            languages = null;
+            userLanguages = null;
+            LanguageInit();
         }
     }
     private static string GetNewProfileName() {
