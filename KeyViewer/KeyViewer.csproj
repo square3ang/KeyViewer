@@ -318,7 +318,7 @@
     <Compile Include="Core\FontManager.cs" />
     <Compile Include="Controllers\GUIController.cs" />
     <Compile Include="Core\GUILayoutEx.cs" />
-    <Compile Include="Core\IconManager.cs" />
+    <Compile Include="Core\ImageManager.cs" />
     <Compile Include="Core\Input\AsyncInputCompat.cs" />
     <Compile Include="Core\Input\KeyInput.cs" />
     <Compile Include="Core\Input\WinInput.cs" />
