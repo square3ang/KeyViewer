@@ -1,6 +1,7 @@
 ﻿using KeyViewer.Core.Interfaces;
 using KeyViewer.Utils;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace KeyViewer.Models;
 
@@ -33,23 +34,30 @@ public class PressReleaseBase<T> : IModel, ICopyable<PressReleaseBase<T>> {
 
     public virtual JToken Serialize() {
         var node = new JObject();
-        if(Released != null) {
+        if(!EqualityComparer<T>.Default.Equals(Released, default)) {
             node[nameof(Released)] = ModelUtils.ToNode<T>(Released);
         }
-        if(Pressed != null && !IsSame) {
+        if(!EqualityComparer<T>.Default.Equals(Pressed, default) && !IsSame) {
             node[nameof(Pressed)] = ModelUtils.ToNode<T>(Pressed);
         }
         return node;
     }
     public virtual void Deserialize(JToken node) {
-        JToken releasedRaw = node[nameof(Released)];
-        JToken pressedRaw = node[nameof(Pressed)];
-        bool nullReleased = releasedRaw == null;
-        if(!nullReleased) {
+        if(node == null) {
+            Pressed = default;
+            Released = default;
+            return;
+        }
+        var releasedRaw = node[nameof(Released)];
+        var pressedRaw = node[nameof(Pressed)];
+        bool hasReleased = releasedRaw != null;
+        if(hasReleased) {
             Released = (T)ModelUtils.ToObject<T>(releasedRaw);
         }
-        Pressed = pressedRaw == null ? nullReleased ? default : Released : (T)ModelUtils.ToObject<T>(pressedRaw);
+        Pressed = pressedRaw != null ? (T)ModelUtils.ToObject<T>(pressedRaw) : hasReleased ? Released : default;
     }
-    public bool IsSame => Equals(Pressed, Released);
+
+    public bool IsSame => EqualityComparer<T>.Default.Equals(Pressed, Released);
+
     public static implicit operator PressReleaseBase<T>(T value) => new(value);
 }

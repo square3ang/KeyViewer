@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -29,23 +28,22 @@ public static class WinInput {
     private static readonly bool[] prevStates = new bool[0xFE];
 
     private static Thread pollingThread;
-    private static bool running = false;
-    public static bool IsPolling => running;
+
+    public static bool IsPolling { get; private set; } = false;
 
     public static void StartPolling(PollingRate rate) {
-        if(!Main.IsWindows || running) {
+        if(!Main.IsWindows || IsPolling) {
             return;
         }
 
-        running = true;
+        IsPolling = true;
         long targetTicks = Stopwatch.Frequency / (rate == PollingRate.HzMonitor ? Application.targetFrameRate : (int)rate);
 
-        pollingThread = new Thread(() =>
-        {
+        pollingThread = new Thread(() => {
             var sw = Stopwatch.StartNew();
             long previousTick = sw.ElapsedTicks;
 
-            while(running) {
+            while(IsPolling) {
                 UpdateStates();
 
                 while(sw.ElapsedTicks - previousTick < targetTicks) {
@@ -63,7 +61,7 @@ public static class WinInput {
     }
 
     public static void StopPolling() {
-        running = false;
+        IsPolling = false;
 
         if(pollingThread != null && pollingThread.IsAlive) {
             if(!pollingThread.Join(1000)) {
@@ -75,7 +73,7 @@ public static class WinInput {
     }
 
     public static void SetPollingRate(PollingRate rate) {
-        if(!Main.IsWindows || !running) {
+        if(!Main.IsWindows || !IsPolling) {
             return;
         }
         StopPolling();
@@ -84,7 +82,7 @@ public static class WinInput {
 
     private static void UpdateStates() {
         for(int vk = 0x01; vk < 0xFF; vk++) {
-            bool prev = prevStates[vk-1];
+            bool prev = prevStates[vk - 1];
             bool curr = (GetAsyncKeyState(vk) & 0x8000) != 0;
 
             keyStates[vk - 1] = curr;

@@ -8,7 +8,7 @@ namespace KeyViewer.Views;
 public class ObjectConfigDrawer(KeyManager manager, KeyConfig config, ObjectConfig objectConfing) :
     ModelDrawable<ObjectConfig>(objectConfing, string.Format(
         Main.Lang.Get("OBJECT_CONFIGURATION", "Key {0} {1} Configuration"),
-        (config.DummyName != null ? config.DummyName : config.Code), GuessLabel(config, objectConfing))
+        config.DummyName != null ? config.DummyName : config.Code, GuessLabel(config, objectConfing))
     ) {
 
     public KeyManager manager = manager;
@@ -36,13 +36,8 @@ public class ObjectConfigDrawer(KeyManager manager, KeyConfig config, ObjectConf
         if(obj == k.CountTextConfig) {
             return Main.Lang.Get("COUNT_TEXT", "Count Text");
         }
-        if(obj == k.BackgroundConfig) {
-            return Main.Lang.Get("BACKGROUND_IMAGE", "Background Image");
-        }
-        if(obj == k.OutlineConfig) {
-            return Main.Lang.Get("OUTLINE_IMAGE", "Outline Image");
-        }
-
-        return "Object";
+        return obj == k.BackgroundConfig
+            ? Main.Lang.Get("BACKGROUND_IMAGE", "Background Image")
+            : obj == k.OutlineConfig ? Main.Lang.Get("OUTLINE_IMAGE", "Outline Image") : "Object";
     }
 }

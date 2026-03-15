@@ -541,15 +541,11 @@ public static class KeyViewerUtils {
             return (sbyte)toCriterion + ((sbyte)obj - (sbyte)fromCriterion);
         }
 
-        if(obj is byte) {
-            return (byte)toCriterion + ((byte)obj - (byte)fromCriterion);
-        }
-
-        if(obj is short) {
-            return (short)toCriterion + ((short)obj - (short)fromCriterion);
-        }
-
-        return obj is ushort
+        return obj is byte
+            ? (byte)toCriterion + ((byte)obj - (byte)fromCriterion)
+            : obj is short
+            ? (short)toCriterion + ((short)obj - (short)fromCriterion)
+            : obj is ushort
             ? (ushort)toCriterion + ((ushort)obj - (ushort)fromCriterion)
             : obj is uint
             ? (uint)toCriterion + ((uint)obj - (uint)fromCriterion)

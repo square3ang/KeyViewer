@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 namespace KeyViewer.Core.TextReplacing;
+
 public class Tag {
     public string Name { get; }
     public bool Referenced => ReferencedCount > 0;

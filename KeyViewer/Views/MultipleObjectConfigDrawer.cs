@@ -42,9 +42,7 @@ public class MultipleObjectConfigDrawer : ModelDrawable<ObjectConfig> {
         targetsCopy = targets.Select(t => t.Copy()).ToList();
     }
 
-    public override void OnceCall() {
-        NeoDrawer.StaticInstance.FieldResetDictById();
-    }
+    public override void OnceCall() => NeoDrawer.StaticInstance.FieldResetDictById();
 
     public override void Draw() {
         NeoDrawer.StaticInstance.FieldResetId();
@@ -76,13 +74,8 @@ public class MultipleObjectConfigDrawer : ModelDrawable<ObjectConfig> {
         if(obj == cfg.CountTextConfig) {
             return Main.Lang.Get("COUNT_TEXT", "Count Text");
         }
-        if(obj == cfg.BackgroundConfig) {
-            return Main.Lang.Get("BACKGROUND_IMAGE", "Background Image");
-        }
-        if(obj == cfg.OutlineConfig) {
-            return Main.Lang.Get("OUTLINE_IMAGE", "Outline Image");
-        }
-
-        return "Object";
+        return obj == cfg.BackgroundConfig
+            ? Main.Lang.Get("BACKGROUND_IMAGE", "Background Image")
+            : obj == cfg.OutlineConfig ? Main.Lang.Get("OUTLINE_IMAGE", "Outline Image") : "Object";
     }
 }

@@ -25,25 +25,31 @@ public class ObjectConfig : IModel, ICopyable<ObjectConfig> {
         };
         Color = new PressReleaseModel<GColor>(defaultPressed, defaultReleased);
     }
-    public VectorConfig VectorConfig;
-    public PressReleaseModel<GColor> Color;
+    public VectorConfig VectorConfig = new();
+    public PressReleaseModel<GColor> Color = new();
     public ObjectConfig Copy() {
-        ObjectConfig newConfig = new() {
-            VectorConfig = VectorConfig.Copy(),
-            Color = Color.Copy(),
+        return new ObjectConfig {
+            VectorConfig = VectorConfig?.Copy(),
+            Color = Color?.Copy()
         };
-        return newConfig;
     }
     public JToken Serialize() {
-        var node = new JObject {
-            [nameof(VectorConfig)] = VectorConfig.Serialize(),
-            [nameof(Color)] = Color.Serialize()
-        };
+        var node = new JObject();
+        ModelUtils.PutIfNotEmpty(node, nameof(VectorConfig), VectorConfig?.Serialize());
+        ModelUtils.PutIfNotEmpty(node, nameof(Color), Color?.Serialize());
         return node;
     }
     public void Deserialize(JToken node) {
-        var defaultSettings = new ObjectConfig();
-        VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
-        Color = ModelUtils.Unbox<PressReleaseModel<GColor>>(node[nameof(Color)]);
+        if(node == null) {
+            VectorConfig = new VectorConfig();
+            Color = new PressReleaseModel<GColor>();
+            return;
+        }
+        VectorConfig = node[nameof(VectorConfig)] != null
+            ? ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)])
+            : new VectorConfig();
+        Color = node[nameof(Color)] != null
+            ? ModelUtils.Unbox<PressReleaseModel<GColor>>(node[nameof(Color)])
+            : new PressReleaseModel<GColor>();
     }
 }

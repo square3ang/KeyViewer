@@ -24,10 +24,10 @@ public class VectorConfig : IModel, ICopyable<VectorConfig> {
     }
     public JToken Serialize() {
         var node = new JObject();
-        if(Rotation.Pressed != Vector3.zero && Rotation.Released != Vector3.zero) {
+        if(Rotation.Pressed != Vector3.zero || Rotation.Released != Vector3.zero) {
             node[nameof(Rotation)] = Rotation.Serialize();
         }
-        if(Offset.Pressed != Vector2.zero && Offset.Released != Vector2.zero) {
+        if(Offset.Pressed != Vector2.zero || Offset.Released != Vector2.zero) {
             node[nameof(Offset)] = Offset.Serialize();
         }
         if(Scale.Pressed != Vector2.one || Scale.Released != Vector2.one) {

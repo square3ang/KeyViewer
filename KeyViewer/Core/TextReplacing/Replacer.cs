@@ -6,6 +6,7 @@ using System.Reflection.Emit;
 using System.Text;
 
 namespace KeyViewer.Core.TextReplacing;
+
 public class Replacer {
     public List<Tag> Tags { get; }
     public List<Tag> References { get; }

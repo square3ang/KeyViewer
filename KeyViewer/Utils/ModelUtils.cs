@@ -256,4 +256,20 @@ public static class ModelUtils {
         }
         return set;
     }
+
+    public static void PutIfNotEmpty(JObject node, string name, JToken value) {
+        if(value == null) {
+            return;
+        }
+        if(value.Type == JTokenType.Null) {
+            return;
+        }
+        if(value is JObject obj && !obj.HasValues) {
+            return;
+        }
+        if(value is JArray arr && !arr.HasValues) {
+            return;
+        }
+        node[name] = value;
+    }
 }

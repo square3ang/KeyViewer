@@ -33,7 +33,7 @@ public class KeyConfigDrawer : ModelDrawable<KeyConfig> {
                 int current = Array.IndexOf(KeyCodeValues, model.Code);
                 bool result = Drawer.SelectionPopup(ref current, KeyCodeNames, $"{Main.Lang.Get("KEY_CODE", "Key Code")}");
                 if(result) {
-                    model.Code = KeyCodeValues[current]; 
+                    model.Code = KeyCodeValues[current];
                 }
             }
             GUILayout.FlexibleSpace();

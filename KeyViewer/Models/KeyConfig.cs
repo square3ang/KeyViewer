@@ -43,7 +43,6 @@ public class KeyConfig : IModel, ICopyable<KeyConfig> {
         KeyConfig newConfig = new() {
             Count = Count,
             Code = Code,
-            //newConfig.Codes = (KeyCode[])Codes.Clone();
             DummyName = DummyName,
             Font = Font,
             EnableKPSMeter = EnableKPSMeter,
@@ -111,71 +110,93 @@ public class KeyConfig : IModel, ICopyable<KeyConfig> {
         node[nameof(TextFontSize)] = TextFontSize;
         node[nameof(CountTextFontSize)] = CountTextFontSize;
 
-        var text = Text.Serialize();
-        if(!string.IsNullOrEmpty(text.ToString())) {
-            node[nameof(Text)] = Text.Serialize();
-        }
-        var countText = CountText.Serialize();
-        if(!string.IsNullOrEmpty(countText.ToString())) {
-            node[nameof(CountText)] = CountText.Serialize();
-        }
-        var backGround = Background.Serialize();
-        if(!string.IsNullOrEmpty(backGround.ToString())) {
-            node[nameof(Background)] = Background.Serialize();
-        }
-        var outline = Outline.Serialize();
-        if(!string.IsNullOrEmpty(outline.ToString())) {
-            node[nameof(Outline)] = Outline.Serialize();
-        }
+        ModelUtils.PutIfNotEmpty(node, nameof(Text), Text.Serialize());
+        ModelUtils.PutIfNotEmpty(node, nameof(CountText), CountText.Serialize());
+        ModelUtils.PutIfNotEmpty(node, nameof(Background), Background.Serialize());
+        ModelUtils.PutIfNotEmpty(node, nameof(Outline), Outline.Serialize());
 
-        node[nameof(TextConfig)] = TextConfig.Serialize();
-        node[nameof(CountTextConfig)] = CountTextConfig.Serialize();
-        node[nameof(BackgroundConfig)] = BackgroundConfig.Serialize();
-        node[nameof(OutlineConfig)] = OutlineConfig.Serialize();
+        ModelUtils.PutIfNotEmpty(node, nameof(TextConfig), TextConfig.Serialize());
+        ModelUtils.PutIfNotEmpty(node, nameof(CountTextConfig), CountTextConfig.Serialize());
+        ModelUtils.PutIfNotEmpty(node, nameof(BackgroundConfig), BackgroundConfig.Serialize());
+        ModelUtils.PutIfNotEmpty(node, nameof(OutlineConfig), OutlineConfig.Serialize());
+
         node[nameof(BackgroundRoundness)] = BackgroundRoundness;
         node[nameof(OutlineRoundness)] = OutlineRoundness;
-        node[nameof(BackgroundBlurConfig)] = BackgroundBlurConfig.Serialize();
 
-        node[nameof(VectorConfig)] = VectorConfig.Serialize();
+        ModelUtils.PutIfNotEmpty(node, nameof(BackgroundBlurConfig), BackgroundBlurConfig.Serialize());
+        ModelUtils.PutIfNotEmpty(node, nameof(VectorConfig), VectorConfig.Serialize());
 
         node[nameof(RainEnabled)] = RainEnabled;
-        node[nameof(Rain)] = Rain.Serialize();
+        ModelUtils.PutIfNotEmpty(node, nameof(Rain), Rain.Serialize());
 
         return node;
     }
     public void Deserialize(JToken node) {
         var defaultSettings = new KeyConfig();
 
-        Count = node[nameof(Count)]?.Value<int>() ?? defaultSettings.Count;
-        Code = EnumHelper<KeyCode>.Parse(node[nameof(Code)]?.Value<string>() ?? defaultSettings.Code.ToString());
-        DummyName = node[nameof(DummyName)]?.Value<string>() ?? defaultSettings.DummyName;
-        Font = node[nameof(Font)]?.Value<string>() ?? defaultSettings.Font;
-        EnableKPSMeter = node[nameof(EnableKPSMeter)]?.Value<bool>() ?? defaultSettings.EnableKPSMeter;
-        UpdateTextAlways = node[nameof(UpdateTextAlways)]?.Value<bool>() ?? defaultSettings.UpdateTextAlways;
-        EnableCountText = node[nameof(EnableCountText)]?.Value<bool>() ?? defaultSettings.EnableCountText;
-        EnableOutlineImage = node[nameof(EnableOutlineImage)]?.Value<bool>() ?? defaultSettings.EnableOutlineImage;
-        DisableSorting = node[nameof(DisableSorting)]?.Value<bool>() ?? defaultSettings.DisableSorting;
-        DoNotScaleText = node[nameof(DoNotScaleText)]?.Value<bool>() ?? defaultSettings.DoNotScaleText;
-        BackgroundBlurEnabled = node[nameof(BackgroundBlurEnabled)]?.Value<bool>() ?? defaultSettings.BackgroundBlurEnabled;
-        TextFontSize = node[nameof(TextFontSize)]?.Value<float>() ?? defaultSettings.TextFontSize;
-        CountTextFontSize = node[nameof(CountTextFontSize)]?.Value<float>() ?? defaultSettings.CountTextFontSize;
+        Count = node?[nameof(Count)]?.Value<int>() ?? defaultSettings.Count;
+        Code = EnumHelper<KeyCode>.Parse(node?[nameof(Code)]?.Value<string>() ?? defaultSettings.Code.ToString());
+        DummyName = node?[nameof(DummyName)]?.Value<string>() ?? defaultSettings.DummyName;
+        Font = node?[nameof(Font)]?.Value<string>() ?? defaultSettings.Font;
 
-        Text = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Text)]);
-        CountText = ModelUtils.Unbox<PressRelease<string>>(node[nameof(CountText)]);
-        Background = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Background)]);
-        Outline = ModelUtils.Unbox<PressRelease<string>>(node[nameof(Outline)]);
+        EnableKPSMeter = node?[nameof(EnableKPSMeter)]?.Value<bool>() ?? defaultSettings.EnableKPSMeter;
+        UpdateTextAlways = node?[nameof(UpdateTextAlways)]?.Value<bool>() ?? defaultSettings.UpdateTextAlways;
+        EnableCountText = node?[nameof(EnableCountText)]?.Value<bool>() ?? defaultSettings.EnableCountText;
+        EnableOutlineImage = node?[nameof(EnableOutlineImage)]?.Value<bool>() ?? defaultSettings.EnableOutlineImage;
+        DisableSorting = node?[nameof(DisableSorting)]?.Value<bool>() ?? defaultSettings.DisableSorting;
+        DoNotScaleText = node?[nameof(DoNotScaleText)]?.Value<bool>() ?? defaultSettings.DoNotScaleText;
+        BackgroundBlurEnabled = node?[nameof(BackgroundBlurEnabled)]?.Value<bool>() ?? defaultSettings.BackgroundBlurEnabled;
 
-        TextConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(TextConfig)]);
-        CountTextConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(CountTextConfig)]);
-        BackgroundConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(BackgroundConfig)]);
-        OutlineConfig = ModelUtils.Unbox<ObjectConfig>(node[nameof(OutlineConfig)]);
-        BackgroundRoundness = node[nameof(BackgroundRoundness)]?.Value<float>() ?? defaultSettings.BackgroundRoundness;
-        OutlineRoundness = node[nameof(OutlineRoundness)]?.Value<float>() ?? defaultSettings.OutlineRoundness;
-        BackgroundBlurConfig = ModelUtils.Unbox<BlurConfig>(node[nameof(BackgroundBlurConfig)]) ?? new BlurConfig();
+        TextFontSize = node?[nameof(TextFontSize)]?.Value<float>() ?? defaultSettings.TextFontSize;
+        CountTextFontSize = node?[nameof(CountTextFontSize)]?.Value<float>() ?? defaultSettings.CountTextFontSize;
 
-        VectorConfig = ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)]);
+        Text = node?[nameof(Text)] != null
+            ? ModelUtils.Unbox<PressRelease<string>>(node[nameof(Text)])
+            : defaultSettings.Text;
 
-        RainEnabled = node[nameof(RainEnabled)]?.Value<bool>() ?? defaultSettings.RainEnabled;
-        Rain = ModelUtils.Unbox<RainConfig>(node[nameof(Rain)]);
+        CountText = node?[nameof(CountText)] != null
+            ? ModelUtils.Unbox<PressRelease<string>>(node[nameof(CountText)])
+            : defaultSettings.CountText;
+
+        Background = node?[nameof(Background)] != null
+            ? ModelUtils.Unbox<PressRelease<string>>(node[nameof(Background)])
+            : defaultSettings.Background;
+
+        Outline = node?[nameof(Outline)] != null
+            ? ModelUtils.Unbox<PressRelease<string>>(node[nameof(Outline)])
+            : defaultSettings.Outline;
+
+        TextConfig = node?[nameof(TextConfig)] != null
+            ? ModelUtils.Unbox<ObjectConfig>(node[nameof(TextConfig)])
+            : defaultSettings.TextConfig;
+
+        CountTextConfig = node?[nameof(CountTextConfig)] != null
+            ? ModelUtils.Unbox<ObjectConfig>(node[nameof(CountTextConfig)])
+            : defaultSettings.CountTextConfig;
+
+        BackgroundConfig = node?[nameof(BackgroundConfig)] != null
+            ? ModelUtils.Unbox<ObjectConfig>(node[nameof(BackgroundConfig)])
+            : defaultSettings.BackgroundConfig;
+
+        OutlineConfig = node?[nameof(OutlineConfig)] != null
+            ? ModelUtils.Unbox<ObjectConfig>(node[nameof(OutlineConfig)])
+            : defaultSettings.OutlineConfig;
+
+        BackgroundRoundness = node?[nameof(BackgroundRoundness)]?.Value<float>() ?? defaultSettings.BackgroundRoundness;
+        OutlineRoundness = node?[nameof(OutlineRoundness)]?.Value<float>() ?? defaultSettings.OutlineRoundness;
+
+        BackgroundBlurConfig = node?[nameof(BackgroundBlurConfig)] != null
+            ? ModelUtils.Unbox<BlurConfig>(node[nameof(BackgroundBlurConfig)])
+            : new BlurConfig();
+
+        VectorConfig = node?[nameof(VectorConfig)] != null
+            ? ModelUtils.Unbox<VectorConfig>(node[nameof(VectorConfig)])
+            : defaultSettings.VectorConfig;
+
+        RainEnabled = node?[nameof(RainEnabled)]?.Value<bool>() ?? defaultSettings.RainEnabled;
+
+        Rain = node?[nameof(Rain)] != null
+            ? ModelUtils.Unbox<RainConfig>(node[nameof(Rain)])
+            : defaultSettings.Rain;
     }
 }

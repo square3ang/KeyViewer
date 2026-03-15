@@ -18,23 +18,25 @@ public class EaseConfig : IModel, ICopyable<EaseConfig> {
     public float Duration = 0;
     public bool IsValid => Ease != Ease.Unset;
     public EaseConfig Copy() {
-        var config = new EaseConfig {
+        return new EaseConfig {
             Ease = Ease,
             Duration = Duration
         };
-        return config;
     }
     public JToken Serialize() {
-        var node = new JObject {
-            [nameof(Ease)] = Ease.ToString(),
-            [nameof(Duration)] = Duration
-        };
-        return node;
+        return !IsValid
+            ? []
+            : new JObject {
+                [nameof(Ease)] = Ease.ToString(),
+                [nameof(Duration)] = Duration
+            };
     }
+
     public void Deserialize(JToken node) {
         var defaultSettings = new EaseConfig();
-
-        Ease = EnumHelper<Ease>.Parse(node[nameof(Ease)]?.Value<string>() ?? defaultSettings.Ease.ToString());
-        Duration = node[nameof(Duration)]?.Value<float>() ?? defaultSettings.Duration;
+        Ease = EnumHelper<Ease>.Parse(
+            node?[nameof(Ease)]?.Value<string>() ?? defaultSettings.Ease.ToString()
+        );
+        Duration = node?[nameof(Duration)]?.Value<float>() ?? defaultSettings.Duration;
     }
 }

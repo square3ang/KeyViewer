@@ -15,10 +15,13 @@ public class BlurConfig : IModel, ICopyable<BlurConfig> {
     }
 
     public JToken Serialize() {
-        var node = new JObject {
-            [nameof(Spacing)] = Spacing,
-            [nameof(Vibrancy)] = Vibrancy,
-        };
+        var node = new JObject();
+        if(Spacing != 2f) {
+            node[nameof(Spacing)] = Spacing;
+        }
+        if(Vibrancy != 0.3f) {
+            node[nameof(Vibrancy)] = Vibrancy;
+        }
         return node;
     }
 

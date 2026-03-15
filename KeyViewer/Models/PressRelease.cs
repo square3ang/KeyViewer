@@ -37,7 +37,10 @@ public class PressRelease<T> : PressReleaseBase<T>, ICopyable<PressRelease<T>> {
             node[nameof(ReleasedEase)] = ReleasedEase.Serialize();
         }
 
-        if(PressedEase?.IsValid == true && PressedEase != ReleasedEase) {
+        if(PressedEase?.IsValid == true &&
+           (PressedEase.Ease != ReleasedEase?.Ease ||
+            PressedEase.Duration != ReleasedEase?.Duration)) {
+
             node[nameof(PressedEase)] = PressedEase.Serialize();
         }
 
@@ -47,18 +50,23 @@ public class PressRelease<T> : PressReleaseBase<T>, ICopyable<PressRelease<T>> {
     public override void Deserialize(JToken node) {
         base.Deserialize(node);
 
+        if(node == null) {
+            PressedEase = new EaseConfig();
+            ReleasedEase = new EaseConfig();
+            return;
+        }
+
         var releasedEaseRaw = node[nameof(ReleasedEase)];
         var pressedEaseRaw = node[nameof(PressedEase)];
 
-        if(releasedEaseRaw != null) {
-            ReleasedEase = ModelUtils.Unbox<EaseConfig>(releasedEaseRaw);
-        }
+        ReleasedEase = releasedEaseRaw != null
+            ? ModelUtils.Unbox<EaseConfig>(releasedEaseRaw)
+            : new EaseConfig();
 
         PressedEase = pressedEaseRaw != null
             ? ModelUtils.Unbox<EaseConfig>(pressedEaseRaw)
-            : ReleasedEase ?? new EaseConfig();
+            : ReleasedEase.Copy();
     }
 
-    public static implicit operator PressRelease<T>(T value)
-        => new(value);
+    public static implicit operator PressRelease<T>(T value) => new(value);
 }

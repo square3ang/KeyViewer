@@ -88,16 +88,16 @@ public class ProfileDrawer : ModelDrawable<Profile> {
                         if(Drawer.Button(str)) {
                             if(KeyInput.Shift) {
                                 if(!selectedKeys.Add(key)) {
-                                    if(criterion != key)
+                                    if(criterion != key) {
                                         criterion = key;
-                                    else {
+                                    } else {
                                         selectedKeys.Remove(key);
                                         criterion = null;
                                     }
                                 }
-                            } else if(configMode)
+                            } else if(configMode) {
                                 Main.GUI.Push(new KeyConfigDrawer(manager, key));
-                            else {
+                            } else {
                                 model.Keys.RemoveAt(i);
                                 manager.UpdateKeys();
                             }

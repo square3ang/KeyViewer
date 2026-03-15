@@ -19,8 +19,9 @@ public static class KeyInput {
             var vks = WinInput.KeyCodeToInts(code);
             if(vks.Count > 0) {
                 foreach(var vk in vks) {
-                    if(WinInput.TryGetKeyState(vk, out bool state) && state)
+                    if(WinInput.TryGetKeyState(vk, out bool state) && state) {
                         return true;
+                    }
                 }
             }
             return false;
@@ -29,11 +30,7 @@ public static class KeyInput {
         return SyncInput.GetKey(code);
     }
 
-    public static bool GetKeyDown(KeyCode code) {
-        return SyncInput.GetKeyDown(code);
-    }
+    public static bool GetKeyDown(KeyCode code) => SyncInput.GetKeyDown(code);
 
-    public static bool GetKeyUp(KeyCode code) {
-        return SyncInput.GetKeyUp(code);
-    }
+    public static bool GetKeyUp(KeyCode code) => SyncInput.GetKeyUp(code);
 }
